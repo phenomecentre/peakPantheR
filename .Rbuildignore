@@ -1,0 +1,6 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^dev_peakPantheR.R
+^.gitignore
+LICENSE
