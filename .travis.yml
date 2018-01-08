@@ -1,2 +1,7 @@
 language: r 
 r: bioc-devel
+
+apt_packages:
+  - libnetcdf-dev
+  - libhdf5-dev
+  - netcdf-bin
