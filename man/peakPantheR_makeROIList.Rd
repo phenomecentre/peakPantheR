@@ -4,12 +4,12 @@
 \alias{peakPantheR_makeROIList}
 \title{Generate a Region Of Interest (ROI) List}
 \usage{
-peakPantheR_makeROIList(rawSpec, targetPeakList)
+peakPantheR_makeROIList(rawSpec, targetFeatTable)
 }
 \arguments{
 \item{rawSpec}{an \code{\link[MSnbase]{OnDiskMSnExp}} used to get the scans corresponding to each retention time.}
 
-\item{targetPeakList}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).}
+\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).}
 }
 \value{
 a list of ROIs
@@ -24,13 +24,13 @@ library(MSnbase)
 netcdffile <- './my_spectra.CDF'
 raw_data   <- MSnbase::readMSData(netcdffile, centroided=TRUE, mode='onDisk')
 
-## targetPeakList from outside source
-targetPeakList            <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-targetPeakList[1,]        <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
-targetPeakList[2,]        <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
-targetPeakList[,c(1,3:8)] <- sapply(targetPeakList[,c(1,3:8)], as.numeric)
+## targetFeatTable from outside source
+targetFeatTable            <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+targetFeatTable[1,]        <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
+targetFeatTable[2,]        <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
+targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 
-ROIList <- peakPantheR_makeROIList(raw_data, targetPeakList)
+ROIList <- peakPantheR_makeROIList(raw_data, targetFeatTable)
 ROIList[[1]]
 # $mz
 # [1] 398.2308
@@ -56,7 +56,11 @@ ROIList[[1]]
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheR_QCSearch}},
+Other peakPantheR: \code{\link{peakPantheR_cpdSearch}},
   \code{\link{peakPantheR_findTargetFeature}},
   \code{\link{peakPantheR_getTargetFeatureStatistic}}
+
+Other realTimeAnnotation: \code{\link{peakPantheR_cpdSearch}}
+
+Other parallelAnnotation: \code{\link{peakPantheR_cpdSearch}}
 }

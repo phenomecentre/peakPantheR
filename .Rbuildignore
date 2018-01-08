@@ -3,4 +3,5 @@
 ^README\.Rmd$
 ^dev_peakPantheR.R
 ^.gitignore
+^.travis.yml
 LICENSE

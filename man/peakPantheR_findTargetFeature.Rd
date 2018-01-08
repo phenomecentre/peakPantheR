@@ -66,16 +66,16 @@ library(MSnbase)
 netcdffile <- './my_spectra.CDF'
 raw_data   <- MSnbase::readMSData(netcdffile, centroided=TRUE, mode='onDisk')
 
-## targetPeakList from outside source
-targetPeakList            <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-targetPeakList[1,]        <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
-targetPeakList[2,]        <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
-targetPeakList[,c(1,3:8)] <- sapply(targetPeakList[,c(1,3:8)], as.numeric)
+## targetFeatTable from outside source
+targetFeatTable            <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+targetFeatTable[1,]        <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
+targetFeatTable[2,]        <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
+targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 
-ROIList <- peakPantheR_makeROIList(raw_data, targetPeakList)
+ROIList <- peakPantheR_makeROIList(raw_data, targetFeatTable)
 
-foundPeakList <- peakPantheR_findTargetFeature(raw_data, ROIList)
-foundPeakList
+foundFeatTable <- peakPantheR_findTargetFeature(raw_data, ROIList)
+foundFeatTable
 #   found       mz    mzmin    mzmax      rt   rtmin   rtmax    into    intb      maxo    sn     egauss
 # 1  TRUE 398.2319 398.2306 398.2330  33.296  31.468  35.352 1919498 1919222  942711.5 15739 0.04867894
 # 2  TRUE 594.4140 594.4120 594.4149 179.046 176.762 181.103 2233011 2232784 1038315.5 30275 0.03296024
@@ -86,7 +86,7 @@ foundPeakList
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheR_QCSearch}},
+Other peakPantheR: \code{\link{peakPantheR_cpdSearch}},
   \code{\link{peakPantheR_getTargetFeatureStatistic}},
   \code{\link{peakPantheR_makeROIList}}
 }
