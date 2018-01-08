@@ -2,6 +2,9 @@ language: r
 r: bioc-devel
 sudo: required
 
+r_packages:
+  - devtools
+
 apt_packages:
   - libnetcdf-dev
   - libhdf5-dev
