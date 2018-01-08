@@ -1,5 +1,6 @@
 language: r 
 r: bioc-devel
+sudo: required
 
 apt_packages:
   - libnetcdf-dev
