@@ -27,5 +27,7 @@ remove.packages('peakPantheR')
 #------------------------------------------------
 library(peakPantheR)
 
-
-
+# Source all files for testing
+setwd('./R')
+lapply(list.files(pattern = "[.][rR]$", recursive = TRUE), source)
+setwd('..')
