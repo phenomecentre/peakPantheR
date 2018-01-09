@@ -6,9 +6,10 @@ Authors@R: c(person("Arnaud", "Wolfer", email = "aw4212@imperial.ac.uk", role = 
 Description: peakPantheR detects, integrates and reports pre-defined features in MS files using XCMS3.
 Depends: R (>= 3.4.2)
 Imports: foreach (>= 1.4.4),
-  doParallel (>= 1.0.11),
+	doParallel (>= 1.0.11),
 	MSnbase (>= 2.4.0),
-	xcms (>= 3.0.0)
+	xcms (>= 3.0.0),
+	testthat
 biocViews: MSnbase (>= 2.4.0),
 	xcms (>= 3.0.0)
 License: GPL-3
