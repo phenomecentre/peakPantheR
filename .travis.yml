@@ -1,2 +1,10 @@
 language: r
 r: bioc-release
+cache: packages
+
+addons:
+  apt:
+    packages:
+      - libnetcdf-dev
+      - netcdf-bin
+      - libhdf5-dev
