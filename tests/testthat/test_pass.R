@@ -1,5 +1,5 @@
 context("No-op Test")
 
-test_null("Does nothing", {
+test_that("Does nothing", {
   expect_equal(1, 1)
  })
