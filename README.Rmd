@@ -10,6 +10,8 @@ knitr::opts_chunk$set(
 ```
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![Build Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR)
+
 # peakPantheR
 Package for _Peak Picking and ANnoTation of High resolution Experiments in R_, implemented in `R` and `Shiny`
 

@@ -1,11 +1,9 @@
-language: r 
-r: bioc-devel
-sudo: required
-
-r_packages:
-  - devtools
+language: r
+r: bioc-release
+cache: packages
 
 apt_packages:
   - libnetcdf-dev
-  - libhdf5-dev
   - netcdf-bin
+  - libhdf5-dev
+
