@@ -8,8 +8,7 @@ Depends: R (>= 3.4.2)
 Imports: foreach (>= 1.4.4),
 	doParallel (>= 1.0.11),
 	MSnbase (>= 2.4.0),
-	xcms (>= 3.0.0),
-	testthat
+	xcms (>= 3.0.0)
 biocViews: MSnbase (>= 2.4.0),
 	xcms (>= 3.0.0)
 License: GPL-3
