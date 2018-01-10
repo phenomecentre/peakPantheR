@@ -5,7 +5,8 @@
 \title{Search, integrate and report targeted features in a raw spectra}
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
-  fitGauss = FALSE, peakStatistic = FALSE, ...)
+  fitGauss = FALSE, peakStatistic = FALSE, getEICs = FALSE,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
@@ -16,10 +17,14 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Assymetry factor}
 
+\item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads)}
+
+\item{verbose}{(bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)}
+
 \item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters}
 }
 \value{
-a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details).
+a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI.
 
 \subsection{Details:}{
   The returned \emph{peakTable} \code{data.frame} is structured as follow:
@@ -57,7 +62,7 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
 }
 }
 \description{
-Report TIC and integrated targeted features in a raw spectra.
+Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access.
 }
 \examples{
 \donttest{

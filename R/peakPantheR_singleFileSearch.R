@@ -7,15 +7,17 @@
 
 #' Search, integrate and report targeted features in a raw spectra
 #'
-#' Report TIC and integrated targeted features in a raw spectra.
+#' Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access.
 #'
 #' @param singleSpectraDataPath (str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).
 #' @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
 #' @param peakStatistic (bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Assymetry factor
+#' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads)
+#' @param verbose (bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
 #'
-#' @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details).
+#' @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI.
 #'
 #' \subsection{Details:}{
 #'   The returned \emph{peakTable} \code{data.frame} is structured as follow:
@@ -99,7 +101,7 @@
 #' @family parallelAnnotation
 #'
 #' @export
-peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, ...) {
+peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, verbose=TRUE, ...) {
   stime <- Sys.time()
 
   # Check input
@@ -114,25 +116,35 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
   TICvalue  <- sum(MSnbase::tic(raw_data))#, initial=FALSE to calculate from raw and not header
 
   ## Generate Region of Interest List (ROIList)
-  ROIList       <- makeROIList(raw_data, targetFeatTable)
+  ROIList  	<- makeROIList(raw_data, targetFeatTable)
 
   ## Integrate features using ROI
-  foundFeatTable <- findTargetFeatures(raw_data, ROIList, verbose=TRUE, fitGauss=fitGauss, ...)
+  foundFeatTable <- findTargetFeatures(raw_data, ROIList, verbose=verbose, fitGauss=fitGauss, ...)
 
+	## Collect ROI EICs
+	EICs 				<- NA
+	if (getEICs) {
+		eicstime 	<- Sys.time()
+		EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+		eicetime 	<- Sys.time()
+		if (verbose) { message('EICs loaded in: ', round(as.double(difftime(eicetime,eicstime)),2),' ',units(difftime(eicetime,eicstime)))}
+	}
+	
   ## Add compound information
   finalOutput         <- foundFeatTable
   finalOutput$cpdID   <- targetFeatTable$cpdID
   finalOutput$cpdName <- targetFeatTable$cpdName
-
+	
   ## Add deviation, FWHM, Tailing factor, Assymetry factor
   if(peakStatistic){
-    statstime     <- Sys.time()
-    finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput)
-    statetime     <- Sys.time()
-    message('Peak statistics done in: ', round(as.double(difftime(statetime,statstime)),2),' ',units( difftime(statetime,statstime)))
+		# don't read EICs from file if already done
+    finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput, usePreviousEICs=EICs, verbose=verbose)
   }
+	
   etime <- Sys.time()
-  message('Feature search done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
+	if (verbose) {
+    message('Feature search done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
+  }
 
-  return(list(TIC=TICvalue, peakTable=finalOutput))
+  return(list(TIC=TICvalue, peakTable=finalOutput, EICs=EICs))
 }
