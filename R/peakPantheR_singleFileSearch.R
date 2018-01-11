@@ -13,7 +13,8 @@
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).
 #' @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
 #' @param peakStatistic (bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Assymetry factor
-#' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads)
+#' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.
+#' @param plotEICsPath (str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved
 #' @param verbose (bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
 #'
@@ -58,10 +59,10 @@
 #' \donttest{
 #' ## Load data
 #' library(MSnbase)
-#' 
+#'
 #' ## Raw data file
 #' netcdfFilePath <- './my_spectra.CDF'
-#' 
+#'
 #' ## targetFeatTable from outside source
 #' targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
@@ -69,7 +70,7 @@
 #' targetFeatTable[1,] <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
 #' targetFeatTable[2,] <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
 #' targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
-#' 
+#'
 #' res <- peakPantheR_singleFileSearch(netcdfFilePath,targetFeatTable[1:2,], peakStatistic=TRUE)
 #' # Polarity can not be extracted from netCDF files, please set manually the polarity with the
 #' #	'polarity' method.
@@ -101,12 +102,27 @@
 #' @family parallelAnnotation
 #'
 #' @export
-peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, verbose=TRUE, ...) {
+peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, verbose=TRUE, ...) {
   stime <- Sys.time()
 
-  # Check input
-  if(!file.exists(singleSpectraDataPath)) {
+  ## Check input
+  singleSpectraDataPath   <- normalizePath(singleSpectraDataPath, mustWork=FALSE)
+
+  if (!file.exists(singleSpectraDataPath)) {
     stop('Check input, file \"', singleSpectraDataPath ,'\" does not exist')
+  }
+
+  if (!is.na(plotEICsPath)) {
+    plotEICsPath  <- normalizePath(plotEICsPath, mustWork=FALSE)
+    # folder exist
+    if (!file.exists(dirname(plotEICsPath))) {
+      stop('Check input, plotEICsPath folder \"', dirname(plotEICsPath) ,'\" does not exist')
+    }
+    # png extension
+    if (stringr::str_sub(basename(plotEICsPath), start=-4) != '.png') {
+      stop('Check input, plotEICsPath file name \"', basename(plotEICsPath) ,'\" lacks a \".png\" extension')
+    }
+    getEICs <- TRUE
   }
 
   ## Read file
@@ -119,7 +135,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
   ROIList  	<- makeROIList(raw_data, targetFeatTable)
 
   ## Integrate features using ROI
-  foundFeatTable <- findTargetFeatures(raw_data, ROIList, verbose=verbose, fitGauss=fitGauss, ...)
+  foundPeakTable <- findTargetFeatures(raw_data, ROIList, verbose=verbose, fitGauss=fitGauss, ...)
 
 	## Collect ROI EICs
 	EICs 				<- NA
@@ -129,18 +145,23 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 		eicetime 	<- Sys.time()
 		if (verbose) { message('EICs loaded in: ', round(as.double(difftime(eicetime,eicstime)),2),' ',units(difftime(eicetime,eicstime)))}
 	}
-	
+
   ## Add compound information
-  finalOutput         <- foundFeatTable
+  finalOutput         <- foundPeakTable
   finalOutput$cpdID   <- targetFeatTable$cpdID
   finalOutput$cpdName <- targetFeatTable$cpdName
-	
+
   ## Add deviation, FWHM, Tailing factor, Assymetry factor
   if(peakStatistic){
 		# don't read EICs from file if already done
     finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput, usePreviousEICs=EICs, verbose=verbose)
   }
-	
+
+  ## Save all EICs plot
+  if(!is.na(plotEICsPath)) {
+    save_multiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
+  }
+
   etime <- Sys.time()
 	if (verbose) {
     message('Feature search done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))

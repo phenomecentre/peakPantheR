@@ -7,7 +7,7 @@
 makeROIList(rawSpec, targetFeatTable)
 }
 \arguments{
-\item{rawSpec}{an \code{\link[MSnbase]{OnDiskMSnExp}} used to get the scans corresponding to each retention time.}
+\item{rawSpec}{an \code{\link[MSnbase]{OnDiskMSnExp-class}} used to get the scans corresponding to each retention time.}
 
 \item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).}
 }
@@ -15,7 +15,7 @@ makeROIList(rawSpec, targetFeatTable)
 a list of ROIs
 }
 \description{
-Generate a ROIList as expected by \code{\link[xcms]{findChromPeaks}} from a \code{\link{data.frame}} with compounds to target as rows. \emph{length} and \emph{intensity} are set to \code{-1} as centWave does not use these values.
+Generate a ROIList as expected by \code{\link[xcms]{findChromPeaks-centWave}} from a \code{\link{data.frame}} with compounds to target as rows. \emph{length} and \emph{intensity} are set to \code{-1} as centWave does not use these values.
 }
 \examples{
 \donttest{
@@ -55,10 +55,4 @@ ROIList[[1]]
 # $intensity
 # [1] -1
 }
-
-}
-\seealso{
-Other peakPantheR: \code{\link{findTargetFeatures}},
-  \code{\link{getTargetFeatureStatistic}},
-  \code{\link{peakPantheR_singleFileSearch}}
 }

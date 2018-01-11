@@ -6,7 +6,7 @@
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
   fitGauss = FALSE, peakStatistic = FALSE, getEICs = FALSE,
-  verbose = TRUE, ...)
+  plotEICsPath = NA, verbose = TRUE, ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
@@ -17,7 +17,9 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Assymetry factor}
 
-\item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads)}
+\item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
+
+\item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved}
 
 \item{verbose}{(bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)}
 
@@ -106,9 +108,4 @@ res
 # 2         0.9744952
 }
 
-}
-\seealso{
-Other peakPantheR: \code{\link{findTargetFeatures}},
-  \code{\link{getTargetFeatureStatistic}},
-  \code{\link{makeROIList}}
 }
