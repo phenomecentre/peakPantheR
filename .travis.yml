@@ -1,9 +1,16 @@
 language: r
-r: bioc-release
 cache: packages
 
-r_packages:
-  - testthat
+os:
+  - linux
+
+r:
+  - bioc-devel
+  - bioc-release
+
+matrix:
+  allow_failures:
+    - r: bioc-devel 
 
 addons:
   apt:
