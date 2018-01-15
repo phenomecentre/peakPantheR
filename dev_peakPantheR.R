@@ -18,6 +18,7 @@ setwd(package_dir)
 
 #setRepositories(ind=1:2)
 devtools::document()
+devtools::test()
 devtools::check()
 devtools::build()
 devtools::install()
@@ -26,6 +27,8 @@ devtools::install()
 remove.packages('peakPantheR')
 #------------------------------------------------
 library(peakPantheR)
+
+?peakPantheR_singleFileSearch
 
 # Source all files for testing
 setwd('./R')

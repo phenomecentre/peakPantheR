@@ -1,5 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+peakPantheR <img src="man/figures/peakPantheR-logo.png" align="right" />
+========================================================================
+
 [![Build Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR)
 
 peakPantheR
@@ -119,7 +122,7 @@ Each function [documentation](http://r-pkgs.had.co.nz/man.html#man-functions) is
 
 ### Unit testing
 
-Unit testing is achieved using the `testthat` package. By placing all tests in `inst/tests/` and one file in `test/` running them all, unit tests will be run during checks `devtools::check()`. In short, if the function is is `fun1.R` the corresponding tests are in `test_fun1.R`, and `run_tests.R` source the required functions and find all matching tests (see [a short introduction here](https://www.r-bloggers.com/unit-testing-with-r/amp/)). For more details, see [here](https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf), [here](http://r-pkgs.had.co.nz/tests.html) and [here (pg. 35-48)](http://www.is.uni-freiburg.de/ressourcen/algorithm-design-and-software-engineering-oeffentlicher-zugriff/11_softwaretesting.pdf).
+Unit testing is achieved using the `testthat` package. By placing all tests in `testthat/tests/` and `testthat.R` triggering them, unit tests can be run with `devtools::test()` (and will also be run with all checks: `devtools::check()`). In short, if the function is is `fun1.R` the corresponding tests are in `test_fun1.R`, and `testthat.R` source the required functions and find all matching tests (for more details see [here](http://r-pkgs.had.co.nz/tests.html) and [here (pg. 35-48)](http://www.is.uni-freiburg.de/ressourcen/algorithm-design-and-software-engineering-oeffentlicher-zugriff/11_softwaretesting.pdf)).
 
 > Tests need to run relatively quickly - aim for under a minute. Place skip\_on\_cran() at the beginning of long-running tests that shouldn't be run on CRAN - they'll still be run locally, but not on CRAN.
 
