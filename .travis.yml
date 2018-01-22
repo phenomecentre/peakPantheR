@@ -12,9 +12,15 @@ matrix:
   allow_failures:
     - r: bioc-devel 
 
+r_packages:
+  - covr
+
 addons:
   apt:
     packages:
       - libnetcdf-dev
       - netcdf-bin
       - libhdf5-dev
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
