@@ -56,7 +56,7 @@
 #' }
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' ## Load data
 #' library(MSnbase)
 #'

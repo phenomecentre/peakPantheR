@@ -18,7 +18,7 @@ a list of ROIs
 Generate a ROIList as expected by \code{\link[xcms]{findChromPeaks-centWave}} from a \code{\link{data.frame}} with compounds to target as rows. \emph{length} and \emph{intensity} are set to \code{-1} as centWave does not use these values.
 }
 \examples{
-\donttest{
+\dontrun{
 ## Load data
 library(MSnbase)
 netcdfFilePath <- './my_spectra.CDF'

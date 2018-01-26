@@ -8,7 +8,7 @@
 #' @return a list of ROIs
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' ## Load data
 #' library(MSnbase)
 #' netcdfFilePath <- './my_spectra.CDF'
@@ -103,7 +103,7 @@ makeROIList        <- function(rawSpec, targetFeatTable) {
 #' }
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' ## Load data
 #' library(MSnbase)
 #' netcdfFilePath <- './my_spectra.CDF'
@@ -210,7 +210,7 @@ findTargetFeatures <- function(rawSpec, ROIList, ppm=20, snthresh=3, noise=400, 
 #' @references Adapted for XCMS3 from Jan Stanstrup https://cdn.rawgit.com/stanstrup/QC4Metabolomics/master/MetabolomiQCsR/inst/doc/standard_stats.html#calculating-statistics
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' ## Load data
 #' library(MSnbase)
 #' netcdfFilePath <- './my_spectra.CDF'

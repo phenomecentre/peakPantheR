@@ -60,7 +60,7 @@ A \code{data.frame} with measured compounds as rows and measurements and propert
 Calculate the ppm error, retention time deviation, FWHM, number of scans, tailing factor and assymmetry factor for each measured feature.
 }
 \examples{
-\donttest{
+\dontrun{
 ## Load data
 library(MSnbase)
 netcdfFilePath <- './my_spectra.CDF'

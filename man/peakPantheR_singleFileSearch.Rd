@@ -67,7 +67,7 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
 Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access.
 }
 \examples{
-\donttest{
+\dontrun{
 ## Load data
 library(MSnbase)
 

@@ -60,7 +60,7 @@ A \code{data.frame} with targeted features as rows and peak measures as columns 
 Integrate features in the ROI using \code{CentWave} and keep in each ROI the feature with the highest integrated intensity.
 }
 \examples{
-\donttest{
+\dontrun{
 ## Load data
 library(MSnbase)
 netcdfFilePath <- './my_spectra.CDF'
