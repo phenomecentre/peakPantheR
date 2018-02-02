@@ -20,34 +20,35 @@ Generate a ROIList as expected by \code{\link[xcms]{findChromPeaks-centWave}} fr
 \examples{
 \dontrun{
 ## Load data
+library(faahKO)
 library(MSnbase)
-netcdfFilePath <- './my_spectra.CDF'
+netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
 
 ## targetFeatTable
 targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
                          stringsAsFactors=F)
-targetFeatTable[1,] <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
-targetFeatTable[2,] <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
+targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 
 ROIList <- makeROIList(raw_data, targetFeatTable)
 ROIList[[1]]
 # $mz
-# [1] 398.2308
+# [1] 522.2
 #
 # $mzmin
-# [1] 398.2108
+# [1] 522.194778
 #
 # $mzmax
-# [1] 398.2508
+# [1] 522.205222
 #
 # $scmin
-# [1] 119
+# [1] 518
 #
 # $scmax
-# [1] 158
+# [1] 569
 #
 # $length
 # [1] -1
