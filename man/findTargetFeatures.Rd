@@ -82,12 +82,8 @@ foundPeakTable
 #   found    mz mzmin mzmax       rt    rtmin    rtmax     into     intb    maxo     sn
 # 1  TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308  889280   1840
 # 2  TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960   1471
-# 3  TRUE 464.2 464.2 464.2 3454.435 3432.525 3479.474 10818327 10818278  380736 380735
-# 4  TRUE 536.2 536.2 536.2 3701.697 3682.918 3729.867  8519480  8460372  330176    197
 # egauss mu sigma  h f dppm scale scpos scmin scmax lmin lmax sample is_filled
 #     NA NA    NA NA 1    0     5   540   535   545   24   60      1         0
 #     NA NA    NA NA 2    0     5   564   559   569   68   98      1         0
-#     NA NA    NA NA 3    0     5   610   605   615   24   54      1         0
-#     NA NA    NA NA 4    0     5   768   763   773   24   54      1         0
 }
 }

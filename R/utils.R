@@ -126,13 +126,9 @@ makeROIList        <- function(rawSpec, targetFeatTable) {
 #' #   found    mz mzmin mzmax       rt    rtmin    rtmax     into     intb    maxo     sn
 #' # 1  TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308  889280   1840
 #' # 2  TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960   1471
-#' # 3  TRUE 464.2 464.2 464.2 3454.435 3432.525 3479.474 10818327 10818278  380736 380735
-#' # 4  TRUE 536.2 536.2 536.2 3701.697 3682.918 3729.867  8519480  8460372  330176    197
 #' # egauss mu sigma  h f dppm scale scpos scmin scmax lmin lmax sample is_filled
 #' #     NA NA    NA NA 1    0     5   540   535   545   24   60      1         0
 #' #     NA NA    NA NA 2    0     5   564   559   569   68   98      1         0
-#' #     NA NA    NA NA 3    0     5   610   605   615   24   54      1         0
-#' #     NA NA    NA NA 4    0     5   768   763   773   24   54      1         0
 #' }
 findTargetFeatures <- function(rawSpec, ROIList, ppm=20, snthresh=3, noise=400, prefilter=c(7,400), peakwidth=c(2,20), verbose=FALSE, fitGauss=FALSE){
   stime <- Sys.time()
@@ -165,7 +161,7 @@ findTargetFeatures <- function(rawSpec, ROIList, ppm=20, snthresh=3, noise=400, 
 
 #' Calculate chromatographic peak properties
 #'
-#' Calculate the ppm error, retention time deviation, FWHM, number of scans, tailing factor and assymmetry factor for each measured feature.
+#' Calculate the ppm error, retention time deviation, FWHM, number of scans, tailing factor and asymmetry factor for each measured feature.
 #'
 #' @param rawSpec an \code{\link[MSnbase]{OnDiskMSnExp-class}}
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).
@@ -206,7 +202,7 @@ findTargetFeatures <- function(rawSpec, ROIList, ppm=20, snthresh=3, noise=400, 
 #'     FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}\cr
 #'     FWHM_ndatapoints \tab number of scans on the peak\cr
 #'     tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
-#'     assymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
+#'     asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
 #'   }
 #' }
 #'
@@ -215,51 +211,49 @@ findTargetFeatures <- function(rawSpec, ROIList, ppm=20, snthresh=3, noise=400, 
 #' @examples
 #' \dontrun{
 #' ## Load data
+#' library(faahKO)
 #' library(MSnbase)
-#' netcdfFilePath <- './my_spectra.CDF'
+#' netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 #' raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
 #'
 #' ## targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
 #'                          stringsAsFactors=F)
-#' targetFeatTable[1,] <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
-#' targetFeatTable[2,] <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
+#' targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+#' targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 #'
 #' ROIList        <- makeROIList(raw_data, targetFeatTable)
 #'
 #' foundPeakTable <- findTargetFeatures(raw_data, ROIList)
 #'
-#' finalOutput    <- getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeakTable)
-#' finalOutput
-#' #    cpdID        cpdName found       mz    mzmin    mzmax      rt   rtmin   rtmax    into    intb
-#' # 1      1  LPC (9:0/0:0)  TRUE 398.2319 398.2306 398.2330  33.296  31.468  35.352 1919498 1919222
-#' # 2      2 PC (11:0/11:0)  TRUE 594.4140 594.4120 594.4149 179.046 176.762 181.103 2233011 2232784
-#' #         maxo    sn     egauss       mu    sigma         h f dppm  scale scpos scmin scmax lmin
-#' # 1   942711.5 15739 0.04867894 136.1303 3.458960  979537.2 1    3      4   136   132   140  128
-#' # 2  1038315.5 30275 0.03296024 770.7220 3.832822 1034072.3 2    1     -1    -1    -1    -1  375
-#' #    lmax sample is_filled ppm_error rt_dev_sec    FWHM FWHM_ndatapoints tailingFactor
-#' # 1   145      1         0  2.744491         NA 1.86026                9     0.8868141
-#' # 2   394      1         0  0.830051         NA      NA               NA     1.0053721
-#' #    assymmetryFactor
-#' # 1         1.1248373
-#' # 2         0.9744952
+#' peakStatistics <- getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeakTable)
+#' peakStatistics
+#' #    found    mz mzmin mzmax       rt    rtmin    rtmax     into     intb   maxo    sn egauss mu
+#' # 1   TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308 889280  1840     NA NA
+#' # 2   TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960 1471     NA NA
+#' #    sigma h  f dppm scale scpos scmin scmax lmin lmax sample is_filled   ppm_error rt_dev_sec
+#' # 1     NA NA 1    0     5   540   535   545   24   60      1         0  0.02336270       0.00
+#' # 2     NA NA 2    0     5   564   559   569   68   98      1         0  0.02458686       3.13
+#' #    FWHM FWHM_ndatapoints tailingFactor asymmetryFactor
+#' # 1    NA               11            NA        1.484000
+#' # 2    NA               11            NA        2.708291
 #' }
 getTargetFeatureStatistic <- function(rawSpec, targetFeatTable, foundPeakTable, usePreviousEICs=NA, verbose=FALSE) {
 
   ## Define the peak_shape_stat() -----------------------
   #
-  # Calculate tailing factor and assymmetry factor
+  # Calculate tailing factor and asymmetry factor
   #
-  # Tailing Factor and Assymmetry Factor following the equations from http://www.chromforum.org/viewtopic.php?t=20079
+  # Tailing Factor and Asymmetry Factor following the equations from http://www.chromforum.org/viewtopic.php?t=20079
   #
   # @param featEIC A single EIC as generated by \code{\link[xcms]{chromatogram}}
   # @param apexRT (float) retention time in seconds of the measured peak apex
-  # @param statistic (str) either \code{tailingFactor} or \code{assymmetryFactor}
+  # @param statistic (str) either \code{tailingFactor} or \code{asymmetryFactor}
   # @param verbose (bool) if TRUE message when NA scans are removed
   #
-  # @return Tailing factor or Assymmetry factor value
+  # @return Tailing factor or Asymmetry factor value
   #
   # @references Adapted for XCMS3 from QC4Metabolomics by Jan Stanstrup https://github.com/stanstrup/QC4Metabolomics/blob/master/MetabolomiQCsR/R/standard_stats.R
   # @references Equations from http://www.chromforum.org/viewtopic.php?t=20079
@@ -332,7 +326,7 @@ getTargetFeatureStatistic <- function(rawSpec, targetFeatTable, foundPeakTable, 
 
 
     # Change the cut-off depending on the statistic
-    cutoff <- switch(statistic, tailingFactor=0.05, assymmetryFactor=0.1)
+    cutoff <- switch(statistic, tailingFactor=0.05, asymmetryFactor=0.1)
 
     ## Get A (left side)
     # Keep points all points > cutoff and 1 point < cutoff, then interpolate cutoff retention time
@@ -372,7 +366,7 @@ getTargetFeatureStatistic <- function(rawSpec, targetFeatTable, foundPeakTable, 
       result <- (B-A)/(2*(C-A))
       return( result[[1]] )
     }
-    if(statistic=="assymmetryFactor") {
+    if(statistic=="asymmetryFactor") {
       result <- (B-C)/(C-A)
       return( result[[1]] )
     }
@@ -406,7 +400,7 @@ getTargetFeatureStatistic <- function(rawSpec, targetFeatTable, foundPeakTable, 
 	}
 
   ## Calculate the statistics
-  peakStat	<- data.frame(matrix(vector(), dim(targetFeatTable)[1], 6, dimnames=list(c(), c("ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "assymmetryFactor"))), stringsAsFactors=F)
+  peakStat	<- data.frame(matrix(vector(), dim(targetFeatTable)[1], 6, dimnames=list(c(), c("ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))), stringsAsFactors=F)
 
   for (i in 1:dim(targetFeatTable)[1]) {
     # If the feature wasn't found we cannot work with it
@@ -432,8 +426,8 @@ getTargetFeatureStatistic <- function(rawSpec, targetFeatTable, foundPeakTable, 
       }
       # Tailing Factor
       peakStat$tailingFactor[i]      <- peak_shape_stat(EICs[[i]], foundPeakTable$rt[i], statistic = "tailingFactor")
-      # Assymmetry Factor
-      peakStat$assymmetryFactor[i]   <- peak_shape_stat(EICs[[i]], foundPeakTable$rt[i], statistic = "assymmetryFactor")
+      # Asymmetry Factor
+      peakStat$asymmetryFactor[i]   <- peak_shape_stat(EICs[[i]], foundPeakTable$rt[i], statistic = "asymmetryFactor")
     }
   }
 

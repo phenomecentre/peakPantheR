@@ -15,7 +15,7 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
 
-\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Assymetry factor}
+\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Asymmetry factor}
 
 \item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
 
@@ -59,7 +59,7 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
     FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}, not available if \code{peakStatistic=FALSE}\cr
     FWHM_ndatapoints \tab number of scans on the peak, not available if \code{peakStatistic=FALSE}\cr
     tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
-    assymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
+    asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
   }
 }
 }
@@ -103,7 +103,7 @@ res
 #    scmax lmin lmax sample is_filled ppm_error rt_dev_sec   FWHM FWHM_ndatapoints tailingFactor
 # 1  	140  128 145      1         0  2.744491         NA 1.86026                9     0.8868141
 # 2   	-1   375 394      1         0  0.830051         NA      NA               NA     1.0053721
-#    assymmetryFactor
+#    asymmetryFactor
 # 1         1.1248373
 # 2         0.9744952
 }
