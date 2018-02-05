@@ -52,12 +52,12 @@ A \code{data.frame} with measured compounds as rows and measurements and propert
     FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}\cr
     FWHM_ndatapoints \tab number of scans on the peak\cr
     tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
-    assymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
+    asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
   }
 }
 }
 \description{
-Calculate the ppm error, retention time deviation, FWHM, number of scans, tailing factor and assymmetry factor for each measured feature.
+Calculate the ppm error, retention time deviation, FWHM, number of scans, tailing factor and asymmetry factor for each measured feature.
 }
 \examples{
 \dontrun{
@@ -89,7 +89,7 @@ finalOutput
 #    lmax sample is_filled ppm_error rt_dev_sec    FWHM FWHM_ndatapoints tailingFactor
 # 1   145      1         0  2.744491         NA 1.86026                9     0.8868141
 # 2   394      1         0  0.830051         NA      NA               NA     1.0053721
-#    assymmetryFactor
+#    asymmetryFactor
 # 1         1.1248373
 # 2         0.9744952
 }

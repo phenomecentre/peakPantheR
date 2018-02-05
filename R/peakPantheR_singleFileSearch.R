@@ -12,7 +12,7 @@
 #' @param singleSpectraDataPath (str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).
 #' @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
-#' @param peakStatistic (bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Assymetry factor
+#' @param peakStatistic (bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Asymmetry factor
 #' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.
 #' @param plotEICsPath (str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved
 #' @param verbose (bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)
@@ -51,7 +51,7 @@
 #'     FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}, not available if \code{peakStatistic=FALSE}\cr
 #'     FWHM_ndatapoints \tab number of scans on the peak, not available if \code{peakStatistic=FALSE}\cr
 #'     tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
-#'     assymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
+#'     asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
 #'   }
 #' }
 #'
@@ -92,7 +92,7 @@
 #' #    scmax lmin lmax sample is_filled ppm_error rt_dev_sec   FWHM FWHM_ndatapoints tailingFactor
 #' # 1  	140  128 145      1         0  2.744491         NA 1.86026                9     0.8868141
 #' # 2   	-1   375 394      1         0  0.830051         NA      NA               NA     1.0053721
-#' #    assymmetryFactor
+#' #    asymmetryFactor
 #' # 1         1.1248373
 #' # 2         0.9744952
 #' }
@@ -156,7 +156,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     finalOutput$cpdID   <- targetFeatTable$cpdID
     finalOutput$cpdName <- targetFeatTable$cpdName
 
-    ## Add deviation, FWHM, Tailing factor, Assymetry factor
+    ## Add deviation, FWHM, Tailing factor, Asymmetry factor
     if(peakStatistic){
   		# don't read EICs from file if already done
       finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput, usePreviousEICs=EICs, verbose=verbose)
@@ -170,7 +170,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
   ## No target features, initialise empty integration results and EICs
   } else {
     if (verbose) {message('- No target features passed in \'targetFeatTable\', no integration, only TIC will be reported -')}
-    finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'assymmetryFactor'))), stringsAsFactors=F)
+    finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
     EICs        <- list()
   }
 
