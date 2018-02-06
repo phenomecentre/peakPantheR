@@ -23,7 +23,7 @@ foundPeakTable[1,] <- c(1, NA, TRUE, 522.2000122, 522.2000122, 522.2000122, 3344
 foundPeakTable[2,] <- c(2, NA, TRUE, 496.2000122, 496.2000122, 496.2000122, 3382.447, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, NA, NA, NA, NA, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0)
 foundPeakTable[3,] <- c(3, NA, TRUE, 464.2000122, 464.2000122, 464.2000122, 3454.435, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, NA, NA, NA, NA, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0)
 foundPeakTable[4,] <- c(4, NA, TRUE, 536.2000122, 536.2000122, 536.2000122, 3701.697, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, NA, NA, NA, NA, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0)
-foundPeakTable[,3] <- c("testCpd 1", "testCpd 2, 2 peaks in box", "testCpd 3", "testCpd 4")
+foundPeakTable[,2] <- c("testCpd 1", "testCpd 2, 2 peaks in box", "testCpd 3", "testCpd 4")
 foundPeakTable[,3] <- sapply(foundPeakTable[,3], as.logical)
 
 # load EICs outside of getTargetFeatureStatistic
@@ -38,7 +38,7 @@ test_that('default parameters, verbose', {
   result_plot <- evaluate_promise(save_multiEIC(EICs, foundPeakTable, savePath1, width=15, height=15, verbose=TRUE))
 
   # Check plot has been produced
-  expect_true(file.exists(savePath))
+  expect_true(file.exists(savePath1))
 
   # Check result messages (save path)
   expect_equal(length(result_plot$messages), 1)
@@ -52,7 +52,7 @@ test_that('default parameters, no verbose', {
   result_plot <- evaluate_promise(save_multiEIC(EICs, foundPeakTable, savePath2, width=15, height=15, verbose=FALSE))
 
   # Check plot has been produced
-  expect_true(file.exists(savePath))
+  expect_true(file.exists(savePath2))
 
   # Check no result messages
   expect_equal(length(result_plot$messages), 0)

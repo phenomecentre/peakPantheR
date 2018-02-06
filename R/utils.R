@@ -16,7 +16,7 @@
 #' raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
 #'
 #' ## targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
+#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
 #'                          stringsAsFactors=F)
 #' targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
@@ -112,7 +112,7 @@ makeROIList        <- function(rawSpec, targetFeatTable) {
 #' raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
 #'
 #' ## targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
+#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
 #'                          stringsAsFactors=F)
 #' targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
@@ -217,7 +217,7 @@ findTargetFeatures <- function(rawSpec, ROIList, ppm=20, snthresh=3, noise=400, 
 #' raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
 #'
 #' ## targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
+#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
 #'                          stringsAsFactors=F)
 #' targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)

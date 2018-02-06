@@ -26,7 +26,7 @@ netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
 
 ## targetFeatTable
-targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
+targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
                          stringsAsFactors=F)
 targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
