@@ -24,8 +24,8 @@ A \code{data.frame} with measured compounds as rows and measurements and propert
 \subsection{Details:}{
   The returned \code{data.frame} is structured as follow:
   \tabular{ll}{
-    cpdID \tab database compound ID\cr
-    cpdName \tab compound name\cr
+    cpdID \tab database compound ID (if in input)\cr
+    cpdName \tab compound name (if in input)\cr
     found \tab (bool) TRUE if compound was found in the raw data\cr
     mz \tab weighted (by intensity) mean of peak m/z across scans\cr
     mzmin \tab m/z peak minimum\cr
