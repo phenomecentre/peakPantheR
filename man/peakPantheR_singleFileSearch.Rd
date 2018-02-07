@@ -69,43 +69,41 @@ Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to 
 \examples{
 \dontrun{
 ## Load data
-library(MSnbase)
+library(faahKO)
+netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 
-## Raw data file
-netcdfFilePath <- './my_spectra.CDF'
-
-## targetFeatTable from outside source
-targetFeatTable     <- data.frame(matrix(vector(), 11, 8, dimnames=list(c(), c("cpdID",
+## targetFeatTable
+targetFeatTable     <- data.frame(matrix(vector(), 11, 2, dimnames=list(c(), c("cpdID",
                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
                          stringsAsFactors=F)
-targetFeatTable[1,] <- c(1, "LPC (9:0/0:0)", 29.4, NA, 38.4, 398.2108, 398.2308, 398.2508)
-targetFeatTable[2,] <- c(2, "PC (11:0/11:0)", 138.0, NA, 198.0, 594.3935, 594.4135, 594.4335)
+targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 
-res <- peakPantheR_singleFileSearch(netcdfFilePath,targetFeatTable[1:2,], peakStatistic=TRUE)
+res <- peakPantheR_singleFileSearch(netcdfFilePath,targetFeatTable, peakStatistic=TRUE)
 # Polarity can not be extracted from netCDF files, please set manually the polarity with the
 #	'polarity' method.
-# Detecting chromatographic peaks in 2 regions of interest ... OK: 7 found.
-# Found 2/2 features (7 total) in 27.8 secs
-# Peak statistics done in: 10.37 secs
-# Feature search done in: 38.61 secs
+# Detecting chromatographic peaks in 2 regions of interest ... OK: 3 found.
+# Found 2/2 features (3 total) in 1.12 secs
+# Peak statistics done in: 0.15 secs
+# Feature search done in: 1.71 secs
 res
 # $TIC
-# [1] 13406775774
+# [1] 2410533091
 #
 # $peakTable
-#    cpdID        cpdName found       mz    mzmin    mzmax      rt   rtmin   rtmax    into
-# 1      1  LPC (9:0/0:0)  TRUE 398.2319 398.2306 398.2330  33.296  31.468  35.352 1919498
-# 2      2 PC (11:0/11:0)  TRUE 594.4140 594.4120 594.4149 179.046 176.762 181.103 2233011
-#    	 intb     maxo     sn     egauss       mu    sigma         h f dppm  scale scpos scmin
-# 1  1919222 942711.5  15739 0.04867894 136.1303 3.458960  979537.2 1    3      4   136   132
-# 2  2232784 1038315.5 30275 0.03296024 770.7220 3.832822 1034072.3 2    1     -1    -1    -1
-#    scmax lmin lmax sample is_filled ppm_error rt_dev_sec   FWHM FWHM_ndatapoints tailingFactor
-# 1  	140  128 145      1         0  2.744491         NA 1.86026                9     0.8868141
-# 2   	-1   375 394      1         0  0.830051         NA      NA               NA     1.0053721
-#    asymmetryFactor
-# 1         1.1248373
-# 2         0.9744952
+#   found   mz mzmin mzmax        rt    rtmin    rtmax     into     intb    maxo   sn egauss
+# 1  TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308  889280 1840     NA
+# 2  TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960 1471     NA
+#   mu sigma  h f dppm scale scpos scmin scmax lmin lmax sample is_filled cpdID cpdName
+# 1 NA    NA NA 1    0     5   540   535   545   24   60      1         0     1   Cpd 1
+# 2 NA    NA NA 2    0     5   564   559   569   68   98      1         0     2   Cpd 2
+#    ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor
+# 1 0.02337616       0.00   NA               11            NA        1.484000
+# 2 0.02460103       3.13   NA               11            NA        2.708291
+#
+# $EICs
+# [1] NA
 }
 
 }

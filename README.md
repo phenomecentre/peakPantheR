@@ -3,7 +3,7 @@
 peakPantheR <img src="man/figures/peakPantheR-logo.png" align="right" />
 ========================================================================
 
-[![Build Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR)
+[![Build Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR) [![codecov](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master/graph/badge.svg)](https://codecov.io/gh/phenomecentre/peakPantheR)
 
 peakPantheR
 ===========
@@ -44,7 +44,11 @@ Usage
 -   load list of expected *RT* / *m/z* regions of interest (ROI)
 -   detect features in each ROI and keep the highest intensity one
 -   determine peak statistics for each feature
--   return a table with all detected compounds for that file (*row: compound, col: statistic*)
+-   returns:
+    -   TIC
+    -   a table with all detected compounds for that file (*row: compound, col: statistic*)
+    -   EIC for each ROI
+    -   save EIC plot to disk
 
 **Post-acquisition compound integration concept:**
 
@@ -91,6 +95,9 @@ setwd(package_dir)
 
 # Generate documentation
 devtools::document()
+
+# Run unit tests
+devtools::test()
 
 # Check the validity of the package (CRAN rules, should run unit tests)
 devtools::check()
