@@ -13,7 +13,8 @@ knitr::opts_chunk$set(
 
 # peakPantheR <img src="man/figures/peakPantheR-logo.png" align="right" />
 
-[![Build Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR)
+[![Build Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR) [![codecov](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master/graph/badge.svg)](https://codecov.io/gh/phenomecentre/peakPantheR)
+
 
 # peakPantheR
 Package for _Peak Picking and ANnoTation of High resolution Experiments in R_, implemented in `R` and `Shiny`
@@ -51,7 +52,11 @@ setRepositories(ind=1:2)
 * load list of expected _RT_ / _m/z_ regions of interest (ROI)
 * detect features in each ROI and keep the highest intensity one
 * determine peak statistics for each feature
-* return a table with all detected compounds for that file (_row: compound, col: statistic_)
+* returns:
+    + TIC
+    + a table with all detected compounds for that file (_row: compound, col: statistic_)
+    + EIC for each ROI
+    + save EIC plot to disk
 
 **Post-acquisition compound integration concept:**
 
@@ -97,6 +102,9 @@ setwd(package_dir)
 
 # Generate documentation
 devtools::document()
+
+# Run unit tests
+devtools::test()
 
 # Check the validity of the package (CRAN rules, should run unit tests)
 devtools::check()
