@@ -62,7 +62,7 @@
 #' netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 #'
 #' ## targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 11, 2, dimnames=list(c(), c("cpdID",
+#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
 #'                          stringsAsFactors=F)
 #' targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
@@ -140,29 +140,39 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     ## Integrate features using ROI
     foundPeakTable <- findTargetFeatures(raw_data, ROIList, verbose=verbose, fitGauss=fitGauss, ...)
 
-  	## Collect ROI EICs
-  	EICs 				<- NA
-  	if (getEICs) {
-  		eicstime 	<- Sys.time()
-  		EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
-  		eicetime 	<- Sys.time()
-  		if (verbose) { message('EICs loaded in: ', round(as.double(difftime(eicetime,eicstime)),2),' ',units(difftime(eicetime,eicstime)))}
-  	}
+    # Only keep going if an integration region is found
+    if (sum(foundPeakTable$found)!=0) {
 
-    ## Add compound information
-    finalOutput         <- foundPeakTable
-    finalOutput$cpdID   <- targetFeatTable$cpdID
-    finalOutput$cpdName <- targetFeatTable$cpdName
+    	## Collect ROI EICs
+    	EICs 				<- NA
+    	if (getEICs) {
+    		eicstime 	<- Sys.time()
+    		EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+    		eicetime 	<- Sys.time()
+    		if (verbose) { message('EICs loaded in: ', round(as.double(difftime(eicetime,eicstime)),2),' ',units(difftime(eicetime,eicstime)))}
+    	}
 
-    ## Add deviation, FWHM, Tailing factor, Asymmetry factor
-    if(peakStatistic){
-  		# don't read EICs from file if already done
-      finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput, usePreviousEICs=EICs, verbose=verbose)
-    }
+      ## Add compound information
+      finalOutput         <- foundPeakTable
+      finalOutput$cpdID   <- targetFeatTable$cpdID
+      finalOutput$cpdName <- targetFeatTable$cpdName
 
-    ## Save all EICs plot
-    if(!is.na(plotEICsPath)) {
-      save_multiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
+      ## Add deviation, FWHM, Tailing factor, Asymmetry factor
+      if(peakStatistic){
+    		# don't read EICs from file if already done
+        finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput, usePreviousEICs=EICs, verbose=verbose)
+      }
+
+      ## Save all EICs plot
+      if(!is.na(plotEICsPath)) {
+        save_multiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
+      }
+
+    ## No integration region found, initialise empty integration results and EICs
+    } else {
+      if (verbose) {message('- No features found to integrate, only TIC will be reported -')}
+      finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
+      EICs        <- NA
     }
 
   ## No target features, initialise empty integration results and EICs
