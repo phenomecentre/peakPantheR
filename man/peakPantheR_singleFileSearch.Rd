@@ -11,7 +11,7 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
 
-\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).}
+\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
 \item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
 
@@ -106,4 +106,9 @@ res
 # [1] NA
 }
 
+}
+\seealso{
+Other peakPantheR: \code{\link{peakPantheRAnnotation-class}}
+
+Other parallelAnnotation: \code{\link{peakPantheRAnnotation-class}}
 }
