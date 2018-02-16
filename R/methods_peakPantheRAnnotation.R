@@ -6,9 +6,9 @@ setMethod("initialize", "peakPantheRAnnotation",
                    targetFeatTable = NULL,
                    cpdID = numeric(),
                    cpdName = character(),
-                   ROI = data.frame(matrix(vector(), 0, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F),
-                   FIR = data.frame(matrix(vector(), 0, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F),
-                   uROI = data.frame(matrix(vector(), 0, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F),
+                   ROI = data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F),
+                   FIR = data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F),
+                   uROI = data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F),
                    filepath = character(),
                    uROIExist = FALSE,
                    useFIR = FALSE,
@@ -17,7 +17,7 @@ setMethod("initialize", "peakPantheRAnnotation",
                    EICs = list(),
                    ...) {
             ## load ... arguments (not really needed, as we initialise all default values)
-            .Object <- methods::allNextMethod(.Object, ...)
+            .Object <- methods::callNextMethod(.Object, ...)
 
             ## set spectra if spectraPaths is provided
             if (!is.null(spectraPaths)){
@@ -29,9 +29,18 @@ setMethod("initialize", "peakPantheRAnnotation",
               # load values and allocate size
               nbSpectra       <- length(spectraPaths)
               filepath        <- spectraPaths
-              TIC             <- as.numeric(rep(NA,nbSpectra))
-              peakTables      <- vector("list", nbSpectra)
-              EICs            <- vector("list", nbSpectra)
+              # set TIC default if no TIC passed in
+              if (length(TIC) == 0) {
+                TIC           <- as.numeric(rep(NA,nbSpectra))
+              }
+              # set peakTables default if no peakTables passed in
+              if (length(peakTables) == 0) {
+                peakTables    <- vector("list", nbSpectra)
+              }
+              # set EICs default if no EICs passed in
+              if (length(EICs) == 0) {
+                EICs          <- vector("list", nbSpectra)
+              }
             }
 
             ## set compounds if targetFeatTable is provided
@@ -79,10 +88,10 @@ setMethod("initialize", "peakPantheRAnnotation",
               ROI         <- targetFeatTable[,c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
               # only set FIR and uROI to the correct size if not provided in input (at the correct size)
               if (dim(FIR)[1] != nbCompound) {
-                FIR       <- data.frame(matrix(vector(), nbCompound, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
+                FIR       <- data.frame(rtMin=as.numeric(rep(NA,nbCompound)), rtMax=as.numeric(rep(NA,nbCompound)), mzMin=as.numeric(rep(NA,nbCompound)), mzMax=as.numeric(rep(NA,nbCompound)), stringsAsFactors=F)
               }
               if (dim(uROI)[1] != nbCompound) {
-                uROI      <- data.frame(matrix(vector(), nbCompound, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+                uROI      <- data.frame(rtMin=as.numeric(rep(NA,nbCompound)), rt=as.numeric(rep(NA,nbCompound)), rtMax=as.numeric(rep(NA,nbCompound)), mzMin=as.numeric(rep(NA,nbCompound)), mz=as.numeric(rep(NA,nbCompound)), mzMax=as.numeric(rep(NA,nbCompound)), stringsAsFactors=F)
                 # if we reset, it doesn't exist
                 uROIExist <- FALSE
               }
@@ -122,9 +131,9 @@ setMethod("show",
               cat("  without updated ROI (uROI)\n", sep="")
             }
             if(object@useFIR) {
-              cat("  with fallback integration regions (FIR)\n", sep="")
+              cat("  uses fallback integration regions (FIR)\n", sep="")
             } else {
-              cat("  without fallback integration regions (FIR)\n", sep="")
+              cat("  does not use fallback integration regions (FIR)\n", sep="")
             }
             invisible(NULL)
           })
