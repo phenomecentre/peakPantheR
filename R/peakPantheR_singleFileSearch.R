@@ -144,7 +144,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     if (sum(foundPeakTable$found)!=0) {
 
     	## Collect ROI EICs
-    	EICs 				<- NA
+    	EICs 				<- NULL
     	if (getEICs) {
     		eicstime 	<- Sys.time()
     		EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
@@ -172,14 +172,14 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     } else {
       if (verbose) {message('- No features found to integrate, only TIC will be reported -')}
       finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
-      EICs        <- NA
+      EICs        <- NULL
     }
 
   ## No target features, initialise empty integration results and EICs
   } else {
     if (verbose) {message('- No target features passed in \'targetFeatTable\', no integration, only TIC will be reported -')}
     finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
-    EICs        <- NA
+    EICs        <- NULL
   }
 
   etime <- Sys.time()

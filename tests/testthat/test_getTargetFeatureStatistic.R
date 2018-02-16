@@ -58,7 +58,7 @@ test_that('default parameters with fitGauss, no previous EICs, no verbose', {
   expected_featureStatistic <- peakStatistic_FitGauss
 
 	# results (output, warnings and messages)
-  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs=NA, verbose=FALSE))
+  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs=NULL, verbose=FALSE))
 
   # Check result table
   expect_equal(result_featureStatistic$result, expected_featureStatistic)
@@ -72,7 +72,7 @@ test_that('default parameters without fitGauss, no previous EICs, verbose', {
   expected_featureStatistic <- peakStatistic_noFitGauss
 
   # results (output, warnings and messages)
-  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_noFitGauss, usePreviousEICs=NA, verbose=TRUE))
+  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_noFitGauss, usePreviousEICs=NULL, verbose=TRUE))
 
   # Check result table
   expect_equal(result_featureStatistic$result, expected_featureStatistic)
@@ -101,7 +101,7 @@ test_that('default parameters with fitGauss, previous EICs, verbose', {
 
 test_that('raise errors', {
   # targetFeatTable and foundPeakTable dimension mismatch
-  expect_error(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss[1:3,], usePreviousEICs=NA, verbose=FALSE), "Number of features in targetFeatTable*")
+  expect_error(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss[1:3,], usePreviousEICs=NULL, verbose=FALSE), "Number of features in targetFeatTable*")
 
   # usePreviousEICs is not a list
   expect_error(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs='not a list', verbose=FALSE), "usePreviousEICs is not a list of xcms::Chromatogram")

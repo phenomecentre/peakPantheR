@@ -45,7 +45,7 @@ test_that('with fitGauss, no peakStatistic, no getEICs, no plotEICsPath, no verb
   # Expected peakTable
   expected_peakTable  <- peakTable_FitGauss[,c(3:27,1:2)]
   # Expected EICs
-  expected_EICs       <- NA
+  expected_EICs       <- NULL
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
 
@@ -67,7 +67,7 @@ test_that('no fitGauss, with peakStatistic, no getEICs, no plotEICsPath, no verb
   # Expected peakTable
   expected_peakTable  <- peakTable_noFitGauss[,c(3:27,1:2,28:33)]
   # Expected EICs
-  expected_EICs       <- NA
+  expected_EICs       <- NULL
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
 
@@ -142,7 +142,7 @@ test_that('change centwave param with ... (change snthresh), no fitGauss, no pea
   expected_peakTable$cpdName[4] <- 'testCpd 4'
   expected_peakTable$found      <- sapply(expected_peakTable$found, as.logical)
   # Expected EICs
-  expected_EICs       <- NA
+  expected_EICs       <- NULL
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n")
 
@@ -167,7 +167,7 @@ test_that('no targetFeatures on import', {
   # Expected peakTable
   expected_peakTable  <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
   # Expected EICs
-  expected_EICs       <- NA
+  expected_EICs       <- NULL
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "- No target features passed in 'targetFeatTable', no integration, only TIC will be reported -\n")
 
@@ -194,7 +194,7 @@ test_that('no features found', {
   # Expected peakTable
   expected_peakTable  <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
   # Expected EICs
-  expected_EICs       <- NA
+  expected_EICs       <- NULL
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " FAIL: none found!\n", "- No features found to integrate, only TIC will be reported -\n")
 
