@@ -1,6 +1,6 @@
 context('peakPantheRAnnotation_class_initializeMethod()')
 
-# Test the class definition (enforces default slot type)
+# Test the class definition (enforces default slot type). Detail error matching works with devtools::test() but fails with R CMD Check / devtools::check()
 # Test initialize method (set default values, initialisation from spectraPaths and targetFeatTable)
 
 test_that('initialize with default values', {
@@ -37,27 +37,27 @@ test_that('initialize with default values', {
 
 test_that('slot types are set in class definition', {
   # slot cpdID is not numeric
-  expect_error(peakPantheRAnnotation(cpdID='notNumeric'), 'assignment of an object of class .?character.? is not valid for .?.?cpdID.? in an object of class .?peakPantheRAnnotation.?.? is.?value.? .?.?numeric.?.?.? is not TRUE')
+  expect_error(peakPantheRAnnotation(cpdID='notNumeric'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "cpdID" in class "peakPantheRAnnotation": got class "character", should be or extend class "numeric"', fixed=TRUE)
   # slot cpdName is not character
-  expect_error(peakPantheRAnnotation(cpdName=5), 'assignment of an object of class .?numeric.? is not valid for .*cpdName.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(cpdName=5))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "cpdName" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', fixed=TRUE)
   # slot ROI is not a data.frame
-  expect_error(peakPantheRAnnotation(ROI='notADataFrame'), 'assignment of an object of class .?character.? is not valid for .*ROI.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(ROI='notADataFrame'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "ROI" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', fixed=TRUE)
   # slot FIR is not a data.frame
-  expect_error(peakPantheRAnnotation(FIR='notADataFrame'), 'assignment of an object of class .?character.? is not valid for .*FIR.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(FIR='notADataFrame'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "FIR" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', fixed=TRUE)
   # slot uROI is not a data.frame
-  expect_error(peakPantheRAnnotation(uROI='notADataFrame'), 'assignment of an object of class .?character.? is not valid for .*uROI.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(uROI='notADataFrame'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "uROI" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', fixed=TRUE)
   # slot filepath is not character
-  expect_error(peakPantheRAnnotation(filepath=5), 'assignment of an object of class .?numeric.? is not valid for .*filepath.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(filepath=5))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "filepath" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', fixed=TRUE)
   # slot uROIExist is not a logical
-  expect_error(peakPantheRAnnotation(uROIExist='notALogical'), 'assignment of an object of class .?character.? is not valid for .*uROIExist.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(uROIExist='notALogical'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "uROIExist" in class "peakPantheRAnnotation": got class "character", should be or extend class "logical"', fixed=TRUE)
   # slot useFIR is not a logical
-  expect_error(peakPantheRAnnotation(useFIR='notALogical'), 'assignment of an object of class .?character.? is not valid for .*useFIR.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(useFIR='notALogical'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "useFIR" in class "peakPantheRAnnotation": got class "character", should be or extend class "logical"', fixed=TRUE)
   # slot TIC is not numeric
-  expect_error(peakPantheRAnnotation(TIC='notNumeric'), 'assignment of an object of class .?character.? is not valid for .*TIC.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(TIC='notNumeric'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "TIC" in class "peakPantheRAnnotation": got class "character", should be or extend class "numeric"', fixed=TRUE)
   # slot peakTables is not a list
-  expect_error(peakPantheRAnnotation(peakTables='notAList'), 'assignment of an object of class .?character.? is not valid for .*peakTables.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(peakTables='notAList'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "peakTables" in class "peakPantheRAnnotation": got class "character", should be or extend class "list"', fixed=TRUE)
   # slot EICs is not a list
-  expect_error(peakPantheRAnnotation(EICs='notAList'), 'assignment of an object of class .?character.? is not valid for .*EICs.? in an object of class .?peakPantheRAnnotation.*')
+  expect_error(peakPantheRAnnotation(EICs='notAList'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "EICs" in class "peakPantheRAnnotation": got class "character", should be or extend class "list"', fixed=TRUE)
 })
 
 test_that('initialize with spectraPaths', {

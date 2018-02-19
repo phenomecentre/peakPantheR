@@ -1,10 +1,10 @@
-#' An S4 class to represent peakPantheR annotation results
+#' @title An S4 class to represent peakPantheR annotation results
 #'
 #' @description The \code{peakPantheRAnnotation} class is designed to run and store peakPantheR parallel annotation results. Instances of the class are created with the \code{peakPantheRAnnotation} constructor function, which initialises an object of proper dimension with \code{spectraPaths} (set samples to process) and \code{targetFeatTable} (set compounds to target). \code{spectraPaths} is a character vector of spectra file paths. \code{targetFeatTable} is a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #'
 #' @details HERE DETAIL \code{targetFeatTable} and \code{annotationTable} which are generated on the fly from the slots.
 #'
-#'   The \code{validObject} method ensures the conformity of an object to the \link{peakPantheRAnnotation-class}. The number of compounds is based on @cpdID length, and the number of samples is based on @filepath length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
+#'   The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on @cpdID length, and the number of samples is based on @filepath length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
 #'
 #' @slot cpdID A numeric vector of compound IDs, of length number of compounds
 #' @slot cpdName A character vector of compound names, of length number of compounds
@@ -121,8 +121,6 @@
 #' # [[3]]
 #' # NULL
 #' }
-#'
-#' @rdname peakPantheRAnnotation-class
 #'
 #' @family peakPantheR
 #' @family parallelAnnotation

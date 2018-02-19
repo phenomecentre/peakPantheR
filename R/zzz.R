@@ -1,3 +1,4 @@
+#' @import utils
 .onLoad <- function(libname = find.package("peakPantheR"), pkgname = "peakPantheR"){
 
 	# CRAN Note avoidance
@@ -8,4 +9,9 @@
 		)
   invisible()
 	}
+}
+
+.onAttach <- function(libname, pkgname) {
+  packageStartupMessage(
+    paste("\nThis is peakPantheR version", utils::packageVersion("peakPantheR"), "\n"))
 }

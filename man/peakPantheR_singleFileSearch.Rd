@@ -108,7 +108,7 @@ res
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheRAnnotation-class}}
+Other peakPantheR: \code{\link{peakPantheRAnnotation}}
 
-Other parallelAnnotation: \code{\link{peakPantheRAnnotation-class}}
+Other parallelAnnotation: \code{\link{peakPantheRAnnotation}}
 }
