@@ -125,6 +125,8 @@
 #' @family peakPantheR
 #' @family parallelAnnotation
 #'
+#' @aliases peakPantheRAnnotation-class
+#'
 #' @import methods
 #'
 #' @export

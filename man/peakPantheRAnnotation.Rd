@@ -3,6 +3,7 @@
 %   R/initialize_peakPantheRAnnotation.R
 \name{peakPantheRAnnotation}
 \alias{peakPantheRAnnotation}
+\alias{peakPantheRAnnotation-class}
 \alias{peakPantheRAnnotation}
 \title{An S4 class to represent peakPantheR annotation results}
 \usage{
