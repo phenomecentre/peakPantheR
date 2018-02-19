@@ -37,7 +37,7 @@ test_that('initialize with default values', {
 
 test_that('slot types are set in class definition', {
   # slot cpdID is not numeric
-  expect_error(peakPantheRAnnotation(cpdID='notNumeric'), 'assignment of an object of class .?character.? is not valid for .*cpdID.? in an object of class .?peakPantheRAnnotation')
+  expect_error(peakPantheRAnnotation(cpdID='notNumeric'), 'assignment of an object of class .?character.? is not valid for .?.?cpdID.? in an object of class .?peakPantheRAnnotation.?.? is.?value.? .?.?numeric.?.?.? is not TRUE')
   # slot cpdName is not character
   expect_error(peakPantheRAnnotation(cpdName=5), 'assignment of an object of class .?numeric.? is not valid for .*cpdName.? in an object of class .?peakPantheRAnnotation.*')
   # slot ROI is not a data.frame
