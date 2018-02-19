@@ -37,27 +37,38 @@ test_that('initialize with default values', {
 
 test_that('slot types are set in class definition', {
   # slot cpdID is not numeric
-  expect_error(peakPantheRAnnotation(cpdID='notNumeric'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "cpdID" in class "peakPantheRAnnotation": got class "character", should be or extend class "numeric"', fixed=TRUE)
+  msg1 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "cpdID" in class "peakPantheRAnnotation": got class "character", should be or extend class "numeric"', sep='')
+  expect_error(peakPantheRAnnotation(cpdID='notNumeric'), msg1, fixed=TRUE)
   # slot cpdName is not character
-  expect_error(peakPantheRAnnotation(cpdName=5))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "cpdName" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', fixed=TRUE)
+  msg2 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "cpdName" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', sep='')
+  expect_error(peakPantheRAnnotation(cpdName=5), msg2, fixed=TRUE)
   # slot ROI is not a data.frame
-  expect_error(peakPantheRAnnotation(ROI='notADataFrame'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "ROI" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', fixed=TRUE)
+  msg3 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "ROI" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', sep='')
+  expect_error(peakPantheRAnnotation(ROI='notADataFrame'), msg3, fixed=TRUE)
   # slot FIR is not a data.frame
-  expect_error(peakPantheRAnnotation(FIR='notADataFrame'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "FIR" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', fixed=TRUE)
+  msg4 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "FIR" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', sep='')
+  expect_error(peakPantheRAnnotation(FIR='notADataFrame'), msg4, fixed=TRUE)
   # slot uROI is not a data.frame
-  expect_error(peakPantheRAnnotation(uROI='notADataFrame'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "uROI" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', fixed=TRUE)
+  msg5 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "uROI" in class "peakPantheRAnnotation": got class "character", should be or extend class "data.frame"', sep='')
+  expect_error(peakPantheRAnnotation(uROI='notADataFrame'), msg5, fixed=TRUE)
   # slot filepath is not character
-  expect_error(peakPantheRAnnotation(filepath=5))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "filepath" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', fixed=TRUE)
+  msg6 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "filepath" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', sep='')
+  expect_error(peakPantheRAnnotation(filepath=5), msg6, fixed=TRUE)
   # slot uROIExist is not a logical
-  expect_error(peakPantheRAnnotation(uROIExist='notALogical'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "uROIExist" in class "peakPantheRAnnotation": got class "character", should be or extend class "logical"', fixed=TRUE)
+  msg7 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "uROIExist" in class "peakPantheRAnnotation": got class "character", should be or extend class "logical"', sep='')
+  expect_error(peakPantheRAnnotation(uROIExist='notALogical'), msg7, fixed=TRUE)
   # slot useFIR is not a logical
-  expect_error(peakPantheRAnnotation(useFIR='notALogical'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "useFIR" in class "peakPantheRAnnotation": got class "character", should be or extend class "logical"', fixed=TRUE)
+  msg8 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "useFIR" in class "peakPantheRAnnotation": got class "character", should be or extend class "logical"', sep='')
+  expect_error(peakPantheRAnnotation(useFIR='notALogical'), msg8, fixed=TRUE)
   # slot TIC is not numeric
-  expect_error(peakPantheRAnnotation(TIC='notNumeric'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "TIC" in class "peakPantheRAnnotation": got class "character", should be or extend class "numeric"', fixed=TRUE)
+  msg9 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "TIC" in class "peakPantheRAnnotation": got class "character", should be or extend class "numeric"', sep='')
+  expect_error(peakPantheRAnnotation(TIC='notNumeric'), msg9, fixed=TRUE)
   # slot peakTables is not a list
-  expect_error(peakPantheRAnnotation(peakTables='notAList'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "peakTables" in class "peakPantheRAnnotation": got class "character", should be or extend class "list"', fixed=TRUE)
+  msg10 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "peakTables" in class "peakPantheRAnnotation": got class "character", should be or extend class "list"', sep='')
+  expect_error(peakPantheRAnnotation(peakTables='notAList'), msg10, fixed=TRUE)
   # slot EICs is not a list
-  expect_error(peakPantheRAnnotation(EICs='notAList'))#, 'invalid class “peakPantheRAnnotation” object: invalid object for slot "EICs" in class "peakPantheRAnnotation": got class "character", should be or extend class "list"', fixed=TRUE)
+  msg11 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "EICs" in class "peakPantheRAnnotation": got class "character", should be or extend class "list"', sep='')
+  expect_error(peakPantheRAnnotation(EICs='notAList'), msg11, fixed=TRUE)
 })
 
 test_that('initialize with spectraPaths', {

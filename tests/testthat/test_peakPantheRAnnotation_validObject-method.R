@@ -74,151 +74,187 @@ test_that('validObject() raises errors', {
   # number of cpdName
   wrong1          <- filledAnnotation
   wrong1@cpdName  <- c("Cpd 1", "Cpd 2", "Cpd 3")
-  expect_error(validObject(wrong1), "invalid class .?peakPantheRAnnotation.? object: cpdName has 3 elements .?compound.?. Should be 2")
+  msg1            <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: cpdName has 3 elements (compound). Should be 2', sep='')
+  expect_error(validObject(wrong1), msg1, fixed=TRUE)
 
   # ROI number of rows
   wrong2          <- filledAnnotation
   wrong2@ROI      <- wrong2@ROI[1,]
-  expect_error(validObject(wrong2), "invalid class .?peakPantheRAnnotation.? object: ROI has 1 rows .?compound.?. Should be 2")
+  msg2            <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI has 1 rows (compound). Should be 2', sep='')
+  expect_error(validObject(wrong2), msg2, fixed=TRUE)
   # ROI number of columns
   wrong3          <- filledAnnotation
   wrong3@ROI      <- wrong3@ROI[,1:5]
-  expect_error(validObject(wrong3), "invalid class .?peakPantheRAnnotation.? object: ROI has 5 columns. Should be 6")
+  msg3            <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI has 5 columns. Should be 6 ("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")', sep='')
+  expect_error(validObject(wrong3), msg3, fixed=TRUE)
   # ROI column names
   wrong4                <- filledAnnotation
   colnames(wrong4@ROI)  <- c("wrongCol", "rt", "rtMax", "mzMin", "mz", "mzMax")
-  expect_error(validObject(wrong4), "invalid class .?peakPantheRAnnotation.? object: ROI columns should be \"rtMin\", \"rt\", \"rtMax\", \"mzMin\", \"mz\", \"mzMax\", not wrongCol rt rtMax mzMin mz mzMax")
+  msg4            <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI columns should be "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", not wrongCol rt rtMax mzMin mz mzMax', sep='')
+  expect_error(validObject(wrong4), msg4 , fixed=TRUE)
   # ROI$rtMin numeric
   wrong5            <- filledAnnotation
   wrong5@ROI$rtMin  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong5), "invalid class .?peakPantheRAnnotation.? object: ROI.?rtMin should be numeric, not character")
+  msg5              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rtMin should be numeric, not character', sep='')
+  expect_error(validObject(wrong5), msg5, fixed=TRUE)
   # ROI$rt numeric
   wrong6            <- filledAnnotation
   wrong6@ROI$rt     <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong6), "invalid class .?peakPantheRAnnotation.? object: ROI.?rt should be numeric, not character")
+  msg6              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rt should be numeric, not character', sep='')
+  expect_error(validObject(wrong6), msg6, fixed=TRUE)
   # ROI$rtMax numeric
   wrong7            <- filledAnnotation
   wrong7@ROI$rtMax  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong7), "invalid class .?peakPantheRAnnotation.? object: ROI.?rtMax should be numeric, not character")
+  msg7              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rtMax should be numeric, not character', sep='')
+  expect_error(validObject(wrong7), msg7, fixed=TRUE)
   # ROI$mzMin numeric
   wrong8            <- filledAnnotation
   wrong8@ROI$mzMin  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong8), "invalid class .?peakPantheRAnnotation.? object: ROI.?mzMin should be numeric, not character")
+  msg8              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$mzMin should be numeric, not character', sep='')
+  expect_error(validObject(wrong8), msg8, fixed=TRUE)
   # ROI$mz numeric
   wrong9            <- filledAnnotation
   wrong9@ROI$mz     <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong9), "invalid class .?peakPantheRAnnotation.? object: ROI.?mz should be numeric, not character")
+  msg9              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$mz should be numeric, not character', sep='')
+  expect_error(validObject(wrong9), msg9, fixed=TRUE)
   # ROI$mzMax numeric
   wrong10            <- filledAnnotation
   wrong10@ROI$mzMax  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong10), "invalid class .?peakPantheRAnnotation.? object: ROI.?mzMax should be numeric, not character")
+  msg10              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$mzMax should be numeric, not character', sep='')
+  expect_error(validObject(wrong10), msg10, fixed=TRUE)
 
   # FIR number of rows
   wrong11          <- filledAnnotation
   wrong11@FIR      <- wrong11@FIR[1,]
-  expect_error(validObject(wrong11), "invalid class .?peakPantheRAnnotation.? object: FIR has 1 rows .?compound.?. Should be 2")
+  msg11            <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR has 1 rows (compound). Should be 2', sep='')
+  expect_error(validObject(wrong11), msg11, fixed=TRUE)
   # FIR number of columns
   wrong12          <- filledAnnotation
   wrong12@FIR      <- wrong12@FIR[,1:3]
-  expect_error(validObject(wrong12), "invalid class .?peakPantheRAnnotation.? object: FIR has 3 columns. Should be 4")
+  msg12            <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR has 3 columns. Should be 4 ("rtMin", "rtMax", "mzMin", "mzMax")', sep='')
+  expect_error(validObject(wrong12), msg12, fixed=TRUE)
   # FIR column names
   wrong13                 <- filledAnnotation
   colnames(wrong13@FIR)   <- c("wrongCol", "rtMax", "mzMin", "mzMax")
-  expect_error(validObject(wrong13), "invalid class .?peakPantheRAnnotation.? object: FIR columns should be \"rtMin\", \"rtMax\", \"mzMin\", \"mzMax\", not wrongCol rtMax mzMin mzMax")
+  msg13                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR columns should be "rtMin", "rtMax", "mzMin", "mzMax", not wrongCol rtMax mzMin mzMax', sep='')
+  expect_error(validObject(wrong13), msg13, fixed=TRUE)
   # FIR$rtMin numeric
-  wrong14            <- filledAnnotation
-  wrong14@FIR$rtMin  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong14), "invalid class .?peakPantheRAnnotation.? object: FIR.?rtMin should be numeric, not character")
+  wrong14             <- filledAnnotation
+  wrong14@FIR$rtMin   <- c("not numeric", "not numeric")
+  msg14               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMin should be numeric, not character', sep='')
+  expect_error(validObject(wrong14), msg14, fixed=TRUE)
   # FIR$rtMax numeric
-  wrong15            <- filledAnnotation
-  wrong15@FIR$rtMax  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong15), "invalid class .?peakPantheRAnnotation.? object: FIR.?rtMax should be numeric, not character")
+  wrong15             <- filledAnnotation
+  wrong15@FIR$rtMax   <- c("not numeric", "not numeric")
+  msg15               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMax should be numeric, not character', sep='')
+  expect_error(validObject(wrong15), msg15, fixed=TRUE)
   # FIR$mzMin numeric
-  wrong16            <- filledAnnotation
-  wrong16@FIR$mzMin  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong16), "invalid class .?peakPantheRAnnotation.? object: FIR.?mzMin should be numeric, not character")
+  wrong16             <- filledAnnotation
+  wrong16@FIR$mzMin   <- c("not numeric", "not numeric")
+  msg16               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$mzMin should be numeric, not character', sep='')
+  expect_error(validObject(wrong16), msg16, fixed=TRUE)
   # FIR$mzMax numeric
-  wrong17            <- filledAnnotation
-  wrong17@FIR$mzMax  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong17), "invalid class .?peakPantheRAnnotation.? object: FIR.?mzMax should be numeric, not character")
+  wrong17             <- filledAnnotation
+  wrong17@FIR$mzMax   <- c("not numeric", "not numeric")
+  msg17               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$mzMax should be numeric, not character', sep='')
+  expect_error(validObject(wrong17), msg17, fixed=TRUE)
 
   # uROI number of rows
-  wrong18          <- filledAnnotation
+  wrong18           <- filledAnnotation
   wrong18@uROI      <- wrong18@uROI[1,]
-  expect_error(validObject(wrong18), "invalid class .?peakPantheRAnnotation.? object: uROI has 1 rows .?compound.?. Should be 2")
+  msg18             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI has 1 rows (compound). Should be 2', sep='')
+  expect_error(validObject(wrong18), msg18, fixed=TRUE)
   # uROI number of columns
-  wrong19          <- filledAnnotation
+  wrong19           <- filledAnnotation
   wrong19@uROI      <- wrong19@uROI[,1:5]
-  expect_error(validObject(wrong19), "invalid class .?peakPantheRAnnotation.? object: uROI has 5 columns. Should be 6")
+  msg19             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI has 5 columns. Should be 6 ("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")', sep='')
+  expect_error(validObject(wrong19), msg19, fixed=TRUE)
   # uROI column names
   wrong20                 <- filledAnnotation
   colnames(wrong20@uROI)  <- c("wrongCol", "rt", "rtMax", "mzMin", "mz", "mzMax")
-  expect_error(validObject(wrong20), "invalid class .?peakPantheRAnnotation.? object: uROI columns should be \"rtMin\", \"rt\", \"rtMax\", \"mzMin\", \"mz\", \"mzMax\", not wrongCol rt rtMax mzMin mz mzMax")
+  msg20                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI columns should be "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", not wrongCol rt rtMax mzMin mz mzMax', sep='')
+  expect_error(validObject(wrong20), msg20, fixed=TRUE)
   # uROI$rtMin numeric
   wrong21             <- filledAnnotation
   wrong21@uROI$rtMin  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong21), "invalid class .?peakPantheRAnnotation.? object: uROI.?rtMin should be numeric, not character")
+  msg21               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rtMin should be numeric, not character', sep='')
+  expect_error(validObject(wrong21), msg21, fixed=TRUE)
   # uROI$rt numeric
   wrong22             <- filledAnnotation
   wrong22@uROI$rt     <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong22), "invalid class .?peakPantheRAnnotation.? object: uROI.?rt should be numeric, not character")
+  msg22               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rt should be numeric, not character', sep='')
+  expect_error(validObject(wrong22), msg22, fixed=TRUE)
   # uROI$rtMax numeric
   wrong23             <- filledAnnotation
   wrong23@uROI$rtMax  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong23), "invalid class .?peakPantheRAnnotation.? object: uROI.?rtMax should be numeric, not character")
+  msg23               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rtMax should be numeric, not character', sep='')
+  expect_error(validObject(wrong23), msg23, fixed=TRUE)
   # uROI$mzMin numeric
   wrong24             <- filledAnnotation
   wrong24@uROI$mzMin  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong24), "invalid class .?peakPantheRAnnotation.? object: uROI.?mzMin should be numeric, not character")
+  msg24               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$mzMin should be numeric, not character', sep='')
+  expect_error(validObject(wrong24), msg24, fixed=TRUE)
   # uROI$mz numeric
   wrong25             <- filledAnnotation
   wrong25@uROI$mz     <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong25), "invalid class .?peakPantheRAnnotation.? object: uROI.?mz should be numeric, not character")
+  msg25               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$mz should be numeric, not character', sep='')
+  expect_error(validObject(wrong25), msg25, fixed=TRUE)
   # uROI$mzMax numeric
   wrong26             <- filledAnnotation
   wrong26@uROI$mzMax  <- c("not numeric", "not numeric")
-  expect_error(validObject(wrong26), "invalid class .?peakPantheRAnnotation.? object: uROI.?mzMax should be numeric, not character")
+  msg26               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$mzMax should be numeric, not character', sep='')
+  expect_error(validObject(wrong26), msg26, fixed=TRUE)
 
   # number of TIC
   wrong27       <- filledAnnotation
   wrong27@TIC   <- c(1, 2)
-  expect_error(validObject(wrong27), "invalid class .?peakPantheRAnnotation.? object: TIC has 2 elements .?samples.?. Should be 3")
+  msg27         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: TIC has 2 elements (samples). Should be 3', sep='')
+  expect_error(validObject(wrong27), msg27, fixed=TRUE)
 
   # number of peakTables
   wrong28             <- filledAnnotation
   wrong28@peakTables  <- wrong28@peakTables[1:2]
-  expect_error(validObject(wrong28), "invalid class .?peakPantheRAnnotation.? object: peakTables has 2 elements .?samples.?. Should be 3")
+  msg28               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables has 2 elements (samples). Should be 3', sep='')
+  expect_error(validObject(wrong28), msg28, fixed=TRUE)
   # peakTables is data.frame
   wrong29             <- filledAnnotation
   wrong29@peakTables  <- list("not data.frame", "not data.frame", "not data.frame")
-  expect_error(validObject(wrong29), "invalid class .?peakPantheRAnnotation.? object: peakTables must be data.frame or NULL not character")
+  msg29               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must be data.frame or NULL not character', sep='')
+  expect_error(validObject(wrong29), msg29, fixed=TRUE)
   # peakTables data.frame number of rows
   wrong30                 <- filledAnnotation
   wrong30@peakTables[[1]] <- wrong30@peakTables[[1]][1,]
-  expect_error(validObject(wrong30), "invalid class .?peakPantheRAnnotation.? object: peakTables.*1.* has 1 rows .?compounds.?. Should be 2")
+  msg30                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 1 rows (compounds). Should be 2', sep='')
+  expect_error(validObject(wrong30), msg30, fixed=TRUE)
   # peakTables data.frame number of columns
   wrong31                 <- filledAnnotation
   wrong31@peakTables[[1]] <- wrong31@peakTables[[1]][,1:2]
-  expect_error(validObject(wrong31), "invalid class .?peakPantheRAnnotation.? object: peakTables.*1.* has 2 columns. Should be 31")
+  msg31                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 2 columns. Should be 31', sep='')
+  expect_error(validObject(wrong31), msg31, fixed=TRUE)
   # peakTables column names
-  wrong31                           <- filledAnnotation
-  colnames(wrong31@peakTables[[1]]) <- c('wrongCol', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor')
-  expect_error(validObject(wrong31), "invalid class .?peakPantheRAnnotation.? object: peakTables.*1.* columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not wrongCol mz mzmin mzmax rt rtmin rtmax into intb maxo sn egauss mu sigma h f dppm scale scpos scmin scmax lmin lmax sample is_filled ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor")
+  wrong32                           <- filledAnnotation
+  colnames(wrong32@peakTables[[1]]) <- c('wrongCol', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor')
+  msg32                             <- paste("invalid class ", dQuote('peakPantheRAnnotation')," object: peakTables[[1]] columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not wrongCol mz mzmin mzmax rt rtmin rtmax into intb maxo sn egauss mu sigma h f dppm scale scpos scmin scmax lmin lmax sample is_filled ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor", sep='')
+  expect_error(validObject(wrong32), msg32, fixed=TRUE)
 
   # number of EIC
-  wrong32       <- filledAnnotation
-  wrong32@EICs  <- wrong32@EICs[1:2]
-  expect_error(validObject(wrong32), "invalid class .?peakPantheRAnnotation.? object: EICs has 2 elements .?samples.?. Should be 3")
-  # individual EIC is list or chromatogram
   wrong33       <- filledAnnotation
-  wrong33@EICs  <- list("not list or chromatogram", "not list or chromatogram", "not list or chromatogram")
-  expect_error(validObject(wrong33), "invalid class .?peakPantheRAnnotation.? object: EICs.*1.* must be a list or xcms::Chromatogram, not character")
+  wrong33@EICs  <- wrong32@EICs[1:2]
+  msg33         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs has 2 elements (samples). Should be 3', sep='')
+  expect_error(validObject(wrong33), msg33, fixed=TRUE)
+  # individual EIC is list or chromatogram
+  wrong34       <- filledAnnotation
+  wrong34@EICs  <- list("not list or chromatogram", "not list or chromatogram", "not list or chromatogram")
+  msg34         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] must be a list or xcms::Chromatogram, not character', sep='')
+  expect_error(validObject(wrong34), msg34, fixed=TRUE)
   # individual EIC has entry for each compound
-  wrong34           <- filledAnnotation
-  wrong34@EICs[[1]] <- tmp_EIC
-  expect_error(validObject(wrong34), "invalid class .?peakPantheRAnnotation.? object: EICs.*1.* contains, 1 EICs .?compound.?. Should be 2")
+  wrong35           <- filledAnnotation
+  wrong35@EICs[[1]] <- tmp_EIC
+  msg35             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] contains, 1 EICs (compound). Should be 2', sep='')
+  expect_error(validObject(wrong35), msg35, fixed=TRUE)
   # individual EIC compound entry is chromatogram
-  wrong35                <- filledAnnotation
-  wrong35@EICs[[1]][[1]] <- "not a chromatogram"
-  expect_error(validObject(wrong35), "invalid class .?peakPantheRAnnotation.? object: EICs.*1.*1.* must be a xcms::Chromatogram, not character")
+  wrong36                <- filledAnnotation
+  wrong36@EICs[[1]][[1]] <- "not a chromatogram"
+  msg36             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]][[1]] must be a xcms::Chromatogram, not character', sep='')
+  expect_error(validObject(wrong36), msg36, fixed=TRUE)
 })
