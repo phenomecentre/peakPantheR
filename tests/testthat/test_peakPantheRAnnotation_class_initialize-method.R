@@ -1,6 +1,6 @@
 context('peakPantheRAnnotation_class_initializeMethod()')
 
-# Test the class definition (enforces default slot type). Detail error matching works with devtools::test() but fails with R CMD Check / devtools::check()
+# Test the class definition (enforces default slot type)
 # Test initialize method (set default values, initialisation from spectraPaths and targetFeatTable)
 
 test_that('initialize with default values', {
