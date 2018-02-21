@@ -25,8 +25,10 @@ Package for _Peak Picking and ANnoTation of High resolution Experiments in R_, i
 `peakPantheR` implements functions to detect, integrate and report pre-defined features in MS files using XCMS3.
 It is designed for:
 
-* Real time feature detection and integration (see [Real Time Annotation](real-time-annotation.html))
-* Post-acquisition feature detection, integration and reporting (see [Parallel Annotation](parallel-annotation.html))
+* **Real time** feature detection and integration (see [Real Time Annotation](real-time-annotation.html))
+    + process `multiple` compounds in `one` file at a time
+* **Post-acquisition** feature detection, integration and reporting (see [Parallel Annotation](parallel-annotation.html))
+    + process `multiple` compounds in `multiple` files in `parallel`, store results in a `single` object
 
 
 ## Installation
@@ -48,8 +50,9 @@ setRepositories(ind=1:2)
 
 Both real time and parallel compound integration require a common set of information:
 
-* Path(s) to netCDF / mzML MS file(s)
-* An expected region of interest (_RT_ / _m/z_ window) for each compound.
+* Path(s) to `netCDF` / `mzML` MS file(s)
+* An expected region of interest (`RT` / `m/z` window) for each compound.
+
 
 The _`faahKO`_ package provides with a set of MS spectra that we can use for `peakPantheR` annotation:
 ```{r}

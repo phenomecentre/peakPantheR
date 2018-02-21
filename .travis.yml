@@ -23,4 +23,4 @@ addons:
       - libhdf5-dev
 
 after_success:
-  - Rscript -e 'library(covr); codecov()'
+  - Rscript -e 'library(covr); codecov(line_exclusions = "R/zzz.R")'

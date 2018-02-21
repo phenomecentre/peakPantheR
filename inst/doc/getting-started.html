@@ -81,8 +81,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>Overview</h2>
 <p><code>peakPantheR</code> implements functions to detect, integrate and report pre-defined features in MS files using XCMS3. It is designed for:</p>
 <ul>
-<li>Real time feature detection and integration (see <a href="real-time-annotation.html">Real Time Annotation</a>)</li>
-<li>Post-acquisition feature detection, integration and reporting (see <a href="parallel-annotation.html">Parallel Annotation</a>)</li>
+<li><strong>Real time</strong> feature detection and integration (see <a href="real-time-annotation.html">Real Time Annotation</a>)
+<ul>
+<li>process <code>multiple</code> compounds in <code>one</code> file at a time</li>
+</ul></li>
+<li><strong>Post-acquisition</strong> feature detection, integration and reporting (see <a href="parallel-annotation.html">Parallel Annotation</a>)
+<ul>
+<li>process <code>multiple</code> compounds in <code>multiple</code> files in <code>parallel</code>, store results in a <code>single</code> object</li>
+</ul></li>
 </ul>
 </div>
 <div id="installation" class="section level2">
@@ -98,8 +104,8 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <h2>Input Data</h2>
 <p>Both real time and parallel compound integration require a common set of information:</p>
 <ul>
-<li>Path(s) to netCDF / mzML MS file(s)</li>
-<li>An expected region of interest (<em>RT</em> / <em>m/z</em> window) for each compound.</li>
+<li>Path(s) to <code>netCDF</code> / <code>mzML</code> MS file(s)</li>
+<li>An expected region of interest (<code>RT</code> / <code>m/z</code> window) for each compound.</li>
 </ul>
 <p>The <em><code>faahKO</code></em> package provides with a set of MS spectra that we can use for <code>peakPantheR</code> annotation:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(faahKO)
