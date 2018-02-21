@@ -1,0 +1,51 @@
+---
+title: "Real Time Annotation"
+author: "Arnaud Wolfer"
+date: "2018-02-21"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Real Time Annotation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `peakPantheR` package is designed for the detection, integration and reporting of pre-defined features in MS files.
+
+The **Real Time Annotation** is set to detect and integrate **multiple** compounds in **one** file at a time.
+
+Using an example dataset, this vignette will:
+
+* Detail the Real Time Annotation concept
+* Apply the Real Time Annotation to an example dataset
+
+
+## Real Time Annotation Concept
+
+Real time compound integration is set to:
+
+* process **multiple** compounds in **one** file at a time
+* load list of expected _RT_ / _m/z_ regions of interest (ROI)
+* detect features in each ROI and keep the highest intensity one
+* determine peak statistics for each feature
+* returns:
+    + TIC
+    + a table with all detected compounds for that file (_row: compound, col: statistic_)
+    + EIC for each ROI
+    + save EIC plot to disk
+
+
+## Real Time Annotation Example
+
+
+
+## See Also
+
+* [Getting Started with peakPantheR](getting-started.html)
+* [Parallel Annotation](parallel-annotation.html)

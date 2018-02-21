@@ -15,8 +15,10 @@ Overview
 
 `peakPantheR` implements functions to detect, integrate and report pre-defined features in MS files using XCMS3. It is designed for:
 
--   Real time feature detection and integration (*realTimeAnnotation*)
--   Post-acquisition feature detection, integration and reporting (*parallelAnnotation*)
+-   **Real time** feature detection and integration (see [Real Time Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/real-time-annotation.html))
+    -   process `multiple` compounds in `one` file at a time
+-   **Post-acquisition** feature detection, integration and reporting (see [Parallel Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/parallel-annotation.html))
+    -   process `multiple` compounds in `multiple` files in `parallel`, store results in a `single` object
 
 Installation
 ------------
@@ -38,104 +40,19 @@ setRepositories(ind=1:2)
 Usage
 -----
 
-**Real time compound integration concept:**
+Both real time and parallel compound integration require a common set of information:
 
--   process **multiple** compounds in **one** file at a time
--   load list of expected *RT* / *m/z* regions of interest (ROI)
--   detect features in each ROI and keep the highest intensity one
--   determine peak statistics for each feature
--   returns:
-    -   TIC
-    -   a table with all detected compounds for that file (*row: compound, col: statistic*)
-    -   EIC for each ROI
-    -   save EIC plot to disk
+-   Path(s) to `netCDF` / `mzML` MS file(s)
+-   An expected region of interest (`RT` / `m/z` window) for each compound.
 
-**Post-acquisition compound integration concept:**
+Vignettes
+---------
 
--   process **multiple** compounds in **multiple** files in **parallel**, store results in a **single** object
--   load list of expected *RT* / *m/z* ROI and list of files to process
--   initialise output object with expected ROI and file paths
--   first pass (*without peak filling*):
-    -   for each file, detect features in each ROI and keep highest intensity
-    -   determine peak statistics for each feature
-    -   store results + EIC for each ROI
--   visual inspection of first pass results, update ROI:
-    -   plot all EICs, peak apex *RT* / *m/z* & peak width evolution
-    -   correct ROI (remove interfering feature, correct *RT* shift)
-    -   define fallback integration regions (FIR) if no feature is detected (median *RT* / *m/z* start and end of found features)
--   initialise new output object, with updated regions of interest (uROI) and fallback integration regions (FIR)
--   second pass (*with peak filling*):
-    -   for each file, detect features in each uROI and keep highest intensity
-    -   determine peak statistics for each feature
-    -   integrate FIR when no peaks found
-    -   store results + EIC for each uROI
--   summary statistics:
-    -   plot EICs, apex and peakwidth evolution
-    -   compare first and second pass
--   return result object and/or table (*row: file, col: compound*)
+More information is available in the following vignettes:
 
-Development, Code Structure, Documentation, Unit testing & Debugging
---------------------------------------------------------------------
-
-Required:
-
--   [R](https://cran.rstudio.com/) (v3.4.3), install both 32bit and 64bit in `C:\R\R-3.4.3`
--   [RTools](https://cran.r-project.org/bin/windows/Rtools/) (v3.4), install both 32bit and 64bit, even if only using x64. *Install in `C:\RTools`*
-
-To install and modify `peakPantheR` (see also `dev_peakPantheR.R`):
-
-``` r
-# Load devtools and roxygen2 for documentation
-if(!require("devtools")) install.packages("devtools")
-if(!require("roxygen2")) install.packages("roxygen2")
-
-# Navigate to package dir
-package_dir = 'path/peakPantheR'
-setwd(package_dir)
-
-# Generate documentation
-devtools::document()
-
-# Run unit tests
-devtools::test()
-
-# Check the validity of the package (CRAN rules, should run unit tests)
-devtools::check()
-
-# Build package as .tar.gz for installation
-devtools::build()
-
-# Install and load the package on current machine
-devtools::install()
-
-
-# Remove package
-remove.packages('peakPantheR')
-#------------------------------------------------
-
-# Load package
-library(peakPantheR)
-```
-
-### Code Structure
-
-Main functions are usually saved independently in `R\myFunction.R`, similar smaller functions can be grouped in a single file.
-
-When calling functions from external packages, the package call must be explicit such as `pkg::fun()` for the function `fun()` in the package `pkg`.
-
-### Documentation
-
-Each function [documentation](http://r-pkgs.had.co.nz/man.html#man-functions) is generated using `roxygen`, which will parse [roxygen comments](http://r-pkgs.had.co.nz/man.html#roxygen-comments), add the function to the `Namespace` to make it available oustide the package (see `@export`), run the examples (see `@example`) and set links to other functions' documentation (see `@family`). To regenerate the documentation, use `devtools::document()`
-
-### Unit testing
-
-Unit testing is achieved using the `testthat` package. By placing all tests in `testthat/tests/` and `testthat.R` triggering them, unit tests can be run with `devtools::test()` (and will also be run with all checks: `devtools::check()`). In short, if the function is is `fun1.R` the corresponding tests are in `test_fun1.R`, and `testthat.R` source the required functions and find all matching tests (for more details see [here](http://r-pkgs.had.co.nz/tests.html) and [here (pg. 35-48)](http://www.is.uni-freiburg.de/ressourcen/algorithm-design-and-software-engineering-oeffentlicher-zugriff/11_softwaretesting.pdf)).
-
-> Tests need to run relatively quickly - aim for under a minute. Place skip\_on\_cran() at the beginning of long-running tests that shouldn't be run on CRAN - they'll still be run locally, but not on CRAN.
-
-### Debugging
-
-Interactive debugging is available in *RStudio*, more details can be found [here (pg.20-21)](http://www.is.uni-freiburg.de/ressourcen/algorithm-design-and-software-engineering-oeffentlicher-zugriff/11_softwaretesting.pdf).
+-   [Getting Started with peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/getting-started.html)
+-   [Real Time Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/real-time-annotation.html)
+-   [Parallel Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/parallel-annotation.html)
 
 Copyright
 ---------
