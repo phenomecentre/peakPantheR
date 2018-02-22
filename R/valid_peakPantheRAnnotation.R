@@ -155,26 +155,34 @@ valid_peakPantheRAnnotation <- function(object) {
   } else {
     # only check peakTables if min 1 sample and not NULL
     if (nbSample >= 1){
-      if (!is.null(object@peakTables[[1]])) {
-        # individual peakTable is data.frame
-        if (!is.data.frame(object@peakTables[[1]])) {
+      # if ALL peakTables are not NULL
+      peakTables_isNULL <- sapply(object@peakTables, is.null)
+      if (!all(peakTables_isNULL)) {
+        # if one peakTable is nuLL but not all, raise an error
+        if (any(peakTables_isNULL)) {
           valid <- FALSE
-          msg   <- c(msg, paste("peakTables must be data.frame or NULL not ", typeof(object@peakTables[[1]]), sep=""))
+          msg   <- c(msg, paste("peakTables must all either be data.frame or NULL", sep=""))
         } else {
-          # individual peakTable data.frame number of rows
-          if (dim(object@peakTables[[1]])[1] != nbCpd) {
+          # individual peakTable is data.frame
+          if (!is.data.frame(object@peakTables[[1]])) {
             valid <- FALSE
-            msg   <- c(msg, paste("peakTables[[1]] has ", dim(object@peakTables[[1]])[1], " rows (compounds). Should be ", nbCpd, sep=""))
-          }
-          # individual peakTable data.frame number of columns
-          if (dim(object@peakTables[[1]])[2] != 31) {
-            valid <- FALSE
-            msg   <- c(msg, paste("peakTables[[1]] has ", dim(object@peakTables[[1]])[2], " columns. Should be 31", sep=""))
+            msg   <- c(msg, paste("peakTables must be data.frame or NULL not ", typeof(object@peakTables[[1]]), sep=""))
           } else {
-            # individual peakTable data.frame column names
-            if (!all(colnames(object@peakTables[[1]]) %in% c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))) {
+            # individual peakTable data.frame number of rows
+            if (dim(object@peakTables[[1]])[1] != nbCpd) {
               valid <- FALSE
-              msg   <- c(msg, paste("peakTables[[1]] columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not ", paste(colnames(object@peakTables[[1]]), collapse=" "), sep=""))
+              msg   <- c(msg, paste("peakTables[[1]] has ", dim(object@peakTables[[1]])[1], " rows (compounds). Should be ", nbCpd, sep=""))
+            }
+            # individual peakTable data.frame number of columns
+            if (dim(object@peakTables[[1]])[2] != 31) {
+              valid <- FALSE
+              msg   <- c(msg, paste("peakTables[[1]] has ", dim(object@peakTables[[1]])[2], " columns. Should be 31", sep=""))
+            } else {
+              # individual peakTable data.frame column names
+              if (!all(colnames(object@peakTables[[1]]) %in% c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))) {
+                valid <- FALSE
+                msg   <- c(msg, paste("peakTables[[1]] columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not ", paste(colnames(object@peakTables[[1]]), collapse=" "), sep=""))
+              }
             }
           }
         }
@@ -189,22 +197,30 @@ valid_peakPantheRAnnotation <- function(object) {
   } else {
     # only check EICs if min 1 sample and not NULL
     if (nbSample >= 1){
-      if (!is.null(object@EICs[[1]])) {
-        # individual EIC is list or chromatogram
-        if (!(is.list(object@EICs[[1]]) | (class(object@EICs[[1]])=="Chromatogram"))) {
+      # if ALL EICs are not NULL
+      EICs_isNULL <- sapply(object@EICs, is.null)
+      if (!all(EICs_isNULL)) {
+        # if one EIC is nuLL but not all, raise an error
+        if (any(EICs_isNULL)) {
           valid <- FALSE
-          msg   <- c(msg, paste("EICs[[1]] must be a list or xcms::Chromatogram, not ", paste(class(object@EICs[[1]]), collapse=" "), sep=""))
+          msg   <- c(msg, paste("EICs must all either be MSnbase::Chromatograms/list or NULL", sep=""))
         } else {
-          # individual EIC has entry for each compound
-          if (length(object@EICs[[1]]) != nbCpd) {
+          # individual EIC is list or chromatograms
+          if (!(is.list(object@EICs[[1]]) | (class(object@EICs[[1]])=="Chromatograms"))) {
             valid <- FALSE
-            msg   <- c(msg, paste("EICs[[1]] contains, ", length(object@EICs[[1]]), " EICs (compound). Should be ", nbCpd, sep=""))
+            msg   <- c(msg, paste("EICs[[1]] must be a list or MSnbase::Chromatograms, not ", paste(class(object@EICs[[1]]), collapse=" "), sep=""))
           } else {
-            if (nbCpd >= 1) {
-              # individual EIC compound entry is Chromatogram
-              if (class(object@EICs[[1]][[1]]) != "Chromatogram") {
-                valid <- FALSE
-                msg   <- c(msg, paste("EICs[[1]][[1]] must be a xcms::Chromatogram, not ", class(object@EICs[[1]][[1]]), sep=""))
+            # individual EIC has entry for each compound
+            if (length(object@EICs[[1]]) != nbCpd) {
+              valid <- FALSE
+              msg   <- c(msg, paste("EICs[[1]] contains, ", length(object@EICs[[1]]), " EICs (compound). Should be ", nbCpd, sep=""))
+            } else {
+              if (nbCpd >= 1) {
+                # individual EIC compound entry is Chromatogram
+                if (class(object@EICs[[1]][[1]]) != "Chromatogram") {
+                  valid <- FALSE
+                  msg   <- c(msg, paste("EICs[[1]][[1]] must be a MSnbase::Chromatogram, not ", class(object@EICs[[1]][[1]]), sep=""))
+                }
               }
             }
           }

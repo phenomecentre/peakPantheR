@@ -158,6 +158,31 @@ test_that('change centwave param with ... (change snthresh), no fitGauss, no pea
   expect_equal(result_singleFileSearch$messages, expected_messages)
 })
 
+test_that('only one targetFeature, with getEICs', {
+  # only one targetFeature will trigger a specific getEICs section
+  oneTargetFeature    <- targetFeatTable[1,]
+
+  # Expected TIC
+  expected_TIC        <- 2410533091
+  # Expected peakTable
+  expected_peakTable  <- peakTable_FitGauss[1,c(3:27,1:2)]
+  # Expected EICs
+  expected_EICs       <- xcms::chromatogram(raw_data, rt = c(rt_lower=oneTargetFeature$rtMin, rt_upper=oneTargetFeature$rtMax), mz = c(mz_lower=oneTargetFeature$mzMin, mz_upper=oneTargetFeature$mzMax))
+  # Expected messages
+  expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " OK: 1 found.\n")
+
+  # results (output, warnings and messages)
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, oneTargetFeature, fitGauss=TRUE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, verbose=FALSE))
+
+  # Check results
+  expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
+  expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+
+  # Check messages (from centwave)
+  expect_equal(result_singleFileSearch$messages, expected_messages)
+})
+
 test_that('no targetFeatures on import', {
   # Empty targetFeatures
   emptyTargetFeatures <- data.frame(matrix(vector(), 0, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)

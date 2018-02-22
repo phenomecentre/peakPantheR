@@ -42,10 +42,10 @@ peakTable3[,1]  <- sapply(peakTable3[,1], as.logical)
 file1  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
 EIC1	 <- xcms::chromatogram(file1, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # 2
-file2  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
+file2  <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
 EIC2	 <- xcms::chromatogram(file2, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # 3
-file3  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
+file3  <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
 EIC3	 <- xcms::chromatogram(file3, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # single compound
 tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin[1], rt_upper=input_targetFeatTable$rtMax[1]), mz = c(mz_lower=input_targetFeatTable$mzMin[1], mz_upper=input_targetFeatTable$mzMax[1]))
@@ -216,45 +216,60 @@ test_that('validObject() raises errors', {
   wrong28@peakTables  <- wrong28@peakTables[1:2]
   msg28               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables has 2 elements (samples). Should be 3', sep='')
   expect_error(validObject(wrong28), msg28, fixed=TRUE)
-  # peakTables is data.frame
+  # not all peakTables are NULL or initialised
   wrong29             <- filledAnnotation
-  wrong29@peakTables  <- list("not data.frame", "not data.frame", "not data.frame")
-  msg29               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must be data.frame or NULL not character', sep='')
+  wrong29@peakTables  <- list(NULL, wrong29@peakTables[[2]], wrong29@peakTables[[3]])
+  msg29               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must all either be data.frame or NULL', sep='')
   expect_error(validObject(wrong29), msg29, fixed=TRUE)
-  # peakTables data.frame number of rows
-  wrong30                 <- filledAnnotation
-  wrong30@peakTables[[1]] <- wrong30@peakTables[[1]][1,]
-  msg30                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 1 rows (compounds). Should be 2', sep='')
+  # peakTables is data.frame
+  wrong30             <- filledAnnotation
+  wrong30@peakTables  <- list("not data.frame", "not data.frame", "not data.frame")
+  msg30               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must be data.frame or NULL not character', sep='')
   expect_error(validObject(wrong30), msg30, fixed=TRUE)
-  # peakTables data.frame number of columns
+  # peakTables data.frame number of rows
   wrong31                 <- filledAnnotation
-  wrong31@peakTables[[1]] <- wrong31@peakTables[[1]][,1:2]
-  msg31                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 2 columns. Should be 31', sep='')
+  wrong31@peakTables[[1]] <- wrong31@peakTables[[1]][1,]
+  msg31                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 1 rows (compounds). Should be 2', sep='')
   expect_error(validObject(wrong31), msg31, fixed=TRUE)
-  # peakTables column names
-  wrong32                           <- filledAnnotation
-  colnames(wrong32@peakTables[[1]]) <- c('wrongCol', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor')
-  msg32                             <- paste("invalid class ", dQuote('peakPantheRAnnotation')," object: peakTables[[1]] columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not wrongCol mz mzmin mzmax rt rtmin rtmax into intb maxo sn egauss mu sigma h f dppm scale scpos scmin scmax lmin lmax sample is_filled ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor", sep='')
+  # peakTables data.frame number of columns
+  wrong32                 <- filledAnnotation
+  wrong32@peakTables[[1]] <- wrong32@peakTables[[1]][,1:2]
+  msg32                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 2 columns. Should be 31', sep='')
   expect_error(validObject(wrong32), msg32, fixed=TRUE)
+  # peakTables column names
+  wrong33                           <- filledAnnotation
+  colnames(wrong33@peakTables[[1]]) <- c('wrongCol', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor')
+  msg33                             <- paste("invalid class ", dQuote('peakPantheRAnnotation')," object: peakTables[[1]] columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not wrongCol mz mzmin mzmax rt rtmin rtmax into intb maxo sn egauss mu sigma h f dppm scale scpos scmin scmax lmin lmax sample is_filled ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor", sep='')
+  expect_error(validObject(wrong33), msg33, fixed=TRUE)
 
   # number of EIC
-  wrong33       <- filledAnnotation
-  wrong33@EICs  <- wrong32@EICs[1:2]
-  msg33         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs has 2 elements (samples). Should be 3', sep='')
-  expect_error(validObject(wrong33), msg33, fixed=TRUE)
-  # individual EIC is list or chromatogram
   wrong34       <- filledAnnotation
-  wrong34@EICs  <- list("not list or chromatogram", "not list or chromatogram", "not list or chromatogram")
-  msg34         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] must be a list or xcms::Chromatogram, not character', sep='')
+  wrong34@EICs  <- wrong34@EICs[1:2]
+  msg34         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs has 2 elements (samples). Should be 3', sep='')
   expect_error(validObject(wrong34), msg34, fixed=TRUE)
-  # individual EIC has entry for each compound
-  wrong35           <- filledAnnotation
-  wrong35@EICs[[1]] <- tmp_EIC
-  msg35             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] contains, 1 EICs (compound). Should be 2', sep='')
+  # not all peakTables are NULL or initialised
+  wrong35       <- filledAnnotation
+  wrong35@EICs  <- list(NULL, wrong35@EICs[[2]], wrong35@EICs[[3]])
+  msg35         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs must all either be MSnbase::Chromatograms/list or NULL', sep='')
   expect_error(validObject(wrong35), msg35, fixed=TRUE)
-  # individual EIC compound entry is chromatogram
-  wrong36                <- filledAnnotation
-  wrong36@EICs[[1]][[1]] <- "not a chromatogram"
-  msg36             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]][[1]] must be a xcms::Chromatogram, not character', sep='')
+  # individual EIC is list or Chromatograms
+  wrong36       <- filledAnnotation
+  wrong36@EICs  <- list("not list or Chromatograms", "not list or Chromatograms", "not list or Chromatograms")
+  msg36         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] must be a list or MSnbase::Chromatograms, not character', sep='')
   expect_error(validObject(wrong36), msg36, fixed=TRUE)
+  # fail if individual EIC is Chromatogram (no S)
+  wrong37       <- filledAnnotation
+  wrong37@EICs  <- list(wrong37@EICs[[1]][1,],  wrong37@EICs[[2]][1,],  wrong37@EICs[[3]][1,])
+  msg37         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] must be a list or MSnbase::Chromatograms, not Chromatogram', sep='')
+  expect_error(validObject(wrong37), msg37, fixed=TRUE)
+  # individual EIC has entry for each compound
+  wrong38           <- filledAnnotation
+  wrong38@EICs[[1]] <- tmp_EIC
+  msg38             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] contains, 1 EICs (compound). Should be 2', sep='')
+  expect_error(validObject(wrong38), msg38, fixed=TRUE)
+  # individual EIC compound entry is chromatogram
+  wrong39                <- filledAnnotation
+  wrong39@EICs[[1]][[1]] <- "not a chromatogram"
+  msg39             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]][[1]] must be a MSnbase::Chromatogram, not character', sep='')
+  expect_error(validObject(wrong39), msg39, fixed=TRUE)
 })

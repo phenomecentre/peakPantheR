@@ -40,6 +40,7 @@ setMethod("show",
 setValidity("peakPantheRAnnotation", function(object) valid_peakPantheRAnnotation(object))
 
 
+
 #####################################################################
 ## Accessors
 # cpdID
@@ -168,4 +169,92 @@ setMethod("annotationTable", "peakPantheRAnnotation",
             rownames(tmpAnnotation) <- object@filepath
             colnames(tmpAnnotation) <- object@cpdName
             return(tmpAnnotation)
+          })
+
+
+
+#####################################################################
+## Sub-setting object
+#' extract parts of peakPantheRAnnotation class
+#' @param x object from which to extract element(s) or in which to replace element(s).
+#' @param i (sample) indices specifying elements to extract or replace
+#' @param j (compound) indices specifying elements to extract or replace
+#' @param drop not applicable
+#'
+#' @aliases [,peakPantheRAnnotation-method
+#' @docType methods
+#'
+setMethod("[", "peakPantheRAnnotation",
+          function(x,i,j,drop="missing") {
+            ## i is row, samples
+            ## j is col, compounds
+
+            # check inputs and fallback
+            if (missing(i) & missing(j)) {
+              return(x)
+            }
+            if (missing(i)) {
+              i <- seq_len(nbSamples(x))
+            }
+            if (missing(j)) {
+              j <- seq_len(nbCompounds(x))
+            }
+
+            # check dim size
+            if (max(i) > nbSamples(x)) {
+              stop(paste("i index out of bound: maximum", nbSamples(x)))
+            }
+            if (max(j) > nbCompounds(x)) {
+              stop(paste("j index out of bound: maximum", nbCompounds(x)))
+            }
+
+            ## sub-setting
+            .cpdID      <- x@cpdID[j]
+            .cpdName    <- x@cpdName[j]
+            .ROI        <- x@ROI[j,]
+            .FIR        <- x@FIR[j,]
+            .uROI       <- x@uROI[j,]
+            .filepath   <- x@filepath[i]
+            .uROIExist  <- x@uROIExist
+            .useFIR     <- x@useFIR
+            .TIC        <- x@TIC[i]
+
+            ## peakTables, filter samples first, then compounds in each table
+            tmp_peakTables  <- x@peakTables[i]
+            if (all(sapply(tmp_peakTables, is.null))) {
+              # no cpd filter if all NULL
+              .peakTables   <- tmp_peakTables
+            } else {
+              # cpd filter in each table
+              .peakTables   <- lapply(tmp_peakTables, function(x, y) {x[y,]}, y=j)
+            }
+
+            ## EICs, filter samples first, then compound in each Chromatograms
+            tmp_EICs        <- x@EICs[i]
+            if (all(sapply(tmp_EICs, is.null))) {
+              # no cpd filter if all NULL
+              .EICs         <- tmp_EICs
+            } else {
+              # cpd filter in each Chromatograms
+              if (length(j) == 1) {
+                # if only 1 sample ensure we don't get a Chromatogram (no S)
+                .EICs <- lapply(tmp_EICs, function(x, y) {MSnbase::Chromatograms(data=list(x[y,]))}, y=j)
+              } else {
+                # filter cpd, get a Chromatograms
+                .EICs <- lapply(tmp_EICs, function(x, y) {x[y,]}, y=j)
+              }
+            }
+
+            ## load value in new object that will need to pass validObject()
+            peakPantheRAnnotation(cpdID = .cpdID,
+                                  cpdName = .cpdName,
+                                  ROI = .ROI,
+                                  FIR = .FIR,
+                                  uROI = .uROI,
+                                  filepath = .filepath,
+                                  uROIExist = .uROIExist,
+                                  useFIR = .useFIR,
+                                  TIC = .TIC,
+                                  peakTables = .peakTables,
+                                  EICs = .EICs)
           })

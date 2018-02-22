@@ -52,10 +52,10 @@ peakTable3[,1]  <- sapply(peakTable3[,1], as.logical)
 file1  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
 EIC1	 <- xcms::chromatogram(file1, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # 2
-file2  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
+file2  <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
 EIC2	 <- xcms::chromatogram(file2, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # 3
-file3  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
+file3  <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
 EIC3	 <- xcms::chromatogram(file3, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # single compound
 tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin[1], rt_upper=input_targetFeatTable$rtMax[1]), mz = c(mz_lower=input_targetFeatTable$mzMin[1], mz_upper=input_targetFeatTable$mzMax[1]))
