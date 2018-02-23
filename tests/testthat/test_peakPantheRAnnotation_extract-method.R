@@ -299,6 +299,45 @@ test_that('set i and j', {
   expect_equal(setIJ@EICs, expected_EICs)
 })
 
+test_that('reorder i and j', {
+  ## reorder i and j
+
+  ## Expected values
+  expected_ROI        <- input_targetFeatTable[c(2,1), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
+  expected_FIR        <- input_FIR[c(2,1),]
+  expected_uROI       <- input_uROI[c(2,1),]
+  expected_filepath   <- input_spectraPaths[c(3,2,1)]
+  expected_TIC        <- input_TIC[c(3,2,1)]
+  expected_peakTables <- list(peakTable3[c(2,1),], peakTable2[c(2,1),], peakTable1[c(2,1),])
+  expected_EICs       <- list(EIC3[c(2,1),], EIC2[c(2,1),], EIC1[c(2,1),])
+
+  # no sub-setting
+  reorderIJ <- filledAnnotation[3:1, c(2,1)]
+
+  # cpdID
+  expect_equal(reorderIJ@cpdID, c(2, 1))
+  # cpdName
+  expect_equal(reorderIJ@cpdName, c("Cpd 2", "Cpd 1"))
+  # ROI
+  expect_equal(reorderIJ@ROI, expected_ROI)
+  # FIR
+  expect_equal(reorderIJ@FIR, expected_FIR)
+  # uROI
+  expect_equal(reorderIJ@uROI, expected_uROI)
+  # filepath
+  expect_equal(reorderIJ@filepath, expected_filepath)
+  # uROIExist
+  expect_true(reorderIJ@uROIExist)
+  # useFIR
+  expect_true(reorderIJ@useFIR)
+  # TIC
+  expect_equal(reorderIJ@TIC, expected_TIC)
+  # peakTables
+  expect_equal(reorderIJ@peakTables, expected_peakTables)
+  # EICs
+  expect_equal(reorderIJ@EICs, expected_EICs)
+})
+
 test_that('raise error if i and j are out of bound', {
   # i out of bound
   msgI  <- paste('i index out of bound: maximum 3', sep='')
