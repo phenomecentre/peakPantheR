@@ -6,7 +6,7 @@
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
   fitGauss = FALSE, peakStatistic = FALSE, getEICs = FALSE,
-  plotEICsPath = NA, verbose = TRUE, ...)
+  plotEICsPath = NA, getAcquTime = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
@@ -21,12 +21,14 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved}
 
+\item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata}
+
 \item{verbose}{(bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)}
 
 \item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters}
 }
 \value{
-a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI.
+a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata.
 
 \subsection{Details:}{
   The returned \emph{peakTable} \code{data.frame} is structured as follow:
@@ -103,6 +105,9 @@ res
 # 2 0.02460103       3.13   NA               11            NA        2.708291
 #
 # $EICs
+# [1] NA
+#
+# $acquTime
 # [1] NA
 }
 

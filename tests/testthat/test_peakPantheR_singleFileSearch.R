@@ -39,92 +39,104 @@ raw_data  <- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='o
 EICs	    <- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
 
 
-test_that('with fitGauss, no peakStatistic, no getEICs, no plotEICsPath, no verbose', {
+test_that('with fitGauss, no peakStatistic, no getEICs, no plotEICsPath, no getAcquTime, no verbose', {
   # Expected TIC
   expected_TIC        <- 2410533091
   # Expected peakTable
   expected_peakTable  <- peakTable_FitGauss[,c(3:27,1:2)]
   # Expected EICs
   expected_EICs       <- NULL
+  # Expected acquTime
+  expected_acquTime   <- NA
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
 
 	# results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=TRUE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, verbose=FALSE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=TRUE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (from centwave)
   expect_equal(result_singleFileSearch$messages, expected_messages)
 })
 
-test_that('no fitGauss, with peakStatistic, no getEICs, no plotEICsPath, no verbose', {
+test_that('no fitGauss, with peakStatistic, no getEICs, no plotEICsPath, no getAcquTime, no verbose', {
   # Expected TIC
   expected_TIC        <- 2410533091
   # Expected peakTable
   expected_peakTable  <- peakTable_noFitGauss[,c(3:27,1:2,28:33)]
   # Expected EICs
   expected_EICs       <- NULL
+  # Expected acquTime
+  expected_acquTime   <- NA
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=TRUE, getEICs=FALSE, plotEICsPath=NA, verbose=FALSE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=TRUE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (from centwave)
   expect_equal(result_singleFileSearch$messages, expected_messages)
 })
 
-test_that('no fitGauss, no peakStatistic, with getEICs, no plotEICsPath, verbose', {
+test_that('no fitGauss, no peakStatistic, with getEICs, no plotEICsPath, getAcquTime, verbose', {
   # Expected TIC
   expected_TIC        <- 2410533091
   # Expected peakTable
   expected_peakTable  <- peakTable_noFitGauss[,c(3:27,1:2)]
   # Expected EICs
   expected_EICs       <- EICs
+  # Expected acquTime
+  expected_acquTime   <- NA   # we don't have a mzML that can be tested
   # Expected messages
-  expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
+  expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n", "Check input, mzMLPath must be a .mzML\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=TRUE, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (3 from centwave, 3 with run time (can't check))
-  expect_equal(length(result_singleFileSearch$messages), 6)
-  expect_equal(result_singleFileSearch$messages[1:3], expected_messages)
+  expect_equal(length(result_singleFileSearch$messages), 7)
+  expect_equal(result_singleFileSearch$messages[c(1:3,6)], expected_messages)
 })
 
-test_that('no fitGauss, no peakStatistic, no getEICs, with plotEICsPath (should switch getEICs automatically), verbose', {
+test_that('no fitGauss, no peakStatistic, no getEICs, with plotEICsPath (should switch getEICs automatically), no getAcquTime, verbose', {
   # Expected TIC
   expected_TIC        <- 2410533091
   # Expected peakTable
   expected_peakTable  <- peakTable_noFitGauss[,c(3:27,1:2)]
   # Expected EICs
   expected_EICs       <- EICs
+  # Expected acquTime
+  expected_acquTime   <- NA
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
   # temporary file
   savePath            <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=savePath, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=savePath, getAcquTime=FALSE, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   # Check plot has been produced
   expect_true(file.exists(savePath))
 
@@ -133,7 +145,7 @@ test_that('no fitGauss, no peakStatistic, no getEICs, with plotEICsPath (should 
   expect_equal(result_singleFileSearch$messages[1:3], expected_messages)
 })
 
-test_that('change centwave param with ... (change snthresh), no fitGauss, no peakStatistic, no getEICs, no plotEICsPath, no verbose', {
+test_that('change centwave param with ... (change snthresh), no fitGauss, no peakStatistic, no getEICs, no plotEICsPath, no getAcquTime, no verbose', {
   # Expected TIC
   expected_TIC        <- 2410533091
   # Expected peakTable
@@ -143,16 +155,19 @@ test_that('change centwave param with ... (change snthresh), no fitGauss, no pea
   expected_peakTable$found      <- sapply(expected_peakTable$found, as.logical)
   # Expected EICs
   expected_EICs       <- NULL
+  # Expected acquTime
+  expected_acquTime   <- NA
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, verbose=FALSE, snthresh=20))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE, snthresh=20))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (3 from centwave)
   expect_equal(result_singleFileSearch$messages, expected_messages)
@@ -168,16 +183,19 @@ test_that('only one targetFeature, with getEICs', {
   expected_peakTable  <- peakTable_FitGauss[1,c(3:27,1:2)]
   # Expected EICs
   expected_EICs       <- xcms::chromatogram(raw_data, rt = c(rt_lower=oneTargetFeature$rtMin, rt_upper=oneTargetFeature$rtMax), mz = c(mz_lower=oneTargetFeature$mzMin, mz_upper=oneTargetFeature$mzMax))
+  # Expected acquTime
+  expected_acquTime   <- NA
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " OK: 1 found.\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, oneTargetFeature, fitGauss=TRUE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, verbose=FALSE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, oneTargetFeature, fitGauss=TRUE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (from centwave)
   expect_equal(result_singleFileSearch$messages, expected_messages)
@@ -193,16 +211,19 @@ test_that('no targetFeatures on import', {
   expected_peakTable  <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
   # Expected EICs
   expected_EICs       <- NULL
+  # Expected acquTime
+  expected_acquTime   <- NA
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "- No target features passed in 'targetFeatTable', no integration, only TIC will be reported -\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, emptyTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, emptyTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (2 can be checked, third is run time)
   expect_equal(length(result_singleFileSearch$messages), 3)
@@ -220,16 +241,19 @@ test_that('no features found', {
   expected_peakTable  <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
   # Expected EICs
   expected_EICs       <- NULL
+  # Expected acquTime
+  expected_acquTime   <- NA
   # Expected messages
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " FAIL: none found!\n", "- No features found to integrate, only TIC will be reported -\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, noMatchTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, noMatchTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
   expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
   expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (4 can be checked, fourth and sixth have run time)
   expect_equal(length(result_singleFileSearch$messages), 6)

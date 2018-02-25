@@ -4,7 +4,7 @@
 #'
 #' @details HERE DETAIL \code{targetFeatTable} and \code{annotationTable} which are generated on the fly from the slots.
 #'
-#'   The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on @cpdID length, and the number of samples is based on @filepath length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
+#'   The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on \code{@cpdID} length, and the number of samples is based on \code{@filepath} length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
 #'
 #' @slot cpdID A numeric vector of compound IDs, of length number of compounds
 #' @slot cpdName A character vector of compound names, of length number of compounds

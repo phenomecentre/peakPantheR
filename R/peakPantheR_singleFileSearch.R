@@ -15,10 +15,11 @@
 #' @param peakStatistic (bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Asymmetry factor
 #' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.
 #' @param plotEICsPath (str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved
+#' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata
 #' @param verbose (bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
 #'
-#' @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI.
+#' @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata.
 #'
 #' \subsection{Details:}{
 #'   The returned \emph{peakTable} \code{data.frame} is structured as follow:
@@ -93,6 +94,9 @@
 #' #
 #' # $EICs
 #' # [1] NA
+#' #
+#' # $acquTime
+#' # [1] NA
 #' }
 #'
 #' @family peakPantheR
@@ -100,7 +104,7 @@
 #' @family parallelAnnotation
 #'
 #' @export
-peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, verbose=TRUE, ...) {
+peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE, ...) {
   stime <- Sys.time()
 
   ## Check input
@@ -188,10 +192,16 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     EICs        <- NULL
   }
 
+  # Get AcquTime
+  AcquTime <- NA
+  if (getAcquTime) {
+    AcquTime <- getAcquisitionDatemzML(mzMLPath=singleSpectraDataPath, verbose=verbose)
+  }
+
   etime <- Sys.time()
 	if (verbose) {
     message('Feature search done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
   }
 
-  return(list(TIC=TICvalue, peakTable=finalOutput, EICs=EICs))
+  return(list(TIC=TICvalue, peakTable=finalOutput, EICs=EICs, acquTime=AcquTime))
 }
