@@ -142,6 +142,18 @@ valid_peakPantheRAnnotation <- function(object) {
     }
   }
 
+  # number of acquisitionTime
+  if (length(object@acquisitionTime) != nbSample) {
+    valid <- FALSE
+    msg   <- c(msg, paste("acquisitionTime has ", length(object@acquisitionTime), " elements (samples). Should be ", nbSample, sep=""))
+  }
+
+  # cannot useUROI if uROIExist=FALSE
+  if (object@useUROI & !(object@uROIExist)) {
+    valid <- FALSE
+    msg   <- c(msg, paste("useUROI cannot be TRUE while uROIExist is FALSE", sep=""))
+  }
+
   # number of TIC
   if (length(object@TIC) != nbSample) {
     valid <- FALSE

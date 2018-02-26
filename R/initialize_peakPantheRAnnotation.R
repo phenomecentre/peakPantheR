@@ -10,7 +10,9 @@
 #' @param FIR A data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @param uROI A data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @param filepath A character vector of file paths, of length number of spectra files
+#' @param acquisitionTime A character vector of acquisition date-time (converted from POSIXct) or NA
 #' @param uROIExist A logical stating if uROI have been set
+#' @param useUROI A logical stating if uROI are to be used
 #' @param useFIR A logical stating if FIR are to be used
 #' @param TIC A numeric vector of TIC or NA, of length number of spectra files
 #' @param peakTables A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.
@@ -23,7 +25,9 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   FIR = data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F),
                                   uROI = data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F),
                                   filepath = character(),
+                                  acquisitionTime = character(),
                                   uROIExist = FALSE,
+                                  useUROI = FALSE,
                                   useFIR = FALSE,
                                   TIC = numeric(),
                                   peakTables = list(),
@@ -37,19 +41,23 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
       stop("specified spectraPaths is not a vector of character")
     }
     # load values and allocate size
-    nbSpectra       <- length(spectraPaths)
-    filepath        <- spectraPaths
+    nbSpectra         <- length(spectraPaths)
+    filepath          <- spectraPaths
+    # set acquisitionTime default if no acquisitionTime passed in
+    if (length(acquisitionTime) == 0) {
+      acquisitionTime <- as.character(rep(NA,nbSpectra))
+    }
     # set TIC default if no TIC passed in
     if (length(TIC) == 0) {
-      TIC           <- as.numeric(rep(NA,nbSpectra))
+      TIC             <- as.numeric(rep(NA,nbSpectra))
     }
     # set peakTables default if no peakTables passed in
     if (length(peakTables) == 0) {
-      peakTables    <- vector("list", nbSpectra)
+      peakTables      <- vector("list", nbSpectra)
     }
     # set EICs default if no EICs passed in
     if (length(EICs) == 0) {
-      EICs          <- vector("list", nbSpectra)
+      EICs            <- vector("list", nbSpectra)
     }
   }
 
@@ -104,9 +112,11 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
       uROI      <- data.frame(rtMin=as.numeric(rep(NA,nbCompound)), rt=as.numeric(rep(NA,nbCompound)), rtMax=as.numeric(rep(NA,nbCompound)), mzMin=as.numeric(rep(NA,nbCompound)), mz=as.numeric(rep(NA,nbCompound)), mzMax=as.numeric(rep(NA,nbCompound)), stringsAsFactors=F)
       # if we reset, it doesn't exist
       uROIExist <- FALSE
+      # if we reset, it can't be used
+      useUROI   <- FALSE
     }
   }
 
   ## set the final values
-  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, uROIExist=uROIExist, useFIR=useFIR, TIC=TIC, peakTables=peakTables, EICs=EICs)
+  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, EICs=EICs)
 }

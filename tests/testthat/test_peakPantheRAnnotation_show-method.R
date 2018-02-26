@@ -15,8 +15,8 @@ test_that('show method outputs right value', {
   input_uROI      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
   input_uROI[1,]  <- c(10., 11., 12., 13., 14., 15.)
   input_uROI[2,]  <- c(16., 17., 18., 19., 20., 21.)
-  expected_msg_default    <- "An object of class peakPantheRAnnotation\n 0 compounds in 0 samples. \n  without updated ROI (uROI)\n  does not use fallback integration regions (FIR)"
-  expected_msg_ROIFIRInit <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  with updated ROI (uROI)\n  uses fallback integration regions (FIR)"
+  expected_msg_default    <- "An object of class peakPantheRAnnotation\n 0 compounds in 0 samples. \n  updated ROI do not exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)"
+  expected_msg_ROIFIRInit <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  uses updated ROI (uROI)\n  uses fallback integration regions (FIR)"
 
   # default values, no uROI, no use of FIR
   defaultInit     <- peakPantheRAnnotation()
@@ -24,7 +24,7 @@ test_that('show method outputs right value', {
   expect_equal(result_default$output, expected_msg_default)
 
   # multiple compounds and spectra with uROIExist and useFIR
-  ROIFIRInit        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, uROI=input_uROI, FIR=input_FIR, uROIExist=TRUE, useFIR=TRUE)
+  ROIFIRInit        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, uROI=input_uROI, FIR=input_FIR, uROIExist=TRUE, useUROI=TRUE, useFIR=TRUE)
   result_ROIFIRInit <- evaluate_promise(show(ROIFIRInit))
   expect_equal(result_ROIFIRInit$output, expected_msg_ROIFIRInit)
 })

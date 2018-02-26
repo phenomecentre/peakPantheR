@@ -28,6 +28,9 @@ input_uROI      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin
 input_uROI[1,]  <- c(9., 10., 11., 12., 13., 14.)
 input_uROI[2,]  <- c(15., 16., 17., 18., 19., 20.)
 
+# acquisitionTime
+input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
+
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
@@ -63,7 +66,7 @@ tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin
 
 
 ## Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
 
 
 test_that('no i j input returns an untouched object', {
@@ -89,8 +92,12 @@ test_that('no i j input returns an untouched object', {
   expect_equal(noChange@uROI, input_uROI)
   # filepath
   expect_equal(noChange@filepath, input_spectraPaths)
+  # acquisitionTime
+  expect_equal(noChange@acquisitionTime, input_acquisitionTime)
   # uROIExist
   expect_true(noChange@uROIExist)
+  # useUROI
+  expect_true(noChange@useUROI)
   # useFIR
   expect_true(noChange@useFIR)
   # TIC
@@ -127,8 +134,12 @@ test_that('missing i, set j: multiple cpds EICs filter', {
   expect_equal(noI@uROI, input_uROI)
   # filepath
   expect_equal(noI@filepath, input_spectraPaths)
+  # acquisitionTime
+  expect_equal(noI@acquisitionTime, input_acquisitionTime)
   # uROIExist
   expect_true(noI@uROIExist)
+  # useUROI
+  expect_true(noI@useUROI)
   # useFIR
   expect_true(noI@useFIR)
   # TIC
@@ -164,8 +175,12 @@ test_that('missing i, set single j: single cpd EICs filter', {
   expect_equal(singleJ@uROI, expected_uROI)
   # filepath
   expect_equal(singleJ@filepath, input_spectraPaths)
+  # acquisitionTime
+  expect_equal(singleJ@acquisitionTime, input_acquisitionTime)
   # uROIExist
   expect_true(singleJ@uROIExist)
+  # useUROI
+  expect_true(singleJ@useUROI)
   # useFIR
   expect_true(singleJ@useFIR)
   # TIC
@@ -180,13 +195,14 @@ test_that('set i, missing j', {
   ## set i, j will default to all compounds
 
   ## Expected values
-  expected_ROI        <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
-  expected_FIR        <- input_FIR
-  expected_uROI       <- input_uROI
-  expected_filepath   <- input_spectraPaths[1:2]
-  expected_TIC        <- input_TIC[1:2]
-  expected_peakTables <- list(peakTable1, peakTable2)
-  expected_EICs       <- list(EIC1, EIC2)
+  expected_ROI              <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
+  expected_FIR              <- input_FIR
+  expected_uROI             <- input_uROI
+  expected_filepath         <- input_spectraPaths[1:2]
+  expected_acquisitionTime  <- input_acquisitionTime[1:2]
+  expected_TIC              <- input_TIC[1:2]
+  expected_peakTables       <- list(peakTable1, peakTable2)
+  expected_EICs             <- list(EIC1, EIC2)
 
   # no sub-setting
   setI <- filledAnnotation[1:2,]
@@ -203,8 +219,12 @@ test_that('set i, missing j', {
   expect_equal(setI@uROI, expected_uROI)
   # filepath
   expect_equal(setI@filepath, expected_filepath)
+  # acquisitionTime
+  expect_equal(setI@acquisitionTime, expected_acquisitionTime)
   # uROIExist
   expect_true(setI@uROIExist)
+  # useUROI
+  expect_true(setI@useUROI)
   # useFIR
   expect_true(setI@useFIR)
   # TIC
@@ -215,62 +235,69 @@ test_that('set i, missing j', {
   expect_equal(setI@EICs, expected_EICs)
 })
 
-test_that('set j with empty peakTables and EICs', {
+test_that('set i, empty peakTables and EICs', {
   ## all EICs and all peakTables are NULL trigger a special case
 
   ## object with cpd and spectra set
-  defaultInit_cpd_spectra <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
+  defaultInit_cpd_spectra   <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
 
   ## Expected values
-  expected_ROI        <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
-  expected_FIR        <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
-  expected_FIR[1,]    <- sapply(expected_FIR[1,], as.numeric)
-  expected_FIR[2,]    <- sapply(expected_FIR[2,], as.numeric)
-  expected_uROI       <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-  expected_uROI[1,]   <- sapply(expected_uROI[1,], as.numeric)
-  expected_uROI[2,]   <- sapply(expected_uROI[2,], as.numeric)
-  expected_filepath   <- input_spectraPaths[1:2]
+  expected_ROI              <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
+  expected_FIR              <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
+  expected_FIR[1,]          <- sapply(expected_FIR[1,], as.numeric)
+  expected_FIR[2,]          <- sapply(expected_FIR[2,], as.numeric)
+  expected_uROI             <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+  expected_uROI[1,]         <- sapply(expected_uROI[1,], as.numeric)
+  expected_uROI[2,]         <- sapply(expected_uROI[2,], as.numeric)
+  expected_filepath         <- input_spectraPaths[1:2]
+  expected_acquisitionTime  <- as.character(c(NA, NA))
+
   expected_peakTables <- vector("list", 2)
   expected_EICs       <- vector("list", 2)
 
   # no sub-setting
-  setJandNULL <- defaultInit_cpd_spectra[1:2,]
+  setIandNULL <- defaultInit_cpd_spectra[1:2,]
 
   # cpdID
-  expect_equal(setJandNULL@cpdID, c(1, 2))
+  expect_equal(setIandNULL@cpdID, c(1, 2))
   # cpdName
-  expect_equal(setJandNULL@cpdName, c("Cpd 1", "Cpd 2"))
+  expect_equal(setIandNULL@cpdName, c("Cpd 1", "Cpd 2"))
   # ROI
-  expect_equal(setJandNULL@ROI, expected_ROI)
+  expect_equal(setIandNULL@ROI, expected_ROI)
   # FIR
-  expect_equal(setJandNULL@FIR, expected_FIR)
+  expect_equal(setIandNULL@FIR, expected_FIR)
   # uROI
-  expect_equal(setJandNULL@uROI, expected_uROI)
+  expect_equal(setIandNULL@uROI, expected_uROI)
   # filepath
-  expect_equal(setJandNULL@filepath, expected_filepath)
+  expect_equal(setIandNULL@filepath, expected_filepath)
+  # acquisitionTime
+  expect_equal(setIandNULL@acquisitionTime, expected_acquisitionTime)
   # uROIExist
-  expect_false(setJandNULL@uROIExist)
+  expect_false(setIandNULL@uROIExist)
+  # useUROI
+  expect_false(setIandNULL@useUROI)
   # useFIR
-  expect_false(setJandNULL@useFIR)
+  expect_false(setIandNULL@useFIR)
   # TIC
-  expect_equal(setJandNULL@TIC, c(as.numeric(NA), as.numeric(NA)))
+  expect_equal(setIandNULL@TIC, c(as.numeric(NA), as.numeric(NA)))
   # peakTables
-  expect_equal(setJandNULL@peakTables, expected_peakTables)
+  expect_equal(setIandNULL@peakTables, expected_peakTables)
   # EICs
-  expect_equal(setJandNULL@EICs, expected_EICs)
+  expect_equal(setIandNULL@EICs, expected_EICs)
 })
 
 test_that('set i and j', {
   ## set i and j
 
   ## Expected values
-  expected_ROI        <- input_targetFeatTable[1, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
-  expected_FIR        <- input_FIR[1,]
-  expected_uROI       <- input_uROI[1,]
-  expected_filepath   <- input_spectraPaths[1:2]
-  expected_TIC        <- input_TIC[1:2]
-  expected_peakTables <- list(peakTable1[1,], peakTable2[1,])
-  expected_EICs       <- list(MSnbase::Chromatograms(data=list(EIC1[1,])), MSnbase::Chromatograms(data=list(EIC2[1,])))
+  expected_ROI              <- input_targetFeatTable[1, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
+  expected_FIR              <- input_FIR[1,]
+  expected_uROI             <- input_uROI[1,]
+  expected_filepath         <- input_spectraPaths[1:2]
+  expected_acquisitionTime  <- input_acquisitionTime[1:2]
+  expected_TIC              <- input_TIC[1:2]
+  expected_peakTables       <- list(peakTable1[1,], peakTable2[1,])
+  expected_EICs             <- list(MSnbase::Chromatograms(data=list(EIC1[1,])), MSnbase::Chromatograms(data=list(EIC2[1,])))
 
   # no sub-setting
   setIJ <- filledAnnotation[1:2,1]
@@ -287,8 +314,12 @@ test_that('set i and j', {
   expect_equal(setIJ@uROI, expected_uROI)
   # filepath
   expect_equal(setIJ@filepath, expected_filepath)
+  # acquisitionTime
+  expect_equal(setIJ@acquisitionTime, expected_acquisitionTime)
   # uROIExist
   expect_true(setIJ@uROIExist)
+  # useUROI
+  expect_true(setIJ@useUROI)
   # useFIR
   expect_true(setIJ@useFIR)
   # TIC
@@ -303,13 +334,14 @@ test_that('reorder i and j', {
   ## reorder i and j
 
   ## Expected values
-  expected_ROI        <- input_targetFeatTable[c(2,1), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
-  expected_FIR        <- input_FIR[c(2,1),]
-  expected_uROI       <- input_uROI[c(2,1),]
-  expected_filepath   <- input_spectraPaths[c(3,2,1)]
-  expected_TIC        <- input_TIC[c(3,2,1)]
-  expected_peakTables <- list(peakTable3[c(2,1),], peakTable2[c(2,1),], peakTable1[c(2,1),])
-  expected_EICs       <- list(EIC3[c(2,1),], EIC2[c(2,1),], EIC1[c(2,1),])
+  expected_ROI              <- input_targetFeatTable[c(2,1), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
+  expected_FIR              <- input_FIR[c(2,1),]
+  expected_uROI             <- input_uROI[c(2,1),]
+  expected_filepath         <- input_spectraPaths[c(3,2,1)]
+  expected_acquisitionTime  <- input_acquisitionTime[c(3,2,1)]
+  expected_TIC              <- input_TIC[c(3,2,1)]
+  expected_peakTables       <- list(peakTable3[c(2,1),], peakTable2[c(2,1),], peakTable1[c(2,1),])
+  expected_EICs             <- list(EIC3[c(2,1),], EIC2[c(2,1),], EIC1[c(2,1),])
 
   # no sub-setting
   reorderIJ <- filledAnnotation[3:1, c(2,1)]
@@ -326,8 +358,12 @@ test_that('reorder i and j', {
   expect_equal(reorderIJ@uROI, expected_uROI)
   # filepath
   expect_equal(reorderIJ@filepath, expected_filepath)
+  # acquisitionTime
+  expect_equal(reorderIJ@acquisitionTime, expected_acquisitionTime)
   # uROIExist
   expect_true(reorderIJ@uROIExist)
+  # useUROI
+  expect_true(reorderIJ@useUROI)
   # useFIR
   expect_true(reorderIJ@useFIR)
   # TIC

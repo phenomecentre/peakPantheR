@@ -20,6 +20,9 @@ input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
+# acquisitionTime
+input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
+
 # peakTables
 # 1
 peakTable1      <- data.frame(matrix(vector(), 2, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
@@ -55,7 +58,7 @@ defaultInit_empty       <- peakPantheRAnnotation()
 # Object, init samples and compounds
 defaultInit_cpd_spectra <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
 
 
 test_that('initialised objects are valid', {
@@ -268,8 +271,21 @@ test_that('validObject() raises errors', {
   msg38             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] contains, 1 EICs (compound). Should be 2', sep='')
   expect_error(validObject(wrong38), msg38, fixed=TRUE)
   # individual EIC compound entry is chromatogram
-  wrong39                <- filledAnnotation
-  wrong39@EICs[[1]][[1]] <- "not a chromatogram"
-  msg39             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]][[1]] must be a MSnbase::Chromatogram, not character', sep='')
+  wrong39                 <- filledAnnotation
+  wrong39@EICs[[1]][[1]]  <- "not a chromatogram"
+  msg39                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]][[1]] must be a MSnbase::Chromatogram, not character', sep='')
   expect_error(validObject(wrong39), msg39, fixed=TRUE)
+
+  # number of acquisitionTime
+  wrong40                 <- filledAnnotation
+  wrong40@acquisitionTime <- filledAnnotation@acquisitionTime[c(1,2)]
+  msg40                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: acquisitionTime has 2 elements (samples). Should be 3', sep='')
+  expect_error(validObject(wrong40), msg40, fixed=TRUE)
+
+  # cannot useUROI=TRUE if uROIExist=FALSE
+  wrong41           <- filledAnnotation
+  wrong41@useUROI   <- TRUE
+  wrong41@uROIExist <- FALSE
+  msg41             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: useUROI cannot be TRUE while uROIExist is FALSE', sep='')
+  expect_error(validObject(wrong41), msg41, fixed=TRUE)
 })

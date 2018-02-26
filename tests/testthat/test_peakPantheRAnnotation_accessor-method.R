@@ -27,6 +27,9 @@ input_uROI      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin
 input_uROI[1,]  <- c(9., 10., 11., 12., 13., 14.)
 input_uROI[2,]  <- c(15., 16., 17., 18., 19., 20.)
 
+# acquisitionTime
+input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
+
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
@@ -62,16 +65,17 @@ tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin
 
 
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
 
 
 
 test_that('accessors return the correct values', {
-  expected_ROI        <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "cpdID", "cpdName")]
-  expected_FIR        <- cbind.data.frame(input_FIR, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
-  expected_uROI       <- cbind.data.frame(input_uROI, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
-  expected_peakTables <- list(peakTable1, peakTable2, peakTable3)
-  expected_EICs       <- list(EIC1, EIC2, EIC3)
+  expected_ROI              <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "cpdID", "cpdName")]
+  expected_FIR              <- cbind.data.frame(input_FIR, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
+  expected_uROI             <- cbind.data.frame(input_uROI, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
+  expected_acquisitionTime  <- as.POSIXct(input_acquisitionTime)
+  expected_peakTables       <- list(peakTable1, peakTable2, peakTable3)
+  expected_EICs             <- list(EIC1, EIC2, EIC3)
 
   # Check accessors
   # Basic slots
@@ -87,8 +91,12 @@ test_that('accessors return the correct values', {
   expect_equal(uROI(filledAnnotation), expected_uROI)
   # filepath
   expect_equal(filepath(filledAnnotation), input_spectraPaths)
+  # acquisitionTIme
+  expect_equal(acquisitionTime(filledAnnotation), expected_acquisitionTime)
   # uROIExist
   expect_true(uROIExist(filledAnnotation))
+  # useUROI
+  expect_true(useUROI(filledAnnotation))
   # useFIR
   expect_true(useFIR(filledAnnotation))
   # TIC

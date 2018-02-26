@@ -21,9 +21,14 @@ setMethod("show",
             cat("An object of class ", class(object), "\n", sep="")
             cat(" ", length(object@cpdName), " compounds in ", length(object@filepath), " samples. \n", sep="")
             if(object@uROIExist) {
-              cat("  with updated ROI (uROI)\n", sep="")
+              cat("  updated ROI exist (uROI)\n", sep="")
             } else {
-              cat("  without updated ROI (uROI)\n", sep="")
+              cat("  updated ROI do not exist (uROI)\n", sep="")
+            }
+            if(object@useUROI) {
+              cat("  uses updated ROI (uROI)\n", sep="")
+            } else {
+              cat("  does not use updated ROI (uROI)\n", sep="")
             }
             if(object@useFIR) {
               cat("  uses fallback integration regions (FIR)\n", sep="")
@@ -91,11 +96,24 @@ setMethod("filepath", "peakPantheRAnnotation",
           function(object) {
             object@filepath
           })
+# acquisitionTime
+# return converted to POSIXct
+setGeneric("acquisitionTime", function(object, ...) standardGeneric("acquisitionTime"))
+setMethod("acquisitionTime", "peakPantheRAnnotation",
+          function(object) {
+            as.POSIXct(object@acquisitionTime)
+          })
 # uROIExist
 setGeneric("uROIExist", function(object, ...) standardGeneric("uROIExist"))
 setMethod("uROIExist", "peakPantheRAnnotation",
           function(object) {
             object@uROIExist
+          })
+# useUROI
+setGeneric("useUROI", function(object, ...) standardGeneric("useUROI"))
+setMethod("useUROI", "peakPantheRAnnotation",
+          function(object) {
+            object@useUROI
           })
 # useFIR
 setGeneric("useFIR", function(object, ...) standardGeneric("useFIR"))
@@ -209,15 +227,17 @@ setMethod("[", "peakPantheRAnnotation",
             }
 
             ## sub-setting
-            .cpdID      <- x@cpdID[j]
-            .cpdName    <- x@cpdName[j]
-            .ROI        <- x@ROI[j,]
-            .FIR        <- x@FIR[j,]
-            .uROI       <- x@uROI[j,]
-            .filepath   <- x@filepath[i]
-            .uROIExist  <- x@uROIExist
-            .useFIR     <- x@useFIR
-            .TIC        <- x@TIC[i]
+            .cpdID            <- x@cpdID[j]
+            .cpdName          <- x@cpdName[j]
+            .ROI              <- x@ROI[j,]
+            .FIR              <- x@FIR[j,]
+            .uROI             <- x@uROI[j,]
+            .filepath         <- x@filepath[i]
+            .acquisitionTime  <- x@acquisitionTime[i]
+            .uROIExist        <- x@uROIExist
+            .useUROI          <- x@useUROI
+            .useFIR           <- x@useFIR
+            .TIC              <- x@TIC[i]
 
             ## peakTables, filter samples first, then compounds in each table
             tmp_peakTables  <- x@peakTables[i]
@@ -252,7 +272,9 @@ setMethod("[", "peakPantheRAnnotation",
                                   FIR = .FIR,
                                   uROI = .uROI,
                                   filepath = .filepath,
+                                  acquisitionTime = .acquisitionTime,
                                   uROIExist = .uROIExist,
+                                  useUROI = .useUROI,
                                   useFIR = .useFIR,
                                   TIC = .TIC,
                                   peakTables = .peakTables,

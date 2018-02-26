@@ -12,7 +12,9 @@
 #' @slot FIR A data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @slot uROI A data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @slot filepath A character vector of file paths, of length number of spectra files
+#' @slot acquisitionTime A character vector of acquisition date-time (converted from POSIXct) or NA
 #' @slot uROIExist A logical stating if uROI have been set
+#' @slot useUROI A logical stating if uROI are to be used
 #' @slot useFIR A logical stating if FIR are to be used
 #' @slot TIC A numeric vector of TIC or NA, of length number of spectra files
 #' @slot peakTables A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.
@@ -74,12 +76,14 @@
 #' annotation
 #' # An object of class peakPantheRAnnotation
 #' #  2 compounds in 3 samples.
-#' #   without updated ROI (uROI)
-#' #   without fallback integration regions (FIR)
+#' #   updated ROI do not exist (uROI)
+#' #   does not use updated ROI (uROI)
+#' #   does not use fallback integration regions (FIR)
 #'
 #' slotNames(annotation)
-#' # [1] "cpdID"      "cpdName"    "ROI"        "FIR"        "uROI"       "filepath"   "uROIExist"
-#' # [8] "useFIR"     "TIC"        "peakTables" "EICs"
+#' # [1]  "cpdID"           "cpdName"    "ROI"        "FIR"        "uROI"       "filepath"
+#' # [7]  "acquisitionTime" "uROIExist"  "useUROI"    "useFIR"     "TIC"        "peakTables"
+#' # [13] "EICs"
 #'
 #' annotation@cpdID
 #' # [1] 1 2
@@ -100,7 +104,11 @@
 #' annotation@filepath
 #' # [1] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko16.CDF"
 #' # [2] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko18.CDF"
+#' annotation@acquisitionTIme
+#' # [1] NA NA NA
 #' annotation@uROIExist
+#' # [1] FALSE
+#' annotation@useUROI
 #' # [1] FALSE
 #' annotation@useFIR
 #' # [1] FALSE
@@ -137,7 +145,9 @@ peakPantheRAnnotation <- setClass("peakPantheRAnnotation",
                                            FIR = "data.frame",
                                            uROI = "data.frame",
                                            filepath = "character",
+                                           acquisitionTime = "character",
                                            uROIExist = "logical",
+                                           useUROI = "logical",
                                            useFIR = "logical",
                                            TIC = "numeric",
                                            peakTables = "list",

@@ -14,7 +14,8 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
   stringsAsFactors = F), uROI = data.frame(rtMin = numeric(), rt = numeric(),
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), filepath = character(), uROIExist = FALSE,
+  stringsAsFactors = F), filepath = character(),
+  acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
   useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list())
 
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
@@ -24,7 +25,8 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
   stringsAsFactors = F), uROI = data.frame(rtMin = numeric(), rt = numeric(),
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), filepath = character(), uROIExist = FALSE,
+  stringsAsFactors = F), filepath = character(),
+  acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
   useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list())
 }
 \arguments{
@@ -44,7 +46,11 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
 
 \item{filepath}{A character vector of file paths, of length number of spectra files}
 
+\item{acquisitionTime}{A character vector of acquisition date-time (converted from POSIXct) or NA}
+
 \item{uROIExist}{A logical stating if uROI have been set}
+
+\item{useUROI}{A logical stating if uROI are to be used}
 
 \item{useFIR}{A logical stating if FIR are to be used}
 
@@ -79,7 +85,11 @@ HERE DETAIL \code{targetFeatTable} and \code{annotationTable} which are generate
 
 \item{\code{filepath}}{A character vector of file paths, of length number of spectra files}
 
+\item{\code{acquisitionTime}}{A character vector of acquisition date-time (converted from POSIXct) or NA}
+
 \item{\code{uROIExist}}{A logical stating if uROI have been set}
+
+\item{\code{useUROI}}{A logical stating if uROI are to be used}
 
 \item{\code{useFIR}}{A logical stating if FIR are to be used}
 
@@ -146,12 +156,14 @@ annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=t
 annotation
 # An object of class peakPantheRAnnotation
 #  2 compounds in 3 samples.
-#   without updated ROI (uROI)
-#   without fallback integration regions (FIR)
+#   updated ROI do not exist (uROI)
+#   does not use updated ROI (uROI)
+#   does not use fallback integration regions (FIR)
 
 slotNames(annotation)
-# [1] "cpdID"      "cpdName"    "ROI"        "FIR"        "uROI"       "filepath"   "uROIExist"
-# [8] "useFIR"     "TIC"        "peakTables" "EICs"
+# [1]  "cpdID"           "cpdName"    "ROI"        "FIR"        "uROI"       "filepath"
+# [7]  "acquisitionTime" "uROIExist"  "useUROI"    "useFIR"     "TIC"        "peakTables"
+# [13] "EICs"
 
 annotation@cpdID
 # [1] 1 2
@@ -172,7 +184,11 @@ annotation@uROI
 annotation@filepath
 # [1] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko16.CDF"
 # [2] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko18.CDF"
+annotation@acquisitionTIme
+# [1] NA NA NA
 annotation@uROIExist
+# [1] FALSE
+annotation@useUROI
 # [1] FALSE
 annotation@useFIR
 # [1] FALSE
