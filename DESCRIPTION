@@ -1,7 +1,7 @@
 Package: peakPantheR
 Title: Peak Picking and ANnoTation of High resolution Experiments in R
-Version: 1.0.2
-Date: 2018-02-12
+Version: 1.0.3
+Date: 2018-02-26
 Authors@R: c(person("Arnaud", "Wolfer", email = "aw4212@imperial.ac.uk", role = c("aut", "cre")))
 Description: peakPantheR detects, integrates and reports pre-defined features in MS files using XCMS3.
 Depends: R (>= 3.4.0)
