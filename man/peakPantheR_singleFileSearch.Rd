@@ -6,27 +6,29 @@
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
   fitGauss = FALSE, peakStatistic = FALSE, getEICs = FALSE,
-  plotEICsPath = NA, verbose = TRUE, ...)
+  plotEICsPath = NA, getAcquTime = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
 
-\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).}
+\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
 \item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
 
-\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Asymmetry factor}
+\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailing factor' and 'asymmetry factor'}
 
 \item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
 
-\item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved}
+\item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved}
 
-\item{verbose}{(bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)}
+\item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)}
+
+\item{verbose}{(bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)}
 
 \item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters}
 }
 \value{
-a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI.
+a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata.
 
 \subsection{Details:}{
   The returned \emph{peakTable} \code{data.frame} is structured as follow:
@@ -104,6 +106,14 @@ res
 #
 # $EICs
 # [1] NA
+#
+# $acquTime
+# [1] NA
 }
 
+}
+\seealso{
+Other peakPantheR: \code{\link{peakPantheRAnnotation}}
+
+Other parallelAnnotation: \code{\link{peakPantheRAnnotation}}
 }

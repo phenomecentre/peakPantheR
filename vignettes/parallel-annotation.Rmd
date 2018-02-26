@@ -1,0 +1,62 @@
+---
+title: "Parallel Annotation"
+author: "Arnaud Wolfer"
+date: "2018-02-21"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Parallel Annotation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The `peakPantheR` package is designed for the detection, integration and reporting of pre-defined features in MS files.
+
+The **Parallel Annotation** is set to detect and integrate **multiple** compounds in **multiple** files in **parallel** and store results in a **single** object.
+
+Using an example dataset, this vignette will:
+
+* Detail the Parallel Annotation concept
+* Apply the Parallel Annotation to an example dataset
+
+
+## Parallel Annotation Concept
+
+Parallel compound integration is set to:
+
+* process **multiple** compounds in **multiple** files in **parallel**, store results in a **single** object
+* load list of expected _RT_ / _m/z_ ROI and list of files to process
+* initialise output object with expected ROI and file paths
+* first pass (_without peak filling_):
+    + for each file, detect features in each ROI and keep highest intensity
+    + determine peak statistics for each feature
+    + store results + EIC for each ROI
+* visual inspection of first pass results, update ROI:
+    + plot all EICs, peak apex _RT_ / _m/z_ & peak width evolution
+    + correct ROI (remove interfering feature, correct _RT_ shift)
+    + define fallback integration regions (FIR) if no feature is detected (median _RT_ / _m/z_ start and end of found features)
+* initialise new output object, with updated regions of interest (uROI) and fallback integration regions (FIR)
+* second pass (_with peak filling_):
+    + for each file, detect features in each uROI and keep highest intensity
+    + determine peak statistics for each feature
+    + integrate FIR when no peaks found
+    + store results + EIC for each uROI
+* summary statistics:
+    + plot EICs, apex and peakwidth evolution
+    + compare first and second pass
+* return result object and/or table (_row: file, col: compound_)
+
+
+## Parallel Annotation Example
+
+
+## See Also
+
+* [Getting Started with peakPantheR](getting-started.html)
+* [Real Time Annotation](real-time-annotation.html)
