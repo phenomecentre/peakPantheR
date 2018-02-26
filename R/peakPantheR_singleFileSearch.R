@@ -10,15 +10,16 @@
 #' Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access.
 #'
 #' @param singleSpectraDataPath (str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).
-#' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (double in seconds), \code{mzMin} (float in seconds), \code{mz} (float in seconds, or \emph{NA}), \code{mzMax} (float in seconds).
+#' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
-#' @param peakStatistic (bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Asymmetry factor
+#' @param peakStatistic (bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailing factor' and 'asymmetry factor'
 #' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.
-#' @param plotEICsPath (str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved
-#' @param verbose (bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)
+#' @param plotEICsPath (str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved
+#' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)
+#' @param verbose (bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
 #'
-#' @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI.
+#' @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata.
 #'
 #' \subsection{Details:}{
 #'   The returned \emph{peakTable} \code{data.frame} is structured as follow:
@@ -93,6 +94,9 @@
 #' #
 #' # $EICs
 #' # [1] NA
+#' #
+#' # $acquTime
+#' # [1] NA
 #' }
 #'
 #' @family peakPantheR
@@ -100,7 +104,7 @@
 #' @family parallelAnnotation
 #'
 #' @export
-peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, verbose=TRUE, ...) {
+peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE, ...) {
   stime <- Sys.time()
 
   ## Check input
@@ -144,10 +148,16 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     if (sum(foundPeakTable$found)!=0) {
 
     	## Collect ROI EICs
-    	EICs 				<- NA
+    	EICs 				<- NULL
     	if (getEICs) {
     		eicstime 	<- Sys.time()
-    		EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+    		if (dim(targetFeatTable)[1] == 1) {
+    		  # only one row (targeted feature)
+    		  EICs			<- xcms::chromatogram(raw_data, rt = c(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = c(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+    		} else {
+    		  # multiple row (targeted feature)
+    		  EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+    		}
     		eicetime 	<- Sys.time()
     		if (verbose) { message('EICs loaded in: ', round(as.double(difftime(eicetime,eicstime)),2),' ',units(difftime(eicetime,eicstime)))}
     	}
@@ -172,14 +182,20 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     } else {
       if (verbose) {message('- No features found to integrate, only TIC will be reported -')}
       finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
-      EICs        <- NA
+      EICs        <- NULL
     }
 
   ## No target features, initialise empty integration results and EICs
   } else {
     if (verbose) {message('- No target features passed in \'targetFeatTable\', no integration, only TIC will be reported -')}
     finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
-    EICs        <- NA
+    EICs        <- NULL
+  }
+
+  # Get AcquTime
+  AcquTime <- NA
+  if (getAcquTime) {
+    AcquTime <- getAcquisitionDatemzML(mzMLPath=singleSpectraDataPath, verbose=verbose)
   }
 
   etime <- Sys.time()
@@ -187,5 +203,5 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     message('Feature search done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
   }
 
-  return(list(TIC=TICvalue, peakTable=finalOutput, EICs=EICs))
+  return(list(TIC=TICvalue, peakTable=finalOutput, EICs=EICs, acquTime=AcquTime))
 }
