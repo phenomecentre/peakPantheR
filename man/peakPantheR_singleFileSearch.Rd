@@ -15,15 +15,15 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
 
-\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: deviation, FWHM, Tailing factor, Asymmetry factor}
+\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailing factor' and 'asymmetry factor'}
 
 \item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
 
-\item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plt saved}
+\item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved}
 
-\item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata}
+\item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)}
 
-\item{verbose}{(bool) If TRUE message calculation progresss, time taken and number of features found (total and matched to targets)}
+\item{verbose}{(bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)}
 
 \item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters}
 }

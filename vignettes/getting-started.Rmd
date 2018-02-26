@@ -55,6 +55,10 @@ Both real time and parallel compound integration require a common set of informa
 
 
 The _`faahKO`_ package provides with a set of MS spectra that we can use for `peakPantheR` annotation:
+```{r, echo = FALSE, include = FALSE}
+# hide package load message
+library(faahKO)
+```
 ```{r}
 library(faahKO)
 ## file paths
