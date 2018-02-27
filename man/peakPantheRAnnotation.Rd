@@ -212,7 +212,9 @@ annotation@EICs
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheR_singleFileSearch}}
+Other peakPantheR: \code{\link{peakPantheR_parallelAnnotation}},
+  \code{\link{peakPantheR_singleFileSearch}}
 
-Other parallelAnnotation: \code{\link{peakPantheR_singleFileSearch}}
+Other parallelAnnotation: \code{\link{peakPantheR_parallelAnnotation}},
+  \code{\link{peakPantheR_singleFileSearch}}
 }

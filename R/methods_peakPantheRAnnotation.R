@@ -128,10 +128,12 @@ setMethod("TIC", "peakPantheRAnnotation",
             object@TIC
           })
 # peakTables
+# add back cpdID and cpdName
 setGeneric("peakTables", function(object, ...) standardGeneric("peakTables"))
 setMethod("peakTables", "peakPantheRAnnotation",
           function(object) {
-            object@peakTables
+            tmpPeakTables <- lapply(object@peakTables, function(x) {cbind(x, cpdID=object@cpdID, cpdName=object@cpdName)})
+            return(tmpPeakTables)
           })
 # EICs
 setGeneric("EICs", function(object, ...) standardGeneric("EICs"))

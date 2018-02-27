@@ -47,6 +47,7 @@
 #'     scpos \tab Peak position found by wavelet analysis (scan number)\cr
 #'     scmin \tab Left peak limit found by wavelet analysis (scan number)\cr
 #'     scmax \tab Right peak limit found by wavelet analysis (scan number)\cr
+#'     is_filled \tab Logical indicate if the feature was integrated using FIR (Fallback Integration Region)\cr
 #'     ppm_error \tab difference in ppm between the expected and measured m/z, not available if \code{peakStatistic=FALSE}\cr
 #'     rt_dev_sec \tab difference in seconds between the expected and measured rt, not available if \code{peakStatistic=FALSE}\cr
 #'     FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}, not available if \code{peakStatistic=FALSE}\cr
