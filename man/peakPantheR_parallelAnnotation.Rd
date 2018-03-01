@@ -27,7 +27,9 @@ a list: \code{list()$result} \emph{(peakPantheRAnnotation)} fully annotated obje
 Integrate all target features in all files defined in the initialised input object and store results. The use of updated ROI and the integration of FIR are controled by the input object slots \code{useUROI} and \code{useFIR}. Files are processed in parallel using \code{link{peakPantheR_singleFileSearch}}; \code{ncores} controls the number of cores used for parallelisation, with \code{ncores=0} corresponding to serial processing. If the processing of a file fails (file does not exist or error during execution) the sample is removed from the outputed object.
 }
 \examples{
-
+\dontrun{
+# placeholder
+}
 
 }
 \seealso{

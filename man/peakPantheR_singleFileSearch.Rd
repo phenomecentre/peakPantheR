@@ -6,7 +6,8 @@
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
   fitGauss = FALSE, peakStatistic = FALSE, getEICs = FALSE,
-  plotEICsPath = NA, getAcquTime = FALSE, verbose = TRUE, ...)
+  plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
@@ -22,6 +23,8 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 \item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved}
 
 \item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)}
+
+\item{FIR}{(data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)}
 
@@ -67,7 +70,7 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
 }
 }
 \description{
-Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access.
+Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access. Features not detected can be integrated using fallback integration regions (FIR).
 }
 \examples{
 \dontrun{

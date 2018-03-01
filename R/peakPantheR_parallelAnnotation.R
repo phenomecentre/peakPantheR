@@ -13,7 +13,9 @@
 #' @return a list: \code{list()$result} \emph{(peakPantheRAnnotation)} fully annotated object, \code{list()$failures} \emph{(list)} list of failed samples and error message
 #'
 #' @examples
-#'
+#' \dontrun{
+#' # placeholder
+#' }
 #'
 #' @family peakPantheR
 #' @family parallelAnnotation

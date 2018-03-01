@@ -23,7 +23,7 @@ peakTable_FitGauss[2,]  <- c(2, NA, TRUE, 496.2000122, 496.2000122, 496.2000122,
 peakTable_FitGauss[3,]  <- c(3, NA, TRUE, 464.2000122, 464.2000122, 464.2000122, 3456.000, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, 0.04489731232, 610.6945623, 7.504713149, 381973.2736, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0, 0.026281775128549539, 1.565, 27.656069615314664, 11, NA, 1.3741191650431608)
 peakTable_FitGauss[4,]  <- c(4, NA, TRUE, 536.2000122, 536.2000122, 536.2000122, 3704.827, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, 0.07353430967, 769.5553377, 6.824007014, 324408.4744, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0, 0.022752704030186234, 3.130, 25.147467808758392, 11, 1.1968986203515855, 1.3314781556202822)
 peakTable_FitGauss[,2]  <- c("testCpd 1", "testCpd 2, 2 peaks in box", "testCpd 3", "testCpd 4")
-peakTable_FitGauss[,3]  <- sapply(peakTable_FitGauss[,3], as.logical)
+peakTable_FitGauss[,c(3,27)]  <- sapply(peakTable_FitGauss[,c(3,27)], as.logical)
 
 # peakTable no fitGauss
 peakTable_noFitGauss      <- data.frame(matrix(vector(), 4, 33, dimnames=list(c(), c("cpdID", "cpdName", "found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
@@ -32,7 +32,7 @@ peakTable_noFitGauss[2,]  <- c(2, NA, TRUE, 496.2000122, 496.2000122, 496.200012
 peakTable_noFitGauss[3,]  <- c(3, NA, TRUE, 464.2000122, 464.2000122, 464.2000122, 3454.435, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, NA, NA, NA, NA, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0, 0.026296922148575364, 0.00, NA, 11, NA, 1.5506880253870328)
 peakTable_noFitGauss[4,]  <- c(4, NA, TRUE, 536.2000122, 536.2000122, 536.2000122, 3701.697, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, NA, NA, NA, NA, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0, 0.022765817240815486, 0.00, NA, 11, 1.4026668257511667, 1.7784490549015182)
 peakTable_noFitGauss[,2]  <- c("testCpd 1", "testCpd 2, 2 peaks in box", "testCpd 3", "testCpd 4")
-peakTable_noFitGauss[,3]  <- sapply(peakTable_noFitGauss[,3], as.logical)
+peakTable_noFitGauss[,c(3,27)]  <- sapply(peakTable_noFitGauss[,c(3,27)], as.logical)
 
 # expected EICs
 raw_data  <- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='onDisk')
@@ -149,10 +149,12 @@ test_that('change centwave param with ... (change snthresh), no fitGauss, no pea
   # Expected TIC
   expected_TIC        <- 2410533091
   # Expected peakTable
-  expected_peakTable            <- peakTable_noFitGauss[,c(3:27,1:2)]
-  expected_peakTable[4,]        <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA)
-  expected_peakTable$cpdName[4] <- 'testCpd 4'
-  expected_peakTable$found      <- sapply(expected_peakTable$found, as.logical)
+  expected_peakTable              <- peakTable_noFitGauss[,c(3:27,1:2)]
+  expected_peakTable[4,]          <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 4, NA)
+  expected_peakTable$cpdName[4]   <- 'testCpd 4'
+  expected_peakTable$is_filled[4] <- 0
+  expected_peakTable$found        <- sapply(expected_peakTable$found, as.logical)
+  expected_peakTable$is_filled    <- sapply(expected_peakTable$is_filled, as.logical)
   # Expected EICs
   expected_EICs       <- NULL
   # Expected acquTime
@@ -238,13 +240,17 @@ test_that('no features found', {
   # Expected TIC
   expected_TIC        <- 2410533091
   # Expected peakTable
-  expected_peakTable  <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
+  expected_peakTable  <- data.frame(matrix(vector(), 1, 27, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName'))), stringsAsFactors=F)
+  expected_peakTable$cpdID      <- 1
+  expected_peakTable$cpdName    <- "testCpd 1"
+  expected_peakTable$found      <- FALSE
+  expected_peakTable$is_filled  <- FALSE
   # Expected EICs
   expected_EICs       <- NULL
   # Expected acquTime
   expected_acquTime   <- NA
   # Expected messages
-  expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " FAIL: none found!\n", "- No features found to integrate, only TIC will be reported -\n")
+  expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " FAIL: none found!\n")
 
   # results (output, warnings and messages)
   result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, noMatchTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE))
@@ -256,8 +262,8 @@ test_that('no features found', {
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
   # Check messages (4 can be checked, fourth and sixth have run time)
-  expect_equal(length(result_singleFileSearch$messages), 6)
-  expect_equal(result_singleFileSearch$messages[c(1:3,5)], expected_messages)
+  expect_equal(length(result_singleFileSearch$messages), 5)
+  expect_equal(result_singleFileSearch$messages[c(1:3)], expected_messages)
 })
 
 test_that('raise errors', {

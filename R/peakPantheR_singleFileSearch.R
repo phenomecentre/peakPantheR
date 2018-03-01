@@ -7,7 +7,7 @@
 
 #' Search, integrate and report targeted features in a raw spectra
 #'
-#' Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access.
+#' Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access. Features not detected can be integrated using fallback integration regions (FIR).
 #'
 #' @param singleSpectraDataPath (str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
@@ -16,6 +16,7 @@
 #' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.
 #' @param plotEICsPath (str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved
 #' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)
+#' @param FIR (data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @param verbose (bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
 #'
@@ -105,7 +106,7 @@
 #' @family parallelAnnotation
 #'
 #' @export
-peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE, ...) {
+peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=TRUE, ...) {
   stime <- Sys.time()
 
   ## Check input
@@ -128,6 +129,23 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     getEICs <- TRUE
   }
 
+  useFIR <- FALSE
+  if (!is.null(FIR)) {
+    # FIR is Data.frame
+    if (!is.data.frame(FIR)) {
+      stop('Check input, FIR must be a data.frame not ', class(FIR))
+    }
+    # FIR number of rows
+    if (dim(FIR)[1] != dim(targetFeatTable)[1]) {
+      stop('Check input, FIR must have the same number of rows as targetFeatTable')
+    }
+    # FIR columns
+    if (!all(c("mzMin","mzMax","rtMin","rtMax") %in% colnames(FIR))) {
+      stop('Check input, FIR must have "mzMin", "mzMax", "rtMin" and "rtMax" as columns')
+    }
+    useFIR <- TRUE
+  }
+
 
   ## Read file
   raw_data  <- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='onDisk')
@@ -145,48 +163,54 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     ## Integrate features using ROI
     foundPeakTable <- findTargetFeatures(raw_data, ROIList, verbose=verbose, fitGauss=fitGauss, ...)
 
-    # Only keep going if an integration region is found
-    if (sum(foundPeakTable$found)!=0) {
-
-    	## Collect ROI EICs
-    	EICs 				<- NULL
-    	if (getEICs) {
-    		eicstime 	<- Sys.time()
-    		if (dim(targetFeatTable)[1] == 1) {
-    		  # only one row (targeted feature)
-    		  EICs			<- xcms::chromatogram(raw_data, rt = c(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = c(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
-    		} else {
-    		  # multiple row (targeted feature)
-    		  EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
-    		}
-    		eicetime 	<- Sys.time()
-    		if (verbose) { message('EICs loaded in: ', round(as.double(difftime(eicetime,eicstime)),2),' ',units(difftime(eicetime,eicstime)))}
-    	}
-
-      ## Add compound information
-      finalOutput         <- foundPeakTable
-      finalOutput$cpdID   <- targetFeatTable$cpdID
-      finalOutput$cpdName <- targetFeatTable$cpdName
-
-      ## Add deviation, FWHM, Tailing factor, Asymmetry factor
-      if(peakStatistic){
-    		# don't read EICs from file if already done
-        finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput, usePreviousEICs=EICs, verbose=verbose)
-      }
-
-      ## Save all EICs plot
-      if(!is.na(plotEICsPath)) {
-        save_multiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
-      }
-
-    ## No integration region found, initialise empty integration results and EICs
-    } else {
-      if (verbose) {message('- No features found to integrate, only TIC will be reported -')}
-      finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
-      EICs        <- NULL
+    # If no features are found, need to add back the missing columns
+    if (sum(foundPeakTable$found) == 0) {
+      foundPeakTable <- data.frame(matrix(vector(), dim(targetFeatTable)[1], 25, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled'))), stringsAsFactors=F)
+      # set found to FALSE
+      foundPeakTable$found <- rep(FALSE, dim(targetFeatTable)[1])
     }
 
-  ## No target features, initialise empty integration results and EICs
+  	## Collect ROI EICs
+  	EICs 				<- NULL
+  	if (getEICs) {
+  		eicstime 	<- Sys.time()
+  		if (dim(targetFeatTable)[1] == 1) {
+  		  # only one row (targeted feature)
+  		  EICs			<- xcms::chromatogram(raw_data, rt = c(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = c(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+  		} else {
+  		  # multiple row (targeted feature)
+  		  EICs			<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+  		}
+  		eicetime 	<- Sys.time()
+  		if (verbose) { message('EICs loaded in: ', round(as.double(difftime(eicetime,eicstime)),2),' ',units(difftime(eicetime,eicstime)))}
+  	}
+
+    ## Add compound information
+    finalOutput           <- foundPeakTable
+    finalOutput$cpdID     <- targetFeatTable$cpdID
+    finalOutput$cpdName   <- targetFeatTable$cpdName
+    # Replace missing is_filled and set to logical
+    finalOutput[(is.na(finalOutput$is_filled) | is.nan(finalOutput$is_filled)), 'is_filled'] <- 0
+    finalOutput$is_filled <- as.logical(finalOutput$is_filled)
+
+
+    ## Add deviation, FWHM, Tailing factor, Asymmetry factor
+    if(peakStatistic){
+      # don't read EICs from file if already done
+      finalOutput   <- getTargetFeatureStatistic(raw_data, targetFeatTable, finalOutput, usePreviousEICs=EICs, verbose=verbose)
+    }
+
+    ## Fill features not found based on FIR
+    if (useFIR) {
+      finalOutput   <- integrateFIR(raw_data, FIR, finalOutput, verbose=verbose)
+    }
+
+    ## Save all EICs plot
+    if(!is.na(plotEICsPath)) {
+      save_multiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
+    }
+
+  ## No targeted features, initialise empty integration results and EICs
   } else {
     if (verbose) {message('- No target features passed in \'targetFeatTable\', no integration, only TIC will be reported -')}
     finalOutput <- data.frame(matrix(vector(), 0, 33, dimnames=list(c(), c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'cpdID', 'cpdName', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
@@ -196,7 +220,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
   # Get AcquTime
   AcquTime <- NA
   if (getAcquTime) {
-    AcquTime <- getAcquisitionDatemzML(mzMLPath=singleSpectraDataPath, verbose=verbose)
+    AcquTime    <- getAcquisitionDatemzML(mzMLPath=singleSpectraDataPath, verbose=verbose)
   }
 
   etime <- Sys.time()
