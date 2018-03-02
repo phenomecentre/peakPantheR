@@ -623,7 +623,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
     for (i in needsFilling_idx) {
 
       # get all data points
-      peakData  <- xcms::extractMsData(rawSpec, mz = FIR[i, c("mzMin", "mzMax")], rt = FIR[i, c("rtMin", "rtMax")])[[1]]
+      peakData  <- xcms::extractMsData(rawSpec, mz = c(FIR$mzMin[i], FIR$mzMax[i]), rt = c(FIR$rtMin[i], FIR$rtMax[i]))[[1]]
 
       # Only continue if a scan is found in the box
       if (dim(peakData)[1] != 0) {
@@ -660,7 +660,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
       ## If no scan found in that region, return default values
       } else {
 
-        if (verbose) { message("No scan present in the FIR # ", needsFilling_idx[i], ": rt and mz are set as the middle of the FIR box; maxo, into and intb are set to 0") }
+        if (verbose) { message("No scan present in the FIR # ", i, ": rt and mz are set as the middle of the FIR box; maxo, into and intb are set to 0") }
 
         tmpResult[i, c("mzMin", "mzMax", "rtMin", "rtMax")]   <- FIR[i, c("mzMin", "mzMax", "rtMin", "rtMax")]
         tmpResult[i, "rt"]    <- mean(c(FIR$rtMin[i], FIR$rtMax[i]))
@@ -672,7 +672,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
     }
 
     # Replace results with FIR integration
-    outTable[needsFilling_idx, c("mzmin", "mz", "mzmax", "rtmin", "rt", "rtmax", "maxo", "into", "intb")] <- tmpResult[, c("mzMin", "mz", "mzMax", "rtMin", "rt", "rtMax", "maxo", "into", "intb")]
+    outTable[needsFilling_idx, c("mzmin", "mz", "mzmax", "rtmin", "rt", "rtmax", "maxo", "into", "intb")] <- tmpResult[needsFilling_idx, c("mzMin", "mz", "mzMax", "rtMin", "rt", "rtMax", "maxo", "into", "intb")]
     outTable$is_filled[needsFilling_idx]  <- TRUE
     outTable$found[needsFilling_idx]      <- TRUE
   }

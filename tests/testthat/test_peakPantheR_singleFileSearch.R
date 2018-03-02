@@ -52,7 +52,7 @@ test_that('with fitGauss, no peakStatistic, no getEICs, no plotEICsPath, no getA
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
 
 	# results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=TRUE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=TRUE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=FALSE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -77,7 +77,7 @@ test_that('no fitGauss, with peakStatistic, no getEICs, no plotEICsPath, no getA
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=TRUE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=TRUE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=FALSE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -102,7 +102,7 @@ test_that('no fitGauss, no peakStatistic, with getEICs, no plotEICsPath, getAcqu
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n", "Check input, mzMLPath must be a .mzML\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=TRUE, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=TRUE, FIR=NULL, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -130,7 +130,7 @@ test_that('no fitGauss, no peakStatistic, no getEICs, with plotEICsPath (should 
   savePath            <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=savePath, getAcquTime=FALSE, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=savePath, getAcquTime=FALSE, FIR=NULL, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -163,7 +163,7 @@ test_that('change centwave param with ... (change snthresh), no fitGauss, no pea
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE, snthresh=20))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=FALSE, snthresh=20))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -191,7 +191,7 @@ test_that('only one targetFeature, with getEICs', {
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " OK: 1 found.\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, oneTargetFeature, fitGauss=TRUE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=FALSE, verbose=FALSE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, oneTargetFeature, fitGauss=TRUE, peakStatistic=FALSE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=FALSE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -219,7 +219,7 @@ test_that('no targetFeatures on import', {
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "- No target features passed in 'targetFeatTable', no integration, only TIC will be reported -\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, emptyTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, emptyTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -232,7 +232,7 @@ test_that('no targetFeatures on import', {
   expect_equal(result_singleFileSearch$messages[1:2], expected_messages)
 })
 
-test_that('no features found', {
+test_that('no features found without FIR', {
   # Empty targetFeatures
   noMatchTargetFeatures         <- targetFeatTable[1,]
   noMatchTargetFeatures[1, 6:8] <- c(52.194778, 52.2, 52.205222)
@@ -253,7 +253,7 @@ test_that('no features found', {
   expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 1 regions of interest ...", " FAIL: none found!\n")
 
   # results (output, warnings and messages)
-  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, noMatchTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, verbose=TRUE))
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, noMatchTargetFeatures, fitGauss=FALSE, peakStatistic=FALSE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=TRUE))
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
@@ -266,11 +266,51 @@ test_that('no features found', {
   expect_equal(result_singleFileSearch$messages[c(1:3)], expected_messages)
 })
 
+test_that('one feature not found with a FIR', {
+  # input FIR (use previously found peaks dimension. Need to widen mz as this test data doesn't give any mz width)
+  input_FIR           <- peakTable_noFitGauss[,c("mzmin", "mzmax", "rtmin", "rtmax")]
+  colnames(input_FIR) <- c("mzMin", "mzMax", "rtMin", "rtMax")
+  input_FIR$mzMin     <- input_FIR$mzMin - 0.0005
+  input_FIR$mzMax     <- input_FIR$mzMax + 0.0005
+  # Expected TIC
+  expected_TIC        <- 2410533091
+  # Expected peakTable
+  expected_peakTable              <- peakTable_noFitGauss[,c(3:27,1:2,28:33)]
+  expected_peakTable[4,]          <- c(TRUE, 536.2, 536.1995, 536.2005, 3701.697, 3682.918, 3729.867, 8244658, 8244658, 330176, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, TRUE, 4, NA, NA, NA, NA, NA, NA, NA)
+  expected_peakTable$cpdName[4]   <- 'testCpd 4'
+  expected_peakTable$is_filled[4] <- 1
+  expected_peakTable$found        <- sapply(expected_peakTable$found, as.logical)
+  expected_peakTable$is_filled    <- sapply(expected_peakTable$is_filled, as.logical)
+  expected_peakTable$tailingFactor<- sapply(expected_peakTable$tailingFactor, as.logical)
+  # Expected EICs
+  expected_EICs       <- NULL
+  # Expected acquTime
+  expected_acquTime   <- NA
+  # Expected messages
+  expected_messages   <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n")
+
+  # results (output, warnings and messages)
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, peakStatistic=TRUE, getEICs=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=input_FIR, verbose=FALSE, snthresh=20))
+
+  # Check results
+  expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
+  expect_equal(result_singleFileSearch$result$EICs, expected_EICs)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
+
+  # Check messages (3 from centwave)
+  expect_equal(result_singleFileSearch$messages, expected_messages)
+})
+
 test_that('raise errors', {
   # paths to trigger errors
   fakeInputPath     <- './notAPath/test.CDF'
   fakeOutputPath    <- './notAPath/save.png'
   wrongOutputFormat <- './notAPNG.txt'
+  # FIR to trigger errors
+  notADataFrame     <- 'not at dataframe'
+  wrongNbrows       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("mzMin", "mzMax", "rtMin", "rtMax"))), stringsAsFactors=F)
+  wrongCols         <- data.frame(matrix(vector(), 4, 4, dimnames=list(c(), c("wrongCol name", "mzMax", "rtMin", "rtMax"))), stringsAsFactors=F)
 
   # singleSpectraDataPath doesnt exist
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath=fakeInputPath, targetFeatTable), "Check input, file*")
@@ -278,4 +318,11 @@ test_that('raise errors', {
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, plotEICsPath=fakeOutputPath), "Check input, plotEICsPath folder*")
   # save file is not a .png
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, plotEICsPath=wrongOutputFormat), "Check input, plotEICsPath file name*")
+
+  # FIR is not a data.frame
+  expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, FIR=notADataFrame), "Check input, FIR must be a data.frame not character")
+  # FIR has wrong number of rows
+  expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, FIR=wrongNbrows), "Check input, FIR must have the same number of rows as targetFeatTable")
+  # FIR columns are wrong
+  expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, FIR=wrongCols), 'Check input, FIR must have "mzMin", "mzMax", "rtMin" and "rtMax" as columns')
 })
