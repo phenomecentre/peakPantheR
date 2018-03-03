@@ -58,6 +58,24 @@ test_that('default parameters, no verbose', {
   expect_equal(length(result_plot$messages), 0)
 })
 
+test_that('only one plot, no verbose', {
+  # input
+  singleEICs            <- xcms::chromatogram(raw_data, rt = c(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = c(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+  singleFoundPeakTable  <- foundPeakTable[1,]
+  # temporary file
+  savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
+
+  # results (output, warnings and messages)
+  result_plot <- evaluate_promise(save_multiEIC(singleEICs, singleFoundPeakTable, savePath3, width=15, height=15, verbose=FALSE))
+
+  # Check plot has been produced
+  expect_true(file.exists(savePath3))
+
+  # Check no result messages
+  expect_equal(length(result_plot$messages), 0)
+})
+
+
 test_that('raise errors', {
   savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
   # targetFeatTable and foundPeakTable dimension mismatch
