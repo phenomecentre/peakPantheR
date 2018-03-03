@@ -65,7 +65,7 @@ tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin
 
 
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3), isAnnotated=TRUE)
 
 
 
@@ -105,6 +105,8 @@ test_that('accessors return the correct values', {
   expect_equal(peakTables(filledAnnotation), expected_peakTables)
   # EICs
   expect_equal(EICs(filledAnnotation), expected_EICs)
+  # isAnnotated
+  expect_true(isAnnotated(filledAnnotation))
 
   # nbSamples
   expect_equal(nbSamples(filledAnnotation), 3)

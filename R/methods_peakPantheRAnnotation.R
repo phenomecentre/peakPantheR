@@ -35,6 +35,11 @@ setMethod("show",
             } else {
               cat("  does not use fallback integration regions (FIR)\n", sep="")
             }
+            if(object@isAnnotated) {
+              cat("  is annotated\n", sep="")
+            } else {
+              cat("  is not annotated\n", sep="")
+            }
             invisible(NULL)
           })
 
@@ -141,6 +146,12 @@ setMethod("EICs", "peakPantheRAnnotation",
           function(object) {
             object@EICs
           })
+# isAnnotated
+setGeneric("isAnnotated", function(object, ...) standardGeneric("isAnnotated"))
+setMethod("isAnnotated", "peakPantheRAnnotation",
+          function(object) {
+            object@isAnnotated
+          })
 # nbSamples
 setGeneric("nbSamples", function(object, ...) standardGeneric("nbSamples"))
 setMethod("nbSamples", "peakPantheRAnnotation",
@@ -240,6 +251,7 @@ setMethod("[", "peakPantheRAnnotation",
             .useUROI          <- x@useUROI
             .useFIR           <- x@useFIR
             .TIC              <- x@TIC[i]
+            .isAnnotated      <- x@isAnnotated
 
             ## peakTables, filter samples first, then compounds in each table
             tmp_peakTables  <- x@peakTables[i]
@@ -280,5 +292,6 @@ setMethod("[", "peakPantheRAnnotation",
                                   useFIR = .useFIR,
                                   TIC = .TIC,
                                   peakTables = .peakTables,
-                                  EICs = .EICs)
+                                  EICs = .EICs,
+                                  isAnnotated = .isAnnotated)
           })

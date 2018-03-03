@@ -16,7 +16,8 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
   stringsAsFactors = F), filepath = character(),
   acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
-  useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list())
+  useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list(),
+  isAnnotated = FALSE)
 
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   cpdID = numeric(), cpdName = character(), ROI = data.frame(rtMin =
@@ -27,7 +28,8 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
   stringsAsFactors = F), filepath = character(),
   acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
-  useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list())
+  useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list(),
+  isAnnotated = FALSE)
 }
 \arguments{
 \item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
@@ -59,6 +61,8 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
 \item{peakTables}{A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.}
 
 \item{EICs}{A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra.}
+
+\item{isAnnotated}{A logical stating in the annotation took place}
 }
 \description{
 The \code{peakPantheRAnnotation} class is designed to run and store peakPantheR parallel annotation results. Instances of the class are created with the \code{peakPantheRAnnotation} constructor function, which initialises an object of proper dimension with \code{spectraPaths} (set samples to process) and \code{targetFeatTable} (set compounds to target). \code{spectraPaths} is a character vector of spectra file paths. \code{targetFeatTable} is a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
@@ -97,7 +101,9 @@ HERE DETAIL \code{targetFeatTable} and \code{annotationTable} which are generate
 
 \item{\code{peakTables}}{A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.}
 
-\item{\code{EICs}}{A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra.
+\item{\code{EICs}}{A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra}
+
+\item{\code{isAnnotated}}{A logical stating if the annotation has taken place
 
 \subsection{Details:}{
   The \emph{peakTables} \code{data.frame} are structured as follow:
@@ -159,11 +165,12 @@ annotation
 #   updated ROI do not exist (uROI)
 #   does not use updated ROI (uROI)
 #   does not use fallback integration regions (FIR)
+#   is not annotated
 
 slotNames(annotation)
-# [1]  "cpdID"           "cpdName"    "ROI"        "FIR"        "uROI"       "filepath"
-# [7]  "acquisitionTime" "uROIExist"  "useUROI"    "useFIR"     "TIC"        "peakTables"
-# [13] "EICs"
+# [1]  "cpdID"           "cpdName"     "ROI"        "FIR"        "uROI"       "filepath"
+# [7]  "acquisitionTime" "uROIExist"   "useUROI"    "useFIR"     "TIC"        "peakTables"
+# [13] "EICs"            "isAnnotated"
 
 annotation@cpdID
 # [1] 1 2
@@ -208,6 +215,8 @@ annotation@EICs
 # NULL
 # [[3]]
 # NULL
+annotation@isAnnotated
+# [1] FALSE
 }
 
 }

@@ -5,7 +5,7 @@ context('peakPantheRAnnotation_class_initializeMethod()')
 
 test_that('initialize with default values', {
   # Expected values
-  expected_slotName <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "EICs")
+  expected_slotName <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "EICs", "isAnnotated")
   expected_ROI      <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
   expected_FIR      <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F)
   expected_uROI     <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
@@ -36,6 +36,7 @@ test_that('initialize with default values', {
   expect_equal(length(defaultInit@peakTables), 0)
   expect_true(is.list(defaultInit@EICs))
   expect_equal(length(defaultInit@EICs), 0)
+  expect_false(defaultInit@isAnnotated)
 })
 
 test_that('slot types are set in class definition', {
@@ -78,6 +79,9 @@ test_that('slot types are set in class definition', {
   # slot EICs is not a list
   msg13 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "EICs" in class "peakPantheRAnnotation": got class "character", should be or extend class "list"', sep='')
   expect_error(peakPantheRAnnotation(EICs='notAList'), msg13, fixed=TRUE)
+  # slot isAnnotated is not a logical
+  msg14 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "isAnnotated" in class "peakPantheRAnnotation": got class "character", should be or extend class "logical"', sep='')
+  expect_error(peakPantheRAnnotation(isAnnotated='notALogical'), msg14, fixed=TRUE)
 })
 
 test_that('initialize with spectraPaths', {
@@ -88,7 +92,7 @@ test_that('initialize with spectraPaths', {
   input_TIC                 <- c(1, 2, 3)
   input_peakTables          <- list(tmp_peakTables, tmp_peakTables, tmp_peakTables)
   input_EICs                <- list(list(), list(), list())
-  expected_slotName         <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "EICs")
+  expected_slotName         <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "EICs", "isAnnotated")
   expected_filepath         <- c('./path/file1', './path/file2', './path/file3')
   expected_acquisitionTime  <- as.character(c(NA, NA, NA))
   expected_ROI              <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
@@ -118,6 +122,7 @@ test_that('initialize with spectraPaths', {
   expect_equal(spectraAnnotation@TIC, expected_TIC)
   expect_equal(spectraAnnotation@peakTables, expected_peakTables)
   expect_equal(spectraAnnotation@EICs, expected_EICs)
+  expect_false(spectraAnnotation@isAnnotated)
 
   # Provide a acquisitionTime that shouldn't get replaced
   acquAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, acquisitionTime=input_acquisitionTime)
@@ -139,6 +144,7 @@ test_that('initialize with spectraPaths', {
   expect_equal(acquAnnotation@TIC, expected_TIC)
   expect_equal(acquAnnotation@peakTables, expected_peakTables)
   expect_equal(acquAnnotation@EICs, expected_EICs)
+  expect_false(acquAnnotation@isAnnotated)
 
   # Provide a TIC that shouldn't get replaced
   TICAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, TIC=input_TIC)
@@ -160,6 +166,7 @@ test_that('initialize with spectraPaths', {
   expect_equal(TICAnnotation@TIC, input_TIC)                  # change is here
   expect_equal(TICAnnotation@peakTables, expected_peakTables)
   expect_equal(TICAnnotation@EICs, expected_EICs)
+  expect_false(TICAnnotation@isAnnotated)
 
   # Provide a peakTables that shouldn't get replaced
   peakTablesAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, peakTables=input_peakTables)
@@ -181,6 +188,7 @@ test_that('initialize with spectraPaths', {
   expect_equal(peakTablesAnnotation@TIC, expected_TIC)
   expect_equal(peakTablesAnnotation@peakTables, input_peakTables) # change is here
   expect_equal(peakTablesAnnotation@EICs, expected_EICs)
+  expect_false(peakTablesAnnotation@isAnnotated)
 
   # Provide a EICs that shouldn't get replaced
   EICsAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, EICs=input_EICs)
@@ -202,6 +210,7 @@ test_that('initialize with spectraPaths', {
   expect_equal(EICsAnnotation@TIC, expected_TIC)
   expect_equal(EICsAnnotation@peakTables, expected_peakTables)
   expect_equal(EICsAnnotation@EICs, input_EICs)               # change is here
+  expect_false(EICsAnnotation@isAnnotated)
 
   # Trigger checks on spectraPaths input
   # spectraPaths not a character vector
@@ -221,7 +230,7 @@ test_that('initialize with targetFeatTable', {
   input_uROI      <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
   input_uROI[1,]  <- c(10., 11., 12., 13., 14., 15.)
   input_uROI[2,]  <- c(16., 17., 18., 19., 20., 21.)
-  expected_slotName   <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "EICs")
+  expected_slotName   <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "EICs", "isAnnotated")
   expected_cpdID      <- c(1,2)
   expected_cpdName    <- c('Cpd 1', 'Cpd 2')
   expected_ROI        <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
@@ -254,6 +263,7 @@ test_that('initialize with targetFeatTable', {
   expect_equal(length(targetFeatTableAnnotation@peakTables), 0)
   expect_true(is.list(targetFeatTableAnnotation@EICs))
   expect_equal(length(targetFeatTableAnnotation@EICs), 0)
+  expect_false(targetFeatTableAnnotation@isAnnotated)
 
   # Provide a FIR that shouldn't get replaced, and set useFIR
   FIRAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, FIR=input_FIR, useFIR=TRUE)
@@ -278,6 +288,7 @@ test_that('initialize with targetFeatTable', {
   expect_equal(length(FIRAnnotation@peakTables), 0)
   expect_true(is.list(FIRAnnotation@EICs))
   expect_equal(length(FIRAnnotation@EICs), 0)
+  expect_false(FIRAnnotation@isAnnotated)
 
   # Provide a uROI that shouldn't get replaced, and set uROIExist
   uROIAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, uROI=input_uROI, uROIExist=TRUE)
@@ -302,6 +313,7 @@ test_that('initialize with targetFeatTable', {
   expect_equal(length(uROIAnnotation@peakTables), 0)
   expect_true(is.list(uROIAnnotation@EICs))
   expect_equal(length(uROIAnnotation@EICs), 0)
+  expect_false(uROIAnnotation@isAnnotated)
 
   # Force uROIExist and useUROI to FALSE (despite setting to TRUE) as uROI is reset
   uROIResetAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, uROIExist=TRUE, useUROI=TRUE)
@@ -326,6 +338,7 @@ test_that('initialize with targetFeatTable', {
   expect_equal(length(uROIResetAnnotation@peakTables), 0)
   expect_true(is.list(uROIResetAnnotation@EICs))
   expect_equal(length(uROIResetAnnotation@EICs), 0)
+  expect_false(uROIResetAnnotation@isAnnotated)
 
 
   # Trigger checks on targetFeatTable input

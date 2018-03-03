@@ -17,6 +17,7 @@
 #' @param TIC A numeric vector of TIC or NA, of length number of spectra files
 #' @param peakTables A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.
 #' @param EICs A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra.
+#' @param isAnnotated A logical stating in the annotation took place
 peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   targetFeatTable = NULL,
                                   cpdID = numeric(),
@@ -31,7 +32,8 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   useFIR = FALSE,
                                   TIC = numeric(),
                                   peakTables = list(),
-                                  EICs = list()) {
+                                  EICs = list(),
+                                  isAnnotated = FALSE) {
 
   ## set spectra if spectraPaths is provided
   if (!is.null(spectraPaths)){
@@ -118,5 +120,5 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
   }
 
   ## set the final values
-  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, EICs=EICs)
+  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, EICs=EICs, isAnnotated=isAnnotated)
 }

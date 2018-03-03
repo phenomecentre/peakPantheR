@@ -18,7 +18,8 @@
 #' @slot useFIR A logical stating if FIR are to be used
 #' @slot TIC A numeric vector of TIC or NA, of length number of spectra files
 #' @slot peakTables A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.
-#' @slot EICs A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra.
+#' @slot EICs A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra
+#' @slot isAnnotated A logical stating if the annotation has taken place
 #'
 #' \subsection{Details:}{
 #'   The \emph{peakTables} \code{data.frame} are structured as follow:
@@ -79,11 +80,12 @@
 #' #   updated ROI do not exist (uROI)
 #' #   does not use updated ROI (uROI)
 #' #   does not use fallback integration regions (FIR)
+#' #   is not annotated
 #'
 #' slotNames(annotation)
-#' # [1]  "cpdID"           "cpdName"    "ROI"        "FIR"        "uROI"       "filepath"
-#' # [7]  "acquisitionTime" "uROIExist"  "useUROI"    "useFIR"     "TIC"        "peakTables"
-#' # [13] "EICs"
+#' # [1]  "cpdID"           "cpdName"     "ROI"        "FIR"        "uROI"       "filepath"
+#' # [7]  "acquisitionTime" "uROIExist"   "useUROI"    "useFIR"     "TIC"        "peakTables"
+#' # [13] "EICs"            "isAnnotated"
 #'
 #' annotation@cpdID
 #' # [1] 1 2
@@ -128,6 +130,8 @@
 #' # NULL
 #' # [[3]]
 #' # NULL
+#' annotation@isAnnotated
+#' # [1] FALSE
 #' }
 #'
 #' @family peakPantheR
@@ -151,5 +155,6 @@ peakPantheRAnnotation <- setClass("peakPantheRAnnotation",
                                            useFIR = "logical",
                                            TIC = "numeric",
                                            peakTables = "list",
-                                           EICs = "list"))
+                                           EICs = "list",
+                                           isAnnotated = "logical"))
 
