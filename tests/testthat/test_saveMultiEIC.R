@@ -1,4 +1,4 @@
-context('save_multiEIC()')
+context('saveMultiEIC()')
 
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
@@ -35,7 +35,7 @@ test_that('default parameters, verbose', {
   savePath1  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
 	# results (output, warnings and messages)
-  result_plot <- evaluate_promise(save_multiEIC(EICs, foundPeakTable, savePath1, width=15, height=15, verbose=TRUE))
+  result_plot <- evaluate_promise(saveMultiEIC(EICs, foundPeakTable, savePath1, width=15, height=15, verbose=TRUE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath1))
@@ -49,7 +49,7 @@ test_that('default parameters, no verbose', {
   savePath2  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_plot <- evaluate_promise(save_multiEIC(EICs, foundPeakTable, savePath2, width=15, height=15, verbose=FALSE))
+  result_plot <- evaluate_promise(saveMultiEIC(EICs, foundPeakTable, savePath2, width=15, height=15, verbose=FALSE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath2))
@@ -66,7 +66,7 @@ test_that('only one plot, no verbose', {
   savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_plot <- evaluate_promise(save_multiEIC(singleEICs, singleFoundPeakTable, savePath3, width=15, height=15, verbose=FALSE))
+  result_plot <- evaluate_promise(saveMultiEIC(singleEICs, singleFoundPeakTable, savePath3, width=15, height=15, verbose=FALSE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath3))
@@ -79,5 +79,5 @@ test_that('only one plot, no verbose', {
 test_that('raise errors', {
   savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
   # targetFeatTable and foundPeakTable dimension mismatch
-  expect_error(save_multiEIC(EICs[1:3], foundPeakTable, savePath3, width=15, height=15, verbose=TRUE), "Number of chromatograms in EICs*")
+  expect_error(saveMultiEIC(EICs[1:3], foundPeakTable, savePath3, width=15, height=15, verbose=TRUE), "Number of chromatograms in EICs*")
 })

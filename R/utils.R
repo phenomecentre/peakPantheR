@@ -457,7 +457,7 @@ getTargetFeatureStatistic <- function(rawSpec, targetFeatTable, foundPeakTable, 
 #' @param mzmax (float) ROI maximum m/z (matching EIC)
 #'
 #' @return Grob (ggplot object)
-plot_EIC_detectedPeakwidth  <- function(EIC, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax) {
+plotEICDetectedPeakwidth  <- function(EIC, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax) {
 
   ## Raw spectra
   # prepare data
@@ -505,7 +505,7 @@ plot_EIC_detectedPeakwidth  <- function(EIC, cpdID, cpdName, rt, rtmin, rtmax, m
 #' @param verbose (bool) if TRUE message progress
 #'
 #' @return None
-save_multiEIC   <- function(EICs, foundPeakTable, savePath, width=15, height=15, verbose=TRUE) {
+saveMultiEIC   <- function(EICs, foundPeakTable, savePath, width=15, height=15, verbose=TRUE) {
 
   ## check input
   if (length(EICs) != dim(foundPeakTable)[1]) {
@@ -515,7 +515,7 @@ save_multiEIC   <- function(EICs, foundPeakTable, savePath, width=15, height=15,
   ## Generate each ROI plot
   p_all         <- vector("list", length(EICs))
   for (i in 1:length(EICs)) {
-    p_all[[i]]  <- plot_EIC_detectedPeakwidth(EICs[[i]], foundPeakTable$cpdID[i], foundPeakTable$cpdName[i], foundPeakTable$rt[i], foundPeakTable$rtmin[i], foundPeakTable$rtmax[i], foundPeakTable$mzmin[i], foundPeakTable$mzmax[i])
+    p_all[[i]]  <- plotEICDetectedPeakwidth(EICs[[i]], foundPeakTable$cpdID[i], foundPeakTable$cpdName[i], foundPeakTable$rt[i], foundPeakTable$rtmin[i], foundPeakTable$rtmax[i], foundPeakTable$mzmin[i], foundPeakTable$mzmax[i])
   }
 
   ## Set save parameters

@@ -207,7 +207,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
     ## Save all EICs plot
     if(!is.na(plotEICsPath)) {
-      save_multiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
+      saveMultiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
     }
 
   ## No targeted features, initialise empty integration results and EICs
