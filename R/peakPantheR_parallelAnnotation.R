@@ -1,4 +1,3 @@
-
 #' Search, integrate and report targeted features in a multiple spectra
 #'
 #' Integrate all target features in all files defined in the initialised input object and store results. The use of updated ROI and the integration of FIR are controled by the input object slots \code{useUROI} and \code{useFIR}. Files are processed in parallel using \code{link{peakPantheR_singleFileSearch}}; \code{ncores} controls the number of cores used for parallelisation, with \code{ncores=0} corresponding to serial processing. If the processing of a file fails (file does not exist or error during execution) the sample is removed from the outputed object.
@@ -30,7 +29,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
     # Check input file exist, wrap \code{peakPantheR_singleFileSearch} in a try cratch, add a failure status
     #
     # @param singleSpectraDataPath (str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).
-    # @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
+    # @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
     # @param FIR (data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
     # @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
     # @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)

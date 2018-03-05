@@ -12,7 +12,7 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
 
-\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
+\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
 \item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
 
@@ -82,8 +82,8 @@ netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
                          stringsAsFactors=F)
-targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 
 res <- peakPantheR_singleFileSearch(netcdfFilePath,targetFeatTable, peakStatistic=TRUE)
@@ -102,8 +102,8 @@ res
 # 1  TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308  889280 1840     NA
 # 2  TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960 1471     NA
 #   mu sigma  h f dppm scale scpos scmin scmax lmin lmax sample is_filled cpdID cpdName
-# 1 NA    NA NA 1    0     5   540   535   545   24   60      1         0     1   Cpd 1
-# 2 NA    NA NA 2    0     5   564   559   569   68   98      1         0     2   Cpd 2
+# 1 NA    NA NA 1    0     5   540   535   545   24   60      1         0  ID-1   Cpd 1
+# 2 NA    NA NA 2    0     5   564   559   569   68   98      1         0  ID-2   Cpd 2
 #    ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor
 # 1 0.02337616       0.00   NA               11            NA        1.484000
 # 2 0.02460103       3.13   NA               11            NA        2.708291

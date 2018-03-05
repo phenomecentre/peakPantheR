@@ -3,7 +3,7 @@
 #' Generate a ROIList as expected by \code{\link[xcms]{findChromPeaks-centWave}} from a \code{\link{data.frame}} with compounds to target as rows. \emph{length} and \emph{intensity} are set to \code{-1} as centWave does not use these values.
 #'
 #' @param rawSpec an \code{\link[MSnbase]{OnDiskMSnExp-class}} used to get the scans corresponding to each retention time.
-#' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
+#' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #'
 #' @return a list of ROIs
 #'
@@ -19,8 +19,8 @@
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
 #'                          stringsAsFactors=F)
-#' targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+#' targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+#' targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 #'
 #' ROIList <- makeROIList(raw_data, targetFeatTable)

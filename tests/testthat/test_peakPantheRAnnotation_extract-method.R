@@ -14,9 +14,9 @@ input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 
 # targetFeatTable
 input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 
 # FIR
 input_FIR     <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
@@ -81,7 +81,7 @@ test_that('no i j input returns an untouched object', {
   # whole object
   expect_equal(noChange, filledAnnotation)
   # cpdID
-  expect_equal(noChange@cpdID, c(1, 2))
+  expect_equal(noChange@cpdID, c("ID-1", "ID-2"))
   # cpdName
   expect_equal(noChange@cpdName, c("Cpd 1", "Cpd 2"))
   # ROI
@@ -125,7 +125,7 @@ test_that('missing i, set j: multiple cpds EICs filter', {
   # whole object
   expect_equal(noI, filledAnnotation)
   # cpdID
-  expect_equal(noI@cpdID, c(1, 2))
+  expect_equal(noI@cpdID, c("ID-1", "ID-2"))
   # cpdName
   expect_equal(noI@cpdName, c("Cpd 1", "Cpd 2"))
   # ROI
@@ -168,7 +168,7 @@ test_that('missing i, set single j: single cpd EICs filter', {
   singleJ <- filledAnnotation[,1]
 
   # cpdID
-  expect_equal(singleJ@cpdID, c(1))
+  expect_equal(singleJ@cpdID, c("ID-1"))
   # cpdName
   expect_equal(singleJ@cpdName, c("Cpd 1"))
   # ROI
@@ -214,7 +214,7 @@ test_that('set i, missing j', {
   setI <- filledAnnotation[1:2,]
 
   # cpdID
-  expect_equal(setI@cpdID, c(1, 2))
+  expect_equal(setI@cpdID, c("ID-1", "ID-2"))
   # cpdName
   expect_equal(setI@cpdName, c("Cpd 1", "Cpd 2"))
   # ROI
@@ -267,7 +267,7 @@ test_that('set i, empty peakTables and EICs', {
   setIandNULL <- defaultInit_cpd_spectra[1:2,]
 
   # cpdID
-  expect_equal(setIandNULL@cpdID, c(1, 2))
+  expect_equal(setIandNULL@cpdID, c("ID-1", "ID-2"))
   # cpdName
   expect_equal(setIandNULL@cpdName, c("Cpd 1", "Cpd 2"))
   # ROI
@@ -313,7 +313,7 @@ test_that('set i and j', {
   setIJ <- filledAnnotation[1:2,1]
 
   # cpdID
-  expect_equal(setIJ@cpdID, c(1))
+  expect_equal(setIJ@cpdID, c("ID-1"))
   # cpdName
   expect_equal(setIJ@cpdName, c("Cpd 1"))
   # ROI
@@ -359,7 +359,7 @@ test_that('reorder i and j', {
   reorderIJ <- filledAnnotation[3:1, c(2,1)]
 
   # cpdID
-  expect_equal(reorderIJ@cpdID, c(2, 1))
+  expect_equal(reorderIJ@cpdID, c("ID-2", "ID-1"))
   # cpdName
   expect_equal(reorderIJ@cpdName, c("Cpd 2", "Cpd 1"))
   # ROI

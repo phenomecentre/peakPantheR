@@ -6,7 +6,7 @@
 #'
 #'   The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on \code{@cpdID} length, and the number of samples is based on \code{@filepath} length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
 #'
-#' @slot cpdID A numeric vector of compound IDs, of length number of compounds
+#' @slot cpdID A character vector of compound IDs, of length number of compounds
 #' @slot cpdName A character vector of compound names, of length number of compounds
 #' @slot ROI A data.frame of Regions Of Interest (ROI) with compounds as row and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @slot FIR A data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
@@ -68,8 +68,8 @@
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
 #'                          stringsAsFactors=F)
-#' targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+#' targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+#' targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 #'
 #' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
@@ -88,7 +88,7 @@
 #' # [13] "EICs"            "isAnnotated"
 #'
 #' annotation@cpdID
-#' # [1] 1 2
+#' # [1] "ID-1" "ID-2"
 #' annotation@cpdName
 #' # [1] "Cpd 1" "Cpd 2"
 #' annotation@ROI
@@ -143,7 +143,7 @@
 #'
 #' @export
 peakPantheRAnnotation <- setClass("peakPantheRAnnotation",
-                                  slot = c(cpdID = "numeric",
+                                  slot = c(cpdID = "character",
                                            cpdName = "character",
                                            ROI = "data.frame",
                                            FIR = "data.frame",

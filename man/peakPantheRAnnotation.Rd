@@ -8,7 +8,7 @@
 \title{An S4 class to represent peakPantheR annotation results}
 \usage{
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
-  cpdID = numeric(), cpdName = character(), ROI = data.frame(rtMin =
+  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin =
   numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
   numeric(), mzMax = numeric(), stringsAsFactors = F), FIR = data.frame(rtMin
   = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
@@ -20,7 +20,7 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   isAnnotated = FALSE)
 
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
-  cpdID = numeric(), cpdName = character(), ROI = data.frame(rtMin =
+  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin =
   numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
   numeric(), mzMax = numeric(), stringsAsFactors = F), FIR = data.frame(rtMin
   = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
@@ -34,9 +34,9 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
 \arguments{
 \item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
 
-\item{targetFeatTable}{NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.}
+\item{targetFeatTable}{NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.}
 
-\item{cpdID}{A numeric vector of compound IDs, of length number of compounds}
+\item{cpdID}{A character vector of compound IDs, of length number of compounds}
 
 \item{cpdName}{A character vector of compound names, of length number of compounds}
 
@@ -77,7 +77,7 @@ HERE DETAIL \code{targetFeatTable} and \code{annotationTable} which are generate
 \section{Slots}{
 
 \describe{
-\item{\code{cpdID}}{A numeric vector of compound IDs, of length number of compounds}
+\item{\code{cpdID}}{A character vector of compound IDs, of length number of compounds}
 
 \item{\code{cpdName}}{A character vector of compound names, of length number of compounds}
 
@@ -153,8 +153,8 @@ spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
                          stringsAsFactors=F)
-targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 
 annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
@@ -173,7 +173,7 @@ slotNames(annotation)
 # [13] "EICs"            "isAnnotated"
 
 annotation@cpdID
-# [1] 1 2
+# [1] "ID-1" "ID-2"
 annotation@cpdName
 # [1] "Cpd 1" "Cpd 2"
 annotation@ROI

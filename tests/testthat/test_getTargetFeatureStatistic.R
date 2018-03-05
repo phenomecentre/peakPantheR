@@ -11,11 +11,11 @@ raw_data  						<- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, m
 
 # targeted features in faahKO
 targetFeatTable     	<- data.frame(matrix(vector(), 4, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
-targetFeatTable[1,] 	<- c(1, "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] 	<- c(2, "testCpd 2, 2 peaks in box", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-targetFeatTable[3,] 	<- c(3, "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
-targetFeatTable[4,] 	<- c(4, "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
+targetFeatTable[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] 	<- c("ID-2", "testCpd 2, 2 peaks in box", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+targetFeatTable[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
+targetFeatTable[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
+targetFeatTable[,c(3:8)] <- sapply(targetFeatTable[,c(3:8)], as.numeric)
 
 # found peaks no fitGauss
 foundPeaks_noFitGauss     <- data.frame(matrix(vector(), 4, 25, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled"))),stringsAsFactors=F)

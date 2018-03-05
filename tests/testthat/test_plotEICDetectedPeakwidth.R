@@ -12,7 +12,7 @@ EIC       <- xcms::chromatogram(raw_data, rt = c(3420., 3495.), mz = c(464.19535
 test_that('plot feature', {
 
 	# result plot
-  result_plot <- plotEICDetectedPeakwidth(EIC[1], cpdID=1, cpdName='testCpd 1', rt=3454.435, rtmin=3420., rtmax=3495., mzmin=464.195358, mzmax=464.204642)
+  result_plot <- plotEICDetectedPeakwidth(EIC[1], cpdID="ID-1", cpdName='testCpd 1', rt=3454.435, rtmin=3420., rtmax=3495., mzmin=464.195358, mzmax=464.204642)
 
   # cannot compare plot to a stored version due to some string mismatch (even if the same plot is called twice)
   # Check plot properties

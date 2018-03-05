@@ -16,7 +16,7 @@ test_that('initialize with default values', {
   # Check object
   expect_true(class(defaultInit) == "peakPantheRAnnotation")
   expect_equal(slotNames(defaultInit), expected_slotName)
-  expect_true(is.numeric(defaultInit@cpdID))
+  expect_true(is.character(defaultInit@cpdID))
   expect_equal(length(defaultInit@cpdID), 0)
   expect_true(is.character(defaultInit@cpdName))
   expect_equal(length(defaultInit@cpdName), 0)
@@ -40,9 +40,9 @@ test_that('initialize with default values', {
 })
 
 test_that('slot types are set in class definition', {
-  # slot cpdID is not numeric
-  msg1 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "cpdID" in class "peakPantheRAnnotation": got class "character", should be or extend class "numeric"', sep='')
-  expect_error(peakPantheRAnnotation(cpdID='notNumeric'), msg1, fixed=TRUE)
+  # slot cpdID is not character
+  msg1 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "cpdID" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', sep='')
+  expect_error(peakPantheRAnnotation(cpdID=5), msg1, fixed=TRUE)
   # slot cpdName is not character
   msg2 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: invalid object for slot "cpdName" in class "peakPantheRAnnotation": got class "numeric", should be or extend class "character"', sep='')
   expect_error(peakPantheRAnnotation(cpdName=5), msg2, fixed=TRUE)
@@ -107,7 +107,7 @@ test_that('initialize with spectraPaths', {
   # Check object values
   expect_true(class(spectraAnnotation) == "peakPantheRAnnotation")
   expect_equal(slotNames(spectraAnnotation), expected_slotName)
-  expect_true(is.numeric(spectraAnnotation@cpdID))
+  expect_true(is.character(spectraAnnotation@cpdID))
   expect_equal(length(spectraAnnotation@cpdID), 0)
   expect_true(is.character(spectraAnnotation@cpdName))
   expect_equal(length(spectraAnnotation@cpdName), 0)
@@ -129,7 +129,7 @@ test_that('initialize with spectraPaths', {
   # Check acquisitionTime get set from input and not default with spectraPaths
   expect_true(class(acquAnnotation) == "peakPantheRAnnotation")
   expect_equal(slotNames(acquAnnotation), expected_slotName)
-  expect_true(is.numeric(acquAnnotation@cpdID))
+  expect_true(is.character(acquAnnotation@cpdID))
   expect_equal(length(acquAnnotation@cpdID), 0)
   expect_true(is.character(acquAnnotation@cpdName))
   expect_equal(length(acquAnnotation@cpdName), 0)
@@ -151,7 +151,7 @@ test_that('initialize with spectraPaths', {
   # Check TIC get set from input and not default with spectraPaths
   expect_true(class(TICAnnotation) == "peakPantheRAnnotation")
   expect_equal(slotNames(TICAnnotation), expected_slotName)
-  expect_true(is.numeric(TICAnnotation@cpdID))
+  expect_true(is.character(TICAnnotation@cpdID))
   expect_equal(length(TICAnnotation@cpdID), 0)
   expect_true(is.character(TICAnnotation@cpdName))
   expect_equal(length(TICAnnotation@cpdName), 0)
@@ -173,7 +173,7 @@ test_that('initialize with spectraPaths', {
   # Check peakTables get set from input and not default with spectraPaths
   expect_true(class(peakTablesAnnotation) == "peakPantheRAnnotation")
   expect_equal(slotNames(peakTablesAnnotation), expected_slotName)
-  expect_true(is.numeric(peakTablesAnnotation@cpdID))
+  expect_true(is.character(peakTablesAnnotation@cpdID))
   expect_equal(length(peakTablesAnnotation@cpdID), 0)
   expect_true(is.character(peakTablesAnnotation@cpdName))
   expect_equal(length(peakTablesAnnotation@cpdName), 0)
@@ -195,7 +195,7 @@ test_that('initialize with spectraPaths', {
   # Check EICs get set from input and not default with spectraPaths
   expect_true(class(EICsAnnotation) == "peakPantheRAnnotation")
   expect_equal(slotNames(EICsAnnotation), expected_slotName)
-  expect_true(is.numeric(EICsAnnotation@cpdID))
+  expect_true(is.character(EICsAnnotation@cpdID))
   expect_equal(length(EICsAnnotation@cpdID), 0)
   expect_true(is.character(EICsAnnotation@cpdName))
   expect_equal(length(EICsAnnotation@cpdName), 0)
@@ -221,9 +221,9 @@ test_that('initialize with spectraPaths', {
 test_that('initialize with targetFeatTable', {
   # Input and expected values
   input_targetFeatTable             <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-  input_targetFeatTable[1,]         <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-  input_targetFeatTable[2,]         <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-  input_targetFeatTable[,c(1,3:8)]  <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+  input_targetFeatTable[1,]         <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+  input_targetFeatTable[2,]         <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+  input_targetFeatTable[,c(3:8)]  <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
   input_FIR       <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F)
   input_FIR[1,]   <- c(1., 2., 3., 4.)
   input_FIR[2,]   <- c(5., 6., 7., 8.)
@@ -231,7 +231,7 @@ test_that('initialize with targetFeatTable', {
   input_uROI[1,]  <- c(10., 11., 12., 13., 14., 15.)
   input_uROI[2,]  <- c(16., 17., 18., 19., 20., 21.)
   expected_slotName   <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "EICs", "isAnnotated")
-  expected_cpdID      <- c(1,2)
+  expected_cpdID      <- c("ID-1", "ID-2")
   expected_cpdName    <- c('Cpd 1', 'Cpd 2')
   expected_ROI        <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
   expected_ROI[1,]    <- c(3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
@@ -350,8 +350,8 @@ test_that('initialize with targetFeatTable', {
   expect_error(peakPantheRAnnotation(targetFeatTable=wrongDF1), 'expected columns in targetFeatTable are "cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz" and "mzMax"')
   # targetFeatTable$cpdID not numeric
   wrongDF2        <- input_targetFeatTable
-  wrongDF2$cpdID  <- c('notNumeric', 'notNumeric')
-  expect_error(peakPantheRAnnotation(targetFeatTable=wrongDF2), 'cpdID must be numeric')
+  wrongDF2$cpdID  <- c(5, 5)
+  expect_error(peakPantheRAnnotation(targetFeatTable=wrongDF2), 'cpdID must be character')
   # targetFeatTable$cpdID not character
   wrongDF3          <- input_targetFeatTable
   wrongDF3$cpdName  <- c(5, 5)

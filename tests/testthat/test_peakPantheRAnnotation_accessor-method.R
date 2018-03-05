@@ -13,9 +13,9 @@ input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 
 # targetFeatTable
 input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 
 # FIR
 input_FIR     <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
@@ -71,17 +71,17 @@ filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths
 
 test_that('accessors return the correct values', {
   expected_ROI              <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "cpdID", "cpdName")]
-  expected_FIR              <- cbind.data.frame(input_FIR, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
-  expected_uROI             <- cbind.data.frame(input_uROI, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
+  expected_FIR              <- cbind.data.frame(input_FIR, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
+  expected_uROI             <- cbind.data.frame(input_uROI, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
   expected_acquisitionTime  <- as.POSIXct(input_acquisitionTime)
-  expected_peakTables       <- list(cbind(peakTable1, cpdID=c(1,2), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable2, cpdID=c(1,2), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable3, cpdID=c(1,2), cpdName=c("Cpd 1","Cpd 2")))
+  expected_peakTables       <- list(cbind(peakTable1, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable2, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable3, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2")))
   expected_EICs             <- list(EIC1, EIC2, EIC3)
   expected_filename         <- c("ko15", "ko16", "ko18")
 
   # Check accessors
   # Basic slots
   # cpdID
-  expect_equal(cpdID(filledAnnotation), c(1, 2))
+  expect_equal(cpdID(filledAnnotation), c("ID-1","ID-2"))
   # cpdName
   expect_equal(cpdName(filledAnnotation), c("Cpd 1", "Cpd 2"))
   # ROI
