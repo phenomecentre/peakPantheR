@@ -201,6 +201,13 @@ setMethod("annotationTable", "peakPantheRAnnotation",
             colnames(tmpAnnotation) <- object@cpdName
             return(tmpAnnotation)
           })
+# filename
+setGeneric("filename", function(object, ...) standardGeneric("filename"))
+setMethod("filename", "peakPantheRAnnotation",
+          function(object) {
+            return(tools::file_path_sans_ext(basename(object@filepath)))
+          })
+
 
 
 

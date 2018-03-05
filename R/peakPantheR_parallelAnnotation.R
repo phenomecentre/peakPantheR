@@ -26,11 +26,12 @@
 #' @export
 peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, getAcquTime=TRUE, verbose=TRUE, ...) {
   ## ------------------------------------------------------------
-  parallel_helper <- function(singleSpectraDataPath, targetFeatTable, fitGauss=FALSE, getAcquTime=FALSE, verbose=TRUE, ...){
+  parallel_helper <- function(singleSpectraDataPath, targetFeatTable, inFIR=NULL, inFitGauss=FALSE, inGetAcquTime=FALSE, inVerbose=TRUE, ...){
     # Check input file exist, wrap \code{peakPantheR_singleFileSearch} in a try cratch, add a failure status
     #
     # @param singleSpectraDataPath (str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).
     # @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
+    # @param FIR (data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
     # @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
     # @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)
     # @param verbose (bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)
@@ -55,7 +56,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
     file_name <- tools::file_path_sans_ext(basename(singleSpectraDataPath))
 
     # progress
-    if (verbose) {
+    if (inVerbose) {
       message(paste('-----', file_name, '-----'))
     }
 
@@ -63,7 +64,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
     result <- tryCatch(
       {
         # singleFileSearch
-        tmpResult     <- peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=fitGauss, peakStatistic=TRUE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=getAcquTime, verbose=verbose, ...)
+        tmpResult     <- peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=inFitGauss, peakStatistic=TRUE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=inGetAcquTime, FIR=inFIR, verbose=inVerbose, ...)
         # add failure status
         failureMsg        <- NA
         names(failureMsg) <- singleSpectraDataPath
@@ -73,14 +74,14 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
       },
       error=function(err) {
         # message error
-        if (verbose) {
+        if (inVerbose) {
           message('-----')
           message(paste('Error processing file:', file_name))
-          message(err)
+          message(err$message)
           message('\n-----')
         }
         # add error status
-        failureMsg        <- paste(err)
+        failureMsg        <- err$message
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
         return(list(TIC=as.numeric(NA), peakTable=NULL, EICs=NULL, acquTime=as.character(NA), failure=failureMsg))
@@ -113,13 +114,29 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
   } else {
     target_peak_table <- ROI(object)
   }
+  if (use_FIR) {
+    input_FIR <- FIR(object)
+  } else {
+    input_FIR <- NULL
+  }
+
+
+  ## Output parameters
+  if (verbose & isAnnotated(object)) {
+    message("!! Data was already annotated, results will be overwritten !!")
+  }
+  if (verbose) {
+    message("Processing ", nbCompounds(object), " compounds in ", nbSamples(object), " samples:")
+    message("  uROI:\t", use_uROI)
+    message("  FIR:\t", use_FIR)
+  }
 
 
   ## Run singleFileSearch (list, each item is the result for a file, errors are passed into the list)
   if( ncores!=0 ) {
-    allFilesRes   <- foreach::foreach( x=file_paths, .export=c('peakPantheR_singleFileSearch', 'makeROIList', 'findTargetFeatures', 'getTargetFeatureStatistic', 'getAcquisitionDatemzML'), .inorder=TRUE, .errorhandling='pass' ) %dopar% parallel_helper(x, target_peak_table, fitGauss=fitGauss, getAcquTime=getAcquTime, verbose=verbose, ...)
+    allFilesRes   <- foreach::foreach( x=file_paths, .packages=c("xcms","MSnbase","mzR"), .inorder=TRUE) %dopar% parallel_helper(x, target_peak_table, inFIR=input_FIR, inFitGauss=fitGauss, inGetAcquTime=getAcquTime, inVerbose=verbose, ...) #, .errorhandling='pass' #.export=c('makeROIList', 'findTargetFeatures', 'getTargetFeatureStatistic', 'getAcquisitionDatemzML', 'integrateFIR', 'peakPantheR_singleFileSearch')# .export 'extractMsData', 'CentWaveParam', 'findChromPeaks', 'chromPeaks'
   } else {
-    allFilesRes   <- lapply(file_paths, function(x) parallel_helper(x, target_peak_table, fitGauss=fitGauss, getAcquTime=getAcquTime, verbose=verbose, ...))
+    allFilesRes   <- lapply(file_paths, function(x) parallel_helper(x, target_peak_table, inFIR=input_FIR, inFitGauss=fitGauss, inGetAcquTime=getAcquTime, inVerbose=verbose, ...))
   }
 
 
@@ -131,32 +148,39 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
   fail_table      <- data.frame(matrix(c(names(fail_status)[failures], fail_status[failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
   # message failures
   if ((sum(failures) != 0) & verbose) {
-    message('-----')
+    message('----------------')
     message(paste(sum(failures), 'file(s) failed to process:\n', paste0(capture.output(fail_table), collapse = "\n")))
-    message()
-    message('-----')
   }
   # remove failures
   allFilesRes <- allFilesRes[!failures]
   # reshape the output object to match (remove failed samples)
   outObject   <- object[!failures,]
 
-  # unlist result into final object
-  # acquisitionTime
-  outObject@acquisitionTime <- sapply(allFilesRes, function(x) {as.character(x$acquTime)})
-  # TIC
-  outObject@TIC             <- sapply(allFilesRes, function(x) {x$TIC})
-  # peakTables (all columns but cpdID and cpdName)
-  outObject@peakTables      <- lapply(allFilesRes, function(x) {x$peakTable[,!names(x$peakTable) %in% c("cpdID", "cpdName")] })
-  # EICs
-  outObject@EICs            <- lapply(allFilesRes, function(x) {x$EIC})
+  # unlist result into final object (if there is a minimum of 1 file left)
+  if (sum(!failures) > 0) {
+    # acquisitionTime
+    outObject@acquisitionTime <- sapply(allFilesRes, function(x) {as.character(x$acquTime)})
+    # TIC
+    outObject@TIC             <- sapply(allFilesRes, function(x) {x$TIC})
+    # peakTables (all columns but cpdID and cpdName)
+    outObject@peakTables      <- lapply(allFilesRes, function(x) {x$peakTable[,!names(x$peakTable) %in% c("cpdID", "cpdName")] })
+    # EICs
+    outObject@EICs            <- lapply(allFilesRes, function(x) {x$EIC})
 
+    # isAnnotated
+    outObject@isAnnotated     <- TRUE
+
+  # All files failed
+  } else {
+    if (verbose) { message("No file left in the object!")}
+  }
 
   ## check validity and exit
   validObject(outObject)
 
   etime <- Sys.time()
   if (verbose) {
+    message('----------------')
     message('Parallel annotation done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
   }
 

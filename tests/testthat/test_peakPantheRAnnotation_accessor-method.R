@@ -76,6 +76,7 @@ test_that('accessors return the correct values', {
   expected_acquisitionTime  <- as.POSIXct(input_acquisitionTime)
   expected_peakTables       <- list(cbind(peakTable1, cpdID=c(1,2), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable2, cpdID=c(1,2), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable3, cpdID=c(1,2), cpdName=c("Cpd 1","Cpd 2")))
   expected_EICs             <- list(EIC1, EIC2, EIC3)
+  expected_filename         <- c("ko15", "ko16", "ko18")
 
   # Check accessors
   # Basic slots
@@ -112,6 +113,8 @@ test_that('accessors return the correct values', {
   expect_equal(nbSamples(filledAnnotation), 3)
   # nbCompounds
   expect_equal(nbCompounds(filledAnnotation), 2)
+  # filename
+  expect_equal(filename(filledAnnotation), expected_filename)
 
   # annotationTable
   # simple value
