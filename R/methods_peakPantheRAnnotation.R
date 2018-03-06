@@ -53,21 +53,38 @@ setValidity("peakPantheRAnnotation", function(object) valid_peakPantheRAnnotatio
 
 #####################################################################
 ## Accessors
+
 # cpdID
 setGeneric("cpdID", function(object, ...) standardGeneric("cpdID"))
+#' cpdID accessor
+#' @param object peakPantheRAnnotation
+#' @aliases cpdID
+#' @export
 setMethod("cpdID", "peakPantheRAnnotation",
           function(object) {
             object@cpdID
             })
+
 # cpdName
 setGeneric("cpdName", function(object, ...) standardGeneric("cpdName"))
+#' cpdName accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases cpdName
+#' @export
 setMethod("cpdName", "peakPantheRAnnotation",
           function(object) {
             object@cpdName
           })
+
 # ROI
 # targetFeatTable with ROI
 setGeneric("ROI", function(object, ...) standardGeneric("ROI"))
+#' ROI accessor returns targetFeatTable with cpdID, cpdName added
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases ROI
+#' @export
 setMethod("ROI", "peakPantheRAnnotation",
           function(object) {
             out         <- object@ROI
@@ -75,9 +92,15 @@ setMethod("ROI", "peakPantheRAnnotation",
             out$cpdName <- object@cpdName
             return(out)
           })
+
 # uROI
 # targetFeatTable with uROI
 setGeneric("uROI", function(object, ...) standardGeneric("uROI"))
+#' uROI accessor returns targetFeatTable with cpdID, cpdName added
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases uROI
+#' @export
 setMethod("uROI", "peakPantheRAnnotation",
           function(object) {
             out         <- object@uROI
@@ -85,9 +108,15 @@ setMethod("uROI", "peakPantheRAnnotation",
             out$cpdName <- object@cpdName
             return(out)
           })
+
 # FIR
 # similar to targetFeatTable with FIR
 setGeneric("FIR", function(object, ...) standardGeneric("FIR"))
+#' FIR accessor returns targetFeatTable with cpdID, cpdName added
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases FIR
+#' @export
 setMethod("FIR", "peakPantheRAnnotation",
           function(object) {
             out         <- object@FIR
@@ -95,78 +124,151 @@ setMethod("FIR", "peakPantheRAnnotation",
             out$cpdName <- object@cpdName
             return(out)
           })
+
 # filepath
 setGeneric("filepath", function(object, ...) standardGeneric("filepath"))
+#' filepath accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases filepath
+#' @export
 setMethod("filepath", "peakPantheRAnnotation",
           function(object) {
             object@filepath
           })
+
 # acquisitionTime
 # return converted to POSIXct
 setGeneric("acquisitionTime", function(object, ...) standardGeneric("acquisitionTime"))
+#' acquisitionTime accessor returns value as.POSIXct
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases acquisitionTime
+#' @export
 setMethod("acquisitionTime", "peakPantheRAnnotation",
           function(object) {
             as.POSIXct(object@acquisitionTime)
           })
+
 # uROIExist
 setGeneric("uROIExist", function(object, ...) standardGeneric("uROIExist"))
+#' uROIExist accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases uROIExist
+#' @export
 setMethod("uROIExist", "peakPantheRAnnotation",
           function(object) {
             object@uROIExist
           })
+
 # useUROI
 setGeneric("useUROI", function(object, ...) standardGeneric("useUROI"))
+#' useUROI accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases useUROI
+#' @export
 setMethod("useUROI", "peakPantheRAnnotation",
           function(object) {
             object@useUROI
           })
+
 # useFIR
 setGeneric("useFIR", function(object, ...) standardGeneric("useFIR"))
+#' useFIR accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases useFIR
+#' @export
 setMethod("useFIR", "peakPantheRAnnotation",
           function(object) {
             object@useFIR
           })
+
 # TIC
 setGeneric("TIC", function(object, ...) standardGeneric("TIC"))
+#' TIC accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases TIC
+#' @export
 setMethod("TIC", "peakPantheRAnnotation",
           function(object) {
             object@TIC
           })
+
 # peakTables
-# add back cpdID and cpdName
 setGeneric("peakTables", function(object, ...) standardGeneric("peakTables"))
+#' peakTables accessor with cpdID and cpdName added back
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases peakTables
+#' @export
 setMethod("peakTables", "peakPantheRAnnotation",
           function(object) {
             tmpPeakTables <- lapply(object@peakTables, function(x) {cbind(x, cpdID=object@cpdID, cpdName=object@cpdName)})
             return(tmpPeakTables)
           })
+
 # EICs
 setGeneric("EICs", function(object, ...) standardGeneric("EICs"))
+#' EICs accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases EICs
+#' @export
 setMethod("EICs", "peakPantheRAnnotation",
           function(object) {
             object@EICs
           })
+
 # isAnnotated
 setGeneric("isAnnotated", function(object, ...) standardGeneric("isAnnotated"))
+#' isAnnotated accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases isAnnotated
+#' @export
 setMethod("isAnnotated", "peakPantheRAnnotation",
           function(object) {
             object@isAnnotated
           })
+
 # nbSamples
 setGeneric("nbSamples", function(object, ...) standardGeneric("nbSamples"))
+#' nbSamples accessor established on filepath
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases nbSamples
+#' @export
 setMethod("nbSamples", "peakPantheRAnnotation",
           function(object) {
             return(length(object@filepath))
           })
+
 # nbCompounds
 setGeneric("nbCompounds", function(object, ...) standardGeneric("nbCompounds"))
+#' nbCompounds accessor established on cpdID
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases nbCompounds
+#' @export
 setMethod("nbCompounds", "peakPantheRAnnotation",
           function(object) {
             return(length(object@cpdID))
           })
+
 # annotationTable
 # data.frame with cpd as row (rownames are cpdName), samples as col (colnames are filepath)
 setGeneric("annotationTable", function(object, column) standardGeneric("annotationTable"))
+#' annotationTable accessor
+#' annotationTable returns a dataframe (row samples, col compounds) filled with a specific peakTable column
+#' @param object peakPantheRAnnotation
+#' @param column a peakTable columns
+#' @docType methods
+#' @aliases annotationTable
+#' @export
 setMethod("annotationTable", "peakPantheRAnnotation",
           function(object, column) {
 
@@ -201,8 +303,14 @@ setMethod("annotationTable", "peakPantheRAnnotation",
             colnames(tmpAnnotation) <- object@cpdName
             return(tmpAnnotation)
           })
+
 # filename
 setGeneric("filename", function(object, ...) standardGeneric("filename"))
+#' filename accessor by spliting filepath
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases filename
+#' @export
 setMethod("filename", "peakPantheRAnnotation",
           function(object) {
             return(tools::file_path_sans_ext(basename(object@filepath)))
