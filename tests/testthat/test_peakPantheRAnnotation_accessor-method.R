@@ -128,13 +128,19 @@ test_that('accessors return the correct values', {
   rownames(expected_noSample) <- tmp_noSample@filepath
   colnames(expected_noSample) <- tmp_noSample@cpdName
   expect_equal(annotationTable(tmp_noSample, 'found'), expected_noSample)
-  # no peakTables
+  # no peakTables (not annotated or no compounds)
   tmp_noPeakTables            <- filledAnnotation
   tmp_noPeakTables@peakTables <- vector("list", 3)
   expected_noPeakTables           <- data.frame(matrix(vector(), 3, 2), stringsAsFactors=F)
   rownames(expected_noPeakTables) <- tmp_noPeakTables@filepath
   colnames(expected_noPeakTables) <- tmp_noPeakTables@cpdName
   expect_equal(annotationTable(tmp_noPeakTables, 'found'), expected_noPeakTables)
+  # only 1 compounds (sapply simplify to vector and not matrix)
+  tmp_singleCpd         <- filledAnnotation[,1]
+  expected_mz           <- data.frame(matrix(c(522.2, 522.2, 522.2), 3, 1), stringsAsFactors=F)
+  rownames(expected_mz) <- filledAnnotation@filepath
+  colnames(expected_mz) <- filledAnnotation@cpdName[1]
+  expect_equal(annotationTable(tmp_singleCpd, 'mz'), expected_mz)
   # raise error if column doesn't exist
   expect_error(annotationTable(filledAnnotation, 'notAnExistingColumn'), 'input column is not a column of peakTables', fixed=TRUE)
 

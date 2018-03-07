@@ -260,7 +260,6 @@ setMethod("nbCompounds", "peakPantheRAnnotation",
           })
 
 # annotationTable
-# data.frame with cpd as row (rownames are cpdName), samples as col (colnames are filepath)
 setGeneric("annotationTable", function(object, column) standardGeneric("annotationTable"))
 #' annotationTable accessor
 #' annotationTable returns a dataframe (row samples, col compounds) filled with a specific peakTable column
@@ -298,7 +297,12 @@ setMethod("annotationTable", "peakPantheRAnnotation",
             }
 
             ## Concatenate all the results in a single data.frame
-            tmpAnnotation           <- data.frame(t(sapply(object@peakTables, function(x, y){x[,y]}, y=column)), stringsAsFactors=F)
+            if(nbCpd == 1) {
+              # if only 1 compounds, sapply simplify to vector and not matrix
+              tmpAnnotation         <- data.frame(matrix(sapply(object@peakTables, function(x, y){x[,y]}, y=column)), stringsAsFactors=F)
+            } else {
+              tmpAnnotation         <- data.frame(t(sapply(object@peakTables, function(x, y){x[,y]}, y=column)), stringsAsFactors=F)
+            }
             rownames(tmpAnnotation) <- object@filepath
             colnames(tmpAnnotation) <- object@cpdName
             return(tmpAnnotation)
