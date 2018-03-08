@@ -74,7 +74,7 @@ test_that('accessors return the correct values', {
   expected_FIR              <- cbind.data.frame(input_FIR, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
   expected_uROI             <- cbind.data.frame(input_uROI, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
   expected_acquisitionTime  <- as.POSIXct(input_acquisitionTime)
-  expected_peakTables       <- list(cbind(peakTable1, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable2, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2")), cbind(peakTable3, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2")))
+  expected_peakTables       <- list(cbind.data.frame(peakTable1, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F), cbind.data.frame(peakTable2, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F), cbind.data.frame(peakTable3, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F))
   expected_EICs             <- list(EIC1, EIC2, EIC3)
   expected_filename         <- c("ko15", "ko16", "ko18")
 
