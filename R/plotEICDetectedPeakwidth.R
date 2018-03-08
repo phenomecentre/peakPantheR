@@ -12,7 +12,8 @@
 #' @param mzmax (float) ROI maximum m/z (matching EIC)
 #' @param ratio (float) value between 0 and 1 defining the vertical percentage taken by the EICs subplot
 #' @param sampleColour (str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtmin}, \code{rtmax})
-#'
+#' @param verbose (bool) if TRUE message when NA scans are removed
+#' 
 #' @return Grob (ggplot object)
 plotEICDetectedPeakwidth  <- function(EICs, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax, ratio=0.85, sampleColour=NULL, verbose=TRUE) {
   

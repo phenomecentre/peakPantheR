@@ -27,6 +27,8 @@ plotEICDetectedPeakwidth(EICs, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax,
 \item{ratio}{(float) value between 0 and 1 defining the vertical percentage taken by the EICs subplot}
 
 \item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtmin}, \code{rtmax})}
+
+\item{verbose}{(bool) if TRUE message when NA scans are removed}
 }
 \value{
 Grob (ggplot object)
