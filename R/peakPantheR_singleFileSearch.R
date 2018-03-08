@@ -13,7 +13,7 @@
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
 #' @param peakStatistic (bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailing factor' and 'asymmetry factor'
-#' @param getEICs (bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.
+#' @param getEICs (bool) If TRUE returns a \code{xcms::Chromatograms} containing a EIC for each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.
 #' @param plotEICsPath (str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved
 #' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)
 #' @param FIR (data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
@@ -207,7 +207,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
     ## Save all EICs plot
     if(!is.na(plotEICsPath)) {
-      saveMultiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
+      saveSingleFileMultiEIC(EICs, finalOutput, plotEICsPath, width=15, height=15, verbose=verbose)
     }
 
   ## No targeted features, initialise empty integration results and EICs

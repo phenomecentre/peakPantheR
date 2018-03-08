@@ -2,30 +2,35 @@
 % Please edit documentation in R/plotEICDetectedPeakwidth.R
 \name{plotEICDetectedPeakwidth}
 \alias{plotEICDetectedPeakwidth}
-\title{Plot a raw data and detected feature in a ROI}
+\title{Plot samples raw data and detected feature for a single ROI}
 \usage{
-plotEICDetectedPeakwidth(EIC, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax)
+plotEICDetectedPeakwidth(EICs, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax,
+  ratio = 0.85, sampleColour = NULL, verbose = TRUE)
 }
 \arguments{
-\item{EIC}{xcms::chromatograms (single spectra)}
+\item{EICs}{list of xcms::chromatograms (containing a single spectra each). If it is a xcms::Chromatogram (no S) or not a list, bring it to the right format.}
 
 \item{cpdID}{(str) Compound ID}
 
 \item{cpdName}{(str) Compound Name}
 
-\item{rt}{(float) detected peak apex retention time (in sec)}
+\item{rt}{(float) vector of detected peak apex retention time (in sec)}
 
-\item{rtmin}{(float) detected peak minimum retention time (in sec)}
+\item{rtmin}{(float) vector of detected peak minimum retention time (in sec)}
 
-\item{rtmax}{(float) detected peak maximum retention time (in sec)}
+\item{rtmax}{(float) vector ofdetected peak maximum retention time (in sec)}
 
 \item{mzmin}{(float) ROI minimum m/z (matching EIC)}
 
 \item{mzmax}{(float) ROI maximum m/z (matching EIC)}
+
+\item{ratio}{(float) value between 0 and 1 defining the vertical percentage taken by the EICs subplot}
+
+\item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtmin}, \code{rtmax})}
 }
 \value{
 Grob (ggplot object)
 }
 \description{
-plot a ROI (x is RT, y is intensity) with the matching detected peak rt and peakwidth under it
+plot a ROI  across multiple samples (x axis is RT, y axis is intensity) with the matching detected peak rt and peakwidth under it. RT and peakwidth are plotted in the order spectra are passed, with the first spectra on top.
 }

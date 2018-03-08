@@ -36,7 +36,7 @@ test_that('default parameters, verbose', {
   savePath1  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
 	# results (output, warnings and messages)
-  result_plot <- evaluate_promise(saveMultiEIC(EICs, foundPeakTable, savePath1, width=15, height=15, verbose=TRUE))
+  result_plot <- evaluate_promise(saveSingleFileMultiEIC(EICs, foundPeakTable, savePath1, width=15, height=15, verbose=TRUE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath1))
@@ -50,7 +50,7 @@ test_that('default parameters, no verbose', {
   savePath2  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_plot <- evaluate_promise(saveMultiEIC(EICs, foundPeakTable, savePath2, width=15, height=15, verbose=FALSE))
+  result_plot <- evaluate_promise(saveSingleFileMultiEIC(EICs, foundPeakTable, savePath2, width=15, height=15, verbose=FALSE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath2))
@@ -67,7 +67,7 @@ test_that('only one plot, no verbose', {
   savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_plot <- evaluate_promise(saveMultiEIC(singleEICs, singleFoundPeakTable, savePath3, width=15, height=15, verbose=FALSE))
+  result_plot <- evaluate_promise(saveSingleFileMultiEIC(singleEICs, singleFoundPeakTable, savePath3, width=15, height=15, verbose=FALSE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath3))
@@ -76,9 +76,9 @@ test_that('only one plot, no verbose', {
   expect_equal(length(result_plot$messages), 0)
 })
 
-
 test_that('raise errors', {
   savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
   # targetFeatTable and foundPeakTable dimension mismatch
-  expect_error(saveMultiEIC(EICs[1:3], foundPeakTable, savePath3, width=15, height=15, verbose=TRUE), "Number of chromatograms in EICs*")
+  msg1 <- "Number of Chromatogram in EICs (3) and features in foundPeakTable (4) do not match!"
+  expect_error(saveSingleFileMultiEIC(EICs[1:3], foundPeakTable, savePath3, width=15, height=15, verbose=TRUE), msg1, fixed=TRUE)
 })

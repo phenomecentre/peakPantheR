@@ -18,7 +18,7 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailing factor' and 'asymmetry factor'}
 
-\item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
+\item{getEICs}{(bool) If TRUE returns a \code{xcms::Chromatograms} containing a EIC for each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
 
 \item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved}
 
