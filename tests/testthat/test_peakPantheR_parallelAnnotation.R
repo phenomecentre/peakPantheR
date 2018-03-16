@@ -97,7 +97,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no fitGauss, no getAcquTime, n
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 9 found.\n")
 
 	# results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE,snthresh=3, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -128,7 +128,7 @@ test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no fitGauss, no ge
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 9 found.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE,snthresh=3, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -168,7 +168,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no fitGauss, no getAcquTime, n
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 2 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE, snthresh=20))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE, snthresh=20, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -213,7 +213,7 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found, no fitGau
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 2 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE, snthresh=20))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE, snthresh=20, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -244,7 +244,7 @@ test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no v
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 9 found.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=FALSE, snthresh=3, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -293,7 +293,7 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Previously loaded EICs used for peak statistics\n", "1 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n", "Previously loaded EICs used for peak statistics\n", "2 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "----------------\n", "1 file(s) failed to process:\n          file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "----------------\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -342,7 +342,7 @@ test_that('parallel: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks 
   expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----------------\n", "1 file(s) failed to process:\n          file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "----------------\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -358,8 +358,8 @@ test_that('serial and parallel give the same result: 3 files, (1 missing), 4 com
   initAnnotation  <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=input_uROI, useFIR=TRUE, FIR=input_FIR)
 
   # results
-  result_serial   <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20))
-  result_parallel <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20))
+  result_serial   <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20, peakwidth=c(2,20)))
+  result_parallel <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_serial$result, result_parallel$result)
@@ -404,7 +404,7 @@ test_that('already annotated message in verbose', {
   expected_message    <- c("!! Data was already annotated, results will be overwritten !!\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Previously loaded EICs used for peak statistics\n", "1 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n", "Previously loaded EICs used for peak statistics\n", "2 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "----------------\n", "1 file(s) failed to process:\n          file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "----------------\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
@@ -427,7 +427,7 @@ test_that('catch file that doesnt exist, catch error processing, no file left', 
   expected_message    <- c("Processing 4 compounds in 2 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "Error file does not exist: aaa/bbb.cdf\n", "----- test_fakemzML -----\n", "-----\n", "Error processing file: test_fakemzML\n", "[SpectrumList_mzML::create()] Bad istream.\n", "\n-----\n", "----------------\n", "No file left in the object!\n", "----------------\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=TRUE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=FALSE, getAcquTime=FALSE, verbose=TRUE, snthresh=3, peakwidth=c(2,20)))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
