@@ -3,8 +3,8 @@
 #' @description \code{peakPantheRAnnotation()}: create an instance of the \code{peakPantherAnnotation} class.
 #'
 #' @param spectraPaths NULL or a character vector of spectra file paths, to set samples to process
-#' @param targetFeatTable NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.
-#' @param cpdID A numeric vector of compound IDs, of length number of compounds
+#' @param targetFeatTable NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.
+#' @param cpdID A character vector of compound IDs, of length number of compounds
 #' @param cpdName A character vector of compound names, of length number of compounds
 #' @param ROI A data.frame of Regions Of Interest (ROI) with compounds as row and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @param FIR A data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
@@ -17,9 +17,10 @@
 #' @param TIC A numeric vector of TIC or NA, of length number of spectra files
 #' @param peakTables A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.
 #' @param EICs A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra.
+#' @param isAnnotated A logical stating in the annotation took place
 peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   targetFeatTable = NULL,
-                                  cpdID = numeric(),
+                                  cpdID = character(),
                                   cpdName = character(),
                                   ROI = data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F),
                                   FIR = data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F),
@@ -31,7 +32,8 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   useFIR = FALSE,
                                   TIC = numeric(),
                                   peakTables = list(),
-                                  EICs = list()) {
+                                  EICs = list(),
+                                  isAnnotated = FALSE) {
 
   ## set spectra if spectraPaths is provided
   if (!is.null(spectraPaths)){
@@ -74,8 +76,8 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
     }
     # column type
     if (dim(targetFeatTable)[1] != 0){
-      if (!is.numeric(targetFeatTable$cpdID[1])){
-        stop("targetFeatTable$cpdID must be numeric")
+      if (!is.character(targetFeatTable$cpdID[1])){
+        stop("targetFeatTable$cpdID must be character")
       }
       if (!is.character(targetFeatTable$cpdName[1])){
         stop("targetFeatTable$cpdName must be character")
@@ -118,5 +120,5 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
   }
 
   ## set the final values
-  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, EICs=EICs)
+  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, EICs=EICs, isAnnotated=isAnnotated)
 }
