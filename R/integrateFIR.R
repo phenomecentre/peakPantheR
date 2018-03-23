@@ -33,7 +33,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
     for (i in needsFilling_idx) {
 
       # get all data points
-      peakData  <- xcms::extractMsData(rawSpec, mz = c(FIR$mzMin[i], FIR$mzMax[i]), rt = c(FIR$rtMin[i], FIR$rtMax[i]))[[1]]
+      peakData  <- extractSignalRawData(rawSpec, mz = c(FIR$mzMin[i], FIR$mzMax[i]), rt = c(FIR$rtMin[i], FIR$rtMax[i]))
 
       # Only continue if a scan is found in the box
       if (dim(peakData)[1] != 0) {
