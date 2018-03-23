@@ -6,22 +6,25 @@
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
   fitGauss = FALSE, peakStatistic = FALSE, getEICs = FALSE,
-  plotEICsPath = NA, getAcquTime = FALSE, verbose = TRUE, ...)
+  plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
 
-\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
+\item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
 \item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
 
 \item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailing factor' and 'asymmetry factor'}
 
-\item{getEICs}{(bool) If TRUE returns a list of EICs corresponding to each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
+\item{getEICs}{(bool) If TRUE returns a \code{xcms::Chromatograms} containing a EIC for each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
 
 \item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved}
 
 \item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)}
+
+\item{FIR}{(data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)}
 
@@ -56,6 +59,7 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
     scpos \tab Peak position found by wavelet analysis (scan number)\cr
     scmin \tab Left peak limit found by wavelet analysis (scan number)\cr
     scmax \tab Right peak limit found by wavelet analysis (scan number)\cr
+    is_filled \tab Logical indicate if the feature was integrated using FIR (Fallback Integration Region)\cr
     ppm_error \tab difference in ppm between the expected and measured m/z, not available if \code{peakStatistic=FALSE}\cr
     rt_dev_sec \tab difference in seconds between the expected and measured rt, not available if \code{peakStatistic=FALSE}\cr
     FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}, not available if \code{peakStatistic=FALSE}\cr
@@ -66,7 +70,7 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
 }
 }
 \description{
-Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access.
+Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access. Features not detected can be integrated using fallback integration regions (FIR).
 }
 \examples{
 \dontrun{
@@ -78,8 +82,8 @@ netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
                          stringsAsFactors=F)
-targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
 
 res <- peakPantheR_singleFileSearch(netcdfFilePath,targetFeatTable, peakStatistic=TRUE)
@@ -98,8 +102,8 @@ res
 # 1  TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308  889280 1840     NA
 # 2  TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960 1471     NA
 #   mu sigma  h f dppm scale scpos scmin scmax lmin lmax sample is_filled cpdID cpdName
-# 1 NA    NA NA 1    0     5   540   535   545   24   60      1         0     1   Cpd 1
-# 2 NA    NA NA 2    0     5   564   559   569   68   98      1         0     2   Cpd 2
+# 1 NA    NA NA 1    0     5   540   535   545   24   60      1         0  ID-1   Cpd 1
+# 2 NA    NA NA 2    0     5   564   559   569   68   98      1         0  ID-2   Cpd 2
 #    ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor
 # 1 0.02337616       0.00   NA               11            NA        1.484000
 # 2 0.02460103       3.13   NA               11            NA        2.708291
@@ -113,7 +117,9 @@ res
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheRAnnotation}}
+Other peakPantheR: \code{\link{peakPantheRAnnotation}},
+  \code{\link{peakPantheR_parallelAnnotation}}
 
-Other parallelAnnotation: \code{\link{peakPantheRAnnotation}}
+Other parallelAnnotation: \code{\link{peakPantheRAnnotation}},
+  \code{\link{peakPantheR_parallelAnnotation}}
 }

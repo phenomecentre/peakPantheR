@@ -13,9 +13,9 @@ input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 
 # targetFeatTable
 input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 
 # FIR
 input_FIR     <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
@@ -65,22 +65,23 @@ tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin
 
 
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3))
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3), isAnnotated=TRUE)
 
 
 
 test_that('accessors return the correct values', {
   expected_ROI              <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "cpdID", "cpdName")]
-  expected_FIR              <- cbind.data.frame(input_FIR, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
-  expected_uROI             <- cbind.data.frame(input_uROI, cpdID=c(1,2), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
+  expected_FIR              <- cbind.data.frame(input_FIR, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
+  expected_uROI             <- cbind.data.frame(input_uROI, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
   expected_acquisitionTime  <- as.POSIXct(input_acquisitionTime)
-  expected_peakTables       <- list(peakTable1, peakTable2, peakTable3)
+  expected_peakTables       <- list(cbind.data.frame(peakTable1, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F), cbind.data.frame(peakTable2, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F), cbind.data.frame(peakTable3, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F))
   expected_EICs             <- list(EIC1, EIC2, EIC3)
+  expected_filename         <- c("ko15", "ko16", "ko18")
 
   # Check accessors
   # Basic slots
   # cpdID
-  expect_equal(cpdID(filledAnnotation), c(1, 2))
+  expect_equal(cpdID(filledAnnotation), c("ID-1","ID-2"))
   # cpdName
   expect_equal(cpdName(filledAnnotation), c("Cpd 1", "Cpd 2"))
   # ROI
@@ -105,11 +106,15 @@ test_that('accessors return the correct values', {
   expect_equal(peakTables(filledAnnotation), expected_peakTables)
   # EICs
   expect_equal(EICs(filledAnnotation), expected_EICs)
+  # isAnnotated
+  expect_true(isAnnotated(filledAnnotation))
 
   # nbSamples
   expect_equal(nbSamples(filledAnnotation), 3)
   # nbCompounds
   expect_equal(nbCompounds(filledAnnotation), 2)
+  # filename
+  expect_equal(filename(filledAnnotation), expected_filename)
 
   # annotationTable
   # simple value
@@ -123,13 +128,19 @@ test_that('accessors return the correct values', {
   rownames(expected_noSample) <- tmp_noSample@filepath
   colnames(expected_noSample) <- tmp_noSample@cpdName
   expect_equal(annotationTable(tmp_noSample, 'found'), expected_noSample)
-  # no peakTables
+  # no peakTables (not annotated or no compounds)
   tmp_noPeakTables            <- filledAnnotation
   tmp_noPeakTables@peakTables <- vector("list", 3)
   expected_noPeakTables           <- data.frame(matrix(vector(), 3, 2), stringsAsFactors=F)
   rownames(expected_noPeakTables) <- tmp_noPeakTables@filepath
   colnames(expected_noPeakTables) <- tmp_noPeakTables@cpdName
   expect_equal(annotationTable(tmp_noPeakTables, 'found'), expected_noPeakTables)
+  # only 1 compounds (sapply simplify to vector and not matrix)
+  tmp_singleCpd         <- filledAnnotation[,1]
+  expected_mz           <- data.frame(matrix(c(522.2, 522.2, 522.2), 3, 1), stringsAsFactors=F)
+  rownames(expected_mz) <- filledAnnotation@filepath
+  colnames(expected_mz) <- filledAnnotation@cpdName[1]
+  expect_equal(annotationTable(tmp_singleCpd, 'mz'), expected_mz)
   # raise error if column doesn't exist
   expect_error(annotationTable(filledAnnotation, 'notAnExistingColumn'), 'input column is not a column of peakTables', fixed=TRUE)
 

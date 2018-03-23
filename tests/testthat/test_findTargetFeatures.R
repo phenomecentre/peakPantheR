@@ -40,7 +40,7 @@ test_that('default parameters, without fitGauss, no verbose', {
   expected_messages   <- c("Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
 
 	# results (output, warnings and messages)
-  result_foundPeaks   <- evaluate_promise(findTargetFeatures(raw_data, ROIList, ppm=20, snthresh=3, noise=400, prefilter=c(7,400), peakwidth=c(2,20), verbose=FALSE, fitGauss=FALSE))
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(raw_data, ROIList, snthresh=3, peakwidth=c(2,20), verbose=FALSE, fitGauss=FALSE))
 
   # Check result table
   expect_equal(result_foundPeaks$result, expected_foundPeaks)
@@ -54,7 +54,7 @@ test_that('default parameters, with fitGauss, with verbose', {
   expected_foundPeaks <- foundPeaks_FitGauss
 
   # results (output, warnings and messages)
-  result_foundPeaks   <- evaluate_promise(findTargetFeatures(raw_data, ROIList, ppm=20, snthresh=3, noise=400, prefilter=c(7,400), peakwidth=c(2,20), verbose=TRUE, fitGauss=TRUE))
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(raw_data, ROIList, snthresh=3, peakwidth=c(2,20), verbose=TRUE, fitGauss=TRUE))
 
   # Check result table
   expect_equal(result_foundPeaks$result, expected_foundPeaks)
@@ -63,22 +63,17 @@ test_that('default parameters, with fitGauss, with verbose', {
   expect_equal(length(result_foundPeaks$messages), 3)
 })
 
-# Cannot simulate different results when changing 'ppm'
-
 test_that('change snthresh', {
   # expected foundPeaks
   expected_foundPeaks     <- foundPeaks_noFitGauss
   expected_foundPeaks[4,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
 
   # results
-  result_foundPeaks       <- findTargetFeatures(raw_data, ROIList, ppm=20, snthresh=20, noise=400, prefilter=c(7,400), peakwidth=c(2,20), verbose=FALSE, fitGauss=FALSE)
+  result_foundPeaks       <- findTargetFeatures(raw_data, ROIList, snthresh=20, peakwidth=c(2,20), verbose=FALSE, fitGauss=FALSE)
 
   # Check result table
   expect_equal(result_foundPeaks, expected_foundPeaks)
 })
-
-# Cannot simulate different results when changing 'noise'
-# Cannot simulate different results when changing 'prefilter'
 
 test_that('change peakwidth', {
   # expected foundPeaks
@@ -90,7 +85,7 @@ test_that('change peakwidth', {
   expected_foundPeaks[,1] <- sapply(expected_foundPeaks[,c(1)], as.logical)
 
   # results
-  result_foundPeaks       <- findTargetFeatures(raw_data, ROIList, ppm=20, snthresh=3, noise=400, prefilter=c(7,400), peakwidth=c(70,100), verbose=FALSE, fitGauss=FALSE)
+  result_foundPeaks       <- findTargetFeatures(raw_data, ROIList, snthresh=3, peakwidth=c(70,100), verbose=FALSE, fitGauss=FALSE)
 
   # Check result table
   expect_equal(result_foundPeaks, expected_foundPeaks)
