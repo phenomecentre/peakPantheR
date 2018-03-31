@@ -42,13 +42,13 @@ input_badtargetFeatTable[4, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000,
 # Expected EICs
 # 1
 raw_data1 <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
-EICs1	    <- xcms::chromatogram(raw_data1, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
+EICs1	    <- MSnbase::chromatogram(raw_data1, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # 2
 raw_data2 <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
-EICs2	    <- xcms::chromatogram(raw_data2, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
+EICs2	    <- MSnbase::chromatogram(raw_data2, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 # 3
 raw_data3 <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
-EICs3	    <- xcms::chromatogram(raw_data3, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
+EICs3	    <- MSnbase::chromatogram(raw_data3, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
 
 # Expected peakTables noFitGauss
 # 1
@@ -290,7 +290,7 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   names(tmp_failures) <- NULL
   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
   # Expected message
-  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Previously loaded EICs used for peak statistics\n", "1 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n", "Previously loaded EICs used for peak statistics\n", "2 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "----------------\n", "1 file(s) failed to process:\n          file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "----------------\n")
+  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Previously loaded EICs used for peak statistics\n", "1 features to integrate with FIR\n", "Reading data from 1 windows\n", "Check input, mzMLPath must be a .mzML\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n", "Previously loaded EICs used for peak statistics\n", "2 features to integrate with FIR\n", "Reading data from 2 windows\n", "Check input, mzMLPath must be a .mzML\n", "----------------\n", "1 file(s) failed to process:\n          file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "----------------\n")
 
   # results (output, warnings and messages)
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20, peakwidth=c(2,20)))
@@ -300,8 +300,8 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (centwave output)
-  expect_equal(length(result_parallelAnnotation$messages), 32)
-  expect_equal(result_parallelAnnotation$messages[c(1:7, 10, 12, 14, 16:20, 23, 25, 27, 29:31)], expected_message)
+  expect_equal(length(result_parallelAnnotation$messages), 34)
+  expect_equal(result_parallelAnnotation$messages[c(1:7, 10, 12, 13, 15, 17:21, 24, 26, 27, 29, 31:33)], expected_message)
 })
 
 test_that('parallel: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found, fitGauss, getAcquTime, verbose', {
@@ -401,7 +401,7 @@ test_that('already annotated message in verbose', {
   names(tmp_failures) <- NULL
   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
   # Expected message
-  expected_message    <- c("!! Data was already annotated, results will be overwritten !!\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Previously loaded EICs used for peak statistics\n", "1 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n", "Previously loaded EICs used for peak statistics\n", "2 features to integrate with FIR\n", "Check input, mzMLPath must be a .mzML\n", "----------------\n", "1 file(s) failed to process:\n          file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "----------------\n")
+  expected_message    <- c("!! Data was already annotated, results will be overwritten !!\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 4 found.\n", "Previously loaded EICs used for peak statistics\n", "1 features to integrate with FIR\n", "Reading data from 1 windows\n", "Check input, mzMLPath must be a .mzML\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Detecting chromatographic peaks in 4 regions of interest ...", " OK: 6 found.\n", "Previously loaded EICs used for peak statistics\n", "2 features to integrate with FIR\n", "Reading data from 2 windows\n", "Check input, mzMLPath must be a .mzML\n", "----------------\n", "1 file(s) failed to process:\n          file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "----------------\n")
 
   # results (output, warnings and messages)
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, fitGauss=TRUE, getAcquTime=TRUE, verbose=TRUE, snthresh=20, peakwidth=c(2,20)))
@@ -411,8 +411,8 @@ test_that('already annotated message in verbose', {
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages
-  expect_equal(length(result_parallelAnnotation$messages), 33)
-  expect_equal(result_parallelAnnotation$messages[c(1:8, 11, 13, 15, 17:21, 24, 26, 28, 30:32)], expected_message)
+  expect_equal(length(result_parallelAnnotation$messages), 35)
+  expect_equal(result_parallelAnnotation$messages[c(1:8, 11, 13, 14, 16, 18:22, 25, 27, 28, 30, 32:34)], expected_message)
 })
 
 test_that('catch file that doesnt exist, catch error processing, no file left', {

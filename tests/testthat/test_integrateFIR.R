@@ -56,7 +56,7 @@ test_that('3 missing with 1 which gives no scan, verbose', {
   expected_peakTable[4,c(3:27)] <- c(TRUE, 536.20001, 536.19951, 536.20051, 3701.6970, 3682.918, 3729.867, 8244657.8540967861, 8244657.8540967861, 330176, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, TRUE)
   expected_peakTable[,c(3,27)]  <- sapply(expected_peakTable[,c(3,27)], as.logical)
   # Expected message
-  expected_messages             <- c("3 features to integrate with FIR\n", "No scan present in the FIR # 3: rt and mz are set as the middle of the FIR box; maxo, into and intb are set to 0\n")
+  expected_messages             <- c("3 features to integrate with FIR\n", "Reading data from 3 windows\n", "No scan present in the FIR # 3: rt and mz are set as the middle of the FIR box; maxo, into and intb are set to 0\n")
 
   # results (output, warnings and messages)
   result_integrateFIR           <- evaluate_promise(integrateFIR(rawSpec=raw_data, foundPeakTable=notFound_peakTable, FIR=input_FIR_empty, verbose=TRUE))
@@ -64,9 +64,9 @@ test_that('3 missing with 1 which gives no scan, verbose', {
   # Check results
   expect_equal(result_integrateFIR$result, expected_peakTable)
 
-  # Check messages (cannot check time on the thrid message)
-  expect_equal(length(result_integrateFIR$messages), 3)
-  expect_equal(result_integrateFIR$messages[1:2], expected_messages)
+  # Check messages (cannot check time on the fourth message)
+  expect_equal(length(result_integrateFIR$messages), 4)
+  expect_equal(result_integrateFIR$messages[1:3], expected_messages)
 })
 
 test_that('raise errors', {

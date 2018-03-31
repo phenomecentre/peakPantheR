@@ -2,22 +2,24 @@
 % Please edit documentation in R/extractSignalRawData.R
 \name{extractSignalRawData}
 \alias{extractSignalRawData}
-\title{Extract signal in a defined mz rt window from a raw data file}
+\title{Extract signal in a multiple defined mz rt window from a raw data file}
 \usage{
-extractSignalRawData(rawSpec, rt, mz, msLevel = 1L)
+extractSignalRawData(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE)
 }
 \arguments{
 \item{rawSpec}{an \code{\link[MSnbase]{OnDiskMSnExp-class}}}
 
-\item{rt}{(numeric(2)) the retention time range from which the data should be extracted}
+\item{rt}{(numeric(2) or two-column matrix) the lower and upper retention time range from which the data should be extracted. If a matrix is passed, each row corresponds to a different window. If not provided, the full retention time range will be extracted.}
 
-\item{mz}{(numeric(2)) the mass range from which the data should be extracted}
+\item{mz}{(numeric(2) or two-column matrix) the lower and upper mass range from which the data should be extracted. If a matrix is passed, each row corresponds to a different window. If not provided, the full mass range will be extracted.}
 
 \item{msLevel}{(int) the MS level at which the data should be extracted (default to MS level 1)}
+
+\item{verbose}{(bool) If TRUE message progress and warnings}
 }
 \value{
-a data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns
+a list (one entry per window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns.
 }
 \description{
-Extract all signal from a defined mz rt window from raw data and returns a data.frame. If no rt-mz window is provided, all signal in the raw data file are returned
+Extract all signal from multiple defined mz rt window from raw data and returns a data.frame. If no rt-mz window is provided, all signal in the raw data file are returned
 }

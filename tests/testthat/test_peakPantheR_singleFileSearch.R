@@ -38,7 +38,7 @@ peakTable_noFitGauss[,c(3,27)]  <- sapply(peakTable_noFitGauss[,c(3,27)], as.log
 
 # expected EICs
 raw_data  <- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='onDisk')
-EICs	    <- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+EICs	    <- MSnbase::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
 
 
 test_that('with fitGauss, no peakStatistic, no getEICs, no plotEICsPath, no getAcquTime, no verbose', {

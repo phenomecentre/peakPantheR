@@ -14,7 +14,8 @@ Imports: foreach (>= 1.4.4),
 	xcms (>= 3.0.0),
 	stringr (>= 1.2.0),
 	methods (>= 3.4.2),
-	XML
+	XML (>= 3.98.1.10),
+	minpack.lm (>= 1.2.1)
 biocViews: MSnbase (>= 2.4.0),
 	mzR (>= 2.12.0),
 	xcms (>= 3.0.0)

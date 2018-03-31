@@ -29,12 +29,14 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
     # store results
     tmpResult   <- data.frame(matrix(vector(), sum(needsFilling), 9, dimnames=list(c(), c("mzMin", "mz", "mzMax", "rtMin", "rt", "rtMax", "maxo", "into", "intb"))))
 
+    # extract data for all fallback windows from raw (list of windows)
+    all_peakData    <- extractSignalRawData(rawSpec, mz = data.frame(mzMin=FIR$mzMin[needsFilling_idx], mzMax=FIR$mzMax[needsFilling_idx]), rt = data.frame(rtMin=FIR$rtMin[needsFilling_idx], rtMax=FIR$rtMax[needsFilling_idx]), verbose=verbose)
+    
     ## iterate over features to integrate
-    for (i in needsFilling_idx) {
-
-      # get all data points
-      peakData  <- extractSignalRawData(rawSpec, mz = c(FIR$mzMin[i], FIR$mzMax[i]), rt = c(FIR$rtMin[i], FIR$rtMax[i]))
-
+    for (cnt in 1:length(needsFilling_idx)) {
+      peakData  <- all_peakData[[cnt]]
+      i         <- needsFilling_idx[cnt]
+      
       # Only continue if a scan is found in the box
       if (dim(peakData)[1] != 0) {
 
