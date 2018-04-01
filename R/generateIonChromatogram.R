@@ -5,6 +5,26 @@
 #' @param aggregationFunction (str) Function to use in order to aggregate intensities across mz in each scan. One of \code{sum}, \code{max}, \code{min}, \code{mean}
 #'
 #' @return A data.frame of retention time "rt" and aggregated intensities "int"
+#' 
+#' @examples
+#' \dontrun{
+#' ## Input data points
+#' in_rt   <- c(3362.102, 3362.102, 3363.667, 3363.667, 3365.232, 3365.232, 3366.797, 3366.797,
+#'              3368.362, 3368.362)
+#' in_mz   <- c(496.2, 497.2, 496.2, 497.2, 496.2, 497.2, 496.2, 497.2, 496.2, 497.2)
+#' in_int  <- c(39616, 11432, 63344, 18224, 107352, 30936, 182144, 51776, 295232, 81216)
+#' input_ROIDataPoints <- data.frame(rt=in_rt, mz=in_mz, int=in_int)
+#'
+#' ## Aggregate mz to generate EIC
+#' EIC <- generateIonChromatogram(input_ROIDataPoints, aggregationFunction='sum')
+#' EIC
+#' #         rt    int
+#' # 1 3362.102  51048
+#' # 2 3363.667  81568
+#' # 3 3365.232 138288
+#' # 4 3366.797 233920
+#' # 5 3368.362 376448
+#' }
 generateIonChromatogram <- function(ROIDataPoint, aggregationFunction='sum') {
   
   # Check input

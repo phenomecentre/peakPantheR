@@ -5,11 +5,46 @@
 #' @param x (numeric) x values (e.g. retention time)
 #' @param y (numeric) y observed values (e.g. spectra intensity)
 #' @param curveModel (str) name of the curve model to fit (currently \code{skewedGaussian})
-#' @param params (list or str) either list of curve fit parameters
+#' @param params (list or str) either 'guess' for automated parametrisation or list of curve fit parameters
 #' @param lower (NULL or numeric vector) if not NULL, a numeric vector of lower bounds on each parameter. If NULL preset parammeters are employed
 #' @param upper (NULL or numeric vector) if not NULL, a numeric vector of upper bounds on each parameter. If NULL preset parammeters are employed
 #' 
 #' @return A list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations
+#' 
+#' @examples
+#' ## x is retention time, y corresponding intensity
+#' input_x  <- c(3362.102, 3363.667, 3365.232, 3366.797, 3368.362, 3369.927, 3371.492, 3373.057,
+#'              3374.622, 3376.187, 3377.752, 3379.317, 3380.882, 3382.447, 3384.012, 3385.577,
+#'              3387.142, 3388.707, 3390.272, 3391.837, 3393.402, 3394.966, 3396.531, 3398.096,
+#'              3399.661, 3401.226, 3402.791, 3404.356, 3405.921, 3407.486, 3409.051)
+#' input_y  <- c(51048, 81568, 138288, 233920, 376448, 557288, 753216, 938048, 1091840, 1196992,
+#'               1261056, 1308992, 1362752, 1406592, 1431360, 1432896, 1407808, 1345344, 1268480,
+#'               1198592, 1126848, 1036544, 937600, 849792, 771456, 692416, 614528, 546088, 492752,
+#'               446464, 400632)
+#' 
+#' ## Fit
+#' fitted_curve <- fitCurve(input_x, input_y, curveModel='skewedGaussian', params='guess')
+#' 
+#' ## Returns the optimal fitting parameters
+#' fitted_curve
+#' #
+#' # $amplitude
+#' # [1] 275371.1
+#' # 
+#' # $center
+#' # [1] 3382.577
+#' # 
+#' # $sigma
+#' # [1] 0.07904697
+#' # 
+#' # $gamma
+#' # [1] 0.001147647
+#' # 
+#' # $fitStatus
+#' # [1] 2
+#' # 
+#' # $curveModel
+#' # [1] "skewedGaussian"
 #' 
 #' @export
 fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NULL, upper=NULL) {
@@ -97,6 +132,18 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
 #' @param x (numeric) values at which to evaluate the fitted curve
 #' 
 #' @return  fitted curve values at x
+#' 
+#' @examples
+#' ## Input a fitted curve
+#' fittedCurve <- list(amplitude=275371.1, center=3382.577, sigma=0.07904697, gamma=0.001147647,
+#'                     fitStatus=2, curveModel="skewedGaussian")
+#' input_x     <- c(3290, 3300, 3310, 3320, 3330, 3340, 3350, 3360, 3370, 3380, 3390, 3400, 3410)
+#'
+#' ## Predict y at each input_x
+#' pred_y      <- predictCurve(fittedCurve, input_x)
+#' pred_y
+#' # [1] 2.347729e-08 1.282668e-05 3.475590e-03 4.676579e-01 3.129420e+01 1.043341e+03 1.736915e+04
+#' # [8] 1.447754e+05 6.061808e+05 1.280037e+06 1.369651e+06 7.467333e+05 2.087477e+05
 #' 
 #' @export
 predictCurve  <- function(fittedCurve, x) {
