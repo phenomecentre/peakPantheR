@@ -59,6 +59,20 @@ test_that('aggregate with mean', {
   expect_equal(result_ionChromatogram, expected_ionChrom)
 })
 
+test_that('return empty df if no scans in input', {
+  input_empty   <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
+  output_empty  <- data.frame(rt=numeric(), int=numeric())
+  
+  # sum
+  expect_equal(generateIonChromatogram(input_empty, aggregationFunction='sum'), output_empty)
+  # min
+  expect_equal(generateIonChromatogram(input_empty, aggregationFunction='min'), output_empty)
+  # max
+  expect_equal(generateIonChromatogram(input_empty, aggregationFunction='max'), output_empty)
+  # mean
+  expect_equal(generateIonChromatogram(input_empty, aggregationFunction='mean'), output_empty)
+})
+
 test_that('raise errors', {
   # ROIDataPoint is not data.frame
   expect_error(generateIonChromatogram(ROIDataPoint='notADataFrame', aggregationFunction='sum'), 'Check input "ROIDataPoint" must be a data.frame', fixed=TRUE)

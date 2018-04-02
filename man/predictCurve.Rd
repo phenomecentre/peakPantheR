@@ -7,7 +7,7 @@
 predictCurve(fittedCurve, x)
 }
 \arguments{
-\item{fittedCurve}{(list) a list of curve fitting parameters, curve shape model \code{curveModel} and nls.lm fit status \code{fitStatus}.}
+\item{fittedCurve}{(peakPantheR_curveFit) A 'peakPantheR_curveFit': a list of curve fitting parameters, curve shape model \code{curveModel} and nls.lm fit status \code{fitStatus}.}
 
 \item{x}{(numeric) values at which to evaluate the fitted curve}
 }
@@ -21,6 +21,7 @@ Evaluate fitted curve values at \code{x} data points
 ## Input a fitted curve
 fittedCurve <- list(amplitude=275371.1, center=3382.577, sigma=0.07904697, gamma=0.001147647,
                     fitStatus=2, curveModel="skewedGaussian")
+class(fittedCurve)  <- 'peakPantheR_curveFit'
 input_x     <- c(3290, 3300, 3310, 3320, 3330, 3340, 3350, 3360, 3370, 3380, 3390, 3400, 3410)
 
 ## Predict y at each input_x

@@ -37,6 +37,12 @@ generateIonChromatogram <- function(ROIDataPoint, aggregationFunction='sum') {
     stop('Check input "aggregationFunction" must be one of: "sum", "mean", "min", "max"')
   }
   
+  # No data to aggregate
+  if (dim(ROIDataPoint)[1] == 0) {
+    return(data.frame(rt=numeric(), int=numeric()))
+  }
+  
+  # Init
   unique_scans  <- sort(unique(ROIDataPoint$rt))
   res           <- data.frame(matrix(vector(), nrow=length(unique_scans), ncol=2, dimnames=list(c(),c('rt','int'))))
   

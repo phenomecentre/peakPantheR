@@ -1,3 +1,11 @@
+#' Check if object is of class peakPantheR_curveFit
+#' 
+#' Check if object is of class peakPantheR_curveFit
+#' @param x object to test
+#' @return (bool) TRUE or FALSE
+is.peakPantheR_curveFit <- function(x){inherits(x, "peakPantheR_curveFit")}
+
+
 #' Curve fitting using minpack.lm
 #' 
 #' Fit different curve models using minpack. Fitting parameters can be passed or guessed.
@@ -9,7 +17,7 @@
 #' @param lower (NULL or numeric vector) if not NULL, a numeric vector of lower bounds on each parameter. If NULL preset parammeters are employed
 #' @param upper (NULL or numeric vector) if not NULL, a numeric vector of upper bounds on each parameter. If NULL preset parammeters are employed
 #' 
-#' @return A list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations
+#' @return A 'peakPantheR_curveFit': a list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations
 #' 
 #' @examples
 #' ## x is retention time, y corresponding intensity
@@ -45,6 +53,9 @@
 #' # 
 #' # $curveModel
 #' # [1] "skewedGaussian"
+#' #
+#' # attr(,"class")
+#' # [1] "peakPantheR_curveFit"
 #' 
 #' @export
 fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NULL, upper=NULL) {
@@ -57,7 +68,7 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
   # known curveModel
   known_curveModel <- c('skewedGaussian')
   if (!(curveModel %in% known_curveModel)) {
-    stop(paste('Error: "curveModel" must be one of', known_curveModel))
+    stop(paste('Error: "curveModel" must be one of:', known_curveModel))
   }
   # params
   if (!(typeof(params) %in% c('list', 'character'))) {
@@ -76,7 +87,7 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
   # upper
   if (!is.null(upper)) {
     if (typeof(upper) != 'double') {
-      stop('Error: "lower" must be a NULL or numeric')
+      stop('Error: "upper" must be a NULL or numeric')
     }
   }
   
@@ -115,6 +126,7 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
     fittedCurve             <- resultFit$par
     fittedCurve$fitStatus   <- resultFit$info
     fittedCurve$curveModel  <- curveModel
+    class(fittedCurve)      <- 'peakPantheR_curveFit'
   }
   # for future curve shapes
   #} else if () {
@@ -128,7 +140,7 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
 #'
 #' Evaluate fitted curve values at \code{x} data points
 #'
-#' @param fittedCurve (list) a list of curve fitting parameters, curve shape model \code{curveModel} and nls.lm fit status \code{fitStatus}.
+#' @param fittedCurve (peakPantheR_curveFit) A 'peakPantheR_curveFit': a list of curve fitting parameters, curve shape model \code{curveModel} and nls.lm fit status \code{fitStatus}.
 #' @param x (numeric) values at which to evaluate the fitted curve
 #' 
 #' @return  fitted curve values at x
@@ -137,6 +149,7 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
 #' ## Input a fitted curve
 #' fittedCurve <- list(amplitude=275371.1, center=3382.577, sigma=0.07904697, gamma=0.001147647,
 #'                     fitStatus=2, curveModel="skewedGaussian")
+#' class(fittedCurve)  <- 'peakPantheR_curveFit'
 #' input_x     <- c(3290, 3300, 3310, 3320, 3330, 3340, 3350, 3360, 3370, 3380, 3390, 3400, 3410)
 #'
 #' ## Predict y at each input_x
@@ -149,15 +162,12 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
 predictCurve  <- function(fittedCurve, x) {
 
   # Check input
-  if (class(fittedCurve) != 'list') {
-    stop('Error: "fittedCurve" must be a list!')
-  }
-  if (!("curveModel" %in% names(fittedCurve))) {
-    stop('Error: "fittedCurve" must contain a "curveModel"!')
+  if (!is.peakPantheR_curveFit(fittedCurve)) {
+    stop('Error: "fittedCurve" must be a peakPantheR_curveFit!')
   }
   known_curveModel <- c('skewedGaussian')
   if (!(fittedCurve$curveModel %in% known_curveModel)) {
-    stop(paste('Error: "fittedCurve$curveModel" must be one of', known_curveModel))
+    stop(paste('Error: "fittedCurve$curveModel" must be one of:', known_curveModel))
   }
   
   # Select correct model

@@ -21,7 +21,7 @@ fitCurve(x, y, curveModel = "skewedGaussian", params = "guess",
 \item{upper}{(NULL or numeric vector) if not NULL, a numeric vector of upper bounds on each parameter. If NULL preset parammeters are employed}
 }
 \value{
-A list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations
+A 'peakPantheR_curveFit': a list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations
 }
 \description{
 Fit different curve models using minpack. Fitting parameters can be passed or guessed.
@@ -60,5 +60,8 @@ fitted_curve
 # 
 # $curveModel
 # [1] "skewedGaussian"
+#
+# attr(,"class")
+# [1] "peakPantheR_curveFit"
 
 }
