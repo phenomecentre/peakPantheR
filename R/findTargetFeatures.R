@@ -10,7 +10,7 @@
 #' @param verbose (bool) If TRUE message the time taken and number of features found
 #' @param ... Passes arguments to \code{fitCurve} to alter peak fitting (such as \code{lower} and \code{upper} for the bounds of each parameters)
 #'
-#' @return A \code{data.frame} with targeted features as rows and peak measures as columns (see Details).
+#' @return A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as rows and peak measures as columns (see Details), \code{list()$curveFit} (\emph{list}) a list of \code{peakPantheR_curveFit} or NA for each ROI.
 #'
 #' \subsection{Details:}{
 #'   The returned \code{data.frame} is structured as follow:
@@ -123,7 +123,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
   ## Init output
   outTable        <- data.frame(matrix(vector(), nROI, 10, dimnames=list(c(),c('found','rtMin','rt','rtMax','mzMin','mz','mzMax','peakArea','maxIntMeasured','maxIntPredicted'))), stringsAsFactors=F)
   outTable$found  <- rep(FALSE, nROI)     # set found to FALSE
-  outCurveFit     <- vector('list', nROI)
+  outCurveFit     <- rep(list(NA), nROI)
   
   
   ## Iterate over ROIs

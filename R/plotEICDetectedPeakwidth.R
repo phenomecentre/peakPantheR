@@ -1,40 +1,53 @@
 #' Plot samples raw data and detected feature for a single ROI
 #'
-#' plot a ROI  across multiple samples (x axis is RT, y axis is intensity) with the matching detected peak rt and peakwidth under it. RT and peakwidth are plotted in the order spectra are passed, with the first spectra on top.
+#' plot a ROI across multiple samples (x axis is RT, y axis is intensity) with the matching detected peak rt and peakwidth under it. If curveFit is provided, the fitted curve for each compound is added. RT and peakwidth are plotted in the order spectra are passed, with the first spectra on top.
 #'
-#' @param EICs list of xcms::chromatograms (containing a single spectra each). If it is a xcms::Chromatogram (no S) or not a list, bring it to the right format.
+#' @param ROIDataPointSampleList (list) list of \code{data.frame} of raw data points for each sample (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).
 #' @param cpdID (str) Compound ID
 #' @param cpdName (str) Compound Name
 #' @param rt (float) vector of detected peak apex retention time (in sec)
-#' @param rtmin (float) vector of detected peak minimum retention time (in sec)
-#' @param rtmax (float) vector ofdetected peak maximum retention time (in sec)
-#' @param mzmin (float) ROI minimum m/z (matching EIC)
-#' @param mzmax (float) ROI maximum m/z (matching EIC)
+#' @param rtMin (float) vector of detected peak minimum retention time (in sec)
+#' @param rtMax (float) vector ofdetected peak maximum retention time (in sec)
+#' @param mzMin (float) ROI minimum m/z (matching EIC)
+#' @param mzMax (float) ROI maximum m/z (matching EIC)
 #' @param ratio (float) value between 0 and 1 defining the vertical percentage taken by the EICs subplot
-#' @param sampleColour (str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtmin}, \code{rtmax})
+#' @param sampling (int) Number of points to employ when plotting fittedCurve
+#' @param curveFitSampleList (list) NULL or a list of \code{peakPantheR_curveFit} (or NA) for each sample
+#' @param sampleColour (str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtMin}, \code{rtMax})
 #' @param verbose (bool) if TRUE message when NA scans are removed
 #' 
 #' @return Grob (ggplot object)
-plotEICDetectedPeakwidth  <- function(EICs, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax, ratio=0.85, sampleColour=NULL, verbose=TRUE) {
+plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin, rtMax, mzMin, mzMax, ratio=0.85, sampling=250, curveFitSampleList=NULL, sampleColour=NULL, verbose=TRUE) {
   
   ## Check input
-  # in case EICs is not a list
-  if (class(EICs) != "list") {
-    stop('Error: EICs must be a list of single xcms::Chromatograms')
+  # in case ROIDataPointSampleList is not a list
+  if (class(ROIDataPointSampleList) != "list") {
+    stop('Error: "ROIDataPointSampleList" must be a list of data.frame')
   }
   
-  nbSpl   <- length(EICs)
-  if ((nbSpl!=length(rt)) | (nbSpl!=length(rtmin)) | (nbSpl!=length(rtmax))) {
-    stop("'EIC', 'rt', 'rtmin' and 'rtmax' must be the same length")
+  # check length of input
+  nbSpl   <- length(ROIDataPointSampleList)
+  if ((nbSpl!=length(rt)) | (nbSpl!=length(rtMin)) | (nbSpl!=length(rtMax))) {
+    stop('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  }
+  
+  # check curveFitSampleList
+  plotFit     <- FALSE
+  if (!is.null(curveFitSampleList)) {
+    if (nbSpl==length(curveFitSampleList)) {
+      plotFit <- TRUE
+    } else {
+      stop('"curveFitSampleList", "ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+    }
   }
   
   # set default colour (add a sample color ID that will be match in the plot)
-  colourSpl  <- rep("black", nbSpl)
+  colourSpl     <- rep("black", nbSpl)
   if (!is.null(sampleColour)) {
     if (nbSpl==length(sampleColour)) {
       colourSpl <- sampleColour
     } else {
-      if (verbose) {message('Warning: sampleColour length must match the number of samples; default colour used')}
+      if (verbose) {message("Warning: sampleColour length must match the number of samples; default colour used")}
     }
   } 
   sampleIDColour    <- paste('spl', seq(1:nbSpl), sep="")
@@ -42,34 +55,40 @@ plotEICDetectedPeakwidth  <- function(EICs, cpdID, cpdName, rt, rtmin, rtmax, mz
   
   # ratio must be between 0 and 1
   if ((ratio < 0) | (ratio > 1)) {
-    if (verbose) {message('Error: ratio must be between 0 and 1, replaced by default value')}
+    if (verbose) {message("Error: ratio must be between 0 and 1, replaced by default value")}
     ratio <- 0.85
   }
   
   
-  ## Init
-  title   <- paste('CpdID: ', cpdID, ' - ', cpdName, ' ', round(mzmin, 4), '-', round(mzmax, 4))
   
-  ## Plot raw spectra
+  ## Init
+  title   <- paste('CpdID: ', cpdID, ' - ', cpdName, ' ', round(mzMin, 4), '-', round(mzMax, 4))
+  
+  
+  ## Plot raw spectra and curve fit
   # init plot
   p_spec      <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) + ggplot2::ggtitle(title) + ggplot2::theme_bw() + ggplot2::ylab('Intensity') + ggplot2::theme(axis.title.x=ggplot2::element_blank(), axis.text.x=ggplot2::element_blank(), plot.title=ggplot2::element_text(size=ggplot2::rel(1)))
-  # add each spectra to the plot
+  
+  # add each spectra and fit to the plot
   for (spectraID in 1:nbSpl){
-    # in case EICs is a single Chromatogram instead of a Chromatograms
-    if (class(EICs[[spectraID]]) != "Chromatograms") {
-      stop('Error: EICs must be a list of single xcms::Chromatograms')
+    # generate EIC
+    tmp_EIC <- generateIonChromatogram(ROIDataPointSampleList[[spectraID]], aggregationFunction='sum')
+    # plot EIC
+    p_spec  <- p_spec + ggplot2::geom_line(data=tmp_EIC, ggplot2::aes_string(x='rt', y='int'), colour=colourSpl[spectraID])
+
+    # fitted curve
+    if (plotFit) {
+      grid_rt   <- seq(from=rtMin[spectraID], to=rtMax[spectraID], by=((rtMax[spectraID]-rtMin[spectraID])/(sampling-1)))
+      # only if exist
+      if (all(!is.na(curveFitSampleList[[spectraID]]))) {
+        # project curve fit
+        tmp_fit <- data.frame(rt=grid_rt ,int=predictCurve(curveFitSampleList[[spectraID]], x=grid_rt))
+        # plot curve fit
+        p_spec  <- p_spec + ggplot2::geom_line(data=tmp_fit, ggplot2::aes_string(x='rt', y='int'), colour=colourSpl[spectraID], linetype="dashed")
+      }
     }
-    # prepare data
-    if (length(EICs[[spectraID]]) > 1) {
-      message('Warning: more than 1 spectra per Chromatograms provided! Only the first one will be considered')
-    }
-    Int       <- xcms::intensity(EICs[[spectraID]][1])
-    filterNA  <- !is.na(Int)
-    Int       <- Int[filterNA]
-    RT        <- xcms::rtime(EICs[[spectraID]][1])[filterNA]
-    # plot
-    p_spec    <- p_spec + ggplot2::geom_line(data=data.frame(x=RT, y=Int), ggplot2::aes_string(x="x", y="y"), colour=colourSpl[spectraID])
   }
+  
   
   
   ## Plot peakwidth
@@ -84,9 +103,10 @@ plotEICDetectedPeakwidth  <- function(EICs, cpdID, cpdName, rt, rtmin, rtmax, mz
   tmp_pt        <- tmp_pt[!is.na(tmp_pt$x),]
   p_peakwidth   <- p_peakwidth + ggplot2::geom_point(data=tmp_pt, ggplot2::aes(x=x, y=y, colour=colr), size=3)
   # rt peakwidth (add color ID to each point)
-  tmp_pwidth    <- data.frame(x=c(rtmin,rtmax), y=c(y_placement,y_placement), colr=c(sampleIDColour,sampleIDColour), stringsAsFactors=F)
+  tmp_pwidth    <- data.frame(x=c(rtMin,rtMax), y=c(y_placement,y_placement), colr=c(sampleIDColour,sampleIDColour), stringsAsFactors=F)
   tmp_pwidth    <- tmp_pwidth[!is.na(tmp_pwidth$x),]
   p_peakwidth   <- p_peakwidth + ggplot2::geom_line(data=tmp_pwidth, ggplot2::aes(x=x, y=y, group=y, colour=colr), size=1)
+  
   
   
   ## Set common x lim

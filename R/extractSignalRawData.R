@@ -99,7 +99,8 @@
 #' # 71 3409.051 522.2 588416
 #' }
 extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
-
+  stime <- Sys.time()
+  
   ## Check input
   # check type and dimensions
   #   msLevel
@@ -219,6 +220,9 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
     res[[i]] <- scanTable
   }
   
+  # Out
+  etime <- Sys.time()
+  if (verbose) { message('Data read in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime))) }
   return(res)
 }
 
