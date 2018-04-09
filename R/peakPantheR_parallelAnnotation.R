@@ -4,7 +4,6 @@
 #'
 #' @param object (peakPantheRAnnotation) Initialised peakPantheRAnnotation object defining the samples to process and compounds to target. The slots \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR integrated if a feature is not found
 #' @param ncores (int) Number of cores to use for parallelisation. Default 0 for no parallelisation.
-#' @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
 #' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)
 #' @param verbose (bool) If TRUE message calculation progress, time taken, number of features found (total and matched to targets) and failures
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
@@ -23,20 +22,19 @@
 #' @import doParallel
 #'
 #' @export
-peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, getAcquTime=TRUE, verbose=TRUE, ...) {
+peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, verbose=TRUE, ...) {
   ## ------------------------------------------------------------
-  parallel_helper <- function(singleSpectraDataPath, targetFeatTable, inFIR=NULL, inFitGauss=FALSE, inGetAcquTime=FALSE, inVerbose=TRUE, ...){
+  parallel_helper <- function(singleSpectraDataPath, targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE, inVerbose=TRUE, ...){
     # Check input file exist, wrap \code{peakPantheR_singleFileSearch} in a try cratch, add a failure status
     #
     # @param singleSpectraDataPath (str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).
     # @param targetFeatTable a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
     # @param FIR (data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
-    # @param fitGauss (bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.
     # @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)
     # @param verbose (bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)
     # @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
     #
-    # @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata, \code{list()$failure} \emph{(named str or NULL)} a string detailing the error (named with the singleSpectraDataPath) or NA if the processing is successful.
+    # @return a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{(data.frame)} targeted features results (see Details), \code{list()$curveFit} \emph{(list)} list of \code{peakPantheR_curveFit} or NA for each ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata, \code{list()$ROIsDataPoint} \emph{(list)} a list of \code{data.frame} of raw data points for each ROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)). \code{list()$failure} \emph{(named str or NULL)} a string detailing the error (named with the singleSpectraDataPath) or NA if the processing is successful.
 
     ## Check input path exist or exit with error message
     if (!file.exists(singleSpectraDataPath)) {
@@ -47,7 +45,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
       failureMsg        <- paste('Error file does not exist: ', singleSpectraDataPath, sep="")
       names(failureMsg) <- singleSpectraDataPath
       # return basic values and failure message
-      return(list(TIC=as.numeric(NA), peakTable=NULL, EICs=NULL, acquTime=as.character(NA), failure=failureMsg))
+      return(list(TIC=as.numeric(NA), peakTable=NULL, acquTime=as.character(NA), curveFit=NULL, ROIsDataPoint=NULL, failure=failureMsg))
     }
 
 
@@ -63,7 +61,8 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
     result <- tryCatch(
       {
         # singleFileSearch
-        tmpResult     <- peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, fitGauss=inFitGauss, peakStatistic=TRUE, getEICs=TRUE, plotEICsPath=NA, getAcquTime=inGetAcquTime, FIR=inFIR, verbose=inVerbose, ...)
+        tmpResult     <- peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable, peakStatistic=TRUE, plotEICsPath=NA, getAcquTime=inGetAcquTime, FIR=inFIR, verbose=inVerbose, ...)
+        
         # add failure status
         failureMsg        <- NA
         names(failureMsg) <- singleSpectraDataPath
@@ -83,7 +82,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
         failureMsg        <- err$message
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
-        return(list(TIC=as.numeric(NA), peakTable=NULL, EICs=NULL, acquTime=as.character(NA), failure=failureMsg))
+        return(list(TIC=as.numeric(NA), peakTable=NULL, acquTime=as.character(NA), curveFit=NULL, ROIsDataPoint=NULL, failure=failureMsg))
       }
     )
 
@@ -133,9 +132,9 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
 
   ## Run singleFileSearch (list, each item is the result for a file, errors are passed into the list)
   if( ncores!=0 ) {
-    allFilesRes   <- foreach::foreach( x=file_paths, .packages=c("xcms","MSnbase","mzR"), .inorder=TRUE) %dopar% parallel_helper(x, target_peak_table, inFIR=input_FIR, inFitGauss=fitGauss, inGetAcquTime=getAcquTime, inVerbose=verbose, ...) #, .errorhandling='pass' #.export=c('makeROIList', 'findTargetFeatures', 'getTargetFeatureStatistic', 'getAcquisitionDatemzML', 'integrateFIR', 'peakPantheR_singleFileSearch')# .export 'extractMsData', 'CentWaveParam', 'findChromPeaks', 'chromPeaks'
+    allFilesRes   <- foreach::foreach( x=file_paths, .packages=c("MSnbase","mzR"), .inorder=TRUE) %dopar% parallel_helper(x, target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime, inVerbose=verbose, ...) #, .errorhandling='pass' #.export=c('makeROIList', 'findTargetFeatures', 'getTargetFeatureStatistic', 'getAcquisitionDatemzML', 'integrateFIR', 'peakPantheR_singleFileSearch')# .export 'extractMsData', 'CentWaveParam', 'findChromPeaks', 'chromPeaks'
   } else {
-    allFilesRes   <- lapply(file_paths, function(x) parallel_helper(x, target_peak_table, inFIR=input_FIR, inFitGauss=fitGauss, inGetAcquTime=getAcquTime, inVerbose=verbose, ...))
+    allFilesRes   <- lapply(file_paths, function(x) parallel_helper(x, target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime, inVerbose=verbose, ...))
   }
 
 
@@ -163,9 +162,11 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, fitGauss=FALSE, get
     outObject@TIC             <- sapply(allFilesRes, function(x) {x$TIC})
     # peakTables (all columns but cpdID and cpdName)
     outObject@peakTables      <- lapply(allFilesRes, function(x) {x$peakTable[,!names(x$peakTable) %in% c("cpdID", "cpdName")] })
-    # EICs
-    outObject@EICs            <- lapply(allFilesRes, function(x) {x$EIC})
-
+    # dataPoints
+    outObject@dataPoints      <- lapply(allFilesRes, function(x) {x$ROIsDataPoint})
+    # peakFit
+    outObject@peakFit         <- lapply(allFilesRes, function(x) {x$curveFit})
+    
     # isAnnotated
     outObject@isAnnotated     <- TRUE
 

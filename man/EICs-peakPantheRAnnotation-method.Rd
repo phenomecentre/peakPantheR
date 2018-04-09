@@ -6,10 +6,12 @@
 \alias{EICs}
 \title{EICs accessor}
 \usage{
-\S4method{EICs}{peakPantheRAnnotation}(object)
+\S4method{EICs}{peakPantheRAnnotation}(object, aggregationFunction)
 }
 \arguments{
 \item{object}{peakPantheRAnnotation}
+
+\item{aggregationFunction}{(str) Function to use in order to aggregate intensities across mz in each scan. One of \code{sum}, \code{max}, \code{min}, \code{mean}}
 }
 \description{
 EICs accessor

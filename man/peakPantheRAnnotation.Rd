@@ -16,8 +16,8 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
   stringsAsFactors = F), filepath = character(),
   acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
-  useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list(),
-  isAnnotated = FALSE)
+  useFIR = FALSE, TIC = numeric(), peakTables = list(),
+  dataPoints = list(), peakFit = list(), isAnnotated = FALSE)
 
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   cpdID = character(), cpdName = character(), ROI = data.frame(rtMin =
@@ -28,8 +28,8 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
   stringsAsFactors = F), filepath = character(),
   acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
-  useFIR = FALSE, TIC = numeric(), peakTables = list(), EICs = list(),
-  isAnnotated = FALSE)
+  useFIR = FALSE, TIC = numeric(), peakTables = list(),
+  dataPoints = list(), peakFit = list(), isAnnotated = FALSE)
 }
 \arguments{
 \item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
@@ -60,7 +60,9 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
 
 \item{peakTables}{A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.}
 
-\item{EICs}{A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra.}
+\item{dataPoints}{A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row))}
+
+\item{peakFit}{A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI}
 
 \item{isAnnotated}{A logical stating in the annotation took place}
 }
@@ -70,9 +72,8 @@ The \code{peakPantheRAnnotation} class is designed to run and store peakPantheR 
 \code{peakPantheRAnnotation()}: create an instance of the \code{peakPantherAnnotation} class.
 }
 \details{
-HERE DETAIL \code{targetFeatTable} and \code{annotationTable} which are generated on the fly from the slots.
-
-  The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on \code{@cpdID} length, and the number of samples is based on \code{@filepath} length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
+The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on \code{@cpdID} length, and the number of samples is based on \code{@filepath} length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
+         \code{annotationTable(object, column)} where \emph{column} is a column from \emph{peakTable}, returns a data.frame of values with the samples as rows, ROI as columns.
 }
 \section{Slots}{
 
@@ -101,40 +102,32 @@ HERE DETAIL \code{targetFeatTable} and \code{annotationTable} which are generate
 
 \item{\code{peakTables}}{A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.}
 
-\item{\code{EICs}}{A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra}
+\item{\code{dataPoints}}{A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row))}
+
+\item{\code{peakFit}}{A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI}
 
 \item{\code{isAnnotated}}{A logical stating if the annotation has taken place
 
 \subsection{Details:}{
   The \emph{peakTables} \code{data.frame} are structured as follow:
   \tabular{ll}{
-    found \tab (bool) TRUE if compound was found in the raw data\cr
+    cpdID \tab database compound ID\cr
+    cpdName \tab compound name\cr
+    found \tab was the peak found\cr
+    rt \tab retention time of peak apex (sec)\cr
+    rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+    rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
     mz \tab weighted (by intensity) mean of peak m/z across scans\cr
-    mzmin \tab m/z peak minimum\cr
-    mzmax \tab m/z peak maximum\cr
-    rt \tab retention time of peak midpoint\cr
-    rtmin \tab leading edge of peak retention time\cr
-    rtmax \tab trailing edge of peak retention time\cr
-    into \tab integrated peak intensity\cr
-    intb \tab baseline corrected integrated peak intensity\cr
-    maxo \tab maximum peak intensity\cr
-    sn \tab Signal/Noise ratio, defined as \code{(maxo - baseline)/sd}, where \code{maxo} is the maximum peak intensity, \code{baseline} the estimated baseline value and \code{sd} the standard deviation of local chromatographic noise.\cr
-    egauss \tab RMSE of Gaussian fit\cr
-    mu \tab Gaussian parameter mu\cr
-    sigma \tab Gaussian parameter sigma\cr
-    h \tab Gaussian parameter h\cr
-    f \tab Region number of m/z ROI where the peak was localised\cr
-    dppm \tab m/z deviation of mass trace across scans in ppm\cr
-    scale \tab Scale on which the peak was localised\cr
-    scpos \tab Peak position found by wavelet analysis (scan number)\cr
-    scmin \tab Left peak limit found by wavelet analysis (scan number)\cr
-    scmax \tab Right peak limit found by wavelet analysis (scan number)\cr
-    ppm_error \tab difference in ppm between the expected and measured m/z, not available if \code{peakStatistic=FALSE}\cr
-    rt_dev_sec \tab difference in seconds between the expected and measured rt, not available if \code{peakStatistic=FALSE}\cr
-    FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}, not available if \code{peakStatistic=FALSE}\cr
-    FWHM_ndatapoints \tab number of scans on the peak, not available if \code{peakStatistic=FALSE}\cr
-    tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
-    asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
+    mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
+    mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
+    peakArea \tab integrated peak area\cr
+    maxIntMeasured \tab maximum peak intensity in raw data\cr
+    maxIntPredicted \tab maximum peak intensity based on curve fit\cr
+    is_filled \tab Logical indicate if the feature was integrated using FIR (Fallback Integration Region)\cr
+    ppm_error \tab difference in ppm between the expected and measured m/z\cr
+    rt_dev_sec \tab difference in seconds between the expected and measured rt\cr
+    tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
+    asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
   }
 }}
 }}

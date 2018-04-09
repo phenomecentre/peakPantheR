@@ -4,15 +4,13 @@
 \alias{peakPantheR_parallelAnnotation}
 \title{Search, integrate and report targeted features in a multiple spectra}
 \usage{
-peakPantheR_parallelAnnotation(object, ncores = 0, fitGauss = FALSE,
-  getAcquTime = TRUE, verbose = TRUE, ...)
+peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation object defining the samples to process and compounds to target. The slots \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR integrated if a feature is not found}
 
 \item{ncores}{(int) Number of cores to use for parallelisation. Default 0 for no parallelisation.}
-
-\item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
 
 \item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)}
 

@@ -46,7 +46,7 @@ setMethod("show",
 
 
 #####################################################################
-## validObject method for \link{peakPantheRAnnotation-class}. Number of compounds based on @cpdID length, number of samples based on @filepath length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on first list element.
+## validObject method for \link{peakPantheRAnnotation-class}. Number of compounds based on @cpdID length, number of samples based on @filepath length. Slot type is not checked as \code{setClass} enforces it. peakTables, dataPoints and peakFit type are checked on first list element.
 setValidity("peakPantheRAnnotation", function(object) valid_peakPantheRAnnotation(object))
 
 
@@ -211,16 +211,28 @@ setMethod("peakTables", "peakPantheRAnnotation",
             return(tmpPeakTables)
           })
 
-# EICs
-setGeneric("EICs", function(object, ...) standardGeneric("EICs"))
-#' EICs accessor
+# dataPoints
+setGeneric("dataPoints", function(object, ...) standardGeneric("dataPoints"))
+#' dataPoints accessor
 #' @param object peakPantheRAnnotation
 #' @docType methods
-#' @aliases EICs
+#' @aliases dataPoints
 #' @export
-setMethod("EICs", "peakPantheRAnnotation",
+setMethod("dataPoints", "peakPantheRAnnotation",
           function(object) {
-            object@EICs
+            object@dataPoints
+          })
+
+# peakFit
+setGeneric("peakFit", function(object, ...) standardGeneric("peakFit"))
+#' peakFit accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases peakFit
+#' @export
+setMethod("peakFit", "peakPantheRAnnotation",
+          function(object) {
+            object@peakFit
           })
 
 # isAnnotated
@@ -308,6 +320,20 @@ setMethod("annotationTable", "peakPantheRAnnotation",
             return(tmpAnnotation)
           })
 
+# EICs
+setGeneric("EICs", function(object, aggregationFunction='sum', ...) standardGeneric("EICs"))
+#' EICs accessor
+#' @param object peakPantheRAnnotation
+#' @param aggregationFunction (str) Function to use in order to aggregate intensities across mz in each scan. One of \code{sum}, \code{max}, \code{min}, \code{mean}
+#' @docType methods
+#' @aliases EICs
+#' @export
+setMethod("EICs", "peakPantheRAnnotation",
+          function(object, aggregationFunction) {
+            tmpEICs <- lapply(object@dataPoints, function(ROIsDataPoint){lapply(ROIsDataPoint, function(x){generateIonChromatogram(x, aggregationFunction=aggregationFunction)}) })
+            return(tmpEICs)
+          })
+
 # filename
 setGeneric("filename", function(object, ...) standardGeneric("filename"))
 #' filename accessor by spliting filepath
@@ -381,23 +407,27 @@ setMethod("[", "peakPantheRAnnotation",
               # cpd filter in each table
               .peakTables   <- lapply(tmp_peakTables, function(x, y) {x[y,]}, y=j)
             }
-
-            ## EICs, filter samples first, then compound in each Chromatograms
-            tmp_EICs        <- x@EICs[i]
-            if (all(sapply(tmp_EICs, is.null))) {
+            
+            ## dataPoints, filter samples first, then compounds in each ROIsDataPoint
+            tmp_dataPoints  <- x@dataPoints[i]
+            if (all(sapply(tmp_dataPoints, is.null))) {
               # no cpd filter if all NULL
-              .EICs         <- tmp_EICs
+              .dataPoints   <- tmp_dataPoints
             } else {
-              # cpd filter in each Chromatograms
-              if (length(j) == 1) {
-                # if only 1 sample ensure we don't get a Chromatogram (no S)
-                .EICs <- lapply(tmp_EICs, function(x, y) {MSnbase::Chromatograms(data=list(x[y,]))}, y=j)
-              } else {
-                # filter cpd, get a Chromatograms
-                .EICs <- lapply(tmp_EICs, function(x, y) {x[y,]}, y=j)
-              }
-            }
-
+              # cpd filter in each ROIsDataPoint
+              .dataPoints   <- lapply(tmp_dataPoints, function(x, y) {x[y]}, y=j)
+            } 
+            
+            ## peakFit, filter samples first, then compoiunds in each curveFit list
+            tmp_peakFit     <- x@peakFit[i]
+            if (all(sapply(tmp_peakFit, is.null))) {
+              # no cpd filter if all NULL
+              .peakFit      <- tmp_peakFit
+            } else {
+              # cpd filter in each curveFit list
+              .peakFit      <- lapply(tmp_peakFit, function(x, y) {x[y]}, y=j)
+            } 
+            
             ## load value in new object that will need to pass validObject()
             peakPantheRAnnotation(cpdID = .cpdID,
                                   cpdName = .cpdName,
@@ -411,6 +441,7 @@ setMethod("[", "peakPantheRAnnotation",
                                   useFIR = .useFIR,
                                   TIC = .TIC,
                                   peakTables = .peakTables,
-                                  EICs = .EICs,
+                                  dataPoints = .dataPoints,
+                                  peakFit = .peakFit,
                                   isAnnotated = .isAnnotated)
           })
