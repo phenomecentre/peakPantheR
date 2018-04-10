@@ -1,4 +1,5 @@
 context('peakPantheRAnnotation_accessor-method()')
+skip_if_not(FALSE, message = 'unittest refactor')
 
 ## Test the accessors five the right values
 

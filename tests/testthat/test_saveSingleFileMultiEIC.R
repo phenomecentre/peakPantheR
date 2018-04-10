@@ -1,5 +1,6 @@
 context('saveMultiEIC()')
 
+skip_if_not(FALSE, message = 'unittest refactor')
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
 

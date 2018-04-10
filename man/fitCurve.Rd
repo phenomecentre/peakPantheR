@@ -4,8 +4,7 @@
 \alias{fitCurve}
 \title{Curve fitting using minpack.lm}
 \usage{
-fitCurve(x, y, curveModel = "skewedGaussian", params = "guess",
-  lower = NULL, upper = NULL)
+fitCurve(x, y, curveModel = "skewedGaussian", params = "guess")
 }
 \arguments{
 \item{x}{(numeric) x values (e.g. retention time)}
@@ -14,11 +13,7 @@ fitCurve(x, y, curveModel = "skewedGaussian", params = "guess",
 
 \item{curveModel}{(str) name of the curve model to fit (currently \code{skewedGaussian})}
 
-\item{params}{(list or str) either 'guess' for automated parametrisation or list of curve fit parameters}
-
-\item{lower}{(NULL or numeric vector) if not NULL, a numeric vector of lower bounds on each parameter. If NULL preset parammeters are employed. For 'skewedGaussian' in order \code{amplitude, center, sigma, gamma})}
-
-\item{upper}{(NULL or numeric vector) if not NULL, a numeric vector of upper bounds on each parameter. If NULL preset parammeters are employed. For 'skewedGaussian' in order \code{amplitude, center, sigma, gamma})}
+\item{params}{(list or str) either 'guess' for automated parametrisation or list of initial parameters ($init_params), lower parameter bounds ($lower_bounds) and upper parameter bounds ($upper_bounds)}
 }
 \value{
 A 'peakPantheR_curveFit': a list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations

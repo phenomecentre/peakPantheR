@@ -22,8 +22,9 @@ test_that('1 numeric rt-mz window', {
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
   
-  # Check result messages
-  expect_equal(result_extractSignalRawData$messages, expected_messages)
+  # Check result messages (skip timing)
+  expect_equal(length(result_extractSignalRawData$messages), 2)
+  expect_equal(result_extractSignalRawData$messages[1], expected_messages)
 })
 
 test_that('2 matrix rt-mz windows', {
@@ -133,8 +134,9 @@ test_that('1 matrix rt, 2 data.frame mz (extend rt, verbose)', {
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
   
-  # Check result messages
-  expect_equal(result_extractSignalRawData$messages, expected_messages)
+  # Check result messages (skip timing)
+  expect_equal(length(result_extractSignalRawData$messages), 3)
+  expect_equal(result_extractSignalRawData$messages[1:2], expected_messages)
 })
 
 test_that('2 data.frame rt, 1 matrix mz (extend mz, verbose)', {
@@ -156,8 +158,9 @@ test_that('2 data.frame rt, 1 matrix mz (extend mz, verbose)', {
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
   
-  # Check result messages
-  expect_equal(result_extractSignalRawData$messages, expected_messages)
+  # Check result messages (skip timing)
+  expect_equal(length(result_extractSignalRawData$messages), 3)
+  expect_equal(result_extractSignalRawData$messages[1:2], expected_messages)
 })
 
 test_that('no rt window defined, 2 data.frame mz (all rt range + extend rt)', {
@@ -262,8 +265,9 @@ test_that('no data for 1 window (no scans in rt range)', {
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
   
-  # Check result messages
-  expect_equal(result_extractSignalRawData$messages, expected_messages)
+  # Check result messages (skip timing)
+  expect_equal(length(result_extractSignalRawData$messages), 3)
+  expect_equal(result_extractSignalRawData$messages[1:2], expected_messages)
 })
 
 test_that('no data for 1 window (no scans in mz range)', {
@@ -280,8 +284,9 @@ test_that('no data for 1 window (no scans in mz range)', {
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
   
-  # Check result messages
-  expect_equal(result_extractSignalRawData$messages, expected_messages)
+  # Check result messages (skip timing)
+  expect_equal(length(result_extractSignalRawData$messages), 2)
+  expect_equal(result_extractSignalRawData$messages[1], expected_messages)
 })
 
 test_that('raise errors', {

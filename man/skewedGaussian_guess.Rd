@@ -2,7 +2,7 @@
 % Please edit documentation in R/curveFit_utils.R
 \name{skewedGaussian_guess}
 \alias{skewedGaussian_guess}
-\title{Guess function for initial skewed gaussian parameters}
+\title{Guess function for initial skewed gaussian parameters and bounds}
 \usage{
 skewedGaussian_guess(x, y)
 }
@@ -12,8 +12,8 @@ skewedGaussian_guess(x, y)
 \item{y}{(numeric) y observed values (e.g. spectra intensity)}
 }
 \value{
-Guessed starting parameters (\code{params$gamma}, \code{params$center}, \code{params$sigma}, \code{params$amplitude})
+A list of guessed starting parameters \code{list()$init_params}, lower \code{list()$lower_bounds} and upper bounds \code{list()$upper_bounds} (\code{$gamma}, \code{$center}, \code{$sigma}, \code{$amplitude})
 }
 \description{
-Guess function for initial skewed gaussian parameters, at the moment only checks the x position
+Guess function for initial skewed gaussian parameters and bounds, at the moment only checks the x position
 }

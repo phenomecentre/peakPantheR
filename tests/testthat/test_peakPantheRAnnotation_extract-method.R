@@ -1,4 +1,5 @@
 context('peakPantheRAnnotation_extract-method()')
+skip_if_not(FALSE, message = 'unittest refactor')
 
 ## Test the extract sub-setting "[" method
 

@@ -6,13 +6,13 @@ EIC_rt  <- c(3362.102, 3363.667, 3365.232, 3366.797, 3368.362, 3369.927, 3371.49
 EIC_int <- c(51048, 81568, 138288, 233920, 376448, 557288, 753216, 938048, 1091840, 1196992, 1261056, 1308992, 1362752, 1406592, 1431360, 1432896, 1407808, 1345344, 1268480, 1198592, 1126848, 1036544, 937600, 849792, 771456, 692416, 614528, 546088, 492752, 446464, 400632)
 EIC     <- data.frame(rt=EIC_rt, int=EIC_int)
 
-test_that('erf(), Gaussian Error function', {
+test_that('skew_erf(), Gaussian Error function', {
   # Input / result
   x   <- c(0., 0.0001, 0.001, 0.01, 0.1, 1., 2., 5.)
   err <- c(0.0000000000, 0.0001128379, 0.0011283788, 0.0112834156, 0.1124629160, 0.8427007929, 0.9953222650, 1.0000000000)
   
   # Check results
-  expect_equal(erf(x), err)
+  expect_equal(skew_erf(x), err)
 })
 
 test_that('skewedGaussian_minpack.lm()', {
@@ -39,10 +39,12 @@ test_that('skewedGaussian_minpack.lm_objectiveFun()', {
 
 test_that('skewedGaussian_guess()', {
   # Input / result
-  out_param   <- list(amplitude=1e+07, center=3385.577, sigma=1, gamma=1)
+  guessed_param <- list(init_params  = list(amplitude=1e+07, center=3385.577, sigma=1, gamma=1),
+                        lower_bounds = list(amplitude=0,     center=3382.577, sigma=0, gamma=-0.1),
+                        upper_bounds = list(amplitude=1e+09, center=3388.577, sigma=5, gamma=5))
   
-  result      <- skewedGaussian_guess(x=EIC$rt, y=EIC$int)
+  result        <- skewedGaussian_guess(x=EIC$rt, y=EIC$int)
   
   # Check results
-  expect_equal(result, out_param)
+  expect_equal(result, guessed_param)
 })

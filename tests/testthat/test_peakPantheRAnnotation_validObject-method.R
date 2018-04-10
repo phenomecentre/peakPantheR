@@ -1,4 +1,5 @@
 context('peakPantheRAnnotation_validObject-method()')
+skip_if_not(FALSE, message = 'unittest refactor')
 
 ## Test the validObject method / valid_peakPantheRAnnotation function
 

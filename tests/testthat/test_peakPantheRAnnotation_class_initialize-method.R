@@ -1,4 +1,5 @@
 context('peakPantheRAnnotation_class_initializeMethod()')
+skip_if_not(FALSE, message = 'unittest refactor')
 
 # Test the class definition (enforces default slot type)
 # Test initialize method (set default values, initialisation from spectraPaths and targetFeatTable)

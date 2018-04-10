@@ -64,9 +64,9 @@ test_that('3 missing with 1 which gives no scan, verbose', {
   # Check results
   expect_equal(result_integrateFIR$result, expected_peakTable)
 
-  # Check messages (cannot check time on the fourth message)
-  expect_equal(length(result_integrateFIR$messages), 4)
-  expect_equal(result_integrateFIR$messages[1:3], expected_messages)
+  # Check messages (cannot check time on♣ message)
+  expect_equal(length(result_integrateFIR$messages), 5)
+  expect_equal(result_integrateFIR$messages[c(1,2,4)], expected_messages)
 })
 
 test_that('raise errors', {

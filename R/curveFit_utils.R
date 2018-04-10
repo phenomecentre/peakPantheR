@@ -13,10 +13,8 @@ is.peakPantheR_curveFit <- function(x){inherits(x, "peakPantheR_curveFit")}
 #' @param x (numeric) x values (e.g. retention time)
 #' @param y (numeric) y observed values (e.g. spectra intensity)
 #' @param curveModel (str) name of the curve model to fit (currently \code{skewedGaussian})
-#' @param params (list or str) either 'guess' for automated parametrisation or list of curve fit parameters
-#' @param lower (NULL or numeric vector) if not NULL, a numeric vector of lower bounds on each parameter. If NULL preset parammeters are employed. For 'skewedGaussian' in order \code{amplitude, center, sigma, gamma})
-#' @param upper (NULL or numeric vector) if not NULL, a numeric vector of upper bounds on each parameter. If NULL preset parammeters are employed. For 'skewedGaussian' in order \code{amplitude, center, sigma, gamma})
-#' 
+#' @param params (list or str) either 'guess' for automated parametrisation or list of initial parameters ($init_params), lower parameter bounds ($lower_bounds) and upper parameter bounds ($upper_bounds)
+#'
 #' @return A 'peakPantheR_curveFit': a list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations
 #' 
 #' @examples
@@ -58,7 +56,7 @@ is.peakPantheR_curveFit <- function(x){inherits(x, "peakPantheR_curveFit")}
 #' # [1] "peakPantheR_curveFit"
 #' 
 #' @export
-fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NULL, upper=NULL) {
+fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess') {
   
   ## Check inputs
   # x and y length
@@ -77,17 +75,21 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
   useGuess = TRUE
   if (any(params != "guess")) {
     useGuess = FALSE
-  }
-  # lower
-  if (!is.null(lower)) {
-    if (typeof(lower) != 'double') {
-      stop('Error: "lower" must be a NULL or numeric')
+    # check init_params, lower and upper bounds are defined
+    if (!all(c("init_params", "lower_bounds", "upper_bounds") %in% names(params))) {
+      stop('Error: "params must be a list of "init_params", "lower_bounds" and "upper_bounds"')
     }
-  }
-  # upper
-  if (!is.null(upper)) {
-    if (typeof(upper) != 'double') {
-      stop('Error: "upper" must be a NULL or numeric')
+    # init_params is list
+    if (typeof(params$init_params) != 'list') {
+      stop('Error: "params$init_params" must be a list of parameters')
+    }
+    # lower_bounds is list
+    if (typeof(params$lower_bounds) != 'list') {
+      stop('Error: "params$lower_bounds" must be a list of parameters')
+    }
+    # upper_bounds is list
+    if (typeof(params$upper_bounds) != 'list') {
+      stop('Error: "params$upper_bounds" must be a list of parameters')
     }
   }
   
@@ -98,29 +100,23 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess', lower=NU
   # skewed gaussian
   if (curveModel == 'skewedGaussian') {
     
-    # Guess init parameters
+    # Guess parameters and bounds
     if (useGuess) {
-      init_params   <- skewedGaussian_guess(x, y)
+      new_params   <- skewedGaussian_guess(x, y)
     } else {
-      init_params   <- params
+      new_params   <- params
     }
     
-    # lower param bounds
-    if (is.null(lower)) {
-      lower_bounds  <- c(0, init_params$center - 3, 0, -0.1)
-    } else {
-      lower_bounds  <- lower
-    }
-    
-    # upper param bounds
-    if (is.null(upper)) {
-      upper_bounds  <- c(1e9, init_params$center + 3, 5, 5)
-    } else {
-      upper_bounds  <- upper
-    }
+    # ensure order of init params and bounds (init is a list, lower and upper are ordered numeric vectors)
+    init  <- list(amplitude = new_params$init_params$amplitude,
+                  center = new_params$init_params$center,
+                  sigma = new_params$init_params$sigma,
+                  gamma = new_params$init_params$gamma)
+    lower <- unlist( c(new_params$lower_bounds['amplitude'], new_params$lower_bounds['center'], new_params$lower_bounds['sigma'], new_params$lower_bounds['gamma']) )
+    upper <- unlist( c(new_params$upper_bounds['amplitude'], new_params$upper_bounds['center'], new_params$upper_bounds['sigma'], new_params$upper_bounds['gamma']) )
     
     # perform fit
-    resultFit  <- minpack.lm::nls.lm(par=init_params, lower=lower_bounds, upper=upper_bounds, fn=skewedGaussian_minpack.lm_objectiveFun, observed=y, xx=x)
+    resultFit  <- minpack.lm::nls.lm(par=init, lower=lower, upper=upper, fn=skewedGaussian_minpack.lm_objectiveFun, observed=y, xx=x)
     
     # prepare output
     fittedCurve             <- resultFit$par
@@ -193,7 +189,7 @@ predictCurve  <- function(fittedCurve, x) {
 #' @param x (numeric) value at which to evaluate the gaussian error function
 #' 
 #' @return Value of the gaussian error function evaluated at x
-erf   <- function(x){
+skew_erf   <- function(x){
   return(2 * stats::pnorm(x * sqrt(2)) - 1)
 } 
 
@@ -207,7 +203,7 @@ erf   <- function(x){
 #' 
 #' @return value of the skewed gaussian evaluated at xx
 skewedGaussian_minpack.lm   <- function(params, xx) {
-  erf_term  <- 1 + erf((params$gamma * (xx - params$center)) / params$sigma * sqrt(2))
+  erf_term  <- 1 + skew_erf((params$gamma * (xx - params$center)) / params$sigma * sqrt(2))
   yy        <- (params$amplitude / (params$sigma * sqrt(2* pi))) * exp(-(xx - params$center)^2 / 2*params$sigma^2) * erf_term
   
   return(yy)
@@ -228,18 +224,24 @@ skewedGaussian_minpack.lm_objectiveFun  <- function(params, observed, xx) {
 }
 
 
-#' Guess function for initial skewed gaussian parameters
+#' Guess function for initial skewed gaussian parameters and bounds
 #'
-#' Guess function for initial skewed gaussian parameters, at the moment only checks the x position
+#' Guess function for initial skewed gaussian parameters and bounds, at the moment only checks the x position
 #'
 #' @param x (numeric) x values (e.g. retention time)
 #' @param y (numeric) y observed values (e.g. spectra intensity)
 #' 
-#' @return Guessed starting parameters (\code{params$gamma}, \code{params$center}, \code{params$sigma}, \code{params$amplitude})
+#' @return A list of guessed starting parameters \code{list()$init_params}, lower \code{list()$lower_bounds} and upper bounds \code{list()$upper_bounds} (\code{$gamma}, \code{$center}, \code{$sigma}, \code{$amplitude})
 skewedGaussian_guess <- function(x, y) {
   # set center as x position of max y value (e.g. highest spectra intensity)
   center_guess  <- x[which.max(y)]
-  param_guess   <- list(amplitude = 10000000, center=center_guess, sigma=1, gamma=1)
+  # init_param
+  init_params   <- list(amplitude = 10000000, center = center_guess,     sigma = 1, gamma = 1)
+  # lower_bounds
+  lower_bounds  <- list(amplitude = 0,        center = center_guess - 3, sigma = 0, gamma = -0.1)
+  # upper_bounds
+  upper_bounds  <- list(amplitude = 1e9,      center = center_guess + 3, sigma = 5, gamma = 5)
   
-  return(param_guess)
+  return(list(init_params=init_params, lower_bounds=lower_bounds, upper_bounds=upper_bounds))
 }
+
