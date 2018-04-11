@@ -105,7 +105,7 @@ test_that('failed fit (fitCurve status 0/5/-1), with verbose', {
   expect_equal(result_foundPeaks$messages[1:2], expected_messages)
 })
 
-test_that('mzMin mzMax cannot be calculated due to rtMin (#3) rtMax (#4) outside of ROI, default parameters, skewedGaussian, guess params, sampling 250, verbose', {
+test_that('mzMin mzMax cannot be calculated due to rtMin (#3) rtMax (#4) outside of ROI, verbose', {
   # expected foundPeaks
   expected_foundPeaks <- foundPeaks
   # expected messages
@@ -120,6 +120,41 @@ test_that('mzMin mzMax cannot be calculated due to rtMin (#3) rtMax (#4) outside
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 3)
   expect_equal(result_foundPeaks$messages[1:2], expected_messages)
+})
+
+test_that('rtMin rtMax cannot be found, verbose', {
+  # fake data which never reaches 0.5% of maxInt in 20x ROI rt width
+  tmp_ROI     	  <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+  tmp_ROI[1,] 	  <- c("ID-1", "testCpd 1", 990., 1000., 1010., 521., 522., 523.)
+  tmp_ROI[,3:8]   <- sapply(tmp_ROI[,3:8], as.numeric)
+  
+  # fake ROI data points
+  rt  <- seq(990, 1010, by=20/250)
+  mz  <- rep(522., length(rt))
+  int <- (dnorm(rt, mean=1000, sd=0.5) * 100) + 20000
+  tmp_DataPoints  <- list(data.frame(rt=rt, mz=mz, int=int))
+  
+  # expected foundPeaks
+  expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+  expected_peakTable[1,]  <- c(TRUE, as.numeric(NA), 999.98795180722891, as.numeric(NA), 521, 522, 523, 1593075.7841562259, 20079.788456080285, 20011.161341567415)
+  expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
+  
+  cFit                <- list(amplitude=215.1147344215168, center=999.79211677725834, sigma=0.0042885265484682187, gamma=1.0273447589474667e-08, fitStatus=1, curveModel="skewedGaussian")
+  class(cFit)         <- 'peakPantheR_curveFit'
+  expected_foundPeaks <- list(peakTable=expected_peakTable, curveFit=list(cFit))
+  
+  # expected messages
+  expected_messages   <- c("Warning: rtMin cannot be determined for ROI #1\n", "Warning: rtMax cannot be determined for ROI #1\n", "Warning: rtMin/rtMax cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
+  # Check result table
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 4)
+  expect_equal(result_foundPeaks$messages[1:3], expected_messages)
 })
 
 # No other curveModel currently available

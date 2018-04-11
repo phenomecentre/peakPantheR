@@ -1,35 +1,38 @@
 context('saveMultiEIC()')
 
-skip_if_not(FALSE, message = 'unittest refactor')
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
 
 
 ## Input and expected data
-# use ko15.CDf file from the pkg faahKO
-singleSpectraDataPath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-raw_data  						<- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='onDisk')
+# fake ROI 1
+# ROI data points
+rt1  <- seq(990, 1010, by=20/250)
+mz1  <- rep(522.2, length(rt))
+int1 <- (dnorm(rt1, mean=1000, sd=1.5) * 100) + 1
+tmp_DataPoints1  <- data.frame(rt=rt1, mz=mz1, int=int1)
+# fittedCurve
+fit1        <- list(amplitude=37.068916502809756, center=999.3734222573454, sigma=0.58493182568124724, gamma=0.090582029276037035, fitStatus=2, curveModel="skewedGaussian")
+class(fit1) <- 'peakPantheR_curveFit'
+# fake ROI 2
+# ROI data points
+rt2  <- seq(990, 1010, by=20/250)
+mz2  <- rep(464.2, length(rt))
+int2 <- (dnorm(rt2, mean=1002, sd=1.5) * 100) + 1
+tmp_DataPoints2  <- data.frame(rt=rt2, mz=mz2, int=int2)
+# fittedCurve
+fit2        <- list(amplitude=37.073067416755556, center=1001.3736564832565, sigma=0.58496485738212201, gamma=0.090553713725151905, fitStatus=2, curveModel="skewedGaussian")
+class(fit2) <- 'peakPantheR_curveFit'
+# ROIsDataPoints
+input_ROIsDataPoints  <- list(tmp_DataPoints1, tmp_DataPoints2)
+# curveFit
+input_curveFit        <- list(fit1, fit2)
 
-# targeted features in faahKO
-targetFeatTable     	<- data.frame(matrix(vector(), 4, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
-targetFeatTable[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] 	<- c("ID-2", "testCpd 2, 2 peaks in box", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-targetFeatTable[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
-targetFeatTable[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-targetFeatTable[,c(3:8)] <- sapply(targetFeatTable[,c(3:8)], as.numeric)
-
-# found peaks no fitGauss
-foundPeakTable     <- data.frame(matrix(vector(), 4, 27, dimnames=list(c(), c("cpdID", "cpdName", "found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled"))),stringsAsFactors=F)
-foundPeakTable[1,] <- c(NA, NA, TRUE, 522.2000122, 522.2000122, 522.2000122, 3344.888, 3322.979, 3379.317, 25792525.445, 25768307.538, 889280, 1840, NA, NA, NA, NA, 1, 0, 5, 540, 535, 545, 24, 60, 1,0)
-foundPeakTable[2,] <- c(NA, NA, TRUE, 496.2000122, 496.2000122, 496.2000122, 3382.447, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, NA, NA, NA, NA, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0)
-foundPeakTable[3,] <- c(NA, NA, TRUE, 464.2000122, 464.2000122, 464.2000122, 3454.435, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, NA, NA, NA, NA, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0)
-foundPeakTable[4,] <- c(NA, NA, TRUE, 536.2000122, 536.2000122, 536.2000122, 3701.697, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, NA, NA, NA, NA, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0)
-foundPeakTable[,2] <- c("ID-1", "ID-2", "ID-3", "ID-4")
-foundPeakTable[,2] <- c("testCpd 1", "testCpd 2, 2 peaks in box", "testCpd 3", "testCpd 4")
-foundPeakTable[,3] <- sapply(foundPeakTable[,3], as.logical)
-
-# load EICs outside of getTargetFeatureStatistic
-EICs	<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
+# peakTable
+input_peakTable     <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+input_peakTable[1,] <- c(TRUE, 995., 1000., 1005., 522.19, 522.2, 522.21, 20000, 21, 21)
+input_peakTable[2,] <- c(TRUE, 997., 1002., 1007., 464.19, 464.2, 464.21, 20000, 21, 21)
+input_peakTable[,1] <- sapply(input_peakTable[,c(1)], as.logical)
 
 
 test_that('default parameters, verbose', {
@@ -37,7 +40,7 @@ test_that('default parameters, verbose', {
   savePath1  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
 	# results (output, warnings and messages)
-  result_plot <- evaluate_promise(saveSingleFileMultiEIC(EICs, foundPeakTable, savePath1, width=15, height=15, verbose=TRUE))
+  result_plot <- evaluate_promise(saveSingleFileMultiEIC(ROIsDataPoint=input_ROIsDataPoints, curveFit=input_curveFit, foundPeakTable=input_peakTable, savePath=savePath1, width=15, height=15, verbose=TRUE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath1))
@@ -51,7 +54,7 @@ test_that('default parameters, no verbose', {
   savePath2  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_plot <- evaluate_promise(saveSingleFileMultiEIC(EICs, foundPeakTable, savePath2, width=15, height=15, verbose=FALSE))
+  result_plot <- evaluate_promise(saveSingleFileMultiEIC(ROIsDataPoint=input_ROIsDataPoints, curveFit=input_curveFit, foundPeakTable=input_peakTable, savePath=savePath2, width=15, height=15, verbose=FALSE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath2))
@@ -61,14 +64,11 @@ test_that('default parameters, no verbose', {
 })
 
 test_that('only one plot, no verbose', {
-  # input
-  singleEICs            <- xcms::chromatogram(raw_data, rt = c(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = c(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
-  singleFoundPeakTable  <- foundPeakTable[1,]
   # temporary file
   savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
 
   # results (output, warnings and messages)
-  result_plot <- evaluate_promise(saveSingleFileMultiEIC(singleEICs, singleFoundPeakTable, savePath3, width=15, height=15, verbose=FALSE))
+  result_plot <- evaluate_promise(saveSingleFileMultiEIC(ROIsDataPoint=list(input_ROIsDataPoints[[1]]), curveFit=list(input_curveFit[[1]]), foundPeakTable=input_peakTable[1,], savePath=savePath3, width=15, height=15, verbose=FALSE))
 
   # Check plot has been produced
   expect_true(file.exists(savePath3))
@@ -78,8 +78,13 @@ test_that('only one plot, no verbose', {
 })
 
 test_that('raise errors', {
-  savePath3  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
-  # targetFeatTable and foundPeakTable dimension mismatch
-  msg1 <- "Number of Chromatogram in EICs (3) and features in foundPeakTable (4) do not match!"
-  expect_error(saveSingleFileMultiEIC(EICs[1:3], foundPeakTable, savePath3, width=15, height=15, verbose=TRUE), msg1, fixed=TRUE)
+  savePath4  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.png')
+  
+  # ROIsDataPoint and foundPeakTable dimension mismatch
+  msg1 <- 'Number of ROI datapoints in "ROIsDataPoint" (1) and features in "foundPeakTable" (2) do not match!'
+  expect_error(saveSingleFileMultiEIC(ROIsDataPoint=list(input_ROIsDataPoints[[1]]), curveFit=list(input_curveFit[[1]]), foundPeakTable=input_peakTable, savePath=savePath4, width=15, height=15, verbose=TRUE), msg1, fixed=TRUE)
+  
+  # ROIsDataPoint and curveFit dimension mismatch
+  msg2 <- 'Number of ROI datapoints in "ROIsDataPoint" (1) and fitted curves in "curveFit" (2) do not match!'
+  expect_error(saveSingleFileMultiEIC(ROIsDataPoint=list(input_ROIsDataPoints[[1]]), curveFit=input_curveFit, foundPeakTable=input_peakTable[1,], savePath=savePath4, width=15, height=15, verbose=TRUE), msg2, fixed=TRUE)
 })

@@ -44,34 +44,43 @@ Calculate the ppm error, retention time deviation, tailing factor and asymmetry 
 }
 \examples{
 \dontrun{
-## Load data
-library(faahKO)
-library(MSnbase)
-netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
+# fittedCurve
+cFit1           <- list(amplitude=162404.8057918259, center=3341.888,
+                        sigma=0.078786133031045896, gamma=0.0018336101984172684,
+                        fitStatus=2, curveModel="skewedGaussian")
+class(cFit1)    <- 'peakPantheR_curveFit'
+cFit2           <- list(amplitude=199249.10572753669, center=3382.577,
+                        sigma=0.074904415304607966, gamma=0.0011471899372353885,
+                        fitStatus=2, curveModel="skewedGaussian")
+class(cFit2)    <- 'peakPantheR_curveFit'
+input_fitCurves <- list(cFit1, cFit2)
 
-## targetFeatTable
-targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
-                         "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
-                         stringsAsFactors=F)
-targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
+input_ROI       <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", 
+                     "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+                     stringsAsFactors=F)
+input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.88, 3390., 522.19, 522.2, 522.21)
+input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.58, 3440., 496.19, 496.2, 496.21)
+input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
 
-ROIList        <- makeROIList(raw_data, targetFeatTable)
+# foundPeakTable
+input_foundPeakTable      <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), 
+                               c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax",
+                               "peakArea", "maxIntMeasured", "maxIntPredicted"))),
+                               stringsAsFactors=F)
+input_foundPeakTable[1,]  <- c(TRUE, 3309.758, 3346.827, 3385.410, 522.19, 522.2, 522.21, 
+                               26133726, 889280, 901015)
+input_foundPeakTable[2,]  <- c(TRUE, 3345.376, 3386.529, 3428.279, 496.19, 496.2, 496.21,
+                               35472141, 1128960, 1113576)
+input_foundPeakTable[,1]  <- sapply(input_foundPeakTable[,c(1)], as.logical)
 
-foundPeakTable <- findTargetFeatures(raw_data, ROIList)
-
-peakStatistics <- getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeakTable)
-peakStatistics
-#    found    mz mzmin mzmax       rt    rtmin    rtmax     into     intb   maxo    sn egauss mu
-# 1   TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308 889280  1840     NA NA
-# 2   TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960 1471     NA NA
-#    sigma h  f dppm scale scpos scmin scmax lmin lmax sample is_filled   ppm_error rt_dev_sec
-# 1     NA NA 1    0     5   540   535   545   24   60      1         0  0.02336270       0.00
-# 2     NA NA 2    0     5   564   559   569   68   98      1         0  0.02458686       3.13
-#    FWHM FWHM_ndatapoints tailingFactor asymmetryFactor
-# 1    NA               11            NA        1.484000
-# 2    NA               11            NA        2.708291
+# Run peak statistics
+peakStatistics <- getTargetFeatureStatistic(input_fitCurves, input_ROI, input_foundPeakTable)
+peakStatistics   
+#   found    rtMin       rt    rtMax  mzMin    mz  mzMax peakArea maxIntMeasured maxIntPredicted
+# 1  TRUE 3309.758 3346.827 3385.410 522.19 522.2 522.21 26133726         889280          901015 
+# 2  TRUE 3345.376 3386.529 3428.279 496.19 496.2 496.21 35472141        1128960         1113576
+#   ppm_error rt_dev_sec tailingFactor asymmetryFactor
+# 1        0      1.947      1.015385        1.026886
+# 2        0      0.949      1.005372        1.009304
 }
 }

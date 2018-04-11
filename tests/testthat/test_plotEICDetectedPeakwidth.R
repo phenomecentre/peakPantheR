@@ -1,21 +1,33 @@
 context('plotEICDetectedPeakwidth()')
 
-skip_if_not(FALSE, message = 'unittest refactor')
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
 
 ## Input and expected data
-# use ko15.CDf file from the pkg faahKO
-spectraDataPath <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko16.CDF', package = "faahKO"))
-EIC1            <- xcms::chromatogram(MSnbase::readMSData(spectraDataPath[1], centroided=TRUE, mode='onDisk'), rt = c(3420., 3495.), mz = c(464.195358, 464.204642))
-EIC2            <- xcms::chromatogram(MSnbase::readMSData(spectraDataPath[2], centroided=TRUE, mode='onDisk'), rt = c(3420., 3495.), mz = c(464.195358, 464.204642))
+# fake sample 1
+# ROI data points
+rt1  <- seq(990, 1010, by=20/250)
+mz1  <- rep(522., length(rt))
+int1 <- (dnorm(rt1, mean=1000, sd=1.5) * 100) + 1
+tmp_DataPoints1  <- data.frame(rt=rt1, mz=mz1, int=int1)
+# fittedCurve
+fit1        <- list(amplitude=37.068916502809756, center=999.3734222573454, sigma=0.58493182568124724, gamma=0.090582029276037035, fitStatus=2, curveModel="skewedGaussian")
+class(fit1) <- 'peakPantheR_curveFit'
+
+# fake sample 2
+# ROI data points
+rt2  <- seq(990, 1010, by=20/250)
+mz2  <- rep(522., length(rt))
+int2 <- (dnorm(rt2, mean=1002, sd=1.5) * 100) + 1
+tmp_DataPoints2  <- data.frame(rt=rt2, mz=mz2, int=int2)
+# fittedCurve
+fit2        <- list(amplitude=37.073067416755556, center=1001.3736564832565, sigma=0.58496485738212201, gamma=0.090553713725151905, fitStatus=2, curveModel="skewedGaussian")
+class(fit2) <- 'peakPantheR_curveFit'
 
 
 test_that('plot feature in 1 sample', {
-
 	# result plot
-  result_plot <- plotEICDetectedPeakwidth(list(EIC1), cpdID="ID-1", cpdName='testCpd 1', rt=3454.435, rtmin=3420., rtmax=3495., mzmin=464.195358, mzmax=464.204642, ratio=0.85, verbose=FALSE)
+  result_plot <- plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=995., rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE)
 
   # cannot compare plot to a stored version due to some string mismatch (even if the same plot is called twice)
   # Check plot properties
@@ -29,9 +41,8 @@ test_that('plot feature in 1 sample', {
 })
 
 test_that('plot feature in 2 samples, change colours', {
-  
   # result plot
-  result_plot <- plotEICDetectedPeakwidth(list(EIC1, EIC2), cpdID="ID-1", cpdName='testCpd 1', rt=c(3454.435, 3454.435), rtmin=c(3420., 3420.), rtmax=c(3495.,3495.), mzmin=464.195358, mzmax=464.204642, sampleColour=c('blue','red'), ratio=0.85, verbose=FALSE)
+  result_plot <- plotEICDetectedPeakwidth(list(tmp_DataPoints1, tmp_DataPoints2), cpdID=c('ID-1', 'ID-2'), cpdName=c('testCpd 1', 'testCpd 2'), rt=c(1000., 1002.), rtMin=c(995., 997.), rtMax=c(1005.,1007.), mzMin=c(521.,521.), mzMax=c(523.,523.), ratio=0.85, sampling=250, curveFitSampleList=list(fit1, fit2), sampleColour=c('blue', 'red'), verbose=FALSE)
   
   # cannot compare plot to a stored version due to some string mismatch (even if the same plot is called twice)
   # Check plot properties
@@ -44,14 +55,12 @@ test_that('plot feature in 2 samples, change colours', {
   expect_equal(length(result_plot)[[1]], 2)
 })
 
-test_that('colour warning, ratio replacement, 2 spectra in a Chromatograms', {
-  # Chromatograms with 2 ROI
-  input_EIC2 <- xcms::chromatogram(MSnbase::readMSData(spectraDataPath[2], centroided=TRUE, mode='onDisk'), rt = data.frame(rt_lower=c(3420.,3420.), rt_upper=c(3495.,3495.)), mz = data.frame(mz_lower=c(464.195358,464.195358), mz_upper=c(464.204642,464.204642)))
+test_that('colour warning, ratio replacement', {
   # Expected message
-  expected_message <- c("Warning: sampleColour length must match the number of samples; default colour used\n", "Error: ratio must be between 0 and 1, replaced by default value\n", "Warning: more than 1 spectra per Chromatograms provided! Only the first one will be considered\n")
+  expected_message <- c("Warning: sampleColour length must match the number of samples; default colour used\n", "Error: ratio must be between 0 and 1, replaced by default value\n")
   
   # result plot
-  result_plot <- evaluate_promise(plotEICDetectedPeakwidth(list(EIC1, input_EIC2), cpdID="ID-1", cpdName='testCpd 1', rt=c(3454.435, 3454.435), rtmin=c(3420., 3420.), rtmax=c(3495.,3495.), mzmin=464.195358, mzmax=464.204642, ratio=2, sampleColour=c('blue','red','grey'), verbose=TRUE))
+  result_plot <- evaluate_promise(plotEICDetectedPeakwidth(list(tmp_DataPoints1, tmp_DataPoints2), cpdID=c('ID-1', 'ID-2'), cpdName=c('testCpd 1', 'testCpd 2'), rt=c(1000., 1002.), rtMin=c(995., 997.), rtMax=c(1005.,1007.), mzMin=c(521.,521.), mzMax=c(523.,523.), ratio=2, sampling=250, curveFitSampleList=list(fit1, fit2), sampleColour=c('blue', 'red', 'grey'), verbose=TRUE))
   
   # check messages confirming the replacements
   expect_equal(result_plot$messages, expected_message)
@@ -68,22 +77,22 @@ test_that('colour warning, ratio replacement, 2 spectra in a Chromatograms', {
 })
 
 test_that('raise errors', {
-  # EICs is not a list
-  msg1    <- c("Error: EICs must be a list of single xcms::Chromatograms")
-  expect_error(plotEICDetectedPeakwidth(EIC1, cpdID="ID-1", cpdName='testCpd 1', rt=3454.435, rtmin=3420., rtmax=3495., mzmin=464.195358, mzmax=464.204642), msg1, fixed=TRUE)
-  # EICs length is wrong
-  msg2    <- c("'EIC', 'rt', 'rtmin' and 'rtmax' must be the same length")
-  expect_error(plotEICDetectedPeakwidth(list(EIC1, EIC2), cpdID="ID-1", cpdName='testCpd 1', rt=3454.435, rtmin=3420., rtmax=3495., mzmin=464.195358, mzmax=464.204642), msg2, fixed=TRUE)
+  # ROIDataPointSampleList is not a list
+  msg1    <- c('Error: "ROIDataPointSampleList" must be a list of data.frame')
+  expect_error(plotEICDetectedPeakwidth('not a list', cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=995., rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg1, fixed=TRUE)
+  # ROIDataPointSampleList length is wrong
+  msg2    <- c('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1, tmp_DataPoints2), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=995., rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg2, fixed=TRUE)
   # rt length is wrong
-  msg3    <- c("'EIC', 'rt', 'rtmin' and 'rtmax' must be the same length")
-  expect_error(plotEICDetectedPeakwidth(list(EIC1), cpdID="ID-1", cpdName='testCpd 1', rt=c(3454.435,3454.435), rtmin=3420., rtmax=3495., mzmin=464.195358, mzmax=464.204642), msg3, fixed=TRUE)
+  msg3    <- c('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=c(1000., 1002.), rtMin=995., rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg3, fixed=TRUE)
   # rtmin length is wrong
-  msg4    <- c("'EIC', 'rt', 'rtmin' and 'rtmax' must be the same length")
-  expect_error(plotEICDetectedPeakwidth(list(EIC1), cpdID="ID-1", cpdName='testCpd 1', rt=3454.435, rtmin=c(3420.,3420), rtmax=3495., mzmin=464.195358, mzmax=464.204642), msg4, fixed=TRUE)
+  msg4    <- c('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=c(995., 997.), rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg4, fixed=TRUE)
   # rtmax length is wrong
-  msg5    <- c("'EIC', 'rt', 'rtmin' and 'rtmax' must be the same length")
-  expect_error(plotEICDetectedPeakwidth(list(EIC1), cpdID="ID-1", cpdName='testCpd 1', rt=3454.435, rtmin=3420., rtmax=c(3495.,3495.), mzmin=464.195358, mzmax=464.204642), msg5, fixed=TRUE)
-  # EIC is not list of Chromatograms
-  msg6    <- c("Error: EICs must be a list of single xcms::Chromatograms")
-  expect_error(plotEICDetectedPeakwidth(list(EIC1, EIC2[[1]]), cpdID="ID-1", cpdName='testCpd 1', rt=c(3454.435, 3454.435), rtmin=c(3420., 3420.), rtmax=c(3495.,3495.), mzmin=464.195358, mzmax=464.204642), msg6, fixed=TRUE)
+  msg5    <- c('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=995., rtMax=c(1005.,1007.), mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg5, fixed=TRUE)
+  # curveFitSampleList length is wrong
+  msg6    <- c('"curveFitSampleList", "ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=995., rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1,fit2), sampleColour=NULL, verbose=FALSE), msg6, fixed=TRUE)
 })

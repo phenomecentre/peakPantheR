@@ -1,65 +1,53 @@
 context('getTargetFeatureStatistic()')
 
-skip_if_not(FALSE, message = 'unittest refactor')
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
 
 
 ## Input and expected data
 # use ko15.CDf file from the pkg faahKO
-singleSpectraDataPath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-raw_data  						<- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='onDisk')
 
-# targeted features in faahKO
-targetFeatTable     	<- data.frame(matrix(vector(), 4, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
-targetFeatTable[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] 	<- c("ID-2", "testCpd 2, 2 peaks in box", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-targetFeatTable[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
-targetFeatTable[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-targetFeatTable[,c(3:8)] <- sapply(targetFeatTable[,c(3:8)], as.numeric)
+# fitted curves
+cFit1           <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1)    <- 'peakPantheR_curveFit'
+cFit2           <- list(amplitude=199249.10572753669, center=3382.577, sigma=0.074904415304607966, gamma=0.0011471899372353885, fitStatus=2, curveModel="skewedGaussian")
+class(cFit2)    <- 'peakPantheR_curveFit'
+cFit3           <- list(amplitude=31645.961277502651, center=3451.435, sigma=0.064803553287811053, gamma=2.8557893789555022, fitStatus=2, curveModel="skewedGaussian")
+class(cFit3)    <- 'peakPantheR_curveFit'
+cFit4           <- list(amplitude=59193.591103772116, center=3698.697, sigma=0.082789238806238355, gamma=0.0026044299691057823, fitStatus=2, curveModel="skewedGaussian")
+class(cFit4)    <- 'peakPantheR_curveFit'
+input_fitCurves <- list(cFit1, cFit2, cFit3, cFit4)
+ 
+# ROI
+input_ROI       <- data.frame(matrix(vector(), 4, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_ROI[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
+input_ROI[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
+input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
 
-# found peaks no fitGauss
-foundPeaks_noFitGauss     <- data.frame(matrix(vector(), 4, 25, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled"))),stringsAsFactors=F)
-foundPeaks_noFitGauss[1,] <- c(TRUE, 522.2000122, 522.2000122, 522.2000122, 3344.888, 3322.979, 3379.317, 25792525.445, 25768307.538, 889280, 1840, NA, NA, NA, NA, 1, 0, 5, 540, 535, 545, 24, 60, 1,0)
-foundPeaks_noFitGauss[2,] <- c(TRUE, 496.2000122, 496.2000122, 496.2000122, 3382.447, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, NA, NA, NA, NA, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0)
-foundPeaks_noFitGauss[3,] <- c(TRUE, 464.2000122, 464.2000122, 464.2000122, 3454.435, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, NA, NA, NA, NA, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0)
-foundPeaks_noFitGauss[4,] <- c(TRUE, 536.2000122, 536.2000122, 536.2000122, 3701.697, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, NA, NA, NA, NA, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0)
-foundPeaks_noFitGauss[,1] <- sapply(foundPeaks_noFitGauss[,c(1)], as.logical)
+# foundPeakTable
+input_foundPeakTable      <- data.frame(matrix(vector(), 4, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+input_foundPeakTable[1,]  <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747)
+input_foundPeakTable[2,]  <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298)
+input_foundPeakTable[3,]  <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412)
+input_foundPeakTable[4,]  <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 330176, 326763.87246511364)
+input_foundPeakTable[,1]  <- sapply(input_foundPeakTable[,c(1)], as.logical)
 
-# found peaks with fitGauss
-foundPeaks_FitGauss     <- data.frame(matrix(vector(), 4, 25, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled"))),stringsAsFactors=F)
-foundPeaks_FitGauss[1,] <- c(TRUE, 522.2000122, 522.2000122, 522.2000122, 3346.453, 3322.979, 3379.317, 25792525.445, 25768307.538, 889280, 1840, 0.05400865734, 541.2220410, 7.464513318, 897391.7370, 1, 0, 5, 540, 535, 545, 24, 60, 1,0)
-foundPeaks_FitGauss[2,] <- c(TRUE, 496.2000122, 496.2000122, 496.2000122, 3385.577, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, 0.07199871100, 566.3075619, 7.788151879, 1133465.7198, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0)
-foundPeaks_FitGauss[3,] <- c(TRUE, 464.2000122, 464.2000122, 464.2000122, 3456.000, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, 0.04489731232, 610.6945623, 7.504713149, 381973.2736, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0)
-foundPeaks_FitGauss[4,] <- c(TRUE, 536.2000122, 536.2000122, 536.2000122, 3704.827, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, 0.07353430967, 769.5553377, 6.824007014, 324408.4744, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0)
-foundPeaks_FitGauss[,1] <- sapply(foundPeaks_FitGauss[,c(1)], as.logical)
-
-# load EICs outside of getTargetFeatureStatistic
-EICs	<- xcms::chromatogram(raw_data, rt = data.frame(rt_lower=targetFeatTable$rtMin, rt_upper=targetFeatTable$rtMax), mz = data.frame(mz_lower=targetFeatTable$mzMin, mz_upper=targetFeatTable$mzMax))
-
-# peak statistics with fitGauss
-peakStatistic_FitGauss      <- data.frame(matrix(vector(), 4, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakStatistic_FitGauss[1,]  <- c(TRUE, 522.2000122, 522.2000122, 522.2000122, 3346.453, 3322.979, 3379.317, 25792525.445, 25768307.538, 889280, 1840, 0.05400865734, 541.2220410, 7.464513318, 897391.7370, 1, 0, 5, 540, 535, 545, 24, 60, 1, 0, 0.023362696095338677, 1.565, 27.508921444636144, 11, NA, 1.2967091657127203)
-peakStatistic_FitGauss[2,]  <- c(TRUE, 496.2000122, 496.2000122, 496.2000122, 3385.577, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, 0.07199871100, 566.3075619, 7.788151879, 1133465.7198, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0, 0.024586860166611640, 0.000, 28.700624487918503, 11, NA, 2.1345129619692504)
-peakStatistic_FitGauss[3,]  <- c(TRUE, 464.2000122, 464.2000122, 464.2000122, 3456.000, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, 0.04489731232, 610.6945623, 7.504713149, 381973.2736, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0, 0.026281775128549539, 1.565, 27.656069615314664, 11, NA, 1.3741191650431608)
-peakStatistic_FitGauss[4,]  <- c(TRUE, 536.2000122, 536.2000122, 536.2000122, 3704.827, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, 0.07353430967, 769.5553377, 6.824007014, 324408.4744, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0, 0.022752704030186234, 3.130, 25.147467808758392, 11, 1.1968986203515855, 1.3314781556202822)
-peakStatistic_FitGauss[,1]  <- sapply(peakStatistic_FitGauss[,c(1)], as.logical)
-
-# peak statistics without fitGauss
-peakStatistic_noFitGauss      <- data.frame(matrix(vector(), 4, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakStatistic_noFitGauss[1,]  <- c(TRUE, 522.2000122, 522.2000122, 522.2000122, 3344.888, 3322.979, 3379.317, 25792525.445, 25768307.538, 889280, 1840, NA, NA, NA, NA, 1, 0, 5, 540, 535, 545, 24, 60, 1, 0, 0.023362696095338677, 0.00, NA, 11, NA, 1.4839997536872727)
-peakStatistic_noFitGauss[2,]  <- c(TRUE, 496.2000122, 496.2000122, 496.2000122, 3382.447, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, NA, NA, NA, NA, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0, 0.024586860166611640, 3.13, NA, 11, NA, 2.7082909206059269)
-peakStatistic_noFitGauss[3,]  <- c(TRUE, 464.2000122, 464.2000122, 464.2000122, 3454.435, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, NA, NA, NA, NA, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0, 0.026281775128549539, 0.00, NA, 11, NA, 1.5506880253870328)
-peakStatistic_noFitGauss[4,]  <- c(TRUE, 536.2000122, 536.2000122, 536.2000122, 3701.697, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, NA, NA, NA, NA, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0, 0.022752704030186234, 0.00, NA, 11, 1.4026668257511667, 1.7784490549015182)
-peakStatistic_noFitGauss[,1]  <- sapply(peakStatistic_noFitGauss[,c(1)], as.logical)
+# peakStatistics
+peakStatistics                  <- input_foundPeakTable
+peakStatistics$ppm_error        <- c(0.023376160866574614, 0.024601030353423384, 0.026296922148575364, 0.022765817240815486)
+peakStatistics$rt_dev_sec       <- c(1.93975903614455092, 0.95180722891564074, 2.92771084337346110, 2.44578313253032320)
+peakStatistics$tailingFactor    <- c(1.0153573486330891, 1.0053782620427065, 207.6939219686769036, 1.0305289730128095)
+peakStatistics$asymmetryFactor  <- c(1.0268238825675249, 1.0093180792278085, 380.5019028782010082, 1.0536948855480386)
 
 
-test_that('default parameters with fitGauss, no previous EICs, no verbose', {
+test_that('no verbose', {
   # expected foundPeaks
-  expected_featureStatistic <- peakStatistic_FitGauss
+  expected_featureStatistic <- peakStatistics
 
 	# results (output, warnings and messages)
-  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs=NULL, verbose=FALSE))
+  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(input_fitCurves, input_ROI, input_foundPeakTable, verbose=FALSE))
 
   # Check result table
   expect_equal(result_featureStatistic$result, expected_featureStatistic)
@@ -68,48 +56,75 @@ test_that('default parameters with fitGauss, no previous EICs, no verbose', {
   expect_equal(length(result_featureStatistic$messages), 0)
 })
 
-test_that('default parameters without fitGauss, no previous EICs, verbose', {
+test_that('verbose', {
   # expected foundPeaks
-  expected_featureStatistic <- peakStatistic_noFitGauss
-
+  expected_featureStatistic <- peakStatistics
+  
   # results (output, warnings and messages)
-  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_noFitGauss, usePreviousEICs=NULL, verbose=TRUE))
-
+  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(input_fitCurves, input_ROI, input_foundPeakTable, verbose=TRUE))
+  
   # Check result table
   expect_equal(result_featureStatistic$result, expected_featureStatistic)
-
-  # Check result messages (message from verbose returns run time, cannot be matched)
+  
+  # Check messages (cannot match timing)
   expect_equal(length(result_featureStatistic$messages), 1)
 })
 
-test_that('default parameters with fitGauss, previous EICs, verbose', {
+test_that('no rtMin (#1), no rtMax (#2), no fittedCurve (#3), no apexRT (#4)', {
+  # foundPeakTable
+  tmp_foundPeakTable              <- input_foundPeakTable
+  tmp_foundPeakTable[1, 'rtMin']  <- NA
+  tmp_foundPeakTable[2, 'rtMax']  <- NA
+  tmp_foundPeakTable[4, 'rt']     <- NA
+  
+  # curveFit
+  tmp_fitCurves      <- input_fitCurves
+  tmp_fitCurves[[3]] <- NA
+  
   # expected foundPeaks
-  expected_featureStatistic <- peakStatistic_FitGauss
-
-  # expected messages
-  expected_message          <- "Previously loaded EICs used for peak statistics\n"
-
+  expected_featureStatistic                 <- peakStatistics
+  expected_featureStatistic$rtMin[1]        <- as.numeric(NA)
+  expected_featureStatistic$rtMax[2]        <- as.numeric(NA)
+  expected_featureStatistic$rt[4]           <- as.numeric(NA)
+  expected_featureStatistic$tailingFactor   <- as.numeric(NA)
+  expected_featureStatistic$asymmetryFactor <- as.numeric(NA)
+  expected_featureStatistic$rt_dev_sec[4]   <- as.numeric(NA)
+  
   # results (output, warnings and messages)
-  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs=EICs, verbose=TRUE))
-
+  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(tmp_fitCurves, input_ROI, tmp_foundPeakTable, verbose=TRUE))
+  
   # Check result table
   expect_equal(result_featureStatistic$result, expected_featureStatistic)
+  
+  # Check messages (cannot match timing)
+  expect_equal(length(result_featureStatistic$messages), 1)
+})
 
-  # Check result messages (message for EICs and run time, run time cannot be matched)
-  expect_equal(length(result_featureStatistic$messages), 2)
-  expect_equal(result_featureStatistic$message[1], expected_message)
+test_that('no rt (#2), no mz (#3)', {
+  # foundPeakTable
+  tmp_ROI           <- input_ROI
+  tmp_ROI[2, 'rt']  <- NA
+  tmp_ROI[3, 'mz']  <- NA
+
+  # expected foundPeaks
+  expected_featureStatistic               <- peakStatistics
+  expected_featureStatistic$rt_dev_sec[2] <- as.numeric(NA)
+  expected_featureStatistic$ppm_error[3]  <- as.numeric(NA)
+  
+  # results (output, warnings and messages)
+  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(input_fitCurves, tmp_ROI, input_foundPeakTable, verbose=TRUE))
+  
+  # Check result table
+  expect_equal(result_featureStatistic$result, expected_featureStatistic)
+  
+  # Check messages (cannot match timing)
+  expect_equal(length(result_featureStatistic$messages), 1)
 })
 
 test_that('raise errors', {
   # targetFeatTable and foundPeakTable dimension mismatch
-  expect_error(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss[1:3,], usePreviousEICs=NULL, verbose=FALSE), "Number of features in targetFeatTable*")
+  expect_error(getTargetFeatureStatistic(input_fitCurves, input_ROI[1:3,], input_foundPeakTable, verbose=TRUE), 'Number of features in "targetFeatTable" (3) and "foundPeakTable" (4) do not match!', fixed=TRUE)
 
-  # usePreviousEICs is not a list
-  expect_error(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs='not a list', verbose=FALSE), "usePreviousEICs is not a list of xcms::Chromatogram")
-
-  # Number of chromatograms in usePreviousEICs list and features in targetFeatTable mismatch
-  expect_error(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs=list('a','b','c'), verbose=FALSE), "Number of chromatograms in usePreviousEICs*")
-
-  # usePreviousEICs is not a list of xcms::Chromatogram
-  expect_error(getTargetFeatureStatistic(raw_data, targetFeatTable, foundPeaks_FitGauss, usePreviousEICs=list('not a chrom','not a chrom','not a chrom','not a chrom'), verbose=FALSE), "usePreviousEICs is not a list of xcms::Chromatogram")
+  # Number of fittedCurve and foundPeakTable mismatch
+  expect_error(getTargetFeatureStatistic(input_fitCurves[1:3], input_ROI, input_foundPeakTable, verbose=TRUE), 'Number of fitted curves in "fittedCurves" (3) and number of features in "foundPeakTable" (4) do not match!', fixed=TRUE)
 })
