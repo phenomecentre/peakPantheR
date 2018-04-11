@@ -14,7 +14,7 @@ findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
 
 \item{curveModel}{(str) Name of the curve model to fit (currently \code{skewedGaussian})}
 
-\item{params}{(list or str) Either 'guess' for automated parametrisation or list of curve fit parameters}
+\item{params}{(list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of "guess" or list of curve fit parameters}
 
 \item{sampling}{(int) Number of points to employ when subsampling the fittedCurve (rt, rtMin, rtMax, integral calculation)}
 
@@ -42,7 +42,7 @@ A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as ro
 }
 }
 \description{
-For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params}. \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 20 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax} (if they haven't been found, 2x the ROI window width left or right from the apex is used as limit). \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available.
+For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 20 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax} (if they haven't been found, 2x the ROI window width left or right from the apex is used as limit). \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available.
 }
 \examples{
 \dontrun{

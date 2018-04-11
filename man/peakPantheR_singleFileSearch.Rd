@@ -23,7 +23,7 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken and number of features found}
 
-\item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters (e.g. \code{curveModel}, \code{sampling}, \code{params},...)}
+\item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters (e.g. \code{curveModel}, \code{sampling}, \code{params} as a list of parameters for each ROI or 'guess',...)}
 }
 \value{
 a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{(data.frame)} targeted features results (see Details), \code{list()$curveFit} \emph{(list)} list of \code{peakPantheR_curveFit} or NA for each ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata, \code{list()$ROIsDataPoint} \emph{(list)} a list of \code{data.frame} of raw data points for each ROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).

@@ -1,11 +1,11 @@
 #' Find and integrate target features in each ROI
 #' 
-#' For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params}. \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 20 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax} (if they haven't been found, 2x the ROI window width left or right from the apex is used as limit). \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available.
+#' For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 20 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax} (if they haven't been found, 2x the ROI window width left or right from the apex is used as limit). \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available.
 #'
 #' @param ROIsDataPoints (list) A list (one entry per ROI window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns. Must match each row of ROI.
 #' @param ROI (data.frame) A data.frame of compounds to target as rows. Columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float)
 #' @param curveModel (str) Name of the curve model to fit (currently \code{skewedGaussian})
-#' @param params (list or str) Either 'guess' for automated parametrisation or list of curve fit parameters
+#' @param params (list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of "guess" or list of curve fit parameters
 #' @param sampling (int) Number of points to employ when subsampling the fittedCurve (rt, rtMin, rtMax, integral calculation)
 #' @param verbose (bool) If TRUE message the time taken and number of features found
 #' @param ... Passes arguments to \code{fitCurve} to alter peak fitting (such as \code{lower} and \code{upper} for the bounds of each parameters)
@@ -115,8 +115,24 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
   }
   # Check all data points fall into the corresponding ROI
   for(r in 1:nROI) {
-    if(!all((ROIsDataPoints[[r]]$rt >= ROI[r,c('rtMin')]) & (ROIsDataPoints[[r]]$rt <= ROI[r,c('rtMax')]))) {stop('Check input not all datapoints for window #', r, 'are into the corresponding ROI (rt)')}
-    if(!all((ROIsDataPoints[[r]]$mz >= ROI[r,c('mzMin')]) & (ROIsDataPoints[[r]]$mz <= ROI[r,c('mzMax')]))) {stop('Check input not all datapoints for window #', r, 'are into the corresponding ROI (mz)')}
+    if(!all((ROIsDataPoints[[r]]$rt >= ROI[r,c('rtMin')]) & (ROIsDataPoints[[r]]$rt <= ROI[r,c('rtMax')]))) {stop('Check input not all datapoints for window #', r, ' are into the corresponding ROI (rt)')}
+    if(!all((ROIsDataPoints[[r]]$mz >= ROI[r,c('mzMin')]) & (ROIsDataPoints[[r]]$mz <= ROI[r,c('mzMax')]))) {stop('Check input not all datapoints for window #', r, ' are into the corresponding ROI (mz)')}
+  }
+  # Check params input
+  if (!(is.character(params) | is.list(params))) {
+    stop('Check input, "params" must be "guess" or list')
+  }
+  # params is 'guess' if character
+  if (is.character(params)){
+    if (params != 'guess') {
+      stop('Check input, "params" must be "guess" if not list')
+    }
+  }
+  # length if params is list
+  if (is.list(params)){
+    if (length(params) != nROI) {
+      stop('Check input, number of parameters must match number of rows of ROI')
+    }
   }
   
   
@@ -124,10 +140,22 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
   outTable        <- data.frame(matrix(vector(), nROI, 10, dimnames=list(c(),c('found','rtMin','rt','rtMax','mzMin','mz','mzMax','peakArea','maxIntMeasured','maxIntPredicted'))), stringsAsFactors=F)
   outTable$found  <- rep(FALSE, nROI)     # set found to FALSE
   outCurveFit     <- rep(list(NA), nROI)
+  # use input params or guess 
+  if (any(params != 'guess')) {
+    useParams <- TRUE
+    if (verbose) {message('Curve fitting parameters passed as input employed')}
+  } else {
+    useParams <- FALSE
+  }
   
   
   ## Iterate over ROIs
   for (i in 1:nROI) {
+    # set params for fitting
+    new_params    <- 'guess'
+    if (useParams) {
+      new_params  <- params[[i]]
+    }
     
     ## EIC to fit
     tmp_EIC     <- generateIonChromatogram(ROIDataPoint=ROIsDataPoints[[i]], aggregationFunction='sum')
@@ -136,7 +164,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     fittedCurve <- tryCatch(
       {
         ## try
-        fittedCurve <- fitCurve(x=tmp_EIC$rt, y=tmp_EIC$int, curveModel=curveModel, params=params, ...)
+        fittedCurve <- fitCurve(x=tmp_EIC$rt, y=tmp_EIC$int, curveModel=curveModel, params=new_params, ...)
       },
       error=function(cond) {
         ## catch
@@ -145,13 +173,13 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     )
     # catch fit failure
     if (all(is.na(fittedCurve))) {
-      if (verbose) {message('Fit of ROI #', i,' is unsuccessful')}
+      if (verbose) {message('Fit of ROI #', i,' is unsuccessful (try error)')}
       # move to next window (empty df row was already initialised)
       next
     }
     # discard fit if nls.lm fit status indicates unsuccessful completion
-    if ((fittedCurve$fitStatus == 0) | (fittedCurve$fitStatus ==5)) {
-      if (verbose) {message('Fit of ROI #', i,' is unsuccessful')}
+    if ((fittedCurve$fitStatus == 0) | (fittedCurve$fitStatus ==5) | (fittedCurve$fitStatus ==-1)) {
+      if (verbose) {message('Fit of ROI #', i,' is unsuccessful (fit status)')}
       # move to next window (empty df row was already initialised)
       next
     } else {
@@ -182,7 +210,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
       # box moves earlier in rt each time
       boxMax      <- boxMin
       boxMin      <- boxMax - deltaRt
-      i           < i+1
+      cntr        <- cntr+1
       grid_rt     <- seq(from=boxMax, to=boxMin, by=((boxMin-boxMax)/(sampling-1))) # reverse order for up slope
       slope_int   <- predictCurve(fittedCurve, x=grid_rt)
       cutoff_pt   <- match(-1,sign(slope_int - peakLim_int))  # pos of 1st point past cutoff
@@ -204,7 +232,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
       # box moves later in rt each time
       boxMin      <- boxMax
       boxMax      <- boxMin + deltaRt
-      i           < i+1
+      cntr        <- cntr+1
       grid_rt     <- seq(from=boxMin, to=boxMax, by=((boxMax-boxMin)/(sampling-1)))
       slope_int   <- predictCurve(fittedCurve, x=grid_rt)
       cutoff_pt   <- match(-1,sign(slope_int - peakLim_int))  # pos of 1st point past cutoff
