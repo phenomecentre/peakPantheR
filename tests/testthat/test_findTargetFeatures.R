@@ -152,7 +152,7 @@ test_that('rtMin rtMax cannot be found, verbose', {
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result$peakTable, expected_foundPeaks$peakTable)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 4)
