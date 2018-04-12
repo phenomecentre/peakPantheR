@@ -13,7 +13,7 @@ Package for *Peak Picking and ANnoTation of High resolution Experiments in R*, i
 Overview
 --------
 
-`peakPantheR` implements functions to detect, integrate and report pre-defined features in MS files using XCMS3. It is designed for:
+`peakPantheR` implements functions to detect, integrate and report pre-defined features in MS files. It is designed for:
 
 -   **Real time** feature detection and integration (see [Real Time Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/real-time-annotation.html))
     -   process `multiple` compounds in `one` file at a time
