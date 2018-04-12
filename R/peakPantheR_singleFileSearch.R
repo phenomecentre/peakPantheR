@@ -1,6 +1,6 @@
 ###################################################################################################
 #                                                                                                 #
-#     --- peakPantheR: detect and integrate pre-defined features in MS files ---      #
+#     --- peakPantheR: detect and integrate pre-defined features in MS files ---                  #
 #                                                                                                 #
 ###################################################################################################
 

@@ -18,6 +18,7 @@ fitted curve values at x
 Evaluate fitted curve values at \code{x} data points
 }
 \examples{
+\dontrun{
 ## Input a fitted curve
 fittedCurve <- list(amplitude=275371.1, center=3382.577, sigma=0.07904697, gamma=0.001147647,
                     fitStatus=2, curveModel="skewedGaussian")
@@ -29,5 +30,5 @@ pred_y      <- predictCurve(fittedCurve, input_x)
 pred_y
 # [1] 2.347729e-08 1.282668e-05 3.475590e-03 4.676579e-01 3.129420e+01 1.043341e+03 1.736915e+04
 # [8] 1.447754e+05 6.061808e+05 1.280037e+06 1.369651e+06 7.467333e+05 2.087477e+05
-
+}
 }

@@ -18,6 +18,7 @@ is.peakPantheR_curveFit <- function(x){inherits(x, "peakPantheR_curveFit")}
 #' @return A 'peakPantheR_curveFit': a list of fitted curve parameters, \code{fitStatus} from \code{nls.lm$info} and curve shape name \code{curveModel}. \code{fitStatus=0} unsuccessful completion: improper input parameters, \code{fitStatus=1} successful completion: first convergence test is successful, \code{fitStatus=2} successful completion: second convergence test is successful, \code{fitStatus=3} successful completion: both convergence test are successful, \code{fitStatus=4} questionable completion: third convergence test is successful but should be carefully examined (maximizers and saddle points might satisfy), \code{fitStatus=5} unsuccessful completion: excessive number of function evaluations/iterations
 #' 
 #' @examples
+#' \dontrun{
 #' ## x is retention time, y corresponding intensity
 #' input_x  <- c(3362.102, 3363.667, 3365.232, 3366.797, 3368.362, 3369.927, 3371.492, 3373.057,
 #'              3374.622, 3376.187, 3377.752, 3379.317, 3380.882, 3382.447, 3384.012, 3385.577,
@@ -54,8 +55,7 @@ is.peakPantheR_curveFit <- function(x){inherits(x, "peakPantheR_curveFit")}
 #' #
 #' # attr(,"class")
 #' # [1] "peakPantheR_curveFit"
-#' 
-#' @export
+#' }
 fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess') {
   
   ## Check inputs
@@ -142,6 +142,7 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess') {
 #' @return  fitted curve values at x
 #' 
 #' @examples
+#' \dontrun{
 #' ## Input a fitted curve
 #' fittedCurve <- list(amplitude=275371.1, center=3382.577, sigma=0.07904697, gamma=0.001147647,
 #'                     fitStatus=2, curveModel="skewedGaussian")
@@ -153,8 +154,7 @@ fitCurve <- function(x, y, curveModel='skewedGaussian', params='guess') {
 #' pred_y
 #' # [1] 2.347729e-08 1.282668e-05 3.475590e-03 4.676579e-01 3.129420e+01 1.043341e+03 1.736915e+04
 #' # [8] 1.447754e+05 6.061808e+05 1.280037e+06 1.369651e+06 7.467333e+05 2.087477e+05
-#' 
-#' @export
+#' }
 predictCurve  <- function(fittedCurve, x) {
 
   # Check input
