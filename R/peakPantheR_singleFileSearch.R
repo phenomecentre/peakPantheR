@@ -138,7 +138,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
   TICvalue  <- sum(MSnbase::tic(raw_data))#, initial=FALSE to calculate from raw and not header
 
   ## Get AcquTime
-  AcquTime <- NA
+  AcquTime  <- NA
   if (getAcquTime) {
     AcquTime    <- getAcquisitionDatemzML(mzMLPath=singleSpectraDataPath, verbose=verbose)
   }
@@ -180,7 +180,11 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
   ## No targeted features, initialise empty integration results and EICs
   } else {
     if (verbose) {message('- No target features passed in \'targetFeatTable\', no integration, only TIC will be reported -')}
-    finalOutput <- data.frame(matrix(vector(), 0, 17, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
+    if (peakStatistic) {
+      finalOutput <- data.frame(matrix(vector(), 0, 17, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
+    } else {
+      finalOutput <- data.frame(matrix(vector(), 0, 13, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled'))), stringsAsFactors=F)
+    }
     curveFit    <- list()
   }
 

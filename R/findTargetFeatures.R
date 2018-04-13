@@ -8,7 +8,7 @@
 #' @param params (list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of "guess" or list of curve fit parameters
 #' @param sampling (int) Number of points to employ when subsampling the fittedCurve (rt, rtMin, rtMax, integral calculation)
 #' @param verbose (bool) If TRUE message the time taken and number of features found
-#' @param ... Passes arguments to \code{fitCurve} to alter peak fitting (such as \code{lower} and \code{upper} for the bounds of each parameters)
+#' @param ... Passes arguments to \code{fitCurve} to alter peak fitting (\code{params})
 #'
 #' @return A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as rows and peak measures as columns (see Details), \code{list()$curveFit} (\emph{list}) a list of \code{peakPantheR_curveFit} or NA for each ROI.
 #'

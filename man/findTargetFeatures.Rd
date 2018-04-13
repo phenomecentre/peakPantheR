@@ -20,7 +20,7 @@ findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
 
 \item{verbose}{(bool) If TRUE message the time taken and number of features found}
 
-\item{...}{Passes arguments to \code{fitCurve} to alter peak fitting (such as \code{lower} and \code{upper} for the bounds of each parameters)}
+\item{...}{Passes arguments to \code{fitCurve} to alter peak fitting (\code{params})}
 }
 \value{
 A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as rows and peak measures as columns (see Details), \code{list()$curveFit} (\emph{list}) a list of \code{peakPantheR_curveFit} or NA for each ROI.
