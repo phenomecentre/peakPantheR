@@ -1,7 +1,6 @@
 context('peakPantheRAnnotation_accessor-method()')
-skip_if_not(FALSE, message = 'unittest refactor')
 
-## Test the accessors five the right values
+## Test the accessors with the right values
 
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
@@ -28,45 +27,62 @@ input_uROI      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin
 input_uROI[1,]  <- c(9., 10., 11., 12., 13., 14.)
 input_uROI[2,]  <- c(15., 16., 17., 18., 19., 20.)
 
-# acquisitionTime
-input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
-
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
+# acquisitionTime
+input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
+
 # peakTables
 # 1
-peakTable1      <- data.frame(matrix(vector(), 2, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakTable1[1,]  <- c(TRUE, 522.2, 522.2, 522.2, 3346.453, 3322.979, 3379.317, 25792525, 25768308, 889280, 1840, 0.05400866, 541.2220, 7.464513, 897391.7, 1, 0, 5, 540, 535, 545, 24, 60, 1, 0, 0.02337616, 1.565, 27.50892, 11, NA, 1.296709)
-peakTable1[2,]  <- c(TRUE, 496.2, 496.2, 496.2, 3385.577, 3362.102, 3409.051, 32873727, 32818664, 1128960, 1471, 0.07199871, 566.3076, 7.788152, 1133465.7, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0, 0.02460103, 0., 28.70062, 11, NA, 2.134513)
-peakTable1[,1]  <- sapply(peakTable1[,1], as.logical)
+peakTable1     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
+peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
+peakTable1[,c(1,11)]       <- sapply(peakTable1[,c(1,11)], as.logical)
+peakTable1[,c(2:10,12:15)] <- sapply(peakTable1[,c(2:10,12:15)], as.numeric)
 # 2
-peakTable2      <- data.frame(matrix(vector(), 2, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakTable2[1,]  <- c(TRUE, 522.2, 522.2, 522.2, 3365.232, 3340.193, 3394.966, 24052220, 24015094, 761664, 577, 0.05649760, 553.1203, 8.079863, 783682.1, 1, 0, 5, 551, 546, 556, 35, 70, 1, 0, 0.02337616, 20.344, 29.77567, 11, NA, NA)
-peakTable2[2,]  <- c(TRUE, 496.2, 496.2, 496.2, 3407.486, 3382.447, 3432.525, 34958375, 34866657, 1099264, 598, 0.08422028, 579.6167, 8.534918, 1104863.3, 2, 0, 5, 577, 572, 582, 81, 113, 1, 0, 0.02460103, 21.909, 31.45268, 11, NA, NA)
-peakTable2[,1]  <- sapply(peakTable2[,1], as.logical)
+peakTable2     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 0.2139999999999, 1.0339153786516375, 1.0630802030537212)
+peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
+peakTable2[,c(1,11)]       <- sapply(peakTable2[,c(1,11)], as.logical)
+peakTable2[,c(2:10,12:15)] <- sapply(peakTable2[,c(2:10,12:15)], as.numeric)
 # 3
-peakTable3      <- data.frame(matrix(vector(), 2, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakTable3[1,]  <- c(TRUE, 522.2, 522.2, 522.2, 3368.363, 3346.454, 3396.533, 21421981, 21114393, 758336, 4527, 0.05799548, 555.4057, 7.455757, 751440.4, 1, 0, 5, 554, 549, 559, 39, 71, 1, 0, 0.02337616, 23.475, 27.47565, 11, NA, NA)
-peakTable3[2,]  <- c(TRUE, 496.2, 496.2, 496.2, 3413.747, 3390.273, 3437.221, 33874835, 33445046, 1149440, 246, 0.07273868, 583.7579, 7.956053, 1144862.9, 2, 0, 5, 582, 577, 587, 86, 116, 1, 0, 0.02460103, 28.170, 29.31939, 11, NA, NA)
-peakTable3[,1]  <- sapply(peakTable3[,1], as.logical)
+peakTable3     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
+peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
+peakTable3[,c(1,11)]       <- sapply(peakTable3[,c(1,11)], as.logical)
+peakTable3[,c(2:10,12:15)] <- sapply(peakTable3[,c(2:10,12:15)], as.numeric)
+input_peakTables <- list(peakTable1, peakTable2, peakTable3)
 
-# EICs
+# peakFit
 # 1
-file1  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
-EIC1	 <- xcms::chromatogram(file1, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
+cFit1.1         <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1.1)  <- 'peakPantheR_curveFit'
+cFit1.2         <- list(amplitude=199249.10572753669, center=3382.577, sigma=0.074904415304607966, gamma=0.0011471899372353885, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1.2)  <- 'peakPantheR_curveFit'
 # 2
-file2  <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
-EIC2	 <- xcms::chromatogram(file2, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
+cFit2.1         <- list(amplitude=124090.83425474487, center=3359.102, sigma=0.071061541060964212, gamma=0.0018336072657203239, fitStatus=2, curveModel="skewedGaussian")
+class(cFit2.1)  <- 'peakPantheR_curveFit'
+cFit2.2         <- list(amplitude=151407.23415130575, center=3399.791, sigma=0.063753866057052563, gamma=0.001676782834598999, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1.2)  <- 'peakPantheR_curveFit'
 # 3
-file3  <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
-EIC3	 <- xcms::chromatogram(file3, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
-# single compound
-tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin[1], rt_upper=input_targetFeatTable$rtMax[1]), mz = c(mz_lower=input_targetFeatTable$mzMin[1], mz_upper=input_targetFeatTable$mzMax[1]))
+cFit3.1         <- list(amplitude=122363.51256736703, center=3362.233, sigma=0.075489598945304492, gamma=0.0025160536725299734, fitStatus=2, curveModel="skewedGaussian")
+class(cFit3.1)  <- 'peakPantheR_curveFit'
+cFit3.2         <- list(amplitude=204749.86097918145, center=3409.182, sigma=0.075731781812843249, gamma=0.0013318670577834328, fitStatus=2, curveModel="skewedGaussian")
+class(cFit3.2)  <- 'peakPantheR_curveFit'
+input_peakFit   <- list(list(cFit1.1, cFit1.2), list(cFit2.1, cFit2.2), list(cFit3.1, cFit3.2))
 
+# dataPoint
+tmp_raw_data1  	  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
+ROIDataPoints1    <- extractSignalRawData(tmp_raw_data1, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=F)
+tmp_raw_data2  	  <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
+ROIDataPoints2    <- extractSignalRawData(tmp_raw_data2, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=F)
+tmp_raw_data3  	  <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
+ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=F)
+input_dataPoints  <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3), isAnnotated=TRUE)
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
 
 
@@ -76,7 +92,8 @@ test_that('accessors return the correct values', {
   expected_uROI             <- cbind.data.frame(input_uROI, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1", "Cpd 2"), stringsAsFactors=FALSE)
   expected_acquisitionTime  <- as.POSIXct(input_acquisitionTime)
   expected_peakTables       <- list(cbind.data.frame(peakTable1, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F), cbind.data.frame(peakTable2, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F), cbind.data.frame(peakTable3, cpdID=c("ID-1","ID-2"), cpdName=c("Cpd 1","Cpd 2"), stringsAsFactors=F))
-  expected_EICs             <- list(EIC1, EIC2, EIC3)
+  expected_dataPoints       <- input_dataPoints
+  expected_peakFit          <- input_peakFit
   expected_filename         <- c("ko15", "ko16", "ko18")
 
   # Check accessors
@@ -105,8 +122,10 @@ test_that('accessors return the correct values', {
   expect_equal(TIC(filledAnnotation), input_TIC)
   # peakTables
   expect_equal(peakTables(filledAnnotation), expected_peakTables)
-  # EICs
-  expect_equal(EICs(filledAnnotation), expected_EICs)
+  # dataPoints
+  expect_equal(dataPoints(filledAnnotation), expected_dataPoints)
+  # peakFit
+  expect_equal(peakFit(filledAnnotation), expected_peakFit)
   # isAnnotated
   expect_true(isAnnotated(filledAnnotation))
 
@@ -138,7 +157,7 @@ test_that('accessors return the correct values', {
   expect_equal(annotationTable(tmp_noPeakTables, 'found'), expected_noPeakTables)
   # only 1 compounds (sapply simplify to vector and not matrix)
   tmp_singleCpd         <- filledAnnotation[,1]
-  expected_mz           <- data.frame(matrix(c(522.2, 522.2, 522.2), 3, 1), stringsAsFactors=F)
+  expected_mz           <- data.frame(matrix(c(522.20001220703125, 522.20001220703125, 522.20001220703125), 3, 1), stringsAsFactors=F)
   rownames(expected_mz) <- filledAnnotation@filepath
   colnames(expected_mz) <- filledAnnotation@cpdName[1]
   expect_equal(annotationTable(tmp_singleCpd, 'mz'), expected_mz)
@@ -147,44 +166,63 @@ test_that('accessors return the correct values', {
 
   ## try some more of the peakTable columns
   # mz
-  expected_mz           <- data.frame(matrix(c(522.2, 522.2, 522.2, 496.2, 496.2, 496.2), 3, 2), stringsAsFactors=F)
+  expected_mz           <- data.frame(matrix(c(522.20001220703125, 522.20001220703125, 522.20001220703125, 496.20001220703125, 496.20001220703125, 496.20001220703125), 3, 2), stringsAsFactors=F)
   rownames(expected_mz) <- filledAnnotation@filepath
   colnames(expected_mz) <- filledAnnotation@cpdName
   expect_equal(annotationTable(filledAnnotation, 'mz'), expected_mz)
-  # mzmin
-  expected_mzmin           <- data.frame(matrix(c(522.2, 522.2, 522.2, 496.2, 496.2, 496.2), 3, 2), stringsAsFactors=F)
-  rownames(expected_mzmin) <- filledAnnotation@filepath
-  colnames(expected_mzmin) <- filledAnnotation@cpdName
-  expect_equal(annotationTable(filledAnnotation, 'mzmin'), expected_mzmin)
-  # mzmax
-  expected_mzmax           <- data.frame(matrix(c(522.2, 522.2, 522.2, 496.2, 496.2, 496.2), 3, 2), stringsAsFactors=F)
-  rownames(expected_mzmax) <- filledAnnotation@filepath
-  colnames(expected_mzmax) <- filledAnnotation@cpdName
-  expect_equal(annotationTable(filledAnnotation, 'mzmax'), expected_mzmax)
+  # mzMin
+  expected_mzMin           <- data.frame(matrix(c(522.194778, 522.194778, 522.194778, 496.20001220703125, 496.195038, 496.195038), 3, 2), stringsAsFactors=F)
+  rownames(expected_mzMin) <- filledAnnotation@filepath
+  colnames(expected_mzMin) <- filledAnnotation@cpdName
+  expect_equal(annotationTable(filledAnnotation, 'mzMin'), expected_mzMin)
+  # mzMax
+  expected_mzMax           <- data.frame(matrix(c(522.205222, 522.205222, 522.205222, 496.20001220703125, 496.204962, 496.204962), 3, 2), stringsAsFactors=F)
+  rownames(expected_mzMax) <- filledAnnotation@filepath
+  colnames(expected_mzMax) <- filledAnnotation@cpdName
+  expect_equal(annotationTable(filledAnnotation, 'mzMax'), expected_mzMax)
   # rt
-  expected_rt           <- data.frame(matrix(c(3346.453, 3365.232, 3368.363, 3385.577, 3407.486, 3413.747), 3, 2), stringsAsFactors=F)
+  expected_rt           <- data.frame(matrix(c(3346.8277590361445, 3365.102, 3368.233, 3386.5288072289159, 3405.791, 3413.4952530120481), 3, 2), stringsAsFactors=F)
   rownames(expected_rt) <- filledAnnotation@filepath
   colnames(expected_rt) <- filledAnnotation@cpdName
   expect_equal(annotationTable(filledAnnotation, 'rt'), expected_rt)
-  # rtmin
-  expected_rtmin           <- data.frame(matrix(c(3322.979, 3340.193, 3346.454, 3362.102, 3382.447, 3390.273), 3, 2), stringsAsFactors=F)
-  rownames(expected_rtmin) <- filledAnnotation@filepath
-  colnames(expected_rtmin) <- filledAnnotation@cpdName
-  expect_equal(annotationTable(filledAnnotation, 'rtmin'), expected_rtmin)
-  # rtmax
-  expected_rtmax           <- data.frame(matrix(c(3379.317, 3394.966, 3396.533, 3409.051, 3432.525, 3437.221), 3, 2), stringsAsFactors=F)
-  rownames(expected_rtmax) <- filledAnnotation@filepath
-  colnames(expected_rtmax) <- filledAnnotation@cpdName
-  expect_equal(annotationTable(filledAnnotation, 'rtmax'), expected_rtmax)
-  # intb
-  expected_intb           <- data.frame(matrix(c(25768308, 24015094, 21114393, 32818664, 34866657, 33445046), 3, 2), stringsAsFactors=F)
-  rownames(expected_intb) <- filledAnnotation@filepath
-  colnames(expected_intb) <- filledAnnotation@cpdName
-  expect_equal(annotationTable(filledAnnotation, 'intb'), expected_intb)
-  # asymmetryFactor
-  expected_asymmetryFactor           <- data.frame(matrix(c(1.296709, NA, NA, 2.134513, NA, NA), 3, 2), stringsAsFactors=F)
-  rownames(expected_asymmetryFactor) <- filledAnnotation@filepath
-  colnames(expected_asymmetryFactor) <- filledAnnotation@cpdName
-  expect_equal(annotationTable(filledAnnotation, 'asymmetryFactor'), expected_asymmetryFactor)
+  # rtMin
+  expected_rtMin           <- data.frame(matrix(c(3309.7589296586070, 3326.1063495851854, 3333.8625894557053, 3345.3766648628907, 3365.0238566258713, 3373.3998828113113), 3, 2), stringsAsFactors=F)
+  rownames(expected_rtMin) <- filledAnnotation@filepath
+  colnames(expected_rtMin) <- filledAnnotation@cpdName
+  expect_equal(annotationTable(filledAnnotation, 'rtMin'), expected_rtMin)
+  # rtMax
+  expected_rtMax           <- data.frame(matrix(c(3385.4098874628098, 3407.2726475892355, 3407.4362838927614, 3428.2788374983961, 3453.4049569205681, 3454.4490330927388), 3, 2), stringsAsFactors=F)
+  rownames(expected_rtMax) <- filledAnnotation@filepath
+  colnames(expected_rtMax) <- filledAnnotation@cpdName
+  expect_equal(annotationTable(filledAnnotation, 'rtMax'), expected_rtMax)
+  # peakArea
+  expected_peakArea           <- data.frame(matrix(c(26133726.6811244078, 24545301.622835573, 21447174.404490683, 35472141.3330242932, 37207579.286265120, 35659353.614476241), 3, 2), stringsAsFactors=F)
+  rownames(expected_peakArea) <- filledAnnotation@filepath
+  colnames(expected_peakArea) <- filledAnnotation@cpdName
+  expect_equal(annotationTable(filledAnnotation, 'peakArea'), expected_peakArea)
+  
+  # EICs
+  # default (sum)
+  tmp_EIC_sum_1.1   <- generateIonChromatogram(input_dataPoints[[1]][[1]], aggregationFunction='sum')
+  tmp_EIC_sum_1.2   <- generateIonChromatogram(input_dataPoints[[1]][[2]], aggregationFunction='sum')
+  tmp_EIC_sum_2.1   <- generateIonChromatogram(input_dataPoints[[2]][[1]], aggregationFunction='sum')
+  tmp_EIC_sum_2.2   <- generateIonChromatogram(input_dataPoints[[2]][[2]], aggregationFunction='sum')
+  tmp_EIC_sum_3.1   <- generateIonChromatogram(input_dataPoints[[3]][[1]], aggregationFunction='sum')
+  tmp_EIC_sum_3.2   <- generateIonChromatogram(input_dataPoints[[3]][[2]], aggregationFunction='sum')
+  expected_EIC_sum  <- list(list(tmp_EIC_sum_1.1, tmp_EIC_sum_1.2),
+                            list(tmp_EIC_sum_2.1, tmp_EIC_sum_2.2),
+                            list(tmp_EIC_sum_3.1, tmp_EIC_sum_3.2))
+  expect_equal(EICs(filledAnnotation), expected_EIC_sum)
+  # change aggregationFunction (max)
+  tmp_EIC_max_1.1   <- generateIonChromatogram(input_dataPoints[[1]][[1]], aggregationFunction='max')
+  tmp_EIC_max_1.2   <- generateIonChromatogram(input_dataPoints[[1]][[2]], aggregationFunction='max')
+  tmp_EIC_max_2.1   <- generateIonChromatogram(input_dataPoints[[2]][[1]], aggregationFunction='max')
+  tmp_EIC_max_2.2   <- generateIonChromatogram(input_dataPoints[[2]][[2]], aggregationFunction='max')
+  tmp_EIC_max_3.1   <- generateIonChromatogram(input_dataPoints[[3]][[1]], aggregationFunction='max')
+  tmp_EIC_max_3.2   <- generateIonChromatogram(input_dataPoints[[3]][[2]], aggregationFunction='max')
+  expected_EIC_max  <- list(list(tmp_EIC_max_1.1, tmp_EIC_max_1.2),
+                            list(tmp_EIC_max_2.1, tmp_EIC_max_2.2),
+                            list(tmp_EIC_max_3.1, tmp_EIC_max_3.2))
+  expect_equal(EICs(filledAnnotation, 'max'), expected_EIC_max)
 })
 

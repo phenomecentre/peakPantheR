@@ -418,7 +418,7 @@ setMethod("[", "peakPantheRAnnotation",
               .dataPoints   <- lapply(tmp_dataPoints, function(x, y) {x[y]}, y=j)
             } 
             
-            ## peakFit, filter samples first, then compoiunds in each curveFit list
+            ## peakFit, filter samples first, then compounds in each curveFit list
             tmp_peakFit     <- x@peakFit[i]
             if (all(sapply(tmp_peakFit, is.null))) {
               # no cpd filter if all NULL

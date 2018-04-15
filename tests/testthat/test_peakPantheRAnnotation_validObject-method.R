@@ -1,5 +1,4 @@
 context('peakPantheRAnnotation_validObject-method()')
-skip_if_not(FALSE, message = 'unittest refactor')
 
 ## Test the validObject method / valid_peakPantheRAnnotation function
 
@@ -26,40 +25,58 @@ input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900
 
 # peakTables
 # 1
-peakTable1      <- data.frame(matrix(vector(), 2, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakTable1[1,]  <- c(TRUE, 522.2, 522.2, 522.2, 3346.453, 3322.979, 3379.317, 25792525, 25768308, 889280, 1840, 0.05400866, 541.2220, 7.464513, 897391.7, 1, 0, 5, 540, 535, 545, 24, 60, 1, 0, 0.02337616, 1.565, 27.50892, 11, NA, 1.296709)
-peakTable1[2,]  <- c(TRUE, 496.2, 496.2, 496.2, 3385.577, 3362.102, 3409.051, 32873727, 32818664, 1128960, 1471, 0.07199871, 566.3076, 7.788152, 1133465.7, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0, 0.02460103, 0., 28.70062, 11, NA, 2.134513)
-peakTable1[,1]  <- sapply(peakTable1[,1], as.logical)
+peakTable1     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
+peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
+peakTable1[,c(1,11)]       <- sapply(peakTable1[,c(1,11)], as.logical)
+peakTable1[,c(2:10,12:15)] <- sapply(peakTable1[,c(2:10,12:15)], as.numeric)
 # 2
-peakTable2      <- data.frame(matrix(vector(), 2, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakTable2[1,]  <- c(TRUE, 522.2, 522.2, 522.2, 3365.232, 3340.193, 3394.966, 24052220, 24015094, 761664, 577, 0.05649760, 553.1203, 8.079863, 783682.1, 1, 0, 5, 551, 546, 556, 35, 70, 1, 0, 0.02337616, 20.344, 29.77567, 11, NA, NA)
-peakTable2[2,]  <- c(TRUE, 496.2, 496.2, 496.2, 3407.486, 3382.447, 3432.525, 34958375, 34866657, 1099264, 598, 0.08422028, 579.6167, 8.534918, 1104863.3, 2, 0, 5, 577, 572, 582, 81, 113, 1, 0, 0.02460103, 21.909, 31.45268, 11, NA, NA)
-peakTable2[,1]  <- sapply(peakTable2[,1], as.logical)
+peakTable2     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 0.2139999999999, 1.0339153786516375, 1.0630802030537212)
+peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
+peakTable2[,c(1,11)]       <- sapply(peakTable2[,c(1,11)], as.logical)
+peakTable2[,c(2:10,12:15)] <- sapply(peakTable2[,c(2:10,12:15)], as.numeric)
 # 3
-peakTable3      <- data.frame(matrix(vector(), 2, 31, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled", "ppm_error", "rt_dev_sec", "FWHM", "FWHM_ndatapoints", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
-peakTable3[1,]  <- c(TRUE, 522.2, 522.2, 522.2, 3368.363, 3346.454, 3396.533, 21421981, 21114393, 758336, 4527, 0.05799548, 555.4057, 7.455757, 751440.4, 1, 0, 5, 554, 549, 559, 39, 71, 1, 0, 0.02337616, 23.475, 27.47565, 11, NA, NA)
-peakTable3[2,]  <- c(TRUE, 496.2, 496.2, 496.2, 3413.747, 3390.273, 3437.221, 33874835, 33445046, 1149440, 246, 0.07273868, 583.7579, 7.956053, 1144862.9, 2, 0, 5, 582, 577, 587, 86, 116, 1, 0, 0.02460103, 28.170, 29.31939, 11, NA, NA)
-peakTable3[,1]  <- sapply(peakTable3[,1], as.logical)
+peakTable3     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
+peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
+peakTable3[,c(1,11)]       <- sapply(peakTable3[,c(1,11)], as.logical)
+peakTable3[,c(2:10,12:15)] <- sapply(peakTable3[,c(2:10,12:15)], as.numeric)
+input_peakTables <- list(peakTable1, peakTable2, peakTable3)
 
-# EICs
+# peakFit
 # 1
-file1  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
-EIC1	 <- xcms::chromatogram(file1, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
+cFit1.1         <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1.1)  <- 'peakPantheR_curveFit'
+cFit1.2         <- list(amplitude=199249.10572753669, center=3382.577, sigma=0.074904415304607966, gamma=0.0011471899372353885, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1.2)  <- 'peakPantheR_curveFit'
 # 2
-file2  <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
-EIC2	 <- xcms::chromatogram(file2, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
+cFit2.1         <- list(amplitude=124090.83425474487, center=3359.102, sigma=0.071061541060964212, gamma=0.0018336072657203239, fitStatus=2, curveModel="skewedGaussian")
+class(cFit2.1)  <- 'peakPantheR_curveFit'
+cFit2.2         <- list(amplitude=151407.23415130575, center=3399.791, sigma=0.063753866057052563, gamma=0.001676782834598999, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1.2)  <- 'peakPantheR_curveFit'
 # 3
-file3  <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
-EIC3	 <- xcms::chromatogram(file3, rt = data.frame(rt_lower=input_targetFeatTable$rtMin, rt_upper=input_targetFeatTable$rtMax), mz = data.frame(mz_lower=input_targetFeatTable$mzMin, mz_upper=input_targetFeatTable$mzMax))
-# single compound
-tmp_EIC <- xcms::chromatogram(file1, rt = c(rt_lower=input_targetFeatTable$rtMin[1], rt_upper=input_targetFeatTable$rtMax[1]), mz = c(mz_lower=input_targetFeatTable$mzMin[1], mz_upper=input_targetFeatTable$mzMax[1]))
+cFit3.1         <- list(amplitude=122363.51256736703, center=3362.233, sigma=0.075489598945304492, gamma=0.0025160536725299734, fitStatus=2, curveModel="skewedGaussian")
+class(cFit3.1)  <- 'peakPantheR_curveFit'
+cFit3.2         <- list(amplitude=204749.86097918145, center=3409.182, sigma=0.075731781812843249, gamma=0.0013318670577834328, fitStatus=2, curveModel="skewedGaussian")
+class(cFit3.2)  <- 'peakPantheR_curveFit'
+input_peakFit   <- list(list(cFit1.1, cFit1.2), list(cFit2.1, cFit2.2), list(cFit3.1, cFit3.2))
+
+# dataPoint
+tmp_raw_data1  	  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
+ROIDataPoints1    <- extractSignalRawData(tmp_raw_data1, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=F)
+tmp_raw_data2  	  <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
+ROIDataPoints2    <- extractSignalRawData(tmp_raw_data2, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=F)
+tmp_raw_data3  	  <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
+ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=F)
+input_dataPoints  <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 # Object, no samples, no compounds
 defaultInit_empty       <- peakPantheRAnnotation()
 # Object, init samples and compounds
 defaultInit_cpd_spectra <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=list(peakTable1, peakTable2, peakTable3), EICs=list(EIC1, EIC2, EIC3), isAnnotated=TRUE)
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
 
 test_that('initialised objects are valid', {
@@ -209,84 +226,115 @@ test_that('validObject() raises errors', {
   msg26               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$mzMax should be numeric, not character', sep='')
   expect_error(validObject(wrong26), msg26, fixed=TRUE)
 
-  # number of TIC
-  wrong27       <- filledAnnotation
-  wrong27@TIC   <- c(1, 2)
-  msg27         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: TIC has 2 elements (samples). Should be 3', sep='')
+  # number of acquisitionTime
+  wrong27                 <- filledAnnotation
+  wrong27@acquisitionTime <- filledAnnotation@acquisitionTime[c(1,2)]
+  msg27                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: acquisitionTime has 2 elements (samples). Should be 3', sep='')
   expect_error(validObject(wrong27), msg27, fixed=TRUE)
+  
+  # cannot useUROI=TRUE if uROIExist=FALSE
+  wrong28           <- filledAnnotation
+  wrong28@useUROI   <- TRUE
+  wrong28@uROIExist <- FALSE
+  msg28             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: useUROI cannot be TRUE while uROIExist is FALSE', sep='')
+  expect_error(validObject(wrong28), msg28, fixed=TRUE)
+  
+  # number of TIC
+  wrong29       <- filledAnnotation
+  wrong29@TIC   <- c(1, 2)
+  msg29         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: TIC has 2 elements (samples). Should be 3', sep='')
+  expect_error(validObject(wrong29), msg29, fixed=TRUE)
 
   # number of peakTables
-  wrong28             <- filledAnnotation
-  wrong28@peakTables  <- wrong28@peakTables[1:2]
-  msg28               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables has 2 elements (samples). Should be 3', sep='')
-  expect_error(validObject(wrong28), msg28, fixed=TRUE)
-  # not all peakTables are NULL or initialised
-  wrong29             <- filledAnnotation
-  wrong29@peakTables  <- list(NULL, wrong29@peakTables[[2]], wrong29@peakTables[[3]])
-  msg29               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must all either be data.frame or NULL', sep='')
-  expect_error(validObject(wrong29), msg29, fixed=TRUE)
-  # peakTables is data.frame
   wrong30             <- filledAnnotation
-  wrong30@peakTables  <- list("not data.frame", "not data.frame", "not data.frame")
-  msg30               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must be data.frame or NULL not character', sep='')
+  wrong30@peakTables  <- wrong30@peakTables[1:2]
+  msg30               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables has 2 elements (samples). Should be 3', sep='')
   expect_error(validObject(wrong30), msg30, fixed=TRUE)
-  # peakTables data.frame number of rows
-  wrong31                 <- filledAnnotation
-  wrong31@peakTables[[1]] <- wrong31@peakTables[[1]][1,]
-  msg31                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 1 rows (compounds). Should be 2', sep='')
-  expect_error(validObject(wrong31), msg31, fixed=TRUE)
-  # peakTables data.frame number of columns
-  wrong32                 <- filledAnnotation
-  wrong32@peakTables[[1]] <- wrong32@peakTables[[1]][,1:2]
-  msg32                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 2 columns. Should be 31', sep='')
-  expect_error(validObject(wrong32), msg32, fixed=TRUE)
-  # peakTables column names
-  wrong33                           <- filledAnnotation
-  colnames(wrong33@peakTables[[1]]) <- c('wrongCol', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor')
-  msg33                             <- paste("invalid class ", dQuote('peakPantheRAnnotation')," object: peakTables[[1]] columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not wrongCol mz mzmin mzmax rt rtmin rtmax into intb maxo sn egauss mu sigma h f dppm scale scpos scmin scmax lmin lmax sample is_filled ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor", sep='')
-  expect_error(validObject(wrong33), msg33, fixed=TRUE)
-
-  # number of EIC
-  wrong34       <- filledAnnotation
-  wrong34@EICs  <- wrong34@EICs[1:2]
-  msg34         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs has 2 elements (samples). Should be 3', sep='')
-  expect_error(validObject(wrong34), msg34, fixed=TRUE)
   # not all peakTables are NULL or initialised
-  wrong35       <- filledAnnotation
-  wrong35@EICs  <- list(NULL, wrong35@EICs[[2]], wrong35@EICs[[3]])
-  msg35         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs must all either be MSnbase::Chromatograms/list or NULL', sep='')
+  wrong31             <- filledAnnotation
+  wrong31@peakTables  <- list(NULL, wrong31@peakTables[[2]], wrong31@peakTables[[3]])
+  msg31               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must all either be data.frame or NULL', sep='')
+  expect_error(validObject(wrong31), msg31, fixed=TRUE)
+  # peakTables is data.frame
+  wrong32             <- filledAnnotation
+  wrong32@peakTables  <- list("not data.frame", "not data.frame", "not data.frame")
+  msg32               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables must be data.frame or NULL not character', sep='')
+  expect_error(validObject(wrong32), msg32, fixed=TRUE)
+  # peakTables data.frame number of rows
+  wrong33                 <- filledAnnotation
+  wrong33@peakTables[[1]] <- wrong33@peakTables[[1]][1,]
+  msg33                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 1 rows (compounds). Should be 2', sep='')
+  expect_error(validObject(wrong33), msg33, fixed=TRUE)
+  # peakTables data.frame number of columns
+  wrong34                 <- filledAnnotation
+  wrong34@peakTables[[1]] <- wrong34@peakTables[[1]][,1:2]
+  msg34                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakTables[[1]] has 2 columns. Should be 15', sep='')
+  expect_error(validObject(wrong34), msg34, fixed=TRUE)
+  # peakTables column names
+  wrong35                           <- filledAnnotation
+  colnames(wrong35@peakTables[[1]]) <- c('wrongCol', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor')
+  msg35                             <- paste("invalid class ", dQuote('peakPantheRAnnotation')," object: peakTables[[1]] columns should be 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor', not wrongCol rt rtMin rtMax mz mzMin mzMax peakArea maxIntMeasured maxIntPredicted is_filled ppm_error rt_dev_sec tailingFactor asymmetryFactor", sep='')
   expect_error(validObject(wrong35), msg35, fixed=TRUE)
-  # individual EIC is list or Chromatograms
-  wrong36       <- filledAnnotation
-  wrong36@EICs  <- list("not list or Chromatograms", "not list or Chromatograms", "not list or Chromatograms")
-  msg36         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] must be a list or MSnbase::Chromatograms, not character', sep='')
+
+  # number of dataPoints
+  wrong36             <- filledAnnotation
+  wrong36@dataPoints  <- wrong36@dataPoints[1:2]
+  msg36               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: dataPoints has 2 elements (samples). Should be 3', sep='')
   expect_error(validObject(wrong36), msg36, fixed=TRUE)
-  # fail if individual EIC is Chromatogram (no S)
-  wrong37       <- filledAnnotation
-  wrong37@EICs  <- list(wrong37@EICs[[1]][1,],  wrong37@EICs[[2]][1,],  wrong37@EICs[[3]][1,])
-  msg37         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] must be a list or MSnbase::Chromatograms, not Chromatogram', sep='')
+  # not all dataPoints are NULL or initialised
+  wrong37             <- filledAnnotation
+  wrong37@dataPoints  <- list(NULL, wrong37@dataPoints[[2]], wrong37@dataPoints[[3]])
+  msg37               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: dataPoints must all either be list of ROI data points or NULL', sep='')
   expect_error(validObject(wrong37), msg37, fixed=TRUE)
-  # individual EIC has entry for each compound
-  wrong38           <- filledAnnotation
-  wrong38@EICs[[1]] <- tmp_EIC
-  msg38             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]] contains, 1 EICs (compound). Should be 2', sep='')
+  # individual dataPoints is list
+  wrong38             <- filledAnnotation
+  wrong38@dataPoints  <- list("not list", "not list", "not list")
+  msg38               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: dataPoints[[1]] must be a list of ROI data points, not character', sep='')
   expect_error(validObject(wrong38), msg38, fixed=TRUE)
-  # individual EIC compound entry is chromatogram
+  # individual dataPoints has entry for each compound
   wrong39                 <- filledAnnotation
-  wrong39@EICs[[1]][[1]]  <- "not a chromatogram"
-  msg39                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: EICs[[1]][[1]] must be a MSnbase::Chromatogram, not character', sep='')
+  wrong39@dataPoints[[1]] <- list(wrong39@dataPoints[[1]][1])
+  msg39                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: dataPoints[[1]] contains, 1 dataPoints (compound). Should be 2', sep='')
   expect_error(validObject(wrong39), msg39, fixed=TRUE)
-
-  # number of acquisitionTime
-  wrong40                 <- filledAnnotation
-  wrong40@acquisitionTime <- filledAnnotation@acquisitionTime[c(1,2)]
-  msg40                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: acquisitionTime has 2 elements (samples). Should be 3', sep='')
+  # individual dataPoints compound entry is data.frame
+  wrong40                       <- filledAnnotation
+  wrong40@dataPoints[[1]][[1]]  <- "not a data.frame"
+  msg40                         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: dataPoints[[1]][[1]] must be a data.frame, not character', sep='')
   expect_error(validObject(wrong40), msg40, fixed=TRUE)
-
-  # cannot useUROI=TRUE if uROIExist=FALSE
-  wrong41           <- filledAnnotation
-  wrong41@useUROI   <- TRUE
-  wrong41@uROIExist <- FALSE
-  msg41             <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: useUROI cannot be TRUE while uROIExist is FALSE', sep='')
+  # individual dataPoints compound data.frame number of columns
+  wrong41                       <- filledAnnotation
+  wrong41@dataPoints[[1]][[1]]  <- wrong41@dataPoints[[1]][[1]][,1:2]
+  msg41                         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: dataPoints[[1]][[1]] has 2 columns. Should be 3', sep='')
   expect_error(validObject(wrong41), msg41, fixed=TRUE)
+  # individual dataPoints compound data.frame column names
+  wrong42                                 <- filledAnnotation
+  colnames(wrong42@dataPoints[[1]][[1]])  <- c('wrongCol', 'mz', 'int')
+  msg42                                   <- paste("invalid class ", dQuote('peakPantheRAnnotation')," object: dataPoints[[1]][[1]] columns should be 'rt', 'mz', 'int', not wrongCol mz int", sep="")
+  expect_error(validObject(wrong42), msg42, fixed=TRUE)
+  
+  # number of peakFit
+  wrong43         <- filledAnnotation
+  wrong43@peakFit <- wrong43@peakFit[1:2]
+  msg43           <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit has 2 elements (samples). Should be 3', sep='')
+  expect_error(validObject(wrong43), msg43, fixed=TRUE)
+  # not all peakFit are NULL or initialised
+  wrong44         <- filledAnnotation
+  wrong44@peakFit <- list(NULL, wrong44@peakFit[[2]], wrong44@peakFit[[3]])
+  msg44           <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit must all either be list of ROI curveFit or NULL', sep='')
+  expect_error(validObject(wrong44), msg44, fixed=TRUE)
+  # individual peakFit is list
+  wrong45         <- filledAnnotation
+  wrong45@peakFit <- list("not list", "not list", "not list")
+  msg45           <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit[[1]] must be a list of ROI curveFit or NA, not character', sep='')
+  expect_error(validObject(wrong45), msg45, fixed=TRUE)
+  # individual peakFit has entry for each compound
+  wrong46               <- filledAnnotation
+  wrong46@peakFit[[1]]  <- list(wrong46@peakFit[[1]][1])
+  msg46                 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit[[1]] contains, 1 peakPantheR_curveFit or NA (compound). Should be 2', sep='')
+  expect_error(validObject(wrong46), msg46, fixed=TRUE)
+  # individual dataPoints compound entry is peakPantheR_curveFit or NA
+  wrong47                    <- filledAnnotation
+  wrong47@peakFit[[1]][[1]]  <- "not a peakPantheR_curveFit or NA"
+  msg47                         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit[[1]][[1]] must be NA or a peakPantheR_curveFit, not character', sep='')
+  expect_error(validObject(wrong47), msg47, fixed=TRUE)
 })
