@@ -121,6 +121,32 @@ test_that('no rt (#2), no mz (#3)', {
   expect_equal(length(result_featureStatistic$messages), 1)
 })
 
+test_that('wrong rtMin (#2), wrong rtMax (#3)', {
+  # if rtMin > 5/10% and rtMax > 5/10% maxInt, cannot calculate statistic. (Shouldn't happen as rtMin rtMax are at 0.5% maxInt)
+  # foundPeakTable
+  tmp_foundPeakTable             <- input_foundPeakTable
+  tmp_foundPeakTable[2, 'rtMin'] <- 3380.
+  tmp_foundPeakTable[3, 'rtMax'] <- 3460.
+  
+  # expected foundPeaks
+  expected_featureStatistic                     <- peakStatistics
+  expected_featureStatistic$rtMin[2]            <- 3380.
+  expected_featureStatistic$rtMax[3]            <- 3460.
+  expected_featureStatistic$tailingFactor[2]    <- as.numeric(NA)
+  expected_featureStatistic$asymmetryFactor[2]  <- as.numeric(NA)
+  expected_featureStatistic$tailingFactor[3]    <- as.numeric(NA)
+  expected_featureStatistic$asymmetryFactor[3]  <- as.numeric(NA)
+  
+  # results (output, warnings and messages)
+  result_featureStatistic   <- evaluate_promise(getTargetFeatureStatistic(input_fitCurves, input_ROI, tmp_foundPeakTable, verbose=TRUE))
+  
+  # Check result table
+  expect_equal(result_featureStatistic$result, expected_featureStatistic)
+  
+  # Check messages (cannot match timing)
+  expect_equal(length(result_featureStatistic$messages), 1)
+})
+
 test_that('raise errors', {
   # targetFeatTable and foundPeakTable dimension mismatch
   expect_error(getTargetFeatureStatistic(input_fitCurves, input_ROI[1:3,], input_foundPeakTable, verbose=TRUE), 'Number of features in "targetFeatTable" (3) and "foundPeakTable" (4) do not match!', fixed=TRUE)

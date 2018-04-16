@@ -239,6 +239,38 @@ test_that('change peak fitting params with ..., no peakStatistic, no plotEICsPat
   expect_equal(result_singleFileSearch$messages, expected_messages)
 })
 
+test_that('no targetFeatures on import, no peakStatistic', {
+  # Empty targetFeatures
+  empty_ROI   <- data.frame(matrix(vector(), 0, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+  
+  # Expected TIC
+  expected_TIC            <- 2410533091
+  # Expected peakTable
+  expected_peakTable      <- data.frame(matrix(vector(), 0, 13, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled'))), stringsAsFactors=F)
+  # Expected curveFit
+  expected_curveFit       <- list()
+  # Expected ROIsDataPoint
+  expected_ROIsDataPoint  <- list()
+  # Expected acquTime
+  expected_acquTime       <- NA
+  # Expected messages
+  expected_messages       <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 0 windows\n", "No data exist for the rt provided\n", "- No target features passed in 'targetFeatTable', no integration, only TIC will be reported -\n")
+  
+  # results (output, warnings and messages)
+  result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, empty_ROI, peakStatistic=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=TRUE))
+  
+  # Check results
+  expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
+  expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
+  
+  # Check messages (loading file)
+  expect_equal(length(result_singleFileSearch$messages), 5)
+  expect_equal(result_singleFileSearch$messages[1:4], expected_messages)
+})
+
 test_that('no targetFeatures on import, peakStatistic', {
   # Empty targetFeatures
   empty_ROI   <- data.frame(matrix(vector(), 0, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
