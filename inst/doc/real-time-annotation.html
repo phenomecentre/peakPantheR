@@ -177,234 +177,138 @@ input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">1</span>,<span
 <h4>Run Single File Annotation</h4>
 <p><code>peakPantheR_singleFileSearch()</code> takes as input a <code>singleSpectraDataPath</code> pointing to the file to process and <code>targetFeatTable</code> defining the compounds to integrate:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(peakPantheR)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; This is peakPantheR version 1.1.0</span>
 annotation &lt;-<span class="st"> </span><span class="kw">peakPantheR_singleFileSearch</span>(<span class="dt">singleSpectraDataPath =</span> input_spectraPath,
                                            <span class="dt">targetFeatTable =</span> input_targetFeatTable,
                                            <span class="dt">peakStatistic =</span> <span class="ot">TRUE</span>,
                                            <span class="dt">getEICs =</span> <span class="ot">TRUE</span>,
                                            <span class="dt">verbose =</span> <span class="ot">TRUE</span>)
 <span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
-<span class="co">#&gt; Detecting chromatographic peaks in 2 regions of interest ... OK: 3 found.</span>
-<span class="co">#&gt; Found 2/2 features (3 total) in 1.16 secs</span>
-<span class="co">#&gt; EICs loaded in: 0.16 secs</span>
-<span class="co">#&gt; Previously loaded EICs used for peak statistics</span>
+<span class="co">#&gt; Reading data from 2 windows</span>
+<span class="co">#&gt; Data read in: 0.29 secs</span>
+<span class="co">#&gt; Fit of ROI #1 is unsuccessful (try error)</span>
+<span class="co">#&gt; Fit of ROI #2 is unsuccessful (try error)</span>
+<span class="co">#&gt; Found 0/2 features in 0.04 secs</span>
 <span class="co">#&gt; Peak statistics done in: 0 secs</span>
-<span class="co">#&gt; Feature search done in: 1.86 secs</span></code></pre></div>
+<span class="co">#&gt; Feature search done in: 0.76 secs</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>TIC
 <span class="co">#&gt; [1] 2410533091</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>peakTable</code></pre></div>
-<table>
+<table style="width:100%;">
 <caption>Table continues below</caption>
 <colgroup>
 <col width="10%"></col>
 <col width="10%"></col>
-<col width="10%"></col>
-<col width="10%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
-<col width="14%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th align="center">found</th>
-<th align="center">mz</th>
-<th align="center">mzmin</th>
-<th align="center">mzmax</th>
-<th align="center">rt</th>
-<th align="center">rtmin</th>
-<th align="center">rtmax</th>
-<th align="center">into</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">TRUE</td>
-<td align="center">522.2</td>
-<td align="center">522.2</td>
-<td align="center">522.2</td>
-<td align="center">3344.888</td>
-<td align="center">3322.979</td>
-<td align="center">3379.317</td>
-<td align="center">25792525</td>
-</tr>
-<tr class="even">
-<td align="center">TRUE</td>
-<td align="center">496.2</td>
-<td align="center">496.2</td>
-<td align="center">496.2</td>
-<td align="center">3382.447</td>
-<td align="center">3362.102</td>
-<td align="center">3409.051</td>
-<td align="center">32873727</td>
-</tr>
-</tbody>
-</table>
-<table>
-<caption>Table continues below</caption>
-<colgroup>
-<col width="15%"></col>
-<col width="13%"></col>
-<col width="9%"></col>
-<col width="12%"></col>
 <col width="6%"></col>
 <col width="10%"></col>
+<col width="10%"></col>
 <col width="6%"></col>
-<col width="5%"></col>
-<col width="9%"></col>
-<col width="9%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th align="center">intb</th>
-<th align="center">maxo</th>
-<th align="center">sn</th>
-<th align="center">egauss</th>
-<th align="center">mu</th>
-<th align="center">sigma</th>
-<th align="center">h</th>
-<th align="center">f</th>
-<th align="center">dppm</th>
-<th align="center">scale</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">25768308</td>
-<td align="center">889280</td>
-<td align="center">1840</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">5</td>
-</tr>
-<tr class="even">
-<td align="center">32818664</td>
-<td align="center">1128960</td>
-<td align="center">1471</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">NA</td>
-<td align="center">2</td>
-<td align="center">0</td>
-<td align="center">5</td>
-</tr>
-</tbody>
-</table>
-<table>
-<caption>Table continues below</caption>
-<colgroup>
 <col width="10%"></col>
-<col width="10%"></col>
-<col width="10%"></col>
-<col width="9%"></col>
-<col width="9%"></col>
-<col width="11%"></col>
-<col width="15%"></col>
-<col width="10%"></col>
-<col width="11%"></col>
-</colgroup>
-<thead>
-<tr class="header">
-<th align="center">scpos</th>
-<th align="center">scmin</th>
-<th align="center">scmax</th>
-<th align="center">lmin</th>
-<th align="center">lmax</th>
-<th align="center">sample</th>
-<th align="center">is_filled</th>
-<th align="center">cpdID</th>
-<th align="center">cpdName</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">540</td>
-<td align="center">535</td>
-<td align="center">545</td>
-<td align="center">24</td>
-<td align="center">60</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">Cpd 1</td>
-</tr>
-<tr class="even">
-<td align="center">564</td>
-<td align="center">559</td>
-<td align="center">569</td>
-<td align="center">68</td>
-<td align="center">98</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">2</td>
-<td align="center">Cpd 2</td>
-</tr>
-</tbody>
-</table>
-<table style="width:93%;">
-<caption>Table continues below</caption>
-<colgroup>
-<col width="18%"></col>
-<col width="18%"></col>
-<col width="9%"></col>
-<col width="26%"></col>
+<col width="14%"></col>
 <col width="20%"></col>
 </colgroup>
 <thead>
 <tr class="header">
-<th align="center">ppm_error</th>
-<th align="center">rt_dev_sec</th>
-<th align="center">FWHM</th>
-<th align="center">FWHM_ndatapoints</th>
-<th align="center">tailingFactor</th>
+<th align="center">found</th>
+<th align="center">rtMin</th>
+<th align="center">rt</th>
+<th align="center">rtMax</th>
+<th align="center">mzMin</th>
+<th align="center">mz</th>
+<th align="center">mzMax</th>
+<th align="center">peakArea</th>
+<th align="center">maxIntMeasured</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">0.02337616</td>
-<td align="center">0</td>
+<td align="center">FALSE</td>
 <td align="center">NA</td>
-<td align="center">11</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
 <td align="center">NA</td>
 </tr>
 <tr class="even">
-<td align="center">0.02460103</td>
-<td align="center">3.13</td>
+<td align="center">FALSE</td>
 <td align="center">NA</td>
-<td align="center">11</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
 <td align="center">NA</td>
 </tr>
 </tbody>
 </table>
-<table style="width:24%;">
+<table style="width:100%;">
+<caption>Table continues below</caption>
 <colgroup>
+<col width="25%"></col>
+<col width="11%"></col>
+<col width="13%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">maxIntPredicted</th>
+<th align="center">cpdID</th>
+<th align="center">cpdName</th>
+<th align="center">is_filled</th>
+<th align="center">ppm_error</th>
+<th align="center">rt_dev_sec</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">NA</td>
+<td align="center">1</td>
+<td align="center">Cpd 1</td>
+<td align="center">FALSE</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+<tr class="even">
+<td align="center">NA</td>
+<td align="center">2</td>
+<td align="center">Cpd 2</td>
+<td align="center">FALSE</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
+</tr>
+</tbody>
+</table>
+<table style="width:46%;">
+<colgroup>
+<col width="22%"></col>
 <col width="23%"></col>
 </colgroup>
 <thead>
 <tr class="header">
+<th align="center">tailingFactor</th>
 <th align="center">asymmetryFactor</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">1.484</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
 </tr>
 <tr class="even">
-<td align="center">2.708291</td>
+<td align="center">NA</td>
+<td align="center">NA</td>
 </tr>
 </tbody>
 </table>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>EICs
-<span class="co">#&gt; Chromatograms with 2 rows and 1 column</span>
-<span class="co">#&gt;            ko15.CDF</span>
-<span class="co">#&gt;      &lt;Chromatogram&gt;</span>
-<span class="co">#&gt; [1,]     length: 51</span>
-<span class="co">#&gt; [2,]    length: 102</span>
-<span class="co">#&gt; phenoData with 1 variables</span></code></pre></div>
+<span class="co">#&gt; NULL</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>acquTime
 <span class="co">#&gt; [1] NA</span></code></pre></div>
 <p>Multiple parameters control the file annotation:</p>

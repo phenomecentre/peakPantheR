@@ -16,7 +16,8 @@
 #' @param useFIR A logical stating if FIR are to be used
 #' @param TIC A numeric vector of TIC or NA, of length number of spectra files
 #' @param peakTables A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.
-#' @param EICs A list of length number of spectra files. Each list element is \emph{NULL or list of length number of compounds} of \code{xcms::Chromatogram} matching the ROI or uROI for the given spectra.
+#' @param dataPoints A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row))
+#' @param peakFit A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI
 #' @param isAnnotated A logical stating in the annotation took place
 peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   targetFeatTable = NULL,
@@ -32,7 +33,8 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   useFIR = FALSE,
                                   TIC = numeric(),
                                   peakTables = list(),
-                                  EICs = list(),
+                                  dataPoints = list(),
+                                  peakFit = list(),
                                   isAnnotated = FALSE) {
 
   ## set spectra if spectraPaths is provided
@@ -57,9 +59,13 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
     if (length(peakTables) == 0) {
       peakTables      <- vector("list", nbSpectra)
     }
-    # set EICs default if no EICs passed in
-    if (length(EICs) == 0) {
-      EICs            <- vector("list", nbSpectra)
+    # set dataPoints default if no dataPoints passed in
+    if (length(dataPoints) == 0) {
+      dataPoints      <- vector("list", nbSpectra)
+    }
+    # set peakFit default if no peakFit passed in
+    if (length(peakFit) == 0) {
+      peakFit         <- vector("list", nbSpectra)
     }
   }
 
@@ -120,5 +126,5 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
   }
 
   ## set the final values
-  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, EICs=EICs, isAnnotated=isAnnotated)
+  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, dataPoints=dataPoints, peakFit=peakFit, isAnnotated=isAnnotated)
 }

@@ -1,7 +1,7 @@
 ## valid method for \link{peakPantheRAnnotation-class}
 ## Number of compounds based on @cpdID length, number of samples based on @filepath length.
 ## Slot type is not checked as \code{setClass} enforces it.
-## peakTables and EICs type are checked on first list element.
+## peakTables, peakFit and dataPoints type are checked on first list element.
 valid_peakPantheRAnnotation <- function(object) {
   # init
   msg       <- NULL
@@ -186,14 +186,14 @@ valid_peakPantheRAnnotation <- function(object) {
               msg   <- c(msg, paste("peakTables[[1]] has ", dim(object@peakTables[[1]])[1], " rows (compounds). Should be ", nbCpd, sep=""))
             }
             # individual peakTable data.frame number of columns
-            if (dim(object@peakTables[[1]])[2] != 31) {
+            if (dim(object@peakTables[[1]])[2] != 15) {
               valid <- FALSE
-              msg   <- c(msg, paste("peakTables[[1]] has ", dim(object@peakTables[[1]])[2], " columns. Should be 31", sep=""))
+              msg   <- c(msg, paste("peakTables[[1]] has ", dim(object@peakTables[[1]])[2], " columns. Should be 15", sep=""))
             } else {
               # individual peakTable data.frame column names
-              if (!all(colnames(object@peakTables[[1]]) %in% c('found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor'))) {
+              if (!all(colnames(object@peakTables[[1]]) %in% c('found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))) {
                 valid <- FALSE
-                msg   <- c(msg, paste("peakTables[[1]] columns should be 'found', 'mz', 'mzmin', 'mzmax', 'rt', 'rtmin', 'rtmax', 'into', 'intb', 'maxo', 'sn', 'egauss', 'mu', 'sigma', 'h', 'f', 'dppm', 'scale', 'scpos', 'scmin', 'scmax', 'lmin', 'lmax', 'sample', 'is_filled', 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailingFactor', 'asymmetryFactor', not ", paste(colnames(object@peakTables[[1]]), collapse=" "), sep=""))
+                msg   <- c(msg, paste("peakTables[[1]] columns should be 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor', not ", paste(colnames(object@peakTables[[1]]), collapse=" "), sep=""))
               }
             }
           }
@@ -202,36 +202,88 @@ valid_peakPantheRAnnotation <- function(object) {
     }
   }
 
-  # number of EICs
-  if (length(object@EICs) != nbSample) {
+  # number of dataPoints
+  if (length(object@dataPoints) != nbSample) {
     valid <- FALSE
-    msg   <- c(msg, paste("EICs has ", length(object@EICs), " elements (samples). Should be ", nbSample, sep=""))
+    msg   <- c(msg, paste("dataPoints has ", length(object@dataPoints), " elements (samples). Should be ", nbSample, sep=""))
   } else {
-    # only check EICs if min 1 sample and not NULL
+    # only check dataPoints if min 1 sample and not NULL
     if (nbSample >= 1){
-      # if ALL EICs are not NULL
-      EICs_isNULL <- sapply(object@EICs, is.null)
-      if (!all(EICs_isNULL)) {
-        # if one EIC is nuLL but not all, raise an error
-        if (any(EICs_isNULL)) {
+      # if ALL dataPoints are not NULL
+      dataPoints_isNULL <- sapply(object@dataPoints, is.null)
+      if (!all(dataPoints_isNULL)) {
+        # if one dataPoints is NULL but not all, raise an error
+        if (any(dataPoints_isNULL)) {
           valid <- FALSE
-          msg   <- c(msg, paste("EICs must all either be MSnbase::Chromatograms/list or NULL", sep=""))
+          msg   <- c(msg, paste("dataPoints must all either be list of ROI data points or NULL", sep=""))
         } else {
-          # individual EIC is list or chromatograms
-          if (!(is.list(object@EICs[[1]]) | (class(object@EICs[[1]])=="Chromatograms"))) {
+          # individual dataPoints is list
+          if (!(is.list(object@dataPoints[[1]]))) {
             valid <- FALSE
-            msg   <- c(msg, paste("EICs[[1]] must be a list or MSnbase::Chromatograms, not ", paste(class(object@EICs[[1]]), collapse=" "), sep=""))
+            msg   <- c(msg, paste("dataPoints[[1]] must be a list of ROI data points, not ", paste(class(object@dataPoints[[1]]), collapse=" "), sep=""))
           } else {
-            # individual EIC has entry for each compound
-            if (length(object@EICs[[1]]) != nbCpd) {
+            # individual dataPoints has entry for each compound (ROI)
+            if (length(object@dataPoints[[1]]) != nbCpd) {
               valid <- FALSE
-              msg   <- c(msg, paste("EICs[[1]] contains, ", length(object@EICs[[1]]), " EICs (compound). Should be ", nbCpd, sep=""))
+              msg   <- c(msg, paste("dataPoints[[1]] contains, ", length(object@dataPoints[[1]]), " dataPoints (compound). Should be ", nbCpd, sep=""))
             } else {
               if (nbCpd >= 1) {
-                # individual EIC compound entry is Chromatogram
-                if (class(object@EICs[[1]][[1]]) != "Chromatogram") {
+                # individual dataPoints compound entry is data.frame
+                if (!is.data.frame(object@dataPoints[[1]][[1]])) {
                   valid <- FALSE
-                  msg   <- c(msg, paste("EICs[[1]][[1]] must be a MSnbase::Chromatogram, not ", class(object@EICs[[1]][[1]]), sep=""))
+                  msg   <- c(msg, paste("dataPoints[[1]][[1]] must be a data.frame, not ", class(object@dataPoints[[1]][[1]]), sep=""))
+                } else {
+                  # individual peakTable data.frame number of columns
+                  if (dim(object@dataPoints[[1]][[1]])[2] != 3) {
+                    valid <- FALSE
+                    msg   <- c(msg, paste("dataPoints[[1]][[1]] has ", dim(object@dataPoints[[1]][[1]])[2], " columns. Should be 3", sep=""))
+                  } else {
+                    # individual peakTable data.frame column names
+                    if (!all(colnames(object@dataPoints[[1]][[1]]) %in% c('rt', 'mz', 'int'))) {
+                      valid <- FALSE
+                      msg   <- c(msg, paste("dataPoints[[1]][[1]] columns should be 'rt', 'mz', 'int', not ", paste(colnames(object@dataPoints[[1]][[1]]), collapse=" "), sep=""))
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  # number of peakFit
+  if (length(object@peakFit) != nbSample) {
+    valid <- FALSE
+    msg   <- c(msg, paste("peakFit has ", length(object@peakFit), " elements (samples). Should be ", nbSample, sep=""))
+  } else {
+    # only check peakFit if min 1 sample and not NULL
+    if (nbSample >= 1){
+      # if ALL peakFit are not NULL
+      peakFit_isNULL <- sapply(object@peakFit, is.null)
+      if (!all(peakFit_isNULL)) {
+        # if one peakFit is NULL but not all, raise an error
+        if (any(peakFit_isNULL)) {
+          valid <- FALSE
+          msg   <- c(msg, paste("peakFit must all either be list of ROI curveFit or NULL", sep=""))
+        } else {
+          # individual peakFit is list
+          if (!(is.list(object@peakFit[[1]]))) {
+            valid <- FALSE
+            msg   <- c(msg, paste("peakFit[[1]] must be a list of ROI curveFit or NA, not ", paste(class(object@peakFit[[1]]), collapse=" "), sep=""))
+          } else {
+            # individual peakFit has entry for each compound (ROI)
+            if (length(object@peakFit[[1]]) != nbCpd) {
+              valid <- FALSE
+              msg   <- c(msg, paste("peakFit[[1]] contains, ", length(object@peakFit[[1]]), " peakPantheR_curveFit or NA (compound). Should be ", nbCpd, sep=""))
+            } else {
+              # only check peakFit if min 1 compound
+              if (nbCpd >= 1) {
+                # individual peakFit compound entry is peakPantheR_curveFit or NA
+                if (!all(is.na(object@peakFit[[1]][[1]])) & !is.peakPantheR_curveFit(object@peakFit[[1]][[1]])) {
+                  valid <- FALSE
+                  msg   <- c(msg, paste("peakFit[[1]][[1]] must be NA or a peakPantheR_curveFit, not ", class(object@peakFit[[1]][[1]]), sep=""))
                 }
               }
             }

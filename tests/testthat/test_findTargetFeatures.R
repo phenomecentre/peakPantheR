@@ -10,83 +10,235 @@ singleSpectraDataPath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 raw_data  						<- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='onDisk')
 
 # targeted features in faahKO
-ROIList <- list(list("mz"=522.2, "mzmin"=522.194778, "mzmax"=522.205222, "scmin"=518, "scmax"=569, "length"=-1, "intensity"=-1),
-                list("mz"=496.2, "mzmin"=496.195038, "mzmax"=496.204962, "scmin"=499, "scmax"=601, "length"=-1, "intensity"=-1),
-                list("mz"=464.2, "mzmin"=464.195358, "mzmax"=464.204642, "scmin"=588, "scmax"=636, "length"=-1, "intensity"=-1),
-                list("mz"=536.2, "mzmin"=536.194638, "mzmax"=536.205362, "scmin"=748, "scmax"=796, "length"=-1, "intensity"=-1))
+input_ROI     	<- data.frame(matrix(vector(), 4, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_ROI[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
+input_ROI[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
+input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
 
-# found peaks no fitGauss
-foundPeaks_noFitGauss     <- data.frame(matrix(vector(), 4, 25, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled"))),stringsAsFactors=F)
-foundPeaks_noFitGauss[1,] <- c(TRUE, 522.2000122, 522.2000122, 522.2000122, 3344.888, 3322.979, 3379.317, 25792525.445, 25768307.538, 889280, 1840, NA, NA, NA, NA, 1, 0, 5, 540, 535, 545, 24, 60, 1,0)
-foundPeaks_noFitGauss[2,] <- c(TRUE, 496.2000122, 496.2000122, 496.2000122, 3382.447, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, NA, NA, NA, NA, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0)
-foundPeaks_noFitGauss[3,] <- c(TRUE, 464.2000122, 464.2000122, 464.2000122, 3454.435, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, NA, NA, NA, NA, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0)
-foundPeaks_noFitGauss[4,] <- c(TRUE, 536.2000122, 536.2000122, 536.2000122, 3701.697, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, NA, NA, NA, NA, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0)
-foundPeaks_noFitGauss[,1] <- sapply(foundPeaks_noFitGauss[,c(1)], as.logical)
+# ROIDataPoints for each window
+input_ROIsDataPoints <- extractSignalRawData(raw_data, rt=input_ROI[,c('rtMin','rtMax')], mz=input_ROI[,c('mzMin','mzMax')], verbose=F)
 
-# found peaks with fitGauss
-foundPeaks_FitGauss     <- data.frame(matrix(vector(), 4, 25, dimnames=list(c(), c("found", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn", "egauss", "mu", "sigma", "h", "f", "dppm", "scale", "scpos", "scmin", "scmax", "lmin", "lmax", "sample", "is_filled"))),stringsAsFactors=F)
-foundPeaks_FitGauss[1,] <- c(TRUE, 522.2000122, 522.2000122, 522.2000122, 3346.453, 3322.979, 3379.317, 25792525.445, 25768307.538, 889280, 1840, 0.05400865734, 541.2220410, 7.464513318, 897391.7370, 1, 0, 5, 540, 535, 545, 24, 60, 1,0)
-foundPeaks_FitGauss[2,] <- c(TRUE, 496.2000122, 496.2000122, 496.2000122, 3385.577, 3362.102, 3409.051, 32873727.359, 32818664.007, 1128960, 1471, 0.07199871100, 566.3075619, 7.788151879, 1133465.7198, 2, 0, 5, 564, 559, 569, 68, 98, 1, 0)
-foundPeaks_FitGauss[3,] <- c(TRUE, 464.2000122, 464.2000122, 464.2000122, 3456.000, 3432.525, 3479.474, 10818326.613, 10818278.099, 380736, 380735, 0.04489731232, 610.6945623, 7.504713149, 381973.2736, 3, 0, 5, 610, 605, 615, 24, 54, 1, 0)
-foundPeaks_FitGauss[4,] <- c(TRUE, 536.2000122, 536.2000122, 536.2000122, 3704.827, 3682.918, 3729.867, 8519479.783, 8460371.578, 330176, 197, 0.07353430967, 769.5553377, 6.824007014, 324408.4744, 4, 0, 5, 768, 763, 773, 24, 54, 1, 0)
-foundPeaks_FitGauss[,1] <- sapply(foundPeaks_FitGauss[,c(1)], as.logical)
+# found peaks
+found_peakTable     <- data.frame(matrix(vector(), 4, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+found_peakTable[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747)
+found_peakTable[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298)
+found_peakTable[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412)
+found_peakTable[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 330176, 326763.87246511364)
+found_peakTable[,1] <- sapply(found_peakTable[,c(1)], as.logical)
+
+cFit1           <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
+class(cFit1)    <- 'peakPantheR_curveFit'
+cFit2           <- list(amplitude=199249.10572753669, center=3382.577, sigma=0.074904415304607966, gamma=0.0011471899372353885, fitStatus=2, curveModel="skewedGaussian")
+class(cFit2)    <- 'peakPantheR_curveFit'
+cFit3           <- list(amplitude=31645.961277502651, center=3451.435, sigma=0.064803553287811053, gamma=2.8557893789555022, fitStatus=2, curveModel="skewedGaussian")
+class(cFit3)    <- 'peakPantheR_curveFit'
+cFit4           <- list(amplitude=59193.591103772116, center=3698.697, sigma=0.082789238806238355, gamma=0.0026044299691057823, fitStatus=2, curveModel="skewedGaussian")
+class(cFit4)    <- 'peakPantheR_curveFit'
+found_curveFit  <- list(cFit1, cFit2, cFit3, cFit4)
+
+foundPeaks <- list(peakTable=found_peakTable, curveFit=found_curveFit)
 
 
-test_that('default parameters, without fitGauss, no verbose', {
+test_that('default parameters, skewedGaussian, guess params, sampling 250, no verbose', {
   # expected foundPeaks
-  expected_foundPeaks <- foundPeaks_noFitGauss
-
-  # expected messages
-  expected_messages   <- c("Detecting chromatographic peaks in 4 regions of interest ...", " OK: 5 found.\n")
-
+  expected_foundPeaks <- foundPeaks
+  
 	# results (output, warnings and messages)
-  result_foundPeaks   <- evaluate_promise(findTargetFeatures(raw_data, ROIList, snthresh=3, peakwidth=c(2,20), verbose=FALSE, fitGauss=FALSE))
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=FALSE))
 
   # Check result table
   expect_equal(result_foundPeaks$result, expected_foundPeaks)
 
   # Check result messages
-  expect_equal(result_foundPeaks$messages, expected_messages)
+  expect_equal(length(result_foundPeaks$messages), 0)
 })
 
-test_that('default parameters, with fitGauss, with verbose', {
+test_that('trigger fitCurve TryCatch, with verbose', {
+  # no scans in window #3
+  tmpDPoints          <- input_ROIsDataPoints
+  tmpDPoints[[3]]     <- extractSignalRawData(raw_data, rt=c(3454.435, 3454.435), mz=c(464.2, 464.2), verbose=F)[[1]]
+  
   # expected foundPeaks
-  expected_foundPeaks <- foundPeaks_FitGauss
-
+  expected_foundPeaks               <- foundPeaks
+  expected_foundPeaks$peakTable[3,] <- c(FALSE, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  expected_foundPeaks$peakTable[,1] <- as.logical(expected_foundPeaks$peakTable[,1])
+  expected_foundPeaks$curveFit[[3]] <- NA
+  
+  # expected messages
+  expected_messages <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try error)\n")
+    
   # results (output, warnings and messages)
-  result_foundPeaks   <- evaluate_promise(findTargetFeatures(raw_data, ROIList, snthresh=3, peakwidth=c(2,20), verbose=TRUE, fitGauss=TRUE))
-
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
   # Check result table
   expect_equal(result_foundPeaks$result, expected_foundPeaks)
-
-  # Check result messages (3rd message from verbose with run time, cannot be matched)
+  
+  # Check result messages (no timing)
   expect_equal(length(result_foundPeaks$messages), 3)
+  expect_equal(result_foundPeaks$messages[1:2], expected_messages)
 })
 
-test_that('change snthresh', {
+test_that('failed fit (fitCurve status 0/5/-1), with verbose', {
+  # no scans in window #3
+  tmpDPoints          <- input_ROIsDataPoints
+  tmpDPoints[[3]]     <- extractSignalRawData(raw_data, rt=c(3454., 3455.), mz=c(464.195358, 464.204642), verbose=F)[[1]]
+  
   # expected foundPeaks
-  expected_foundPeaks     <- foundPeaks_noFitGauss
-  expected_foundPeaks[4,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
-
-  # results
-  result_foundPeaks       <- findTargetFeatures(raw_data, ROIList, snthresh=20, peakwidth=c(2,20), verbose=FALSE, fitGauss=FALSE)
-
+  expected_foundPeaks               <- foundPeaks
+  expected_foundPeaks$peakTable[3,] <- c(FALSE, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  expected_foundPeaks$peakTable[,1] <- as.logical(expected_foundPeaks$peakTable[,1])
+  expected_foundPeaks$curveFit[[3]] <- NA
+  
+  # expected messages
+  expected_messages <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (fit status)\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
   # Check result table
-  expect_equal(result_foundPeaks, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages (no timing)
+  expect_equal(length(result_foundPeaks$messages), 3)
+  expect_equal(result_foundPeaks$messages[1:2], expected_messages)
 })
 
-test_that('change peakwidth', {
+test_that('mzMin mzMax cannot be calculated due to rtMin (#3) rtMax (#4) outside of ROI, verbose', {
   # expected foundPeaks
-  expected_foundPeaks     <- foundPeaks_noFitGauss
-  expected_foundPeaks[1,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
-  expected_foundPeaks[2,] <- c(TRUE, 496.2000122, 496.2000122, 496.2000122, 3387.142, 3265.075, 3476.344, 51476017.36, 49337927.84, 1128960, 85, NA, NA, NA, NA, 2, 0, 30, 567, 537, 597, 87, 222, 1, 0)
-  expected_foundPeaks[3,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
-  expected_foundPeaks[4,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
-  expected_foundPeaks[,1] <- sapply(expected_foundPeaks[,c(1)], as.logical)
-
-  # results
-  result_foundPeaks       <- findTargetFeatures(raw_data, ROIList, snthresh=3, peakwidth=c(70,100), verbose=FALSE, fitGauss=FALSE)
-
+  expected_foundPeaks <- foundPeaks
+  # expected messages
+  expected_messages   <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #3\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
   # Check result table
-  expect_equal(result_foundPeaks, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 3)
+  expect_equal(result_foundPeaks$messages[1:2], expected_messages)
+})
+
+test_that('rtMin rtMax cannot be found, verbose', {
+  # fake data which never reaches 0.5% of maxInt in 20x ROI rt width
+  tmp_ROI     	  <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+  tmp_ROI[1,] 	  <- c("ID-1", "testCpd 1", 990., 1000., 1010., 521., 522., 523.)
+  tmp_ROI[,3:8]   <- sapply(tmp_ROI[,3:8], as.numeric)
+  
+  # fake ROI data points
+  #int <- (dnorm(rt, mean=1000, sd=0.5) * 100) + 20000
+  #rt  <- seq(990, 1010, by=20/250)
+  rt  <- c(990.00, 990.08, 990.16, 990.24, 990.32, 990.40, 990.48, 990.56, 990.64, 990.72, 990.80, 990.88, 990.96, 991.04, 991.12, 991.20, 991.28, 991.36, 991.44, 991.52, 991.60, 991.68, 991.76, 991.84, 991.92, 992.00, 992.08, 992.16, 992.24, 992.32, 992.40, 992.48, 992.56, 992.64, 992.72, 992.80, 992.88, 992.96, 993.04, 993.12, 993.20, 993.28, 993.36, 993.44, 993.52, 993.60, 993.68, 993.76, 993.84, 993.92, 994.00, 994.08, 994.16, 994.24, 994.32, 994.40, 994.48, 994.56, 994.64, 994.72, 994.80, 994.88, 994.96, 995.04, 995.12, 995.20, 995.28, 995.36, 995.44, 995.52, 995.60, 995.68, 995.76, 995.84, 995.92, 996.00, 996.08, 996.16, 996.24, 996.32, 996.40, 996.48, 996.56, 996.64, 996.72, 996.80, 996.88, 996.96, 997.04, 997.12, 997.20, 997.28, 997.36, 997.44, 997.52, 997.60, 997.68, 997.76, 997.84, 997.92, 998.00, 998.08, 998.16, 998.24, 998.32, 998.40, 998.48, 998.56, 998.64, 998.72, 998.80, 998.88, 998.96, 999.04, 999.12, 999.20, 999.28, 999.36, 999.44, 999.52, 999.60, 999.68, 999.76, 999.84, 999.92, 1000.00, 1000.08, 1000.16, 1000.24, 1000.32, 1000.40, 1000.48, 1000.56, 1000.64, 1000.72, 1000.80, 1000.88, 1000.96, 1001.04, 1001.12, 1001.20, 1001.28, 1001.36, 1001.44, 1001.52, 1001.60, 1001.68, 1001.76, 1001.84, 1001.92, 1002.00, 1002.08, 1002.16, 1002.24, 1002.32, 1002.40, 1002.48, 1002.56, 1002.64, 1002.72, 1002.80, 1002.88, 1002.96, 1003.04, 1003.12, 1003.20, 1003.28, 1003.36, 1003.44, 1003.52, 1003.60, 1003.68, 1003.76, 1003.84, 1003.92, 1004.00, 1004.08, 1004.16, 1004.24, 1004.32, 1004.40, 1004.48, 1004.56, 1004.64, 1004.72, 1004.80, 1004.88, 1004.96, 1005.04, 1005.12, 1005.20, 1005.28, 1005.36, 1005.44, 1005.52, 1005.60, 1005.68, 1005.76, 1005.84, 1005.92, 1006.00, 1006.08, 1006.16, 1006.24, 1006.32, 1006.40, 1006.48, 1006.56, 1006.64, 1006.72, 1006.80, 1006.88, 1006.96, 1007.04, 1007.12, 1007.20, 1007.28, 1007.36, 1007.44, 1007.52, 1007.60, 1007.68, 1007.76, 1007.84, 1007.92, 1008.00, 1008.08, 1008.16, 1008.24, 1008.32, 1008.40, 1008.48, 1008.56, 1008.64, 1008.72, 1008.80, 1008.88, 1008.96, 1009.04, 1009.12, 1009.20, 1009.28, 1009.36, 1009.44, 1009.52, 1009.60, 1009.68, 1009.76, 1009.84, 1009.92, 1010.00)
+  mz  <- rep(522., length(rt))
+  int <- c(20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000.000000000004, 20000.000000000011, 20000.000000000044, 20000.000000000138, 20000.000000000440, 20000.000000001379, 20000.000000004202, 20000.000000012471, 20000.000000036085, 20000.000000101762, 20000.000000279735, 20000.000000749529, 20000.000001957542, 20000.000004983285, 20000.000012365243, 20000.000029906903, 20000.000070505404, 20000.000162015076, 20000.000362886240, 20000.000792259820, 20000.001685958276, 20000.003497100206, 20000.007070520602, 20000.013934030874, 20000.026766045154, 20000.050115688977, 20000.091462962813, 20000.162704246217, 20000.282120451389, 20000.476817640294, 20000.785510725786, 20001.261345279254, 20001.974230758951, 20003.011923265476, 20004.478906058968, 20006.492053128739, 20009.172215254213, 20012.631312287038, 20016.955272261606, 20022.184166935895, 20028.291993044964, 20035.169486059534, 20042.613829355148, 20050.328868219622, 20057.938310552297, 20065.012452816813, 20071.106505701198, 20075.806105230542, 20078.773672313706, 20079.788456080285, 20078.773672313706, 20075.806105230542, 20071.106505701198, 20065.012452816813, 20057.938310552297, 20050.328868219622, 20042.613829355148, 20035.169486059534, 20028.291993044964, 20022.184166935895, 20016.955272261606, 20012.631312287038, 20009.172215254213, 20006.492053128739, 20004.478906058968, 20003.011923265476, 20001.974230758951, 20001.261345279254, 20000.785510725786, 20000.476817640294, 20000.282120451389, 20000.162704246217, 20000.091462962813, 20000.050115688977, 20000.026766045154, 20000.013934030874, 20000.007070520602, 20000.003497100206, 20000.001685958276, 20000.000792259820, 20000.000362886240, 20000.000162015076, 20000.000070505404, 20000.000029906903, 20000.000012365243, 20000.000004983285, 20000.000001957542, 20000.000000749529, 20000.000000279735, 20000.000000101762, 20000.000000036085, 20000.000000012471, 20000.000000004202, 20000.000000001379, 20000.000000000440, 20000.000000000138, 20000.000000000044, 20000.000000000011, 20000.000000000004, 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000., 20000.)
+  tmp_DataPoints  <- list(data.frame(rt=rt, mz=mz, int=int))
+  
+  # expected foundPeaks
+  expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+  expected_peakTable[1,]  <- c(TRUE, as.numeric(NA), 999.98795180722891, as.numeric(NA), 521, 522, 523, 1593075.7841562259, 20079.788456080285, 20011.161341567415)
+  expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
+  
+  cFit                <- list(amplitude=215.1147344215168, center=999.79211677725834, sigma=0.0042885265484682187, gamma=1.0273447589474667e-08, fitStatus=1, curveModel="skewedGaussian")
+  class(cFit)         <- 'peakPantheR_curveFit'
+  expected_foundPeaks <- list(peakTable=expected_peakTable, curveFit=list(cFit))
+  
+  # expected messages
+  expected_messages   <- c("Warning: rtMin cannot be determined for ROI #1\n", "Warning: rtMax cannot be determined for ROI #1\n", "Warning: rtMin/rtMax cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
+  # Check result table only (fit values to not match exactly on Linux)
+  expect_equal(result_foundPeaks$result$peakTable, expected_foundPeaks$peakTable)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 4)
+  expect_equal(result_foundPeaks$messages[1:3], expected_messages)
+})
+
+# No other curveModel currently available
+
+test_that('change params for window #3', {
+  # input params
+  tmp_params    <- list( init_params  = list(amplitude=1E7, center=3454.435, sigma=1, gamma=0),
+                         lower_bounds = list(amplitude=0,   center=3451.435, sigma=0, gamma=-0.1),
+                         upper_bounds = list(amplitude=1E9, center=3457.435, sigma=5, gamma=0.1))
+  input_params  <- list('guess', 'guess', tmp_params, 'guess')
+  # expected foundPeaks
+  expected_foundPeaks                         <- foundPeaks
+  expected_foundPeaks$peakTable[3,2:10]        <- c(3456.2450570267611, 3457.435, 3499.0868240786049, 464.195358, 464.2000122, 464.204642, 5255410.5167749533, 380736, 174353.55750364260)
+  expected_foundPeaks$curveFit[[3]]$amplitude <- 36323.971046956591
+  expected_foundPeaks$curveFit[[3]]$center    <- 3457.435
+  expected_foundPeaks$curveFit[[3]]$sigma     <- 0.083113691800671921
+  expected_foundPeaks$curveFit[[3]]$gamma     <- 0.1
+  expected_foundPeaks$curveFit[[3]]$fitStatus <- 1
+  # expected messages
+  expected_messages   <- c("Curve fitting parameters passed as input employed\n","Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #3\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params=input_params, sampling=250, verbose=TRUE))
+  
+  # Check result table
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 4)
+  expect_equal(result_foundPeaks$messages[1:3], expected_messages)
+})
+
+test_that('change sampling', {
+  # expected foundPeaks
+  expected_peakTable      <- data.frame(matrix(vector(), 4, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+  expected_peakTable[1,]  <- c(TRUE, 3309.6884911519801, 3346.7859591836732, 3385.4800395368861, 522.194778, 522.20001220703125, 522.205222, 26133882.5658131838, 889280, 901012.10599065467)
+  expected_peakTable[2,]  <- c(TRUE, 3345.0894935650540, 3386.4953673469390, 3428.4561855932079, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35474025.5332010239, 1128960, 1113574.43999634334)
+  expected_peakTable[3,]  <- c(TRUE, 3450.0344897959185, 3451.5574489795918, 3501.7095764174951, 464.195358, 464.20001220703125, 464.204642, 7456470.7446634285, 380736, 389624.14409317775)
+  expected_peakTable[4,]  <- c(TRUE, 3670.8488688282255, 3704.0847551020411, 3740.0915161411931, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626359.7845999431, 330176, 326758.81671814714)
+  expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
+  expected_foundPeaks     <- list(peakTable=expected_peakTable, curveFit=found_curveFit)
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=50, verbose=FALSE))
+  
+  # Check result table
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 0)
+})
+
+test_that('raise errors', {
+  # ROIsDataPoints doesn't match number of ROI
+  expect_error(findTargetFeatures(input_ROIsDataPoints, input_ROI[1:3,], curveModel='skewedGaussian', params='guess'), 'Check input, number of ROIsDataPoints entries must match the number of rows of ROI', fixed=TRUE)
+  
+  # data points rt outside of ROI
+  # rtMin side
+  tmpDPoints      <- input_ROIsDataPoints
+  tmpDPoints[[2]] <- extractSignalRawData(raw_data, rt=c(3000, 3440), mz=c(496.195038, 496.204962), verbose=F)[[1]]
+  expect_error(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess'), 'Check input not all datapoints for window #2 are into the corresponding ROI (rt)', fixed=TRUE)
+  # rtMax
+  tmpDPoints      <- input_ROIsDataPoints
+  tmpDPoints[[3]] <- extractSignalRawData(raw_data, rt=c(3420., 3600.), mz=c(464.195358, 464.204642), verbose=F)[[1]]
+  expect_error(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess'), 'Check input not all datapoints for window #3 are into the corresponding ROI (rt)', fixed=TRUE)
+  
+  # data points mz outside of ROI
+  # mzMin side
+  tmpDPoints      <- input_ROIsDataPoints
+  tmpDPoints[[2]] <- extractSignalRawData(raw_data, rt=c(3280, 3440), mz=c(494.195038, 496.204962), verbose=F)[[1]]
+  expect_error(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess'), 'Check input not all datapoints for window #2 are into the corresponding ROI (mz)', fixed=TRUE)
+  # mzMax
+  tmpDPoints      <- input_ROIsDataPoints
+  tmpDPoints[[3]] <- extractSignalRawData(raw_data, rt=c(3420., 3495.), mz=c(464.195358, 466.204642), verbose=F)[[1]]
+  expect_error(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess'), 'Check input not all datapoints for window #3 are into the corresponding ROI (mz)', fixed=TRUE)
+  
+  # params is not character or list
+  expect_error(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params=5), 'Check input, "params" must be "guess" or list', fixed=TRUE)
+  
+  # params is character but not 'guess'
+  expect_error(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='not guess'), 'Check input, "params" must be "guess" if not list', fixed=TRUE)
+  
+  # params is a list of wrong length
+  expect_error(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params=vector('list',2)), 'Check input, number of parameters must match number of rows of ROI', fixed=TRUE)
 })

@@ -4,11 +4,12 @@
 \alias{plotEICDetectedPeakwidth}
 \title{Plot samples raw data and detected feature for a single ROI}
 \usage{
-plotEICDetectedPeakwidth(EICs, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax,
-  ratio = 0.85, sampleColour = NULL, verbose = TRUE)
+plotEICDetectedPeakwidth(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin,
+  rtMax, mzMin, mzMax, ratio = 0.85, sampling = 250,
+  curveFitSampleList = NULL, sampleColour = NULL, verbose = TRUE)
 }
 \arguments{
-\item{EICs}{list of xcms::chromatograms (containing a single spectra each). If it is a xcms::Chromatogram (no S) or not a list, bring it to the right format.}
+\item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).}
 
 \item{cpdID}{(str) Compound ID}
 
@@ -16,17 +17,21 @@ plotEICDetectedPeakwidth(EICs, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax,
 
 \item{rt}{(float) vector of detected peak apex retention time (in sec)}
 
-\item{rtmin}{(float) vector of detected peak minimum retention time (in sec)}
+\item{rtMin}{(float) vector of detected peak minimum retention time (in sec)}
 
-\item{rtmax}{(float) vector ofdetected peak maximum retention time (in sec)}
+\item{rtMax}{(float) vector ofdetected peak maximum retention time (in sec)}
 
-\item{mzmin}{(float) ROI minimum m/z (matching EIC)}
+\item{mzMin}{(float) ROI minimum m/z (matching EIC)}
 
-\item{mzmax}{(float) ROI maximum m/z (matching EIC)}
+\item{mzMax}{(float) ROI maximum m/z (matching EIC)}
 
 \item{ratio}{(float) value between 0 and 1 defining the vertical percentage taken by the EICs subplot}
 
-\item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtmin}, \code{rtmax})}
+\item{sampling}{(int) Number of points to employ when plotting fittedCurve}
+
+\item{curveFitSampleList}{(list) NULL or a list of \code{peakPantheR_curveFit} (or NA) for each sample}
+
+\item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtMin}, \code{rtMax})}
 
 \item{verbose}{(bool) if TRUE message when NA scans are removed}
 }
@@ -34,5 +39,5 @@ plotEICDetectedPeakwidth(EICs, cpdID, cpdName, rt, rtmin, rtmax, mzmin, mzmax,
 Grob (ggplot object)
 }
 \description{
-plot a ROI  across multiple samples (x axis is RT, y axis is intensity) with the matching detected peak rt and peakwidth under it. RT and peakwidth are plotted in the order spectra are passed, with the first spectra on top.
+plot a ROI across multiple samples (x axis is RT, y axis is intensity) with the matching detected peak rt and peakwidth under it. If curveFit is provided, the fitted curve for each compound is added. RT and peakwidth are plotted in the order spectra are passed, with the first spectra on top.
 }
