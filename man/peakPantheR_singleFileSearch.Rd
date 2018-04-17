@@ -5,20 +5,15 @@
 \title{Search, integrate and report targeted features in a raw spectra}
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
-  fitGauss = FALSE, peakStatistic = FALSE, getEICs = FALSE,
-  plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL, verbose = TRUE,
-  ...)
+  peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE,
+  FIR = NULL, verbose = TRUE, ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file (centroided, \strong{only with the channel of interest}).}
 
 \item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as rows. Columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
-\item{fitGauss}{(bool) if TRUE fits peak with option \code{CentWaveParam(..., fitgauss=TRUE)}.}
-
-\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'FWHM', 'FWHM_ndatapoints', 'tailing factor' and 'asymmetry factor'}
-
-\item{getEICs}{(bool) If TRUE returns a \code{xcms::Chromatograms} containing a EIC for each ROI. (subsequently passed to \code{link{getTargetFeatureStatistic}} to reduce the number of file reads). If \code{plotEICsPath}, EICs will be loaded.}
+\item{peakStatistic}{(bool) If TRUE calculates additional peak statistics: 'ppm_error', 'rt_dev_sec', 'tailing factor' and 'asymmetry factor'}
 
 \item{plotEICsPath}{(str or NA) If not NA, will save a \emph{.png} of all ROI EICs at the path provided (\code{'filepath/filename.png'} expected). If NA no plot saved}
 
@@ -26,51 +21,38 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 
 \item{FIR}{(data.frame or NULL) If not NULL, integrate Fallback Integration Regions (FIR) when a feature is not found.  Compounds as row are identical to \code{targetFeatTable}, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
 
-\item{verbose}{(bool) If TRUE message calculation progress, time taken and number of features found (total and matched to targets)}
+\item{verbose}{(bool) If TRUE message calculation progress, time taken and number of features found}
 
-\item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters}
+\item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters (e.g. \code{curveModel}, \code{sampling}, \code{params} as a list of parameters for each ROI or 'guess',...)}
 }
 \value{
-a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{data.frame} targeted features results (see Details), \code{list()$EICs} \emph{(list or NA)} list of \code{xcms::Chromatogram} matching the ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata.
+a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{(data.frame)} targeted features results (see Details), \code{list()$curveFit} \emph{(list)} list of \code{peakPantheR_curveFit} or NA for each ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata, \code{list()$ROIsDataPoint} \emph{(list)} a list of \code{data.frame} of raw data points for each ROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).
 
 \subsection{Details:}{
   The returned \emph{peakTable} \code{data.frame} is structured as follow:
   \tabular{ll}{
     cpdID \tab database compound ID\cr
     cpdName \tab compound name\cr
-    found \tab (bool) TRUE if compound was found in the raw data\cr
+    found \tab was the peak found\cr
+    rt \tab retention time of peak apex (sec)\cr
+    rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+    rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
     mz \tab weighted (by intensity) mean of peak m/z across scans\cr
-    mzmin \tab m/z peak minimum\cr
-    mzmax \tab m/z peak maximum\cr
-    rt \tab retention time of peak midpoint\cr
-    rtmin \tab leading edge of peak retention time\cr
-    rtmax \tab trailing edge of peak retention time\cr
-    into \tab integrated peak intensity\cr
-    intb \tab baseline corrected integrated peak intensity\cr
-    maxo \tab maximum peak intensity\cr
-    sn \tab Signal/Noise ratio, defined as \code{(maxo - baseline)/sd}, where \code{maxo} is the maximum peak intensity, \code{baseline} the estimated baseline value and \code{sd} the standard deviation of local chromatographic noise.\cr
-    egauss \tab RMSE of Gaussian fit\cr
-    mu \tab Gaussian parameter mu\cr
-    sigma \tab Gaussian parameter sigma\cr
-    h \tab Gaussian parameter h\cr
-    f \tab Region number of m/z ROI where the peak was localised\cr
-    dppm \tab m/z deviation of mass trace across scans in ppm\cr
-    scale \tab Scale on which the peak was localised\cr
-    scpos \tab Peak position found by wavelet analysis (scan number)\cr
-    scmin \tab Left peak limit found by wavelet analysis (scan number)\cr
-    scmax \tab Right peak limit found by wavelet analysis (scan number)\cr
+    mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
+    mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
+    peakArea \tab integrated peak area\cr
+    maxIntMeasured \tab maximum peak intensity in raw data\cr
+    maxIntPredicted \tab maximum peak intensity based on curve fit\cr
     is_filled \tab Logical indicate if the feature was integrated using FIR (Fallback Integration Region)\cr
-    ppm_error \tab difference in ppm between the expected and measured m/z, not available if \code{peakStatistic=FALSE}\cr
-    rt_dev_sec \tab difference in seconds between the expected and measured rt, not available if \code{peakStatistic=FALSE}\cr
-    FWHM \tab full width at half maximum (in seconds), not available if \code{fitGauss=FALSE}, not available if \code{peakStatistic=FALSE}\cr
-    FWHM_ndatapoints \tab number of scans on the peak, not available if \code{peakStatistic=FALSE}\cr
-    tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
-    asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted, not available if \code{peakStatistic=FALSE}\cr
+    ppm_error \tab difference in ppm between the expected and measured m/z\cr
+    rt_dev_sec \tab difference in seconds between the expected and measured rt\cr
+    tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
+    asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
   }
 }
 }
 \description{
-Report TIC, EIC and integrated targeted features in a raw spectra. Optimised to reduce the number of file access. Features not detected can be integrated using fallback integration regions (FIR).
+Report for a raw spectra the TIC, acquisition time, integrated targeted features, fitted curves and datapoints for each region of interest. Optimised to reduce the number of file access. Features not detected can be integrated using fallback integration regions (FIR).
 }
 \examples{
 \dontrun{
@@ -84,35 +66,112 @@ targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("c
                          stringsAsFactors=F)
 targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
+targetFeatTable[,c(3:8)] <- sapply(targetFeatTable[,c(3:8)], as.numeric)
 
 res <- peakPantheR_singleFileSearch(netcdfFilePath,targetFeatTable, peakStatistic=TRUE)
 # Polarity can not be extracted from netCDF files, please set manually the polarity with the
-#	'polarity' method.
-# Detecting chromatographic peaks in 2 regions of interest ... OK: 3 found.
-# Found 2/2 features (3 total) in 1.12 secs
-# Peak statistics done in: 0.15 secs
-# Feature search done in: 1.71 secs
+#   'polarity' method.
+# Reading data from 2 windows
+# Data read in: 0.16 secs
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation,
+#   approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
+# Found 2/2 features in 0.05 secs
+# Peak statistics done in: 0 secs
+# Feature search done in: 0.75 secs
+
 res
 # $TIC
 # [1] 2410533091
 #
 # $peakTable
-#   found   mz mzmin mzmax        rt    rtmin    rtmax     into     intb    maxo   sn egauss
-# 1  TRUE 522.2 522.2 522.2 3344.888 3322.979 3379.317 25792525 25768308  889280 1840     NA
-# 2  TRUE 496.2 496.2 496.2 3382.447 3362.102 3409.051 32873727 32818664 1128960 1471     NA
-#   mu sigma  h f dppm scale scpos scmin scmax lmin lmax sample is_filled cpdID cpdName
-# 1 NA    NA NA 1    0     5   540   535   545   24   60      1         0  ID-1   Cpd 1
-# 2 NA    NA NA 2    0     5   564   559   569   68   98      1         0  ID-2   Cpd 2
-#    ppm_error rt_dev_sec FWHM FWHM_ndatapoints tailingFactor asymmetryFactor
-# 1 0.02337616       0.00   NA               11            NA        1.484000
-# 2 0.02460103       3.13   NA               11            NA        2.708291
-#
-# $EICs
-# [1] NA
+#   found    rtMin       rt    rtMax    mzMin    mz    mzMax peakArea maxIntMeasured
+# 1  TRUE 3309.759 3346.828 3385.410 522.1948 522.2 522.2052 26133727         889280
+# 2  TRUE 3345.377 3386.529 3428.279 496.2000 496.2 496.2000 35472141        1128960
+#   maxIntPredicted cpdID cpdName is_filled  ppm_error rt_dev_sec tailingFactor
+# 1        901015.8  ID-1   Cpd 1     FALSE 0.02337616  1.9397590      1.015357
+# 2       1113576.7  ID-2   Cpd 2     FALSE 0.02460103  0.9518072      1.005378
+#    asymmetryFactor
+# 1        1.026824
+# 2        1.009318
 #
 # $acquTime
 # [1] NA
+#
+#
+# $curveFit
+# $curveFit[[1]]
+# $amplitude
+# [1] 162404.8
+# 
+# $center
+# [1] 3341.888
+# 
+# $sigma
+# [1] 0.07878613
+# 
+# $gamma
+# [1] 0.00183361
+# 
+# $fitStatus
+# [1] 2
+# 
+# $curveModel
+# [1] "skewedGaussian"
+# 
+# attr(,"class")
+# [1] "peakPantheR_curveFit"
+# 
+# $curveFit[[2]]
+# $amplitude
+# [1] 199249.1
+# 
+# $center
+# [1] 3382.577
+# 
+# $sigma
+# [1] 0.07490442
+# 
+# $gamma
+# [1] 0.00114719
+# 
+# $fitStatus
+# [1] 2
+# 
+# $curveModel
+# [1] "skewedGaussian"
+# 
+# attr(,"class")
+# [1] "peakPantheR_curveFit"
+#
+#
+# $ROIsDataPoint
+# $ROIsDataPoint[[1]]
+#          rt    mz    int
+# 1  3315.154 522.2   2187
+# 2  3316.719 522.2   3534
+# 3  3318.284 522.2   6338
+# 4  3319.849 522.2  11718
+# 5  3321.414 522.2  21744
+# 6  3322.979 522.2  37872
+# 7  3324.544 522.2  62424
+# 8  3326.109 522.2  98408
+# 9  3327.673 522.2 152896
+# 10 3329.238 522.2 225984
+# ...
+#
+# $ROIsDataPoint[[2]]
+#          rt    mz     int
+# 1  3280.725 496.2    1349
+# 2  3290.115 496.2    2069
+# 3  3291.680 496.2    3103
+# 4  3293.245 496.2    5570
+# 5  3294.809 496.2   10730
+# 6  3296.374 496.2   20904
+# 7  3297.939 496.2   38712
+# 8  3299.504 496.2   64368
+# 9  3301.069 496.2   97096
+# 10 3302.634 496.2  136320
+# ...
 }
 
 }

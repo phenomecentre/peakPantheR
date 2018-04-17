@@ -79,7 +79,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Package for <em>Peak Picking and ANnoTation of High resolution Experiments in R</em>, implemented in <code>R</code> and <code>Shiny</code></p>
 <div id="overview" class="section level2">
 <h2>Overview</h2>
-<p><code>peakPantheR</code> implements functions to detect, integrate and report pre-defined features in MS files using XCMS3. It is designed for:</p>
+<p><code>peakPantheR</code> implements functions to detect, integrate and report pre-defined features in MS files. It is designed for:</p>
 <ul>
 <li><strong>Real time</strong> feature detection and integration (see <a href="real-time-annotation.html">Real Time Annotation</a>)
 <ul>
@@ -97,7 +97,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Install devtools</span>
 <span class="cf">if</span>(<span class="op">!</span><span class="kw">require</span>(<span class="st">&quot;devtools&quot;</span>)) <span class="kw">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)
 devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;phenomecentre/peakPantheR&quot;</span>)</code></pre></div>
-<p>If the dependencies <code>xcms</code> and <code>MSnbase</code> are not successfully installed, <code>Bioconductor</code> must be added to the default repositories with:</p>
+<p>If the dependencies <code>mzR</code> and <code>MSnbase</code> are not successfully installed, <code>Bioconductor</code> must be added to the default repositories with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setRepositories</span>(<span class="dt">ind=</span><span class="dv">1</span><span class="op">:</span><span class="dv">2</span>)</code></pre></div>
 </div>
 <div id="input-data" class="section level2">
