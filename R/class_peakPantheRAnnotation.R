@@ -60,7 +60,7 @@
 #'                          stringsAsFactors=F)
 #' targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(1,3:8)] <- sapply(targetFeatTable[,c(1,3:8)], as.numeric)
+#' targetFeatTable[,c(3:8)] <- sapply(targetFeatTable[,c(3:8)], as.numeric)
 #'
 #' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
 #'
@@ -75,7 +75,7 @@
 #' slotNames(annotation)
 #' # [1]  "cpdID"           "cpdName"     "ROI"        "FIR"        "uROI"       "filepath"
 #' # [7]  "acquisitionTime" "uROIExist"   "useUROI"    "useFIR"     "TIC"        "peakTables"
-#' # [13] "EICs"            "isAnnotated"
+#' # [13] "dataPoints"      "peakFit"     "isAnnotated"
 #'
 #' annotation@cpdID
 #' # [1] "ID-1" "ID-2"
@@ -113,7 +113,14 @@
 #' # NULL
 #' # [[3]]
 #' # NULL
-#' annotation@EICs
+#' annotation@dataPoints
+#' # [[1]]
+#' # NULL
+#' # [[2]]
+#' # NULL
+#' # [[3]]
+#' # NULL
+#' annotation@peakFit
 #' # [[1]]
 #' # NULL
 #' # [[2]]
