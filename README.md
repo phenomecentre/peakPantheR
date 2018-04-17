@@ -31,7 +31,7 @@ if(!require("devtools")) install.packages("devtools")
 devtools::install_github("phenomecentre/peakPantheR")
 ```
 
-If the dependencies `xcms` and `MSnbase` are not successfully installed, `Bioconductor` must be added to the default repositories with:
+If the dependencies `mzR` and `MSnbase` are not successfully installed, `Bioconductor` must be added to the default repositories with:
 
 ``` r
 setRepositories(ind=1:2)
