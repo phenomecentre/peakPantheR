@@ -96,11 +96,13 @@ library(peakPantheR)
 annotation <- peakPantheR_singleFileSearch(singleSpectraDataPath = input_spectraPath,
                                            targetFeatTable = input_targetFeatTable,
                                            peakStatistic = TRUE,
-                                           getEICs = TRUE,
                                            verbose = TRUE)
 ```
 ```{r}
 annotation$TIC
+```
+```{r}
+annotation$acquTime
 ```
 ```{r, eval = FALSE}
 annotation$peakTable
@@ -109,20 +111,20 @@ annotation$peakTable
 pander::pandoc.table(annotation$peakTable, digits = 7)
 ```
 ```{r}
-annotation$EICs
+annotation$curveFit
 ```
 ```{r}
-annotation$acquTime
+annotation$ROIsDataPoint
 ```
 
 Multiple parameters control the file annotation:
 
-* `peakStatistic` controls the calculation of additional peak statistics: _'ppm_error'_, _'rt_dev_sec'_, _'FWHM'_, _'FWHM_ndatapoints'_, _'tailing factor'_ and _'asymmetry factor'_
-* `getEICs` controls if a list of EICs corresponding to each ROI must be returned
+* `peakStatistic` controls the calculation of additional peak statistics: _'ppm_error'_, _'rt_dev_sec'_, _'tailing factor'_ and _'asymmetry factor'_
 * `plotEICsPath` if not `NA` will save a `.png` of all ROI EICs at the path provided (expects `'filepath/filename.png'` for example). If `NA` no plot is saved
 * `getAcquTime` controls if sample acquisition date-time must be extracted from the `mzML` metadata. Acquisition time cannot be extracted from other file formats. The additional file access will impact run time
+* `FIR` if not `NULL`, defines the Fallback Integration Regions (FIR) to integrate when a feature is not found.
 * `verbose` controls if messages detailing calculation progress, time taken and number of features found (_total and matched to targets_) must be returned
-* `...` passes arguments to `centwave` in order to alter peak-picking parameters
+* `...` passes arguments to `findTargetFeatures` to alter peak-picking parameters (e.g. the curveModel, the sampling or fitting params)
 
 
 
