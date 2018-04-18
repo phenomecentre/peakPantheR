@@ -55,6 +55,21 @@ test_that('plot feature in 2 samples, change colours', {
   expect_equal(length(result_plot)[[1]], 2)
 })
 
+test_that('plot feature in 2 samples, rtMin and/or rtMax are NA', {
+  # result plot
+  result_plotNA <- plotEICDetectedPeakwidth(list(tmp_DataPoints1, tmp_DataPoints2), cpdID=c('ID-1', 'ID-2'), cpdName=c('testCpd 1', 'testCpd 2'), rt=c(1000., 1002.), rtMin=c(NA, 997.), rtMax=c(1005.,NA), mzMin=c(521.,521.), mzMax=c(523.,523.), ratio=0.85, sampling=250, curveFitSampleList=list(fit1, fit2), sampleColour=c('blue', 'red'), verbose=FALSE)
+  
+  # cannot compare plot to a stored version due to some string mismatch (even if the same plot is called twice)
+  # Check plot properties
+  expect_is(result_plotNA, 'gtable')
+  expect_is(result_plotNA, 'gTree')
+  expect_is(result_plotNA, 'grob')
+  expect_is(result_plotNA, 'gDesc')
+  expect_equal(length(result_plotNA), 2)
+  # number of subplots
+  expect_equal(length(result_plotNA)[[1]], 2)
+})
+
 test_that('colour warning, ratio replacement', {
   # Expected message
   expected_message <- c("Warning: sampleColour length must match the number of samples; default colour used\n", "Error: ratio must be between 0 and 1, replaced by default value\n")
