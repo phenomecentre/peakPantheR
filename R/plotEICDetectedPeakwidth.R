@@ -77,7 +77,7 @@ plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt
     p_spec  <- p_spec + ggplot2::geom_line(data=tmp_EIC, ggplot2::aes_string(x='rt', y='int'), colour=colourSpl[spectraID])
 
     # fitted curve
-    if (plotFit) {
+    if (plotFit & !(is.na(rtMin[spectraID])) & !(is.na(rtMax[spectraID]))) {
       grid_rt   <- seq(from=rtMin[spectraID], to=rtMax[spectraID], by=((rtMax[spectraID]-rtMin[spectraID])/(sampling-1)))
       # only if exist
       if (all(!is.na(curveFitSampleList[[spectraID]]))) {
