@@ -122,8 +122,8 @@ test_that('mzMin mzMax cannot be calculated due to rtMin (#3) rtMax (#4) outside
   expect_equal(result_foundPeaks$messages[1:2], expected_messages)
 })
 
-test_that('rtMin rtMax cannot be found, verbose', {
-  # fake data which never reaches 0.5% of maxInt in 20x ROI rt width
+test_that('rtMin rtMax cannot be found, fit is rejected, verbose', {
+  # fake data which never reaches 0.5% of maxInt in 5x ROI rt width
   tmp_ROI     	  <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
   tmp_ROI[1,] 	  <- c("ID-1", "testCpd 1", 990., 1000., 1010., 521., 522., 523.)
   tmp_ROI[,3:8]   <- sapply(tmp_ROI[,3:8], as.numeric)
@@ -138,25 +138,59 @@ test_that('rtMin rtMax cannot be found, verbose', {
   
   # expected foundPeaks
   expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
-  expected_peakTable[1,]  <- c(TRUE, as.numeric(NA), 999.98795180722891, as.numeric(NA), 521, 522, 523, 1593075.7841562259, 20079.788456080285, 20011.161341567415)
+  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
   expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
   
-  cFit                <- list(amplitude=215.1147344215168, center=999.79211677725834, sigma=0.0042885265484682187, gamma=1.0273447589474667e-08, fitStatus=1, curveModel="skewedGaussian")
-  class(cFit)         <- 'peakPantheR_curveFit'
+  cFit                <- NA
   expected_foundPeaks <- list(peakTable=expected_peakTable, curveFit=list(cFit))
   
   # expected messages
-  expected_messages   <- c("Warning: rtMin cannot be determined for ROI #1\n", "Warning: rtMax cannot be determined for ROI #1\n", "Warning: rtMin/rtMax cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n")
+  expected_messages   <- c("Warning: rtMin cannot be determined for ROI #1\n", "Warning: rtMax cannot be determined for ROI #1\n", "Fit of ROI #1 is unsuccessful (cannot determine rtMin/rtMax)\n")
   
   # results (output, warnings and messages)
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table only (fit values to not match exactly on Linux)
-  expect_equal(result_foundPeaks$result$peakTable, expected_foundPeaks$peakTable)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 4)
   expect_equal(result_foundPeaks$messages[1:3], expected_messages)
+})
+
+test_that('mz cannot be calculated, fit is rejected, verbose', {
+  # no scan fall between rtMin/rtMax after fitting, therefore nothing can be used for mz calculation (mz is NA). (fit isn't satisfactory)
+  
+  tmp_ROI     	  <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+  tmp_ROI[1,] 	  <- c("ID-1", "testCpd 1", 149.112, NA, 158.67, 126.9795, 127.0195, 127.0595)
+  tmp_ROI[,3:8]   <- sapply(tmp_ROI[,3:8], as.numeric)
+  
+  # ROI data points
+  rt  <- c(149.394, 150.068, 150.741, 150.910, 150.910, 150.910, 151.078, 151.247, 152.089, 152.257, 152.257, 152.594, 152.594, 153.773, 154.615, 154.952, 155.458, 155.458, 156.300, 156.468, 156.637, 156.637, 156.805, 156.974, 157.142, 157.142, 157.310, 157.310, 157.479, 157.479, 157.647, 157.647, 157.647, 157.816, 157.816, 157.984, 157.984, 157.984, 158.153, 158.153, 158.153, 158.321, 158.321, 158.321, 158.490, 158.490, 158.490, 158.490, 158.659, 158.659, 158.659)
+  mz  <- c(127.0464, 127.0561, 127.0535, 127.0154, 127.0293, 127.0540, 127.0532, 127.0261, 127.0519, 127.0234, 127.0486, 127.0257, 127.0544, 127.0471, 127.0453, 127.0565, 127.0426, 127.0544, 127.0477, 127.0220, 127.0139, 127.0250, 127.0189, 127.0189, 127.0187, 127.0509, 127.0197, 127.0552, 127.0193, 127.0536, 127.0192, 127.0395, 127.0526, 127.0192, 127.0545, 126.9916, 127.0192, 127.0518, 126.9877, 127.0196, 127.0518, 126.9825, 127.0196, 127.0502, 126.9820, 126.9944, 127.0196, 127.0490, 126.9972, 127.0195, 127.0493)
+  int <- c(176.9860, 100.9088, 114.0000, 121.5390, 114.4610, 105.2671, 164.5325, 143.0000, 231.2491, 100.2164, 157.3531, 107.5632, 106.0000, 199.6444, 138.0000, 154.0000, 101.8883, 116.5039, 146.0000, 105.0000, 179.9103, 256.8206, 769.8887, 1134.0303, 2396.0000, 110.4933, 6405.2383, 144.0000, 10276.6250, 157.0000, 18852.2969, 110.2715, 127.9841, 31468.8906, 153.8988, 133.8497, 48662.4062, 248.3162, 128.1760, 72571.4375, 637.0933, 136.0000, 101874.3750, 715.7915, 100.3529, 252.6471, 131491.1250, 1474.4824, 107.2497, 160474.5000, 2006.7666)
+  tmp_DataPoints  <- list(data.frame(rt=rt, mz=mz, int=int))
+  
+  # expected foundPeaks
+  expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+  expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
+  
+  cFit                <- NA
+  expected_foundPeaks <- list(peakTable=expected_peakTable, curveFit=list(cFit))
+  
+  # expected messages
+  expected_messages   <- c("Warning: rtMax cannot be determined for ROI #1\n", "Fit of ROI #1 is unsuccessful (cannot determine rtMin/rtMax)\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
+  # Check result table only (fit values to not match exactly on Linux)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 3)
+  expect_equal(result_foundPeaks$messages[1:2], expected_messages)
 })
 
 # No other curveModel currently available
