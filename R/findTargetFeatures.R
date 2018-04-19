@@ -1,6 +1,6 @@
 #' Find and integrate target features in each ROI
 #' 
-#' For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 20 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax} (if they haven't been found, 2x the ROI window width left or right from the apex is used as limit). \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available.
+#' For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 5 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned and the peak fit rejected. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz would be NA, the peak is rejected).
 #'
 #' @param ROIsDataPoints (list) A list (one entry per ROI window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns. Must match each row of ROI.
 #' @param ROI (data.frame) A data.frame of compounds to target as rows. Columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float)
@@ -182,8 +182,6 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
       if (verbose) {message('Fit of ROI #', i,' is unsuccessful (fit status)')}
       # move to next window (empty df row was already initialised)
       next
-    } else {
-      outCurveFit[[i]] <- fittedCurve
     }
     
     ## rt (search on same bounds as peak fit +/-3s)
@@ -206,7 +204,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     boxMin      <- rt
     cntr        <- 0
     # search rtMin
-    while (is.na(rtMin) & cntr<=20) {
+    while (is.na(rtMin) & cntr<=5) {
       # box moves earlier in rt each time
       boxMax      <- boxMin
       boxMin      <- boxMax - deltaRt
@@ -228,7 +226,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     boxMax      <- rt
     cntr        <- 0
     # search rtMax
-    while (is.na(rtMax) & cntr<=20) {
+    while (is.na(rtMax) & cntr<=5) {
       # box moves later in rt each time
       boxMin      <- boxMax
       boxMax      <- boxMin + deltaRt
@@ -245,9 +243,15 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     }
     if (is.na(rtMax) & verbose) {message('Warning: rtMax cannot be determined for ROI #',i)}
     
+    # if rtMin or rtMax cannot be determined the fit is not successful
+    if (is.na(rtMin) | is.na(rtMax)) {
+      message('Fit of ROI #', i,' is unsuccessful (cannot determine rtMin/rtMax)')
+      # move to next window (empty df row was already initialised)
+      next
+    }
     
     ## mz, mzMin, mzMax
-    # if rtMin, rtMax are NA, or outside of ROI, we cannot calculate mzMin, mzMax and mz:
+    # if rtMin, rtMax are outside of ROI, we cannot calculate mzMin, mzMax and mz precisely:
     # default to ROI$mzMIn, ROI$mzMax as a safe choice, and approximate mz
     tmpRtMin    <- rtMin
     tmpRtMax    <- rtMax
@@ -255,27 +259,14 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     tmpMzMax    <- ROI$mzMax[i]
     tmpROIData  <- ROIsDataPoints[[i]]
     isValid     <- TRUE
-    # deal with NA
-    if (is.na(tmpRtMin) | is.na(tmpRtMax)) {
-      isValid   <- FALSE
-      if (verbose) { message('Warning: rtMin/rtMax cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #',i) }
-      # replace rtMin by ROI$rtMin
-      if (is.na(tmpRtMin)) { tmpRtMin <- ROI$rtMin[i] }
-      # replace rtMax by ROI$rtMax
-      if (is.na(tmpRtMax)) { tmpRtMax <- ROI$rtMax[i] }
-    } 
-    # deal with rtMin rtMax outside of ROI
+    # deal with rtMin rtMax outside of ROI (warning and no)
     if ((tmpRtMin < ROI$rtMin[i]) | (tmpRtMax > ROI$rtMax[i])) {
       isValid   <- FALSE
       if (verbose) { message('Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #',i) }
-      # replace rtMin by ROI$rtMin
-      if (tmpRtMin < ROI$rtMin[i]) { tmpRtMin <- ROI$rtMin[i] }
-      # replace rtMax by ROI$rtMax
-      if (tmpRtMax > ROI$rtMax[i]) { tmpRtMax <- ROI$rtMax[i] }
     } 
     # subset datapoints mz to rtMin/rtMax range
     tmpPt       <- tmpROIData[(tmpROIData$rt > tmpRtMin) & (tmpROIData$rt < tmpRtMax), ]
-    # rtMin rtMax range can be used for mzMin mzMax calculation
+    # rtMin rtMax range can be used for mzMin mzMax calculation (otherwise init to ROI mzMin/Max)
     if (isValid) {
       tmpMzMin  <- min(tmpPt$mz)
       tmpMzMax  <- max(tmpPt$mz)
@@ -287,14 +278,17 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     # tidy
     mzMin   <- tmpMzMin
     mzMax   <- tmpMzMax
+    # if mz, mzMin or mzMax cannot be determined the fit is not successful (mzMin/mzMax default to ROI)
+    if (is.na(mz) | is.na(mzMin) | is.na(mzMax)) {
+      message('Fit of ROI #', i,' is unsuccessful (cannot determine mz/mzMin/mzMax)')
+      # move to next window (empty df row was already initialised)
+      next
+    }
     
     
     ## integrate curve
     tmpRtMin  <- rtMin
     tmpRtMax  <- rtMax
-    # 2x rt window should be enough to reach bottom level left and right if we didn't fint rtMin/Max
-    if (is.na(tmpRtMin)) {tmpRtMin <- rt - 2*deltaRt}
-    if (is.na(tmpRtMax)) {tmpRtMax <- rt + 2*deltaRt}
     #         __a__
     #       /|     \
     #     /  h      \ 
@@ -312,17 +306,20 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     peakArea  <- dist * h
     
     
-    ## Set values
-    outTable$found[i]            <- TRUE
-    outTable$rt[i]               <- rt
-    outTable$rtMin[i]            <- as.numeric(rtMin)
-    outTable$rtMax[i]            <- as.numeric(rtMax)
-    outTable$mz[i]               <- mz
-    outTable$mzMin[i]            <- mzMin
-    outTable$mzMax[i]            <- mzMax
-    outTable$peakArea[i]         <- peakArea
-    outTable$maxIntMeasured[i]   <- maxIntMeasured
-    outTable$maxIntPredicted[i]  <- maxIntPredicted
+    ## Set all values
+    # curveFit
+    outCurveFit[[i]]            <- fittedCurve
+    # peaktable
+    outTable$found[i]           <- TRUE
+    outTable$rt[i]              <- rt
+    outTable$rtMin[i]           <- as.numeric(rtMin)
+    outTable$rtMax[i]           <- as.numeric(rtMax)
+    outTable$mz[i]              <- mz
+    outTable$mzMin[i]           <- mzMin
+    outTable$mzMax[i]           <- mzMax
+    outTable$peakArea[i]        <- peakArea
+    outTable$maxIntMeasured[i]  <- maxIntMeasured
+    outTable$maxIntPredicted[i] <- maxIntPredicted
   }
   
   ## output
