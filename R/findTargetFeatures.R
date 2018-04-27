@@ -1,12 +1,13 @@
 #' Find and integrate target features in each ROI
 #' 
-#' For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 5 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned and the peak fit rejected. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz would be NA, the peak is rejected).
+#' For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 8 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned and the peak fit rejected. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz would be NA, the peak is rejected). If any of the two following ratio are superior to \code{maxApexResidualRatio}, the fit is rejected: 1) ratio of fit residuals at the apex (predicted apex fit intensity vs measured apex intensity: fit overshoots the apex), 2) ratio of predicted apex fit intensity vs maximum measured peak intensity (fit misses the real apex in the peak).
 #'
 #' @param ROIsDataPoints (list) A list (one entry per ROI window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns. Must match each row of ROI.
 #' @param ROI (data.frame) A data.frame of compounds to target as rows. Columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float)
 #' @param curveModel (str) Name of the curve model to fit (currently \code{skewedGaussian})
 #' @param params (list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of "guess" or list of curve fit parameters
 #' @param sampling (int) Number of points to employ when subsampling the fittedCurve (rt, rtMin, rtMax, integral calculation)
+#' @param maxApexResidualRatio (float) Ratio of maximum allowed fit residual at the peak apex, compared to the fit max intensity. (e.g. 0.2 for a maximum residual of 20\% of apex intensity)
 #' @param verbose (bool) If TRUE message the time taken and number of features found
 #' @param ... Passes arguments to \code{fitCurve} to alter peak fitting (\code{params})
 #'
@@ -24,7 +25,7 @@
 #'     mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
 #'     peakArea \tab integrated peak area\cr
 #'     maxIntMeasured \tab maximum peak intensity in raw data\cr
-#'     maxIntPredicted \tab maximum peak intensity based on curve fit\cr
+#'     maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
 #'   }
 #' }
 #'
@@ -104,7 +105,7 @@
 #' # attr(,"class")
 #' # [1] "peakPantheR_curveFit"
 #' }
-findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=FALSE, ...){
+findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian', params='guess', sampling=250, maxApexResidualRatio=0.2, verbose=FALSE, ...){
   stime <- Sys.time()
   
   ## Check inputs
@@ -157,9 +158,19 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
       new_params  <- params[[i]]
     }
     
-    ## EIC to fit
-    tmp_EIC     <- generateIonChromatogram(ROIDataPoint=ROIsDataPoints[[i]], aggregationFunction='sum')
     
+    ## EIC to fit 
+    tmp_EIC       <- generateIonChromatogram(ROIDataPoint=ROIsDataPoints[[i]], aggregationFunction='sum')
+    ## resample to a standardised grid of size the maximum between 2*sampling and raw number of data points (double sampling used for integration)
+    #rawData_EIC       <- generateIonChromatogram(ROIDataPoint=ROIsDataPoints[[i]], aggregationFunction='sum')
+    #tmp_gridMin       <- min(rawData_EIC$rt)
+    #tmp_gridMax       <- max(rawData_EIC$rt)
+    #tmp_gridSampling  <- max(2*sampling, dim(rawData_EIC)[1])
+    #grid_rt_EIC       <- seq(from=tmp_gridMin, to=tmp_gridMax, by=((tmp_gridMax-tmp_gridMin)/(tmp_gridSampling-1)))
+    #raw_approx_fun    <- stats::approxfun(x=rawData_EIC$rt, y=rawData_EIC$int)
+    #tmp_EIC           <- data.frame(rt=grid_rt_EIC, int=raw_approx_fun(grid_rt_EIC))
+    
+
     ## fit curve to EIC (store output). If failure move to next window
     fittedCurve <- tryCatch(
       {
@@ -184,17 +195,17 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
       next
     }
     
+
     ## rt (search on same bounds as peak fit +/-3s)
     rt_EICmax       <- tmp_EIC$rt[which.max(tmp_EIC$int)]
     grid_rt         <- seq(from=rt_EICmax-3, to=rt_EICmax+3, by=(6/(sampling-1)))
     close_apex_int  <- predictCurve(fittedCurve, x=grid_rt)
     rt              <- grid_rt[which.max(close_apex_int)]
     
-    ## maxIntMeasured, maxIntPredicted
-    maxIntMeasured  <- max(tmp_EIC$int)
+    ## maxIntPredicted (fit apex intensity)
     maxIntPredicted <- predictCurve(fittedCurve=fittedCurve, x=rt)
     
-    
+
     ## rtMin, rtMax (look for 0.5% from max int, by rolling away from apex until match or too many iterations)
     peakLim_int <- 0.005 * maxIntPredicted
     deltaRt     <- ROI$rtMax[i] - ROI$rtMin[i]
@@ -204,7 +215,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     boxMin      <- rt
     cntr        <- 0
     # search rtMin
-    while (is.na(rtMin) & cntr<=5) {
+    while (is.na(rtMin) & cntr<=8) {
       # box moves earlier in rt each time
       boxMax      <- boxMin
       boxMin      <- boxMax - deltaRt
@@ -226,7 +237,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     boxMax      <- rt
     cntr        <- 0
     # search rtMax
-    while (is.na(rtMax) & cntr<=5) {
+    while (is.na(rtMax) & cntr<=8) {
       # box moves later in rt each time
       boxMin      <- boxMax
       boxMax      <- boxMin + deltaRt
@@ -250,6 +261,11 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
       next
     }
     
+
+    ## maxIntMeasured (max raw data intensity; 0 in case of no scans)
+    maxIntMeasured  <- max(0, tmp_EIC$int[(tmp_EIC$rt < rtMax) & (tmp_EIC$rt > rtMin)])
+    
+
     ## mz, mzMin, mzMax
     # if rtMin, rtMax are outside of ROI, we cannot calculate mzMin, mzMax and mz precisely:
     # default to ROI$mzMIn, ROI$mzMax as a safe choice, and approximate mz
@@ -280,12 +296,12 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     mzMax   <- tmpMzMax
     # if mz, mzMin or mzMax cannot be determined the fit is not successful (mzMin/mzMax default to ROI)
     if (is.na(mz) | is.na(mzMin) | is.na(mzMax)) {
-      message('Fit of ROI #', i,' is unsuccessful (cannot determine mz/mzMin/mzMax)')
+      if (verbose) {message('Fit of ROI #', i,' is unsuccessful (cannot determine mz/mzMin/mzMax)')}
       # move to next window (empty df row was already initialised)
       next
     }
     
-    
+
     ## integrate curve
     tmpRtMin  <- rtMin
     tmpRtMax  <- rtMax
@@ -304,6 +320,52 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     val_int   <- predictCurve(fittedCurve, x=grid_rt)
     dist      <- sum( c(val_int, val_int[2:(sampling-1)]) )/2
     peakArea  <- dist * h
+    
+
+    ## Check quality of fit (residuals at apex, and max predicted to max measured)
+    # maxIntMeasured:  peak max value in raw data
+    # maxIntPredicted: fit apex value
+    # IntRawApex:      raw data apex value
+    raw_approx_fun  <- stats::approxfun(x=tmp_EIC$rt, y=tmp_EIC$int)
+    IntRawApex      <- raw_approx_fun(rt)
+    if (is.na(IntRawApex)) {IntRawApex <- 0}
+    # residual at apex
+    apex_residuals  <- abs(maxIntPredicted - maxIntMeasured)
+    # residual between maximums (raw vs fit)
+    max_residuals   <- abs(maxIntPredicted - IntRawApex)
+    # compare residuals to max fit intensity
+    if(((apex_residuals / maxIntPredicted) > maxApexResidualRatio) | ((max_residuals / maxIntPredicted) > maxApexResidualRatio)) {
+      if (verbose) {message('Fit of ROI #', i,' is unsuccessful (apex residuals is ', round(apex_residuals / maxIntPredicted, 2),' of max fit intensity, max intensity residuals is ', round(max_residuals / maxIntPredicted, 2),' of max fit intensity)')}
+      # move to next window (empty df row was already initialised)
+      next
+    }
+    
+    
+    # ! Unused filtering based on residuals !
+    # @param maxResidualRatio (float) Ratio of maximum allowed residual area compared to the fit area. (e.g. 0.20 for a maximum residual area of 20% of fit area)
+    ### Check quality of fit (residual area compared to peakArea)
+    ## use the common range of ROI(raw data) and curve fit
+    #tmpRtMin        <- max(rtMin, min(tmpROIData$rt))
+    #tmpRtMax        <- min(rtMax, max(tmpROIData$rt))
+    #h_res           <- (tmpRtMax-tmpRtMin)/(sampling-1)
+    #grid_rt_res     <- seq(from=tmpRtMin, to=tmpRtMax, by=h_res)
+    ## project raw data approx and curve fit on common grid
+    #raw_approx_fun <- stats::approxfun(x=tmp_EIC$rt, y=tmp_EIC$int)
+    #raw_proj        <- raw_approx_fun(grid_rt_res)
+    #fit_proj        <- predictCurve(fittedCurve, x=grid_rt_res)
+    ## calculate residuals area on section considered
+    #fit_residuals   <- abs(raw_proj - fit_proj)
+    #dist_residuals  <- sum( c(fit_residuals, fit_residuals[2:(sampling-1)]) )/2
+    #area_residuals  <- dist_residuals * h_res
+    ## calculate peak area on section considered
+    #dist_subfit     <- sum( c(fit_proj, fit_proj[2:(sampling-1)]) )/2
+    #area_subfit     <- dist_subfit * h_res
+    ## compare residual area to fit area
+    #if (area_residuals > (area_subfit * maxResidualRatio)) {
+    #  if (verbose) {message('Fit of ROI #', i,' is unsuccessful (fit residuals is ', round(area_residuals / area_subfit, 2),' of peak area)')}
+    #  # move to next window (empty df row was already initialised)
+    #  next
+    #}
     
     
     ## Set all values

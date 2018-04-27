@@ -200,17 +200,17 @@ test_that('peakStatistic, plotEICsPath, getAcquTime, FIR, verbose', {
 
 test_that('change peak fitting params with ..., no peakStatistic, no plotEICsPath, no getAcquTime, no verbose', {
   # Expected TIC
-  expected_TIC            <- 2410533091
+  expected_TIC                      <- 2410533091
   # Expected peakTable
   expected_peakTable                <- found_peakTable[,1:13]
-  expected_peakTable[3,2:10]        <- c(3456.2450570267611, 3457.435, 3499.0868240786049, 464.195358, 464.2000122, 464.204642, 5255410.5167749533, 380736, 174353.55750364260)
+  expected_peakTable[3,2:10]        <- c(3418.0076795585401, 3455.6277710843374, 3495.4734240188186, 464.195358, 464.2000122, 464.204642, 11307215.264967661, 380736, 381327.26552768378)
   # Expected curveFit
   expected_curveFit                 <- found_curveFit
-  expected_curveFit[[3]]$amplitude  <- 36323.971046956591
-  expected_curveFit[[3]]$center     <- 3457.435
-  expected_curveFit[[3]]$sigma      <- 0.083113691800671921
-  expected_curveFit[[3]]$gamma      <- 0.1
-  expected_curveFit[[3]]$fitStatus  <- 1
+  expected_curveFit[[3]]$amplitude  <- 64246.052173667762
+  expected_curveFit[[3]]$center     <- 3450
+  expected_curveFit[[3]]$sigma      <- 0.07533469863886906
+  expected_curveFit[[3]]$gamma      <- 0.0019238229766131536
+  expected_curveFit[[3]]$fitStatus  <- 2
   # Expected ROIsDataPoint
   expected_ROIsDataPoint  <- found_ROIsDataPoints
   # Expected acquTime
@@ -219,9 +219,9 @@ test_that('change peak fitting params with ..., no peakStatistic, no plotEICsPat
   expected_messages       <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
   
   # Modify fit of window #3
-  tmp_params              <- list(init_params  = list(amplitude=1E7, center=3454.435, sigma=1, gamma=0),
-                                  lower_bounds = list(amplitude=0,   center=3451.435, sigma=0, gamma=-0.1),
-                                  upper_bounds = list(amplitude=1E9, center=3457.435, sigma=5, gamma=0.1))
+  tmp_params              <- list(init_params  = list(amplitude=1E5, center=3455., sigma=0.1, gamma=0),
+                                  lower_bounds = list(amplitude=0,   center=3450., sigma=0,   gamma=-0.1),
+                                  upper_bounds = list(amplitude=1E9, center=3460., sigma=5,   gamma=0.1))
   new_params              <- list('guess', 'guess', tmp_params, 'guess')
   
   # results (output, warnings and messages)

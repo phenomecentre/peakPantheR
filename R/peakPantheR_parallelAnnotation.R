@@ -272,5 +272,9 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, v
     message('Parallel annotation done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
   }
 
+  if (ncores!=0) {
+    parallel::stopCluster( cl )
+  }
+  
   return(list(annotation=outObject, failures=fail_table))
 }

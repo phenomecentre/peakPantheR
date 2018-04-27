@@ -5,7 +5,8 @@
 \title{Find and integrate target features in each ROI}
 \usage{
 findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
-  params = "guess", sampling = 250, verbose = FALSE, ...)
+  params = "guess", sampling = 250, maxApexResidualRatio = 0.2,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns. Must match each row of ROI.}
@@ -17,6 +18,8 @@ findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
 \item{params}{(list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of "guess" or list of curve fit parameters}
 
 \item{sampling}{(int) Number of points to employ when subsampling the fittedCurve (rt, rtMin, rtMax, integral calculation)}
+
+\item{maxApexResidualRatio}{(float) Ratio of maximum allowed fit residual at the peak apex, compared to the fit max intensity. (e.g. 0.2 for a maximum residual of 20\% of apex intensity)}
 
 \item{verbose}{(bool) If TRUE message the time taken and number of features found}
 
@@ -37,12 +40,12 @@ A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as ro
     mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
     peakArea \tab integrated peak area\cr
     maxIntMeasured \tab maximum peak intensity in raw data\cr
-    maxIntPredicted \tab maximum peak intensity based on curve fit\cr
+    maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
   }
 }
 }
 \description{
-For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 5 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned and the peak fit rejected. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz would be NA, the peak is rejected).
+For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 8 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned and the peak fit rejected. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz would be NA, the peak is rejected). If any of the two following ratio are superior to \code{maxApexResidualRatio}, the fit is rejected: 1) ratio of fit residuals at the apex (predicted apex fit intensity vs measured apex intensity: fit overshoots the apex), 2) ratio of predicted apex fit intensity vs maximum measured peak intensity (fit misses the real apex in the peak).
 }
 \examples{
 \dontrun{

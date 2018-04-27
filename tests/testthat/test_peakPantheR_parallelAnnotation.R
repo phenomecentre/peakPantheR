@@ -39,7 +39,7 @@ input_badtargetFeatTable[3, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000,
 input_badtargetFeatTable[4, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000, 0,1000)
 
 # Expected peakTables
-peakTable1     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable1     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
 peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
 peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
 peakTable1[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412, FALSE, 0.026296922148575364, 2.92771084337346110, 207.6939219686769036, 380.5019028782010082)
@@ -47,7 +47,7 @@ peakTable1[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.017251125
 peakTable1[,c(1,11)]       <- sapply(peakTable1[,c(1,11)], as.logical)
 peakTable1[,c(2:10,12:15)] <- sapply(peakTable1[,c(2:10,12:15)], as.numeric)
 # 2
-peakTable2     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable2     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
 peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 20.2139999999999, 1.0339153786516375, 1.0630802030537212)
 peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
 peakTable2[3,] <- c(TRUE, 3425.9772908380342, 3466.1733975903617, 3508.0320324994614, 464.195358, 464.20001220703125, 464.204642, 11512269.4488430563, 366720, 365928.64209905855, FALSE, 0.026296922148575364, 11.738397590361728, 1.0157024674594695, 1.0275996777323413)
@@ -55,10 +55,10 @@ peakTable2[4,] <- c(TRUE, 3678.1204484629088, 3720.347, 3768.8011145239534, 536.
 peakTable2[,c(1,11)]       <- sapply(peakTable2[,c(1,11)], as.logical)
 peakTable2[,c(2:10,12:15)] <- sapply(peakTable2[,c(2:10,12:15)], as.numeric)
 # 3
-peakTable3     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+peakTable3     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
 peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
 peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
-peakTable3[3,] <- c(TRUE, 3459.2119781906281, 3461.5273253012047, 3463.839463523896, 464.20001220703125, 464.20001220703125, 464.20001220703125, 1021671.6704928315, 319488, 585424.9056976852, FALSE, 0.026296922148575364, 7.0923253012047098, 0.9989972105548458, 0.9977627421408920)
+peakTable3[3,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA)
 peakTable3[4,] <- c(TRUE, 3672.3110625980275, 3714.088, 3761.43921706666, 536.194638, 536.20001220703125, 536.205362, 6467062.4309558524, 196160, 189416.24807174454, FALSE, 0.022765817240815486, 12.391, 1.0656000616594850, 1.1333185588985102)
 peakTable3[,c(1,11)]       <- sapply(peakTable3[,c(1,11)], as.logical)
 peakTable3[,c(2:10,12:15)] <- sapply(peakTable3[,c(2:10,12:15)], as.numeric)
@@ -88,8 +88,7 @@ cFit3.1         <- list(amplitude=122363.51256736703, center=3362.233, sigma=0.0
 class(cFit3.1)  <- 'peakPantheR_curveFit'
 cFit3.2         <- list(amplitude=204749.86097918145, center=3409.182, sigma=0.075731781812843249, gamma=0.0013318670577834328, fitStatus=2, curveModel="skewedGaussian")
 class(cFit3.2)  <- 'peakPantheR_curveFit'
-cFit3.3         <- list(amplitude=2093140.9068273285, center=3461.5799153142093, sigma=1.4306982533791959, gamma=-0.1, fitStatus=2, curveModel="skewedGaussian")
-class(cFit3.3)  <- 'peakPantheR_curveFit'
+cFit3.3         <- NA
 cFit3.4         <- list(amplitude=26628.505498512375, center=3708.088, sigma=0.064131129861254479, gamma=0.0015719426982490699, fitStatus=2, curveModel="skewedGaussian")
 class(cFit3.4)  <- 'peakPantheR_curveFit'
 expected_peakFit <- list(list(cFit1.1, cFit1.2, cFit1.3, cFit1.4), list(cFit2.1, cFit2.2, cFit2.3, cFit2.4), list(cFit3.1, cFit3.2, cFit3.3, cFit3.4))
@@ -169,13 +168,14 @@ test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no
 })
 
 test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, modify parameter with ... (cpd #3)', {
+  # Cpd 3 is now found in 3rd file
   # Object fully initialised
   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
 
   # Modify fit of window #3
-  tmp_params              <- list(init_params  = list(amplitude=1E7, center=3454.435, sigma=1, gamma=0),
-                                  lower_bounds = list(amplitude=0,   center=3451.435, sigma=0, gamma=-0.1),
-                                  upper_bounds = list(amplitude=1E9, center=3457.435, sigma=5, gamma=0.1))
+  tmp_params              <- list(init_params  = list(amplitude=1E5, center=3455., sigma=0.1, gamma=0),
+                                  lower_bounds = list(amplitude=0,   center=3450., sigma=0,   gamma=-0.1),
+                                  upper_bounds = list(amplitude=1E9, center=3460., sigma=5,   gamma=0.1))
   new_params              <- list('guess', 'guess', tmp_params, 'guess')
   
   # Expected annotation
@@ -183,18 +183,19 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, mo
   expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
   # modify peakTable
   tmp_peakTable1                  <- expected_peakTables[[1]]
-  tmp_peakTable1[3,c(2:10,12:15)] <- c(3456.2450570267611, 3457.435, 3499.0868240786049, 464.195358, 464.20001220703125, 464.204642, 5255410.5167749533, 380736, 174353.5575036426, 0.026296922148575364, 3, 20.571875136157626, 43.105392986722954)
+  tmp_peakTable1[3,c(2:10,12:15)] <- c(3418.0076795585401, 3455.6277710843374, 3495.4734240188186, 464.195358, 464.2000122, 464.204642, 11307215.264967661, 380736, 381327.26552768378, 0.026296922148575364, 1.1927710843374371, 1.0223856861398346, 1.0391667928715738)
   tmp_peakTable2                  <- expected_peakTables[[2]]
-  tmp_peakTable2[3,c(2:10,12:15)] <- c(3450.8926273328361, 3460.824, 3536.7763272226857, 464.195358, 464.20001220703125, 464.204642, 11597134.482173817, 366720, 333145.08211841487, 0.026296922148575364, 6.389, 3.3355981668364465, 4.9063781669871434)
+  tmp_peakTable2[3,c(2:10,12:15)] <- c(3433.0520428402692, 3464.1974939759039, 3518.3673814020449, 464.195358, 464.2000122, 464.204642, 11632481.39997852, 366720, 370275.43095360085, 0.026296922148575364, 9.762493975903908, 1.3108566292516153, 1.566712445298531)
   tmp_peakTable3                  <- expected_peakTables[[3]]
-  tmp_peakTable3[3,c(2:10,12:15)] <- c(3451.7935501854859, 3457.696, 3509.9484145923325, 464.195358, 464.20001220703125, 464.204642, 7761835.527094976, 319488, 338985.30050855147, 0.026296922148575364, 3.261, 3.9396813115378047, 6.0440721242455835)
+  tmp_peakTable3[3,c(2:10,12:15)] <- c(3428.5236305028589, 3459.5514216867468, 3510.3107983995801, 464.195358, 464.2000122, 464.204642, 9697604.1795769241, 319488, 321005.94361925457, 0.026296922148575364, 5.1164216867468895, 1.2652077714541707, 1.4814479150398188)
+  tmp_peakTable3$found[3]         <- TRUE
   expected_annotation@peakTables  <- list(tmp_peakTable1, tmp_peakTable2, tmp_peakTable3)
   # modify curveFit
-  tmp_curveFit1.3         <- list(amplitude=36323.971046956591, center=3457.435, sigma=0.083113691800671921, gamma=0.1, fitStatus=1, curveModel="skewedGaussian")
+  tmp_curveFit1.3         <- list(amplitude=64246.052173667762, center=3450, sigma=0.07533469863886906, gamma=0.0019238229766131536, fitStatus=2, curveModel="skewedGaussian")
   class(tmp_curveFit1.3)  <- 'peakPantheR_curveFit'
-  tmp_curveFit2.3         <- list(amplitude=17098.52464966735, center=3451.435, sigma=0.038377131200019989, gamma=0.1, fitStatus=2, curveModel="skewedGaussian")
+  tmp_curveFit2.3         <- list(amplitude=31499.356902732343, center=3454.217764223421, sigma=0.052005180846722628, gamma=0.0030181085286239786, fitStatus=1, curveModel="skewedGaussian")
   class(tmp_curveFit2.3)  <- 'peakPantheR_curveFit'
-  tmp_curveFit3.3         <- list(amplitude=25255.918137185927, center=3452.6234655888979, sigma=0.057011418598510957, gamma=0.1, fitStatus=1, curveModel="skewedGaussian")
+  tmp_curveFit3.3         <- list(amplitude=29842.598057228814, center=3450, sigma=0.055439446898995937, gamma=0.0031338189157350213, fitStatus=2, curveModel="skewedGaussian")
   class(tmp_curveFit3.3)  <- 'peakPantheR_curveFit'
   expected_annotation@peakFit           <- expected_peakFit
   expected_annotation@peakFit[[1]][[3]] <- tmp_curveFit1.3
@@ -275,7 +276,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, pe
 })
 
 test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), no getAcquTime, no verbose', {
-  # Cpd #3 will not give results
+  # Cpd #3 will not give results, FIR will replace
   noMatch_ROI3        <- input_targetFeatTable
   noMatch_ROI3[3,6:8] <- c(52.194778, 52.2, 52.205222)
   
@@ -291,6 +292,7 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
   tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3463.824, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8675223.6101818271, 366720, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   tmp_peakTables[[3]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[3]]$found[3]      <- TRUE
   tmp_peakTables[[3]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
   tmp_peakFit                     <- expected_peakFit
@@ -373,6 +375,7 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
   tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
   tmp_peakFit                     <- expected_peakFit[c(1,3)]
@@ -421,6 +424,7 @@ test_that('parallel: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks 
   tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
   tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
   tmp_peakFit                     <- expected_peakFit[c(1,3)]
@@ -488,6 +492,7 @@ test_that('already annotated message in verbose', {
   tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
   tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
   tmp_peakFit                     <- expected_peakFit[c(1,3)]
