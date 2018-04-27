@@ -13,6 +13,8 @@ matrix:
   allow_failures:
     - r: bioc-devel 
 
+bioc_required: true
+
 r_packages:
   - covr
 
