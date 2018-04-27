@@ -7,7 +7,7 @@ os:
 r:
   - bioc-devel
   - bioc-release
-  - oldrel
+  - 3.4.0
 
 matrix:
   allow_failures:
