@@ -534,7 +534,7 @@ test_that('catch file that doesnt exist, catch error processing, no file left', 
   expected_annotation             <- initAnnotation[c(FALSE, FALSE),]
   expected_annotation@isAnnotated <- FALSE
   # Expected message
-  expected_message    <- c("Processing 4 compounds in 2 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "Error file does not exist: aaa/bbb.cdf\n", "----- test_fakemzML -----\n", "-----\n", "Error processing file: test_fakemzML\n", "[SpectrumList_mzML::create()] Bad istream.\n", "\n-----\n", "----------------\n", "No file left in the object!\n", "----------------\n")
+  expected_message    <- c("Processing 4 compounds in 2 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "Error file does not exist: aaa/bbb.cdf\n", "----- test_fakemzML -----\n", "-----\n", "Error processing file: test_fakemzML\n", "\n-----\n", "----------------\n", "No file left in the object!\n", "----------------\n")
 
   # results (output, warnings and messages)
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=TRUE))
@@ -545,9 +545,9 @@ test_that('catch file that doesnt exist, catch error processing, no file left', 
   expect_equal(dim(result_parallelAnnotation$result$failures)[1], 2)
   expect_equal(dim(result_parallelAnnotation$result$failures)[2], 2)
 
-  # Check messages (no timing and paths)
+  # Check messages (remove timing and paths in error messages)
   expect_equal(length(result_parallelAnnotation$messages), 14)
-  expect_equal(result_parallelAnnotation$messages[c(1:10, 12, 13)], expected_message)
+  expect_equal(result_parallelAnnotation$messages[c(1:7, 9, 10, 12, 13)], expected_message)
 })
 
 test_that('raise errors', {
