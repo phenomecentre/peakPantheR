@@ -173,9 +173,11 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, v
         return(list(TIC=as.numeric(NA), peakTable=NULL, acquTime=as.character(NA), curveFit=NULL, ROIsDataPoint=NULL, failure=failureMsg))
       }
     )
-
-  # return singleFileSearch results with failure status
-  return(result)
+    
+    # try clear variables
+    gc(verbose=FALSE)
+    # return singleFileSearch results with failure status
+    return(result)
   }
   ## ------------------------------------------------------------
 
