@@ -7,10 +7,13 @@ os:
 r:
   - bioc-devel
   - bioc-release
+  - 3.4.0
 
 matrix:
   allow_failures:
     - r: bioc-devel 
+
+bioc_required: true
 
 r_packages:
   - covr

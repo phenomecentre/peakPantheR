@@ -185,8 +185,8 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, v
 
   ## Open parallel interface
   if (ncores!=0) {
-    cl <- parallel::makeCluster( ncores )
-    doParallel::registerDoParallel( cl )
+    cl <- parallel::makeCluster(ncores)
+    doParallel::registerDoParallel(cl)
   }
 
   stime <- Sys.time()
@@ -272,5 +272,10 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, v
     message('Parallel annotation done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
   }
 
+  ## Close parallel interface
+  if (ncores!=0) {
+    parallel::stopCluster(cl)
+  }
+  
   return(list(annotation=outObject, failures=fail_table))
 }
