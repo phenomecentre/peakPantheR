@@ -5,6 +5,7 @@
 #' @param object (peakPantheRAnnotation) Initialised peakPantheRAnnotation object defining the samples to process and compounds to target. The slots \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR integrated if a feature is not found
 #' @param ncores (int) Number of cores to use for parallelisation. Default 0 for no parallelisation.
 #' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)
+#' @param resetWorkers (int) If 0, the parallel cluster is only initiated once. If >0 the cluster will be reset (and the memory of each worker freed) once \code{ncores * resetWorkers} files have been processed. Default value is 1, the cluster is reset once \code{ncores} files have been processed. While potentially impacting performance (need to wait until all \code{ncores * resetWorkers} files are processed before restarting the cluster), shutting down the workers processes regularly will ensure the OS can reallocate memory more efficiently. For values >1, ensure sufficient system memory is available
 #' @param verbose (bool) If TRUE message calculation progress, time taken, number of features found (total and matched to targets) and failures
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters
 #'
@@ -110,7 +111,7 @@
 #' @import doParallel
 #'
 #' @export
-peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, verbose=TRUE, ...) {
+peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, resetWorkers=1, verbose=TRUE, ...) {
   ## ------------------------------------------------------------
   parallel_helper <- function(singleSpectraDataPath, targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE, inVerbose=TRUE, ...){
     # Check input file exist, wrap \code{peakPantheR_singleFileSearch} in a try cratch, add a failure status
@@ -184,13 +185,11 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, v
 
   ## check validity of object
   validObject(object)
-
-  ## Open parallel interface
-  if (ncores!=0) {
-    cl <- parallel::makeCluster( ncores )
-    doParallel::registerDoParallel( cl )
-  }
-
+  # check resetWorkers value
+  if (!is.numeric(resetWorkers)) {stop('Check input, resetWorkers must be an integer')}
+  resetWorkersMulti <- as.integer(resetWorkers)
+  if (resetWorkersMulti < 0) {stop('Check input, resetWorkers must be a positive integer')}
+  
   stime <- Sys.time()
 
   ## Initialise parameters from object
@@ -221,8 +220,46 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, v
 
 
   ## Run singleFileSearch (list, each item is the result for a file, errors are passed into the list)
+  # Parallel
   if( ncores!=0 ) {
-    allFilesRes   <- foreach::foreach( x=file_paths, .packages=c("MSnbase","mzR"), .inorder=TRUE) %dopar% parallel_helper(x, target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime, inVerbose=verbose, ...) #, .errorhandling='pass' #.export=c('makeROIList', 'findTargetFeatures', 'getTargetFeatureStatistic', 'getAcquisitionDatemzML', 'integrateFIR', 'peakPantheR_singleFileSearch')# .export 'extractMsData', 'CentWaveParam', 'findChromPeaks', 'chromPeaks'
+    
+    # Reinitialise the cluster after ncores files (reset worker processes, freed memory can be reallocated by the OS)
+    if (resetWorkersMulti != 0) {
+      # Init
+      nFiles          <- nbSamples(object)
+      allFilesRes     <- vector('list', nFiles)
+      nFilesPerClust  <- (ncores*resetWorkersMulti)
+      nClust          <- ceiling(nFiles/nFilesPerClust)
+      if (verbose) {message("Running ", nClust, " clusters of ", nFilesPerClust, " files, over ", ncores, " cores:")}
+      
+      # in each round start a new cluster and store results
+      for (iClust in seq(0,nClust-1,1)) {
+        if (verbose) {message("  starting cluster ", iClust+1, " out of ", nClust)}
+        # init
+        idxStart        <- 1 + iClust*nFilesPerClust
+        idxEnd          <- min( (nFilesPerClust + iClust*nFilesPerClust), nFiles) # to not overshoot the number of files
+        tmp_file_paths  <- file_paths[idxStart : idxEnd]
+        # Open parallel interface
+        cl              <- parallel::makeCluster(ncores)
+        doParallel::registerDoParallel(cl)
+        # Run
+        allFilesRes[idxStart : idxEnd] <- foreach::foreach( x=tmp_file_paths, .packages=c("MSnbase","mzR"), .inorder=TRUE) %dopar% parallel_helper(x, target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime, inVerbose=verbose, ...)
+        # Close
+        parallel::stopCluster(cl)
+      }
+    
+    # Single cluster initialisation (workload can be balanced across workers)
+    } else {
+      # Open parallel interface
+      cl          <- parallel::makeCluster(ncores)
+      doParallel::registerDoParallel(cl)
+      # Run      
+      allFilesRes <- foreach::foreach( x=file_paths, .packages=c("MSnbase","mzR"), .inorder=TRUE) %dopar% parallel_helper(x, target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime, inVerbose=verbose, ...) #, .errorhandling='pass' #.export=c('findTargetFeatures', 'getTargetFeatureStatistic') 
+      # Close
+      parallel::stopCluster(cl)
+    }
+    
+  # Serial
   } else {
     allFilesRes   <- lapply(file_paths, function(x) parallel_helper(x, target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime, inVerbose=verbose, ...))
   }
@@ -272,10 +309,6 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, v
   if (verbose) {
     message('----------------')
     message('Parallel annotation done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
-  }
-
-  if (ncores!=0) {
-    parallel::stopCluster( cl )
   }
   
   return(list(annotation=outObject, failures=fail_table))
