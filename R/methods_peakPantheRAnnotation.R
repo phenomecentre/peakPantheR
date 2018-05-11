@@ -445,3 +445,85 @@ setMethod("[", "peakPantheRAnnotation",
                                   peakFit = .peakFit,
                                   isAnnotated = .isAnnotated)
           })
+
+
+
+
+#####################################################################
+## Fit diagnosis
+
+## Set uROI and FIR based on annotation results
+setGeneric("annotationParamsDiagnostic", function(object, verbose=TRUE, ...) standardGeneric("annotationParamsDiagnostic"))
+#' Set uROI and FIR based on annotation results
+#' Set updated ROI (uROI) and Fallback Integration Regions (FIR) based on the annotation results. If the object is not annotated, it is returned untouched. ROI is not modified. If uROI exist they are left untouched, otherwise they are set with the ROI. If FIR are used they are left untouched, otherwise they are set as the median of the found limits (rtMin, rtMax, mzMin, mzMax).
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param verbose (bool) If TRUE message progress of uROI and FIR calculation
+#' @return (peakPantheRAnnotation) object with updated ROI and FIR set from annotation results
+#' @docType methods
+#' @aliases annotationParamsDiagnostic
+#' @export
+setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
+          function(object, verbose) {
+            ## init
+            outAnnotation <- object
+            
+            ## not annotated, pass
+            if (!outAnnotation@isAnnotated) {
+              if (verbose) {message('Warning: the object has not been annotated, return the object untouched')}
+              return(outAnnotation)
+            }
+            
+            ## uROI
+            # uROI doesn't exist, set uROI with ROI
+            if (!outAnnotation@uROIExist) {
+              if (verbose) {message('uROI will be set with ROI')}
+              outAnnotation@uROI[,c('rtMin','rt','rtMax','mzMin','mz','mzMax')] <- outAnnotation@ROI[,c('rtMin','rt','rtMax','mzMin','mz','mzMax')]
+              # set uROIExist
+              outAnnotation@uROIExist <- TRUE
+              # uROI exist (even not used), no replacement
+            } else {
+              if (verbose) {message('uROI already exist, will not be changed')}
+            }
+            
+            ## FIR
+            # FIR not used, recalculate (if NA, use uROI value that was set previously)
+            if (!outAnnotation@useFIR) {
+              if (verbose) {message('FIR will be calculated as the median of found "rtMin","rtMax","mzMin","mzMax"')}
+              # rtMin
+              rtMin   <- unname(sapply(annotationTable(outAnnotation, 'rtMin'), stats::median, na.rm=T))
+              if (sum(is.na(rtMin)) != 0) {
+                if (verbose) {message('FIR median rtMin which are NA are replaced with uROI rtMin')}
+                rtMin[is.na(rtMin)]   <- outAnnotation@uROI[is.na(rtMin), 'rtMin']
+              }
+              # rtMax
+              rtMax   <- unname(sapply(annotationTable(outAnnotation, 'rtMax'), stats::median, na.rm=T))
+              if (sum(is.na(rtMax)) != 0) {
+                if (verbose) {message('FIR median rtMax which are NA are replaced with uROI rtMax')}
+                rtMax[is.na(rtMax)]   <- outAnnotation@uROI[is.na(rtMax), 'rtMax']
+              }
+              # mzMin
+              mzMin   <- unname(sapply(annotationTable(outAnnotation, 'mzMin'), stats::median, na.rm=T))
+              if (sum(is.na(mzMin)) != 0) {
+                if (verbose) {message('FIR median mzMin which are NA are replaced uROI mzMin')}
+                mzMin[is.na(mzMin)]   <- outAnnotation@uROI[is.na(mzMin), 'mzMin']
+              }
+              # mzMax
+              mzMax   <- unname(sapply(annotationTable(outAnnotation, 'mzMax'), stats::median, na.rm=T))
+              if (sum(is.na(mzMax)) != 0) {
+                if (verbose) {message('FIR median mzMax which are NA are replaced uROI mzMax')}
+                mzMax[is.na(mzMax)]   <- outAnnotation@uROI[is.na(mzMax), 'mzMax']
+              }
+              # store new FIR values
+              outAnnotation@FIR[,'rtMin'] <- rtMin
+              outAnnotation@FIR[,'rtMax'] <- rtMax
+              outAnnotation@FIR[,'mzMin'] <- mzMin
+              outAnnotation@FIR[,'mzMax'] <- mzMax
+              # FIR used, do not recalculate
+            } else {
+              if (verbose) {message('FIR in use, will not be changed')}
+            }
+            
+            return(outAnnotation)
+          })
+
+

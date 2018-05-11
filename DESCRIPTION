@@ -2,7 +2,8 @@ Package: peakPantheR
 Title: Peak Picking and ANnoTation of High resolution Experiments in R
 Version: 1.1.2
 Date: 2018-04-18
-Authors@R: c(person("Arnaud", "Wolfer", email = "aw4212@imperial.ac.uk", role = c("aut", "cre")))
+Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre")),
+	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "ctb"))
 Description: peakPantheR detects, integrates and reports pre-defined features in MS files.
 Depends: R (>= 3.4.0)
 Imports: foreach (>= 1.4.4),

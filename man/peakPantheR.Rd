@@ -8,8 +8,8 @@
 \alias{peakPantheR-package}
 \title{peakPantheR: A package for Peak Picking and ANnoTation of High resolution Experiments in R}
 \description{
-\pkg{peakPantheR} detects, integrates and reports pre-defined features in MS files using
-XCMS3. It enables the real time annotation of multiple compounds in a single file, or
+\pkg{peakPantheR} detects, integrates and reports pre-defined features in MS files.
+It enables the real time annotation of multiple compounds in a single file, or
 the parallel annotation of multiple compounds in multiple files.
 }
 \details{
@@ -20,6 +20,11 @@ functions help assess and the quality of annotation and update fitting parameter
 Refer to the vignettes for graphical user interface and command line tutorials.
 }
 \author{
-\strong{Maintainer}: Arnaud Wolfer \email{aw4212@imperial.ac.uk}
+\strong{Maintainer}: Arnaud Wolfer \email{adwolfer@gmail.com}
+
+Other contributors:
+\itemize{
+  \item Goncalo Correia \email{gscorreia89@gmail.com} [contributor]
+}
 
 }

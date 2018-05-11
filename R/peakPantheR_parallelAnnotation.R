@@ -230,11 +230,11 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, r
       allFilesRes     <- vector('list', nFiles)
       nFilesPerClust  <- (ncores*resetWorkersMulti)
       nClust          <- ceiling(nFiles/nFilesPerClust)
-      if (verbose) {message("Running ", nClust, " clusters of ", nFilesPerClust, " files, over ", ncores, " cores:")}
+      if (verbose) {message("Running ", nClust, " clusters of ", nFilesPerClust, " files over ", ncores, " cores:")}
       
       # in each round start a new cluster and store results
       for (iClust in seq(0,nClust-1,1)) {
-        if (verbose) {message("  starting cluster ", iClust+1, " out of ", nClust)}
+        if (verbose) {message("  starting cluster ", iClust+1, "/", nClust)}
         # init
         idxStart        <- 1 + iClust*nFilesPerClust
         idxEnd          <- min( (nFilesPerClust + iClust*nFilesPerClust), nFiles) # to not overshoot the number of files
@@ -309,6 +309,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, r
   if (verbose) {
     message('----------------')
     message('Parallel annotation done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
+    message('  ', dim(fail_table)[1], ' failure(s)')
   }
   
   return(list(annotation=outObject, failures=fail_table))
