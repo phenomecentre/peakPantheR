@@ -455,7 +455,7 @@ setMethod("[", "peakPantheRAnnotation",
 ## Set uROI and FIR based on annotation results
 setGeneric("annotationParamsDiagnostic", function(object, verbose=TRUE, ...) standardGeneric("annotationParamsDiagnostic"))
 #' Set uROI and FIR based on annotation results
-#' Set updated ROI (uROI) and Fallback Integration Regions (FIR) based on the annotation results. If the object is not annotated, it is returned untouched. ROI is not modified. If uROI exist they are left untouched, otherwise they are set as the minimum and maximum found peaks limits (+/-5% of ROI in retention time). If FIR are used they are left untouched, otherwise they are set as the median of the found limits (rtMin, rtMax, mzMin, mzMax).
+#' Set updated ROI (uROI) and Fallback Integration Regions (FIR) based on the annotation results. If the object is not annotated, it is returned untouched. ROI is not modified. If uROI exist they are left untouched, otherwise they are set as the minimum and maximum found peaks limits (+/-5\% of ROI in retention time). If FIR are used they are left untouched, otherwise they are set as the median of the found limits (rtMin, rtMax, mzMin, mzMax).
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
 #' @param verbose (bool) If TRUE message progress of uROI and FIR calculation
 #' @return (peakPantheRAnnotation) object with updated ROI and FIR set from annotation results
@@ -560,38 +560,41 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
           })
 
 
+## Save annotation parameters as CSV
+setGeneric("outputAnnotationParamsCSV", function(object, saveFolder, verbose=TRUE, ...) standardGeneric("outputAnnotationParamsCSV"))
 #' Save annotation parameters as CSV
-#' 
-#' Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing.
-#' 
-#' @param annotation (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
 #' @param verbose (bool) If TRUE message progress
-#' 
+#' @param saveFolder (str) Path of folder where annotationParameters_summary.csv will be saved
 #' @return None
-outputAnnotationParamsCSV <- function(annotation, saveFolder, verbose=TRUE) {
-  # create table  
-  outTable          <- data.frame(matrix(,nrow=nbCompounds(annotation),ncol=0))
-  outTable          <- cbind(outTable, cpdID=cpdID(annotation), cpdName=cpdName(annotation))
-  # ROI
-  tmp_ROI           <- ROI(annotation)[,c('rt', 'mz', 'rtMin', 'rtMax', 'mzMin', 'mzMax')]
-  colnames(tmp_ROI) <- c('ROI_rt', 'ROI_mz', 'ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax')
-  outTable          <- cbind(outTable, X=rep('|',nbCompounds(annotation)), tmp_ROI)
-  # uROI
-  tmp_uROI            <- uROI(annotation)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax', 'rt', 'mz')]
-  colnames(tmp_uROI)  <- c('uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz')
-  outTable            <- cbind(outTable, X=rep('|',nbCompounds(annotation)), tmp_uROI)
-  # FIR
-  tmp_FIR           <- FIR(annotation)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]
-  colnames(tmp_FIR) <- c('FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax')
-  outTable          <- cbind(outTable, X=rep('|',nbCompounds(annotation)), tmp_FIR)
-  
-  # save table
-  dir.create(saveFolder, recursive=TRUE, showWarnings=FALSE)
-  targetFile  <- paste(saveFolder,'/annotationParameters_summary.csv',sep='')
-  if (verbose) {
-    message('Annotation parameters saved at ',targetFile)
-  }
-  utils::write.csv(outTable, file = targetFile, row.names=FALSE)
-}
-
+#' @docType methods
+#' @aliases outputAnnotationParamsCSV
+#' @export
+setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
+          function(object, saveFolder, verbose) {
+            # create table  
+            outTable          <- data.frame(matrix(,nrow=nbCompounds(object),ncol=0))
+            outTable          <- cbind(outTable, cpdID=cpdID(object), cpdName=cpdName(object))
+            # ROI
+            tmp_ROI           <- ROI(object)[,c('rt', 'mz', 'rtMin', 'rtMax', 'mzMin', 'mzMax')]
+            colnames(tmp_ROI) <- c('ROI_rt', 'ROI_mz', 'ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax')
+            outTable          <- cbind(outTable, X=rep('|',nbCompounds(object)), tmp_ROI)
+            # uROI
+            tmp_uROI            <- uROI(object)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax', 'rt', 'mz')]
+            colnames(tmp_uROI)  <- c('uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz')
+            outTable            <- cbind(outTable, X=rep('|',nbCompounds(object)), tmp_uROI)
+            # FIR
+            tmp_FIR           <- FIR(object)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]
+            colnames(tmp_FIR) <- c('FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax')
+            outTable          <- cbind(outTable, X=rep('|',nbCompounds(object)), tmp_FIR)
+            
+            # save table
+            dir.create(saveFolder, recursive=TRUE, showWarnings=FALSE)
+            targetFile  <- paste(saveFolder,'/annotationParameters_summary.csv',sep='')
+            if (verbose) {
+              message('Annotation parameters saved at ',targetFile)
+            }
+            utils::write.csv(outTable, file = targetFile, row.names=FALSE)
+          })
 
