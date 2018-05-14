@@ -122,17 +122,19 @@ test_that('uROIExist (no change), useFIR (no change), verbose', {
   expect_equal(result_diagnostic$messages, expected_message)
 })
 
-test_that('no uROIExist (use ROI), useFIR (no change), verbose', {
-  # uROIExist set to FALSE, so uROI will be set with ROI and uROIExist set to TRUE
+test_that('no uROIExist (min/max found peaks), useFIR (no change), verbose', {
+  # uROIExist set to FALSE, so uROI will be set with min/max found peak (rt +/-5% ROI width), uROI rt mz set to ROI rt mz, uROIExist set to TRUE
   
   # input
   input_annotation            <- filledAnnotation
   input_annotation@uROIExist  <- FALSE
   
   # expected
-  expected_annotation       <- filledAnnotation
-  expected_annotation@uROI  <- filledAnnotation@ROI
-  expected_message          <- c("uROI will be set with ROI\n", "FIR in use, will not be changed\n")
+  expected_annotation         <- filledAnnotation
+  expected_annotation@uROI[ ,c('rt','mz')]                        <- filledAnnotation@ROI[,c('rt','mz')]
+  expected_annotation@uROI[1,c('rtMin','rtMax','mzMin','mzMax')]  <- c(3305.758929658607, 3411.4362838927614, 522.194778, 522.205222)
+  expected_annotation@uROI[2,c('rtMin','rtMax','mzMin','mzMax')]  <- c(3337.376664862891, 3462.4490330927388, 496.195038, 496.204962)
+  expected_message            <- c("uROI will be set as mimimum/maximum of found peaks (+/-5% of ROI in retention time)\n", "FIR in use, will not be changed\n")
   
   # results
   result_diagnostic <- evaluate_promise(annotationParamsDiagnostic(input_annotation, verbose=TRUE))
@@ -145,7 +147,7 @@ test_that('no uROIExist (use ROI), useFIR (no change), verbose', {
   expect_equal(result_diagnostic$messages, expected_message)
 })
 
-test_that('uROIExist (no change), no useFIR (median found), verbose', {
+test_that('uROIExist (no change), no useFIR (median found peaks), verbose', {
   # useFIR set to FALSE, so FIR will be calculated as median
   
   # input
@@ -170,7 +172,7 @@ test_that('uROIExist (no change), no useFIR (median found), verbose', {
   expect_equal(result_diagnostic$messages, expected_message)
 })
 
-test_that('no peak founds for cpd 2, uROIExist (no change), no useFIR (median and replacement from uROI), verbose and no verbose', {
+test_that('no peaks found for cpd 2, uROIExist (no change), no useFIR (median and replacement from uROI), verbose and no verbose', {
   # useFIR set to FALSE, so FIR will be calculated as median, no peaks for cpd 2 so use uROI that are untouched (uROIExist)
   # add NAs to cpd 1 to check na.rm=T
   
@@ -191,6 +193,45 @@ test_that('no peak founds for cpd 2, uROIExist (no change), no useFIR (median an
   expected_annotation@FIR[2,c('rtMin','rtMax','mzMin','mzMax')] <- c(15., 17., 18., 20.)
   expected_annotation@useFIR      <- FALSE
   expected_message                <- c("uROI already exist, will not be changed\n", "FIR will be calculated as the median of found \"rtMin\",\"rtMax\",\"mzMin\",\"mzMax\"\n", "FIR median rtMin which are NA are replaced with uROI rtMin\n", "FIR median rtMax which are NA are replaced with uROI rtMax\n", "FIR median mzMin which are NA are replaced uROI mzMin\n", "FIR median mzMax which are NA are replaced uROI mzMax\n")
+  
+  # results
+  result_diagnostic <- evaluate_promise(annotationParamsDiagnostic(input_annotation, verbose=TRUE))
+  
+  # check results
+  expect_equal(result_diagnostic$result, expected_annotation)
+  
+  # check messages
+  expect_equal(length(result_diagnostic$messages), 6)
+  expect_equal(result_diagnostic$messages, expected_message)
+  
+  
+  ## No verbose
+  result_diagnostic2 <- evaluate_promise(annotationParamsDiagnostic(input_annotation, verbose=FALSE))
+  expect_equal(length(result_diagnostic2$messages), 0)
+})
+
+test_that('no peaks found for cpd 2, no uROIExist (min/max and replacement from ROI), useFIR (no change) verbose and no verbose', {
+  # uROIExist set to FALSE, so uROI will be calculated as min/max of peaks found, no peaks for cpd 2 so use ROI
+  # add NAs to cpd 1 to check na.rm=T
+  
+  # input
+  input_annotation              <- filledAnnotation
+  input_annotation@uROIExist    <- FALSE
+  # no data found for cpd 2
+  input_annotation@peakTables[[1]][2,c('rtMin', 'rtMax', 'mzMin', 'mzMax')] <- c(as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  input_annotation@peakTables[[2]][2,c('rtMin', 'rtMax', 'mzMin', 'mzMax')] <- c(as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  input_annotation@peakTables[[3]][2,c('rtMin', 'rtMax', 'mzMin', 'mzMax')] <- c(as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  # NA for cpd 1, change FIR
+  input_annotation@peakTables[[1]][1,c('rtMin', 'mzMin', 'mzMax')]  <- c(as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  input_annotation@peakTables[[3]][1,c('rtMax')]                    <- c(as.numeric(NA))
+  
+  # expected
+  expected_annotation             <- filledAnnotation
+  expected_annotation@peakTables  <- input_annotation@peakTables
+  expected_annotation@uROI[1,c('rtMin','rt','rtMax','mzMin','mz','mzMax')] <- c(3322.10635, 3344.888, 3411.27265, 522.194778, 522.2, 522.205222)
+  expected_annotation@uROI[2,c('rtMin','rt','rtMax','mzMin','mz','mzMax')] <- c(3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+  expected_annotation@uROIExist   <- TRUE
+  expected_message                <- c("uROI will be set as mimimum/maximum of found peaks (+/-5% of ROI in retention time)\n", "uROI min rtMin which are NA are replaced with ROI rtMin\n", "uROI max rtMax which are NA are replaced with ROI rtMax\n", "uROI min mzMin which are NA are replaced ROI mzMin\n", "uROI max mzMax which are NA are replaced ROI mzMax\n", "FIR in use, will not be changed\n")
   
   # results
   result_diagnostic <- evaluate_promise(annotationParamsDiagnostic(input_annotation, verbose=TRUE))
