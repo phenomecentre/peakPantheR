@@ -109,7 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## file paths
 input_spectraPath  &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">system.file</span>(<span class="st">'cdf/KO/ko15.CDF'</span>, <span class="dt">package =</span> <span class="st">&quot;faahKO&quot;</span>))
 input_spectraPath
-<span class="co">#&gt; [1] &quot;C:/R/R-3.4.3/library/faahKO/cdf/KO/ko15.CDF&quot;</span></code></pre></div>
+<span class="co">#&gt; [1] &quot;C:/R/R-3.5.0/library/faahKO/cdf/KO/ko15.CDF&quot;</span></code></pre></div>
 <p>Two targeed features are defined and stored in a table with as columns:</p>
 <ul>
 <li><code>cpdID</code> (numeric)</li>
@@ -183,11 +183,11 @@ annotation &lt;-<span class="st"> </span><span class="kw">peakPantheR_singleFile
                                            <span class="dt">verbose =</span> <span class="ot">TRUE</span>)
 <span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
 <span class="co">#&gt; Reading data from 2 windows</span>
-<span class="co">#&gt; Data read in: 0.17 secs</span>
+<span class="co">#&gt; Data read in: 0.52 secs</span>
 <span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span>
-<span class="co">#&gt; Found 2/2 features in 0.04 secs</span>
-<span class="co">#&gt; Peak statistics done in: 0 secs</span>
-<span class="co">#&gt; Feature search done in: 0.53 secs</span></code></pre></div>
+<span class="co">#&gt; Found 2/2 features in 0.03 secs</span>
+<span class="co">#&gt; Peak statistics done in: 0.02 secs</span>
+<span class="co">#&gt; Feature search done in: 0.96 secs</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>TIC
 <span class="co">#&gt; [1] 2410533091</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>acquTime
