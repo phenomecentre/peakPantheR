@@ -5,9 +5,10 @@ context('plotRunOrder()')
 sampleVal <- c(1, 2, 3, 4)
 acqTime   <- as.POSIXct(c("2017-07-13 21:06:14", "2017-07-14 21:06:14", "2017-07-15 21:06:14", "2017-07-16 21:06:14"))
 
-## Expected data (load saved version of plots)
-path_expected_data      <- system.file("testdata/reference_plotRunOrder.RData", package = "peakPantheR")
-load(path_expected_data) # expected_runOrder3splNoCol + expected_runOrder4splWithCol + expected_runOrderPlotColourWarning
+## Plot axis can vary across platforms, cannot test plots matching
+### Expected data (load saved version of plots)
+#path_expected_data      <- system.file("testdata/reference_plotRunOrder.RData", package = "peakPantheR")
+#load(path_expected_data) # expected_runOrder3splNoCol + expected_runOrder4splWithCol + expected_runOrderPlotColourWarning
 
 
 test_that('plot 3 samples, no color', {
@@ -21,10 +22,10 @@ test_that('plot 3 samples, no color', {
   expect_equal(result_runOrder3splNoCol$labels$y, "Test variable")
   expect_equal(length(result_runOrder3splNoCol), 9)
   
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_runOrder3splNoCol)
-  tmp_expected  <- ggplot2::ggplot_build(expected_runOrder3splNoCol)
-  expect_equal(tmp_result, tmp_expected)
+  ## Check against reference version
+  #tmp_result    <- ggplot2::ggplot_build(result_runOrder3splNoCol)
+  #tmp_expected  <- ggplot2::ggplot_build(expected_runOrder3splNoCol)
+  #expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot 4 samples with color', {
@@ -38,10 +39,10 @@ test_that('plot 4 samples with color', {
   expect_equal(result_runOrder4splWithCol$labels$y, "Test variable 2")
   expect_equal(length(result_runOrder4splWithCol), 9)
   
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_runOrder4splWithCol)
-  tmp_expected  <- ggplot2::ggplot_build(expected_runOrder4splWithCol)
-  expect_equal(tmp_result, tmp_expected)
+  ## Check against reference version
+  #tmp_result    <- ggplot2::ggplot_build(result_runOrder4splWithCol)
+  #tmp_expected  <- ggplot2::ggplot_build(expected_runOrder4splWithCol)
+  #expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('sampleColour length warning', {
@@ -63,10 +64,10 @@ test_that('sampleColour length warning', {
   expect_equal(result_runOrderPlotColourWarning$result$labels$y, "Test variable 3")
   expect_equal(length(result_runOrderPlotColourWarning$result), 9)
   
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_runOrderPlotColourWarning$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_runOrderPlotColourWarning)
-  expect_equal(tmp_result, tmp_expected)
+  ## Check against reference version
+  #tmp_result    <- ggplot2::ggplot_build(result_runOrderPlotColourWarning$result)
+  #tmp_expected  <- ggplot2::ggplot_build(expected_runOrderPlotColourWarning)
+  #expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('raise errors', {
