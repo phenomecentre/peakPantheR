@@ -1,8 +1,5 @@
 context('saveMultiEIC()')
 
-skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
-library(faahKO)
-
 
 ## Input and expected data
 # fake ROI 1

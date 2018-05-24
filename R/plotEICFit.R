@@ -47,7 +47,7 @@ plotEICFit  <- function(ROIDataPointSampleList, curveFitSampleList=NULL, rtMin=N
   
   ## Plot raw spectra and curve fit
   # init plot
-  p_spec      <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) + ggplot2::theme_bw() + ggplot2::xlab('Retention Time (sec)') + ggplot2::ylab('Intensity')
+  p_spec      <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) + ggplot2::theme_bw() + ggplot2::xlab('Retention Time (sec)') + ggplot2::ylab('Intensity') + ggplot2::scale_y_continuous(expand=c(0.01, 0.01))
   
   # add each spectra and fit to the plot
   for (spectraID in 1:nbSpl){
