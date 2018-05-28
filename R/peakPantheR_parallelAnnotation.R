@@ -301,6 +301,14 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, r
   } else {
     if (verbose) { message("No file left in the object!")}
   }
+  
+  # reorder results by acquisition date if available
+  if (sum(is.na(acquisitionTime(outObject))) == 0) {
+    if (verbose) { message("Annotation object reordered by sample acquisition date") }
+    outObject   <- outObject[order(acquisitionTime(outObject)),]
+  } else {
+    if (verbose) { message("Annotation object cannot be reordered by sample acquisition date") }
+  }
 
   ## check validity and exit
   validObject(outObject)
