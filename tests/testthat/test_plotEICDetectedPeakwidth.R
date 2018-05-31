@@ -70,7 +70,7 @@ test_that('plot feature in 2 samples, rtMin and/or rtMax are NA', {
 
 test_that('colour warning, ratio replacement', {
   # Expected message
-  expected_message <- c("Error: ratio must be between 0 and 1, replaced by default value\n", "Warning: sampleColour length must match the number of samples; default colour used\n", "Warning: sampleColour length must match the number of samples; default colour used\n")
+  expected_message <- c("Error: ratio must be between 0 and 1, replaced by default value\n", "Warning: sampleColour length must match the number of samples; default colour used\n")
   
   # result plot
   result_plot <- evaluate_promise(plotEICDetectedPeakwidth(list(tmp_DataPoints1, tmp_DataPoints2), cpdID=c('ID-1', 'ID-2'), cpdName=c('testCpd 1', 'testCpd 2'), rt=c(1000., 1002.), rtMin=c(995., 997.), rtMax=c(1005.,1007.), mzMin=c(521.,521.), mzMax=c(523.,523.), ratio=2, sampling=250, curveFitSampleList=list(fit1, fit2), sampleColour=c('blue', 'red', 'grey'), verbose=TRUE))

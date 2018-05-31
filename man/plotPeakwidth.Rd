@@ -2,21 +2,26 @@
 % Please edit documentation in R/plotPeakwidth.R
 \name{plotPeakwidth}
 \alias{plotPeakwidth}
-\title{Plot detected peaks width for a single ROI}
+\title{Plot peak value and peakwidth by acquisition time or in input order}
 \usage{
-plotPeakwidth(apexValue, widthMin, widthMax, varName = "Variable",
-  sampleColour = NULL, verbose = TRUE)
+plotPeakwidth(apexValue, widthMin = NULL, widthMax = NULL,
+  acquTime = NULL, varName = "variable", sampleColour = NULL,
+  rotateAxis = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{apexValue}{(float) vector of detected peak apex value}
+\item{apexValue}{(float) vector of apex value}
 
-\item{widthMin}{(float) vector of detected peak minimum peakwidth value}
+\item{widthMin}{(float) vector of detected peak minimum peakwidth value or NULL (if NULL no peakwidth)}
 
-\item{widthMax}{(float) vector of detected peak maximum peakwidth value}
+\item{widthMax}{(float) vector of detected peak maximum peakwidth value or NULL (uf NULL no peakwidth)}
 
-\item{varName}{(str) Name of the variable to plot (X axis label)}
+\item{acquTime}{(POSIXct) vector of sample acquisition time as POSIXct or NULL (if NULL points are plotted in the order values are passed as input with the first on top or left)}
 
-\item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{apexValue}, \code{widthMin}, \code{widthMax})}
+\item{varName}{(str) Name of the variable to plot}
+
+\item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{apexValue}, \code{widthMin}, \code{widthMax}, \code{acquTime})}
+
+\item{rotateAxis}{(bool) if TRUE x and y axis are reversed}
 
 \item{verbose}{(bool) if TRUE message when NA scans are removed}
 }
@@ -24,5 +29,5 @@ plotPeakwidth(apexValue, widthMin, widthMax, varName = "Variable",
 Grob (ggplot object)
 }
 \description{
-plot for a ROI the value and peakwidth (RT, m/z, ...) of detected peaks across multiple samples (x axis is the value (RT, m/z, ...), y is plotted in the order spectra are passed with the first on top).
+For a single ROI, plot the peak value and peakwidth (RT, m/z, ...) of detected peaks across multiple samples, by acquisition time or in input order. If \code{rotateAxis=FALSE} x is run order / plot order, y is the \code{apexValue} / \code{widthMin} / \code{widthMax}, if \code{rotateAxis=TRUE} x is the measurement values and y the run order.
 }

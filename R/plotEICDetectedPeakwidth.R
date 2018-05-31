@@ -45,14 +45,14 @@ plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt
  
   ## Plot peakwidth
   p_peakwidth   <- plotPeakwidth(apexValue=rt, widthMin=rtMin, widthMax=rtMax,
-                                 varName='Retention Time (sec)',
-                                 sampleColour=sampleColour,verbose=verbose)
+                                 varName='Retention Time (sec)', acquTime=NULL,
+                                 sampleColour=sampleColour, rotateAxis=TRUE, verbose=FALSE)
   
-  ## Set common x lim
-  minX          <- min(ggplot2::layer_scales(p_spec)$x$range$range[1], ggplot2::layer_scales(p_peakwidth)$x$range$range[1])
-  maxX          <- max(ggplot2::layer_scales(p_spec)$x$range$range[2], ggplot2::layer_scales(p_peakwidth)$x$range$range[2])
+  ## Set common x lim (due to the rotation, x on p_peakwidth is originally y and accessed as such)
+  minX          <- min(ggplot2::layer_scales(p_spec)$x$range$range[1], ggplot2::layer_scales(p_peakwidth)$y$range$range[1])
+  maxX          <- max(ggplot2::layer_scales(p_spec)$x$range$range[2], ggplot2::layer_scales(p_peakwidth)$y$range$range[2])
   p_spec        <- p_spec + ggplot2::xlim(minX, maxX)
-  p_peakwidth   <- p_peakwidth + ggplot2::xlim(minX, maxX)
+  p_peakwidth   <- p_peakwidth + ggplot2::ylim(minX, maxX)
   # convert to gtables
   p_spec        <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_spec))
   p_peakwidth   <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_peakwidth))
