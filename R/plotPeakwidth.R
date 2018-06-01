@@ -29,6 +29,7 @@ plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax=NULL, acquTime=NULL
     # NA in acquTime
     if (any(is.na(acquTime))) {
       if (verbose) { message('Warning: "acquTime" contains NA, run order will not be plotted') }
+      acquTime <- NULL # helps with unittesting as dates in $plot_env introduce OS differences
     } else {
       # check acquTime length
       if (nbSpl!=length(acquTime)) {
@@ -78,7 +79,6 @@ plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax=NULL, acquTime=NULL
   } else {
     if (rotateAxis) {
       x_axis  <- seq(nbSpl-1, 0)  #first spectra on top
-      
     } else {
       x_axis  <- seq(0, nbSpl-1)  #first spectra on left
     }

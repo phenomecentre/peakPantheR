@@ -11,6 +11,16 @@ acqTime <- as.POSIXct(c("2017-07-13 21:06:14", "2017-07-14 21:06:14", "2017-07-1
 path_expected_data      <- system.file("testdata/reference_plotPeakwidth.RData", package = "peakPantheR")
 load(path_expected_data) # expected_3splNoColNoRot + expected_3splNoColRot + expected_4splWithColNoRot + expected_4splWithColRot + expected_plotColourWarning + expected_plotNoWidth + expected_plotFallBackNAAcqu
 
+#save(expected_3splNoColNoRot, expected_3splNoColRot, expected_4splWithColNoRot, expected_4splWithColRot, expected_plotColourWarning, expected_plotNoWidth, expected_plotFallBackNAAcqu, file='./inst/testdata/reference_plotPeakWidth.RData', compress = TRUE)
+
+#expected_3splNoColNoRot <- result_3splNoColNoRot
+#expected_3splNoColRot <- result_3splNoColRot
+#expected_4splWithColNoRot <- result_4splWithColNoRot
+#expected_4splWithColRot <- result_4splWithColRot
+#expected_plotColourWarning <- result_plotColourWarning$result
+#expected_plotNoWidth <- result_plotNoWidthMax$result
+#expected_plotFallBackNAAcqu <- result_plotFallBackNAAcqu$result
+
 
 test_that('plot 3 samples, no color', {
 	# generate plot
