@@ -64,7 +64,7 @@ class(cFit1.2)  <- 'peakPantheR_curveFit'
 cFit2.1         <- list(amplitude=124090.83425474487, center=3359.102, sigma=0.071061541060964212, gamma=0.0018336072657203239, fitStatus=2, curveModel="skewedGaussian")
 class(cFit2.1)  <- 'peakPantheR_curveFit'
 cFit2.2         <- list(amplitude=151407.23415130575, center=3399.791, sigma=0.063753866057052563, gamma=0.001676782834598999, fitStatus=2, curveModel="skewedGaussian")
-class(cFit1.2)  <- 'peakPantheR_curveFit'
+class(cFit2.2)  <- 'peakPantheR_curveFit'
 # 3
 cFit3.1         <- list(amplitude=122363.51256736703, center=3362.233, sigma=0.075489598945304492, gamma=0.0025160536725299734, fitStatus=2, curveModel="skewedGaussian")
 class(cFit3.1)  <- 'peakPantheR_curveFit'

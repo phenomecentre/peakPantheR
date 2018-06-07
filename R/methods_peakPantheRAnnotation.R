@@ -598,3 +598,96 @@ setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
             utils::write.csv(outTable, file = targetFile, row.names=FALSE)
           })
 
+
+## Generate fit diagnostic plots
+setGeneric("annotationDiagnosticPlots", function(object, sampleColour=NULL, sampling=250, verbose=TRUE, ...) standardGeneric("annotationDiagnosticPlots"))
+#' Generate fit diagnostic plots
+#' Generate fit diagnostic plots for each ROI: \code{EICFit} the raw data and detected feature fit, \code{rtPeakwidthVert} detected peaks retention time apex and peakwidth (vertical and no run order), \code{rtPeakwidthHorzRunOrder} detected peaks retention time apex and peakwidth by run order, \code{mzPeakwidthHorzRunOrder} detected peaks m/z apex and peakwidth by run order, \code{areaRunOrder} detected peaks area by run order, \code{rtHistogram} histogram of detected peaks retention time, \code{mzHistogram} histogram of detected peaks m/z, \code{areaHistogram} histogram of detected peaks area.
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param sampleColour (str) NULL or vector colour for each sample
+#' @param sampling (int) Number of points to employ when plotting fittedCurve
+#' @param verbose (bool) if TRUE message the plot generation progress
+#' @return A list (one list per compound) of diagnostic plots: \code{result[[i]]$EICFit}, \code{result[[i]]$rtPeakwidthVert}, \code{result[[i]]$rtPeakwidthHorzRunOrder}, \code{result[[i]]$mzPeakwidthHorzRunOrder}, \code{result[[i]]$areaRunOrder}, \code{result[[i]]$rtHistogram}, \code{result[[i]]$mzHistogram}, \code{result[[i]]$areaHistogram}
+#' @docType methods
+#' @aliases annotationDiagnosticPlots
+#' @export
+setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
+          function(object, sampleColour, sampling, verbose) {
+            # Init
+            nbCpd   <- nbCompounds(object)
+            outList <- vector("list", nbCpd)
+            
+            ## Check object was annotated
+            if (!object@isAnnotated) {
+              message('Warning: the object has not been annotated, return an empty diagnostic plot list')
+              return(outList)
+            }
+            
+            # Iterate over compounds
+            for (cpd in 1:nbCpd) {
+              tmp_annotation      <- object[,cpd]
+              tmp_plotList        <- vector("list", 8)
+              names(tmp_plotList) <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram')
+              
+              # plotEICFit
+              tmp_plotList$EICFit                   <- plotEICFit(ROIDataPointSampleList = unlist(dataPoints(tmp_annotation), recursive=FALSE),
+                                                                  curveFitSampleList = unlist(peakFit(tmp_annotation), recursive=FALSE),
+                                                                  rtMin = annotationTable(tmp_annotation, "rtMin")[,1],
+                                                                  rtMax = annotationTable(tmp_annotation, "rtMax")[,1],
+                                                                  sampling = sampling,
+                                                                  sampleColour = sampleColour,
+                                                                  verbose = verbose)
+              # RT plotPeakwidth vertical
+              tmp_plotList$rtPeakwidthVert          <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "rt")[,1],
+                                                                     widthMin = annotationTable(tmp_annotation, "rtMin")[,1],
+                                                                     widthMax = annotationTable(tmp_annotation, "rtMax")[,1],
+                                                                     acquTime = NULL,
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'Retention Time (sec)',
+                                                                     rotateAxis = TRUE,
+                                                                     verbose = verbose)
+              # RT plotPeakwidth horizontal run order
+              tmp_plotList$rtPeakwidthHorzRunOrder  <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "rt")[,1],
+                                                                     widthMin = annotationTable(tmp_annotation, "rtMin")[,1],
+                                                                     widthMax = annotationTable(tmp_annotation, "rtMax")[,1],
+                                                                     acquTime = acquisitionTime(tmp_annotation),
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'Retention Time (sec)',
+                                                                     rotateAxis = FALSE,
+                                                                     verbose = verbose)
+              # mz plotPeakwidth horizontal run order
+              tmp_plotList$mzPeakwidthHorzRunOrder  <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "mz")[,1],
+                                                                     widthMin = annotationTable(tmp_annotation, "mzMin")[,1],
+                                                                     widthMax = annotationTable(tmp_annotation, "mzMax")[,1],
+                                                                     acquTime = acquisitionTime(tmp_annotation),
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'm/z',
+                                                                     rotateAxis = FALSE,
+                                                                     verbose = verbose)
+              # peakarea horizontal run order
+              tmp_plotList$areaRunOrder             <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "peakArea")[,1],
+                                                                     widthMin = NULL,
+                                                                     widthMax = NULL,
+                                                                     acquTime = acquisitionTime(tmp_annotation),
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'Peak Area',
+                                                                     rotateAxis = FALSE,
+                                                                     verbose = verbose)
+              # RT plotHistogram
+              tmp_plotList$rtHistogram              <- plotHistogram(var = annotationTable(tmp_annotation, 'rt')[,1], 
+                                                                     varName='Retention Time (sec)',
+                                                                     density=TRUE)
+              # mz plotHistogram
+              tmp_plotList$mzHistogram              <- plotHistogram(var = annotationTable(tmp_annotation, 'mz')[,1],
+                                                                     varName='m/z',
+                                                                     density=TRUE)
+              # peak area plotHistogram
+              tmp_plotList$areaHistogram            <- plotHistogram(var = annotationTable(tmp_annotation, 'peakArea')[,1],
+                                                                     varName='Peak Area', 
+                                                                     density=TRUE)
+              # store results
+              outList[[cpd]]  <- tmp_plotList
+              if (verbose) {message('Compound ', cpd, '/', nbCpd,' done')}
+            }
+            return(outList)
+          })
