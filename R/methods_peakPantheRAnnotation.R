@@ -137,6 +137,30 @@ setMethod("filepath", "peakPantheRAnnotation",
             object@filepath
           })
 
+# cpdMetadata
+setGeneric("cpdMetadata", function(object, ...) standardGeneric("cpdMetadata"))
+#' cpdMetadata accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases cpdMetadata
+#' @export
+setMethod("cpdMetadata", "peakPantheRAnnotation",
+          function(object) {
+            object@cpdMetadata
+          })
+
+# spectraMetadata
+setGeneric("spectraMetadata", function(object, ...) standardGeneric("spectraMetadata"))
+#' spectraMetadata accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases spectraMetadata
+#' @export
+setMethod("spectraMetadata", "peakPantheRAnnotation",
+          function(object) {
+            object@spectraMetadata
+          })
+
 # acquisitionTime
 # return converted to POSIXct
 setGeneric("acquisitionTime", function(object, ...) standardGeneric("acquisitionTime"))
@@ -391,6 +415,8 @@ setMethod("[", "peakPantheRAnnotation",
             .FIR              <- x@FIR[j,]
             .uROI             <- x@uROI[j,]
             .filepath         <- x@filepath[i]
+            .cpdMetadata      <- x@cpdMetadata[j,]
+            .spectraMetadata  <- x@spectraMetadata[i,]
             .acquisitionTime  <- x@acquisitionTime[i]
             .uROIExist        <- x@uROIExist
             .useUROI          <- x@useUROI
@@ -435,6 +461,8 @@ setMethod("[", "peakPantheRAnnotation",
                                   FIR = .FIR,
                                   uROI = .uROI,
                                   filepath = .filepath,
+                                  cpdMetadata = .cpdMetadata,
+                                  spectraMetadata = .spectraMetadata,
                                   acquisitionTime = .acquisitionTime,
                                   uROIExist = .uROIExist,
                                   useUROI = .useUROI,

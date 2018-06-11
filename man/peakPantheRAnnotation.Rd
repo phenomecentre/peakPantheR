@@ -14,10 +14,11 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
   stringsAsFactors = F), uROI = data.frame(rtMin = numeric(), rt = numeric(),
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), filepath = character(),
-  acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
-  useFIR = FALSE, TIC = numeric(), peakTables = list(),
-  dataPoints = list(), peakFit = list(), isAnnotated = FALSE)
+  stringsAsFactors = F), filepath = character(), cpdMetadata = data.frame(),
+  spectraMetadata = data.frame(), acquisitionTime = character(),
+  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE, TIC = numeric(),
+  peakTables = list(), dataPoints = list(), peakFit = list(),
+  isAnnotated = FALSE)
 
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   cpdID = character(), cpdName = character(), ROI = data.frame(rtMin =
@@ -26,10 +27,11 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
   = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
   stringsAsFactors = F), uROI = data.frame(rtMin = numeric(), rt = numeric(),
   rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), filepath = character(),
-  acquisitionTime = character(), uROIExist = FALSE, useUROI = FALSE,
-  useFIR = FALSE, TIC = numeric(), peakTables = list(),
-  dataPoints = list(), peakFit = list(), isAnnotated = FALSE)
+  stringsAsFactors = F), filepath = character(), cpdMetadata = data.frame(),
+  spectraMetadata = data.frame(), acquisitionTime = character(),
+  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE, TIC = numeric(),
+  peakTables = list(), dataPoints = list(), peakFit = list(),
+  isAnnotated = FALSE)
 }
 \arguments{
 \item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
@@ -47,6 +49,10 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
 \item{uROI}{A data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
 \item{filepath}{A character vector of file paths, of length number of spectra files}
+
+\item{cpdMetadata}{A data.frame of compound metadata, with compounds as row and metadata as columns}
+
+\item{spectraMetadata}{A data.frame of sample metadata, with samples as row and metadata as columns}
 
 \item{acquisitionTime}{A character vector of acquisition date-time (converted from POSIXct) or NA}
 
@@ -89,6 +95,10 @@ The \code{validObject} method ensures the conformity of an object to the \code{p
 \item{\code{uROI}}{A data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
 \item{\code{filepath}}{A character vector of file paths, of length number of spectra files}
+
+\item{\code{cpdMetadata}}{A data.frame of compound metadata, with compounds as row and metadata as columns}
+
+\item{\code{spectraMetadata}}{A data.frame of sample metadata, with samples as row and metadata as columns}
 
 \item{\code{acquisitionTime}}{A character vector of acquisition date-time (converted from POSIXct) or NA}
 
@@ -161,9 +171,9 @@ annotation
 #   is not annotated
 
 slotNames(annotation)
-# [1]  "cpdID"           "cpdName"     "ROI"        "FIR"        "uROI"       "filepath"
-# [7]  "acquisitionTime" "uROIExist"   "useUROI"    "useFIR"     "TIC"        "peakTables"
-# [13] "dataPoints"      "peakFit"     "isAnnotated"
+# [1] "cpdID"       "cpdName"         "ROI"             "FIR"       "uROI"        "filepath"       
+# [7] "cpdMetadata" "spectraMetadata" "acquisitionTime" "uROIExist" "useUROI"     "useFIR"         
+# [13] "TIC"        "peakTables"      "dataPoints"      "peakFit"   "isAnnotated"
 
 annotation@cpdID
 # [1] "ID-1" "ID-2"
@@ -184,6 +194,10 @@ annotation@uROI
 annotation@filepath
 # [1] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko16.CDF"
 # [2] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko18.CDF"
+annotation@cpdMetadata
+# data frame with 0 columns and 2 rows
+annotation@spectraMetadata
+# data frame with 0 columns and 3 rows
 annotation@acquisitionTIme
 # [1] NA NA NA
 annotation@uROIExist

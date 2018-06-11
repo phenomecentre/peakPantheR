@@ -38,6 +38,13 @@ input_badtargetFeatTable[2, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000,
 input_badtargetFeatTable[3, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000, 0,1000)
 input_badtargetFeatTable[4, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000, 0,1000)
 
+# cpdMetadata
+input_cpdMetadata     <- data.frame(matrix(data=c('a','b','c','d',1,2,3,4), nrow=4, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
+# spectraMetadata
+input_spectraMetadata <- data.frame(matrix(data=c('e','f','g',5,6,7), nrow=3, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
+
 # Expected peakTables
 peakTable1     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
 peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
@@ -105,7 +112,7 @@ expected_dataPoints <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Expected annotation
   expected_annotation             <- initAnnotation
@@ -137,7 +144,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
 
 test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_targetFeatTable)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Expected annotation
   expected_annotation             <- initAnnotation[c(1,3),]
@@ -170,7 +177,7 @@ test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no
 test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, modify parameter with ... (cpd #3)', {
   # Cpd 3 is now found in 3rd file
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Modify fit of window #3
   tmp_params              <- list(init_params  = list(amplitude=1E5, center=3455., sigma=0.1, gamma=0),
@@ -230,7 +237,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, pe
   noMatch_ROI3[3,6:8] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=noMatch_ROI3)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=noMatch_ROI3, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
   
   # Expected annotation
   expected_annotation             <- initAnnotation
@@ -281,7 +288,7 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
   noMatch_ROI3[3,6:8] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=noMatch_ROI3, useFIR=TRUE, FIR=input_FIR)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=noMatch_ROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
   
   # Expected annotation
   expected_annotation             <- initAnnotation
@@ -329,7 +336,7 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
 
 test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no verbose', {
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=input_uROI)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=input_uROI, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Expected annotation
   expected_annotation             <- initAnnotation
@@ -366,7 +373,7 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Expected annotation
   expected_annotation             <- initAnnotation[c(1,3),]
@@ -415,7 +422,7 @@ test_that('parallel (with cluster reset): 3 files, (1 missing), 4 compounds, uRO
   noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
   
   # Expected annotation
   expected_annotation             <- initAnnotation[c(1,3),]
@@ -464,7 +471,7 @@ test_that('parallel (without cluster reset): 3 files, (1 missing), 4 compounds, 
   noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
   
   # Expected annotation
   expected_annotation             <- initAnnotation[c(1,3),]
@@ -513,7 +520,7 @@ test_that('serial and parallel (with cluster reset) give the same result: 3 file
   noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation  <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR)
+  initAnnotation  <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # results
   result_serial   <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=TRUE, verbose=TRUE))
@@ -530,7 +537,7 @@ test_that('serial and parallel (without cluster reset) give the same result: 3 f
   noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation  <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR)
+  initAnnotation  <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
   
   # results
   result_serial   <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=TRUE, verbose=TRUE))
@@ -547,7 +554,7 @@ test_that('change to resetWorkers alters the number of parallel cluster reset', 
   noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
   
   # Expected annotation
   expected_annotation             <- initAnnotation[c(1,3),]
@@ -598,7 +605,7 @@ test_that('already annotated message in verbose', {
   noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
   
   # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, isAnnotated=TRUE)
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, isAnnotated=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
   
   # Expected annotation
   expected_annotation             <- initAnnotation[c(1,3),]
@@ -643,7 +650,7 @@ test_that('already annotated message in verbose', {
 test_that('catch file that doesnt exist, catch error processing, no file left', {
   # Object fully initialised
   wrongPaths      <- c("aaa/bbb.cdf", system.file("testdata/test_fakemzML.mzML", package = "peakPantheR"))
-  initAnnotation  <- peakPantheRAnnotation(spectraPaths=wrongPaths, targetFeatTable=input_targetFeatTable)
+  initAnnotation  <- peakPantheRAnnotation(spectraPaths=wrongPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Expected annotation
   expected_annotation             <- initAnnotation[c(FALSE, FALSE),]

@@ -30,6 +30,12 @@ input_uROI[2,]  <- c(15., 16., 17., 18., 19., 20.)
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
+# cpdMetadata
+input_cpdMetadata     <- data.frame(matrix(data=c('a','b',1,2), nrow=2, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
+# spectraMetadata
+input_spectraMetadata <- data.frame(matrix(data=c('c','d','e',3,4,5), nrow=3, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
 # acquisitionTime
 input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
 
@@ -82,7 +88,7 @@ ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTabl
 input_dataPoints  <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
 
 test_that('default diagnostic plots, no sampleColour, default sampling, verbose/no verbose', {

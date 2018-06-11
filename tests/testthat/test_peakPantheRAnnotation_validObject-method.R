@@ -20,6 +20,12 @@ input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.nume
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
+# cpdMetadata
+input_cpdMetadata     <- data.frame(matrix(data=c('a','b',1,2), nrow=2, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
+# spectraMetadata
+input_spectraMetadata <- data.frame(matrix(data=c('c','d','e',3,4,5), nrow=3, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
 # acquisitionTime
 input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
 
@@ -76,7 +82,7 @@ defaultInit_empty       <- peakPantheRAnnotation()
 # Object, init samples and compounds
 defaultInit_cpd_spectra <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
 
 test_that('initialised objects are valid', {
@@ -333,8 +339,20 @@ test_that('validObject() raises errors', {
   msg46                 <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit[[1]] contains, 1 peakPantheR_curveFit or NA (compound). Should be 2', sep='')
   expect_error(validObject(wrong46), msg46, fixed=TRUE)
   # individual dataPoints compound entry is peakPantheR_curveFit or NA
-  wrong47                    <- filledAnnotation
-  wrong47@peakFit[[1]][[1]]  <- "not a peakPantheR_curveFit or NA"
-  msg47                         <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit[[1]][[1]] must be NA or a peakPantheR_curveFit, not character', sep='')
+  wrong47                   <- filledAnnotation
+  wrong47@peakFit[[1]][[1]] <- "not a peakPantheR_curveFit or NA"
+  msg47                     <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: peakFit[[1]][[1]] must be NA or a peakPantheR_curveFit, not character', sep='')
   expect_error(validObject(wrong47), msg47, fixed=TRUE)
+  
+  # number of cpdMetadata compounds (rows)
+  wrong28             <- filledAnnotation
+  wrong28@cpdMetadata <- filledAnnotation@cpdMetadata[c(1,2,1),]
+  msg28               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: cpdMetadata has 3 rows (compounds). Should be 2', sep='')
+  expect_error(validObject(wrong28), msg28, fixed=TRUE)
+  
+  # number of spectraMetadata spectra (rows)
+  wrong29                 <- filledAnnotation
+  wrong29@spectraMetadata <- filledAnnotation@spectraMetadata[c(1,2),]
+  msg29                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: spectraMetadata has 2 rows (spectra). Should be 3', sep='')
+  expect_error(validObject(wrong29), msg29, fixed=TRUE)
 })
