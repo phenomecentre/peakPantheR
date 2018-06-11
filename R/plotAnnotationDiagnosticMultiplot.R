@@ -15,7 +15,7 @@ annotationDiagnosticMultiplot   <- function(annotationDiagnosticPlotList) {
   for (cpd in 1:nbCpd) {
     
     ## Check input
-    if (!all(c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram") %in% names(annotationDiagnosticPlotList[[cpd]]))) {
+    if (!all(c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram", "title") %in% names(annotationDiagnosticPlotList[[cpd]]))) {
       # cannot generate multiplot, pass to next compound
       message('Required plots missing for compound #',cpd)
       outList[[cpd]]  <- NULL
@@ -83,19 +83,20 @@ annotationDiagnosticMultiplot   <- function(annotationDiagnosticPlotList) {
     p_areaHisto$widths[2:3]         <- maxHeight
     
     ## Generate and store multiplot
-    outList[[cpd]]  <-gridExtra::grid.arrange(p_EIC,
-                                              p_rtPeakwidthVert, 
-                                              p_rtPeakwidthHorz, p_rtHisto,
-                                              p_mzPeakwidthHorz, p_mzHisto,
-                                              p_peakAreaHorz, p_areaHisto, 
-                                              widths = c(6, 1),
-                                              heights = c(100, 45, 30, 30, 30, 14),
-                                              layout_matrix = rbind(c(1, 1),
-                                                                    c(2, 2),
-                                                                    c(3, 4),
-                                                                    c(5, 6),
-                                                                    c(7, 8),
-                                                                    c(7, 9)))
+    outList[[cpd]] <-gridExtra::grid.arrange(p_EIC,
+                                             p_rtPeakwidthVert, 
+                                             p_rtPeakwidthHorz, p_rtHisto,
+                                             p_mzPeakwidthHorz, p_mzHisto,
+                                             p_peakAreaHorz, p_areaHisto, 
+                                             widths = c(6, 1),
+                                             heights = c(100, 45, 30, 30, 30, 14),
+                                             layout_matrix = rbind(c(1, 1),
+                                                                   c(2, 2),
+                                                                   c(3, 4),
+                                                                   c(5, 6),
+                                                                   c(7, 8),
+                                                                   c(7, 9)),
+                                             top = annotationDiagnosticPlotList[[cpd]]$title)
   }
   return(outList)
 }

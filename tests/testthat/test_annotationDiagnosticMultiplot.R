@@ -155,7 +155,8 @@ input_annotationDiagnosticPlotList <- list(list(EICFit = expected_EICFit1,
                                                 areaRunOrder = expected_areaRunOrder1,
                                                 rtHistogram = expected_rtHistogram1,
                                                 mzHistogram = expected_mzHistogram1,
-                                                areaHistogram = expected_areaHistogram1),
+                                                areaHistogram = expected_areaHistogram1,
+                                                title = 'test compound 1'),
                                            list(EICFit = expected_EICFit2, 
                                                 rtPeakwidthVert = expected_rtPeakwidthVert2, 
                                                 rtPeakwidthHorzRunOrder = expected_rtPeakwidthHorzRunOrder2,
@@ -163,7 +164,8 @@ input_annotationDiagnosticPlotList <- list(list(EICFit = expected_EICFit1,
                                                 areaRunOrder = expected_areaRunOrder2,
                                                 rtHistogram = expected_rtHistogram2,
                                                 mzHistogram = expected_mzHistogram2,
-                                                areaHistogram = expected_areaHistogram2))
+                                                areaHistogram = expected_areaHistogram2,
+                                                title = 'test compound 2'))
 
 
 
@@ -179,9 +181,9 @@ test_that('default multiplot', {
   # Check plots generated
   expect_equal(length(result_multiplot$result), 2)
   expect_equal(sort(class(result_multiplot$result[[1]])), gtable_class)
-  expect_equal(length(result_multiplot$result[[1]]), 8)
+  expect_equal(length(result_multiplot$result[[1]]), 9)
   expect_equal(sort(class(result_multiplot$result[[2]])), gtable_class)
-  expect_equal(length(result_multiplot$result[[2]]), 8)
+  expect_equal(length(result_multiplot$result[[2]]), 9)
 })
 
 test_that('raise warnings/error', {
@@ -191,30 +193,30 @@ test_that('raise warnings/error', {
   
   # missing EICFit for cpd 1
   input_missEICFit      <- input_annotationDiagnosticPlotList
-  input_missEICFit[[1]] <- input_missEICFit[[1]][c("rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram")]
+  input_missEICFit[[1]] <- input_missEICFit[[1]][c("rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram", "title")]
   result_warn1          <- evaluate_promise(annotationDiagnosticMultiplot(input_missEICFit))
   expect_equal(result_warn1$message[[1]], expected_message)
   expect_equal(result_warn1$result[[1]], NULL)
   expect_equal(sort(class(result_warn1$result[[2]])), gtable_class)
-  expect_equal(length(result_warn1$result[[2]]), 8)
+  expect_equal(length(result_warn1$result[[2]]), 9)
   
   # missing rtPeakwidthVert for cpd 1
   input_missrtPeakwidthVert       <- input_annotationDiagnosticPlotList
-  input_missrtPeakwidthVert[[1]]  <- input_missrtPeakwidthVert[[1]][c("EICFit", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram")]
+  input_missrtPeakwidthVert[[1]]  <- input_missrtPeakwidthVert[[1]][c("EICFit", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram", "title")]
   result_warn2                    <- evaluate_promise(annotationDiagnosticMultiplot(input_missrtPeakwidthVert))
   expect_equal(result_warn2$message[[1]], expected_message)
   expect_equal(result_warn2$result[[1]], NULL)
   expect_equal(sort(class(result_warn2$result[[2]])), gtable_class)
-  expect_equal(length(result_warn2$result[[2]]), 8)
+  expect_equal(length(result_warn2$result[[2]]), 9)
   
   # missing rtPeakwidthHorzRunOrder for cpd 1
   input_missrtPeakwidthHorzRunOrder       <- input_annotationDiagnosticPlotList
-  input_missrtPeakwidthHorzRunOrder[[1]]  <- input_missrtPeakwidthHorzRunOrder[[1]][c("EICFit", "rtPeakwidthVert", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram")]
+  input_missrtPeakwidthHorzRunOrder[[1]]  <- input_missrtPeakwidthHorzRunOrder[[1]][c("EICFit", "rtPeakwidthVert", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram", "title")]
   result_warn3                            <- evaluate_promise(annotationDiagnosticMultiplot(input_missrtPeakwidthHorzRunOrder))
   expect_equal(result_warn3$message[[1]], expected_message)
   expect_equal(result_warn3$result[[1]], NULL)
   expect_equal(sort(class(result_warn3$result[[2]])), gtable_class)
-  expect_equal(length(result_warn3$result[[2]]), 8)
+  expect_equal(length(result_warn3$result[[2]]), 9)
   
   # missing mzPeakwidthHorzRunOrder for cpd 1
   input_missmzPeakwidthHorzRunOrder       <- input_annotationDiagnosticPlotList
@@ -223,41 +225,50 @@ test_that('raise warnings/error', {
   expect_equal(result_warn4$message[[1]], expected_message)
   expect_equal(result_warn4$result[[1]], NULL)
   expect_equal(sort(class(result_warn4$result[[2]])), gtable_class)
-  expect_equal(length(result_warn4$result[[2]]), 8)
+  expect_equal(length(result_warn4$result[[2]]), 9)
   
   # missing areaRunOrder for cpd 1
   input_missareaRunOrder      <- input_annotationDiagnosticPlotList
-  input_missareaRunOrder[[1]] <- input_missareaRunOrder[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "rtHistogram", "mzHistogram", "areaHistogram")]
+  input_missareaRunOrder[[1]] <- input_missareaRunOrder[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "rtHistogram", "mzHistogram", "areaHistogram", "title")]
   result_warn5                <- evaluate_promise(annotationDiagnosticMultiplot(input_missareaRunOrder))
   expect_equal(result_warn5$message[[1]], expected_message)
   expect_equal(result_warn5$result[[1]], NULL)
   expect_equal(sort(class(result_warn5$result[[2]])), gtable_class)
-  expect_equal(length(result_warn5$result[[2]]), 8)
+  expect_equal(length(result_warn5$result[[2]]), 9)
   
   # missing rtHistogram for cpd 1
   input_missrtHistogram      <- input_annotationDiagnosticPlotList
-  input_missrtHistogram[[1]] <- input_missrtHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "mzHistogram", "areaHistogram")]
+  input_missrtHistogram[[1]] <- input_missrtHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "mzHistogram", "areaHistogram", "title")]
   result_warn6                <- evaluate_promise(annotationDiagnosticMultiplot(input_missrtHistogram))
   expect_equal(result_warn6$message[[1]], expected_message)
   expect_equal(result_warn6$result[[1]], NULL)
   expect_equal(sort(class(result_warn6$result[[2]])), gtable_class)
-  expect_equal(length(result_warn6$result[[2]]), 8)
+  expect_equal(length(result_warn6$result[[2]]), 9)
   
   # missing mzHistogram for cpd 1
   input_missmzHistogram      <- input_annotationDiagnosticPlotList
-  input_missmzHistogram[[1]] <- input_missmzHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "areaHistogram")]
+  input_missmzHistogram[[1]] <- input_missmzHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "areaHistogram", "title")]
   result_warn7                <- evaluate_promise(annotationDiagnosticMultiplot(input_missmzHistogram))
   expect_equal(result_warn7$message[[1]], expected_message)
   expect_equal(result_warn7$result[[1]], NULL)
   expect_equal(sort(class(result_warn7$result[[2]])), gtable_class)
-  expect_equal(length(result_warn7$result[[2]]), 8)
+  expect_equal(length(result_warn7$result[[2]]), 9)
   
   # missing areaHistogram for cpd 1
   input_missareaHistogram      <- input_annotationDiagnosticPlotList
-  input_missareaHistogram[[1]] <- input_missareaHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram")]
+  input_missareaHistogram[[1]] <- input_missareaHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "title")]
   result_warn8                <- evaluate_promise(annotationDiagnosticMultiplot(input_missareaHistogram))
   expect_equal(result_warn8$message[[1]], expected_message)
   expect_equal(result_warn8$result[[1]], NULL)
   expect_equal(sort(class(result_warn8$result[[2]])), gtable_class)
-  expect_equal(length(result_warn8$result[[2]]), 8)
+  expect_equal(length(result_warn8$result[[2]]), 9)
+  
+  # missing title for cpd 1
+  input_missareaHistogram      <- input_annotationDiagnosticPlotList
+  input_missareaHistogram[[1]] <- input_missareaHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram")]
+  result_warn8                <- evaluate_promise(annotationDiagnosticMultiplot(input_missareaHistogram))
+  expect_equal(result_warn8$message[[1]], expected_message)
+  expect_equal(result_warn8$result[[1]], NULL)
+  expect_equal(sort(class(result_warn8$result[[2]])), gtable_class)
+  expect_equal(length(result_warn8$result[[2]]), 9)
 })

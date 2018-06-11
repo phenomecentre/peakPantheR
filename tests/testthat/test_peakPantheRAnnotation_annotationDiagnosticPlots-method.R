@@ -128,7 +128,7 @@ test_that('default diagnostic plots, no sampleColour, default sampling, verbose/
                                            verbose = FALSE)
   # message
   expected_message        <- c("Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 1/2 done\n", "Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 2/2 done\n")
-  expected_plotNames      <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram')
+  expected_plotNames      <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram', 'title')
   
   # results (output, warnings and messages)
   result_diagnosticPlot1  <- evaluate_promise(annotationDiagnosticPlots(input_annotation, sampleColour=NULL, sampling=250, verbose=TRUE))
@@ -137,22 +137,24 @@ test_that('default diagnostic plots, no sampleColour, default sampling, verbose/
   # Check plots generated
   # verbose
   expect_equal(length(result_diagnosticPlot1$result), 2)
-  expect_equal(length(result_diagnosticPlot1$result[[1]]), 8)
+  expect_equal(length(result_diagnosticPlot1$result[[1]]), 9)
   expect_equal(names(result_diagnosticPlot1$result[[1]]), expected_plotNames)
-  expect_equal(length(result_diagnosticPlot1$result[[2]]), 8)
+  expect_equal(length(result_diagnosticPlot1$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot1$result[[2]]), expected_plotNames)
   expect_equal(result_diagnosticPlot1$result[[2]]$EICFit, expected_EICFit2v)
   expect_equal(result_diagnosticPlot1$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2v)
   expect_equal(result_diagnosticPlot1$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot1$result[[2]]$title, 'ID-2 - Cpd 2')
   # no verbose
   expect_equal(length(result_diagnosticPlot2$result), 2)
-  expect_equal(length(result_diagnosticPlot2$result[[1]]), 8)
+  expect_equal(length(result_diagnosticPlot2$result[[1]]), 9)
   expect_equal(names(result_diagnosticPlot2$result[[1]]), expected_plotNames)
-  expect_equal(length(result_diagnosticPlot2$result[[2]]), 8)
+  expect_equal(length(result_diagnosticPlot2$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot2$result[[2]]), expected_plotNames)
   expect_equal(result_diagnosticPlot2$result[[2]]$EICFit, expected_EICFit2nv)
   expect_equal(result_diagnosticPlot2$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2nv)
   expect_equal(result_diagnosticPlot2$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot2$result[[2]]$title, 'ID-2 - Cpd 2')
   
   # Check result messages
   # verbose
@@ -206,7 +208,7 @@ test_that('default diagnostic plots, set sampleColour, change sampling, verbose/
                                            verbose = FALSE)
   # message
   expected_message        <- c("Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 1/2 done\n", "Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 2/2 done\n")
-  expected_plotNames      <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram')
+  expected_plotNames      <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram', 'title')
   
   # results (output, warnings and messages)
   result_diagnosticPlot1  <- evaluate_promise(annotationDiagnosticPlots(input_annotation, sampleColour=input_colour, sampling=10, verbose=TRUE))
@@ -215,22 +217,24 @@ test_that('default diagnostic plots, set sampleColour, change sampling, verbose/
   # Check plots generated
   # verbose
   expect_equal(length(result_diagnosticPlot1$result), 2)
-  expect_equal(length(result_diagnosticPlot1$result[[1]]), 8)
+  expect_equal(length(result_diagnosticPlot1$result[[1]]), 9)
   expect_equal(names(result_diagnosticPlot1$result[[1]]), expected_plotNames)
-  expect_equal(length(result_diagnosticPlot1$result[[2]]), 8)
+  expect_equal(length(result_diagnosticPlot1$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot1$result[[2]]), expected_plotNames)
   expect_equal(result_diagnosticPlot1$result[[2]]$EICFit, expected_EICFit2v)
   expect_equal(result_diagnosticPlot1$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2v)
   expect_equal(result_diagnosticPlot1$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot1$result[[2]]$title, 'ID-2 - Cpd 2')
   # no verbose
   expect_equal(length(result_diagnosticPlot2$result), 2)
-  expect_equal(length(result_diagnosticPlot2$result[[1]]), 8)
+  expect_equal(length(result_diagnosticPlot2$result[[1]]), 9)
   expect_equal(names(result_diagnosticPlot2$result[[1]]), expected_plotNames)
-  expect_equal(length(result_diagnosticPlot2$result[[2]]), 8)
+  expect_equal(length(result_diagnosticPlot2$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot2$result[[2]]), expected_plotNames)
   expect_equal(result_diagnosticPlot2$result[[2]]$EICFit, expected_EICFit2nv)
   expect_equal(result_diagnosticPlot2$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2nv)
   expect_equal(result_diagnosticPlot2$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot2$result[[2]]$title, 'ID-2 - Cpd 2')
   
   # Check result messages
   # verbose

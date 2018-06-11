@@ -607,7 +607,7 @@ setGeneric("annotationDiagnosticPlots", function(object, sampleColour=NULL, samp
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param sampling (int) Number of points to employ when plotting fittedCurve
 #' @param verbose (bool) if TRUE message the plot generation progress
-#' @return A list (one list per compound) of diagnostic plots: \code{result[[i]]$EICFit}, \code{result[[i]]$rtPeakwidthVert}, \code{result[[i]]$rtPeakwidthHorzRunOrder}, \code{result[[i]]$mzPeakwidthHorzRunOrder}, \code{result[[i]]$areaRunOrder}, \code{result[[i]]$rtHistogram}, \code{result[[i]]$mzHistogram}, \code{result[[i]]$areaHistogram}
+#' @return A list (one list per compound) of diagnostic plots: \code{result[[i]]$EICFit}, \code{result[[i]]$rtPeakwidthVert}, \code{result[[i]]$rtPeakwidthHorzRunOrder}, \code{result[[i]]$mzPeakwidthHorzRunOrder}, \code{result[[i]]$areaRunOrder}, \code{result[[i]]$rtHistogram}, \code{result[[i]]$mzHistogram}, \code{result[[i]]$areaHistogram}, \code{result[[i]]$title}
 #' @docType methods
 #' @aliases annotationDiagnosticPlots
 setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
@@ -625,9 +625,11 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
             # Iterate over compounds
             for (cpd in 1:nbCpd) {
               tmp_annotation      <- object[,cpd]
-              tmp_plotList        <- vector("list", 8)
-              names(tmp_plotList) <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram')
+              tmp_plotList        <- vector("list", 9)
+              names(tmp_plotList) <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram', 'title')
               
+              # title
+              tmp_plotList$title                    <- paste(cpdID(tmp_annotation), '-', cpdName(tmp_annotation))
               # plotEICFit
               tmp_plotList$EICFit                   <- plotEICFit(ROIDataPointSampleList = unlist(dataPoints(tmp_annotation), recursive=FALSE),
                                                                   curveFitSampleList = unlist(peakFit(tmp_annotation), recursive=FALSE),
