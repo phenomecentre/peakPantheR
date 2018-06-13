@@ -46,7 +46,7 @@ Real time compound integration is set to:
 
 We can target two features in a MS spectra file from the _`faahKO`_ package with `peakPantheR_singleFileSearch()`:
 
-#### Input Data
+### Input Data
 
 An input spectra is selected:
 ```{r, echo = FALSE, include = FALSE}
@@ -75,20 +75,20 @@ Two targeed features are defined and stored in a table with as columns:
 ```{r, eval = FALSE}
 # targetFeatTable
 input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 ```
 ```{r, results = "asis", echo = FALSE}
 input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 rownames(input_targetFeatTable) <- NULL
 pander::pandoc.table(input_targetFeatTable, digits = 9)
 ```
 
-#### Run Single File Annotation
+### Run Single File Annotation
 
 `peakPantheR_singleFileSearch()` takes as input a `singleSpectraDataPath` pointing to the file to process and `targetFeatTable` defining the compounds to integrate:
 ```{r}

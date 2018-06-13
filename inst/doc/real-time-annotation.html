@@ -102,8 +102,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="real-time-annotation-example" class="section level2">
 <h2>Real Time Annotation Example</h2>
 <p>We can target two features in a MS spectra file from the <em><code>faahKO</code></em> package with <code>peakPantheR_singleFileSearch()</code>:</p>
-<div id="input-data" class="section level4">
-<h4>Input Data</h4>
+<div id="input-data" class="section level3">
+<h3>Input Data</h3>
 <p>An input spectra is selected:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(faahKO)
 ## file paths
@@ -123,9 +123,9 @@ input_spectraPath
 </ul>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># targetFeatTable</span>
 input_targetFeatTable     &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="kw">vector</span>(), <span class="dv">2</span>, <span class="dv">8</span>, <span class="dt">dimnames=</span><span class="kw">list</span>(<span class="kw">c</span>(), <span class="kw">c</span>(<span class="st">&quot;cpdID&quot;</span>, <span class="st">&quot;cpdName&quot;</span>, <span class="st">&quot;rtMin&quot;</span>, <span class="st">&quot;rt&quot;</span>, <span class="st">&quot;rtMax&quot;</span>, <span class="st">&quot;mzMin&quot;</span>, <span class="st">&quot;mz&quot;</span>, <span class="st">&quot;mzMax&quot;</span>))), <span class="dt">stringsAsFactors=</span>F)
-input_targetFeatTable[<span class="dv">1</span>,] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="st">&quot;Cpd 1&quot;</span>, <span class="dv">3310</span>., <span class="fl">3344.888</span>, <span class="dv">3390</span>., <span class="fl">522.194778</span>, <span class="fl">522.2</span>, <span class="fl">522.205222</span>)
-input_targetFeatTable[<span class="dv">2</span>,] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>, <span class="st">&quot;Cpd 2&quot;</span>, <span class="dv">3280</span>., <span class="fl">3385.577</span>, <span class="dv">3440</span>., <span class="fl">496.195038</span>, <span class="fl">496.2</span>, <span class="fl">496.204962</span>)
-input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">8</span>)] &lt;-<span class="st"> </span><span class="kw">sapply</span>(input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">8</span>)], as.numeric)</code></pre></div>
+input_targetFeatTable[<span class="dv">1</span>,] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ID-1&quot;</span>, <span class="st">&quot;Cpd 1&quot;</span>, <span class="dv">3310</span>., <span class="fl">3344.888</span>, <span class="dv">3390</span>., <span class="fl">522.194778</span>, <span class="fl">522.2</span>, <span class="fl">522.205222</span>)
+input_targetFeatTable[<span class="dv">2</span>,] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;ID-2&quot;</span>, <span class="st">&quot;Cpd 2&quot;</span>, <span class="dv">3280</span>., <span class="fl">3385.577</span>, <span class="dv">3440</span>., <span class="fl">496.195038</span>, <span class="fl">496.2</span>, <span class="fl">496.204962</span>)
+input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">8</span>)] &lt;-<span class="st"> </span><span class="kw">sapply</span>(input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">8</span>)], as.numeric)</code></pre></div>
 <table style="width:100%;">
 <colgroup>
 <col width="10%"></col>
@@ -151,7 +151,7 @@ input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">1</span>,<span
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center">1</td>
+<td align="center">ID-1</td>
 <td align="center">Cpd 1</td>
 <td align="center">3310</td>
 <td align="center">3344.888</td>
@@ -161,7 +161,7 @@ input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">1</span>,<span
 <td align="center">522.205222</td>
 </tr>
 <tr class="even">
-<td align="center">2</td>
+<td align="center">ID-2</td>
 <td align="center">Cpd 2</td>
 <td align="center">3280</td>
 <td align="center">3385.577</td>
@@ -173,8 +173,8 @@ input_targetFeatTable[,<span class="kw">c</span>(<span class="dv">1</span>,<span
 </tbody>
 </table>
 </div>
-<div id="run-single-file-annotation" class="section level4">
-<h4>Run Single File Annotation</h4>
+<div id="run-single-file-annotation" class="section level3">
+<h3>Run Single File Annotation</h3>
 <p><code>peakPantheR_singleFileSearch()</code> takes as input a <code>singleSpectraDataPath</code> pointing to the file to process and <code>targetFeatTable</code> defining the compounds to integrate:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(peakPantheR)
 annotation &lt;-<span class="st"> </span><span class="kw">peakPantheR_singleFileSearch</span>(<span class="dt">singleSpectraDataPath =</span> input_spectraPath,
@@ -183,11 +183,11 @@ annotation &lt;-<span class="st"> </span><span class="kw">peakPantheR_singleFile
                                            <span class="dt">verbose =</span> <span class="ot">TRUE</span>)
 <span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
 <span class="co">#&gt; Reading data from 2 windows</span>
-<span class="co">#&gt; Data read in: 0.52 secs</span>
+<span class="co">#&gt; Data read in: 0.47 secs</span>
 <span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span>
-<span class="co">#&gt; Found 2/2 features in 0.09 secs</span>
-<span class="co">#&gt; Peak statistics done in: 0.03 secs</span>
-<span class="co">#&gt; Feature search done in: 1.04 secs</span></code></pre></div>
+<span class="co">#&gt; Found 2/2 features in 0.05 secs</span>
+<span class="co">#&gt; Peak statistics done in: 0 secs</span>
+<span class="co">#&gt; Feature search done in: 0.85 secs</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>TIC
 <span class="co">#&gt; [1] 2410533091</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">annotation<span class="op">$</span>acquTime
@@ -261,7 +261,7 @@ annotation &lt;-<span class="st"> </span><span class="kw">peakPantheR_singleFile
 <td align="center">26133727</td>
 <td align="center">889280</td>
 <td align="center">901015.8</td>
-<td align="center">1</td>
+<td align="center">ID-1</td>
 <td align="center">Cpd 1</td>
 <td align="center">FALSE</td>
 </tr>
@@ -269,7 +269,7 @@ annotation &lt;-<span class="st"> </span><span class="kw">peakPantheR_singleFile
 <td align="center">35472141</td>
 <td align="center">1128960</td>
 <td align="center">1113577</td>
-<td align="center">2</td>
+<td align="center">ID-2</td>
 <td align="center">Cpd 2</td>
 <td align="center">FALSE</td>
 </tr>

@@ -411,12 +411,12 @@ setMethod("[", "peakPantheRAnnotation",
             ## sub-setting
             .cpdID            <- x@cpdID[j]
             .cpdName          <- x@cpdName[j]
-            .ROI              <- x@ROI[j,]
-            .FIR              <- x@FIR[j,]
-            .uROI             <- x@uROI[j,]
+            .ROI              <- x@ROI[j, ,drop=FALSE]
+            .FIR              <- x@FIR[j, ,drop=FALSE]
+            .uROI             <- x@uROI[j, ,drop=FALSE]
             .filepath         <- x@filepath[i]
-            .cpdMetadata      <- x@cpdMetadata[j,]
-            .spectraMetadata  <- x@spectraMetadata[i,]
+            .cpdMetadata      <- x@cpdMetadata[j, ,drop=FALSE]
+            .spectraMetadata  <- x@spectraMetadata[i, ,drop=FALSE]
             .acquisitionTime  <- x@acquisitionTime[i]
             .uROIExist        <- x@uROIExist
             .useUROI          <- x@useUROI
@@ -598,7 +598,6 @@ setGeneric("outputAnnotationParamsCSV", function(object, saveFolder, verbose=TRU
 #' @return None
 #' @docType methods
 #' @aliases outputAnnotationParamsCSV
-#' @export
 setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
           function(object, saveFolder, verbose) {
             # create table  
