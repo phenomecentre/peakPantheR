@@ -207,3 +207,11 @@ test_that('csv output, verbose, no verbose', {
   result_save2    <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath2, annotationName='testProject', verbose=FALSE))
   expect_equal(length(result_save2$messages), 0)
 })
+
+test_that('raise error', {
+  # error if object is not annotated
+  savePath1         <- tempdir()
+  input_annotation  <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
+  msg1              <- 'Object has not been annotated, no annotation results to save'
+  expect_error(outputAnnotationResult(input_annotation, saveFolder=savePath1), msg1, fixed=TRUE)
+})

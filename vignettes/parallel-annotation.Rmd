@@ -249,7 +249,7 @@ pander::pandoc.table(new_spectraMetadata)
 ```
 
 ```{r, echo=FALSE}
-new_annotation <- resetAnnotation(updated_annotation, spectraPaths=new_spectraPaths, spectraMetadata=new_spectraMetadata, useUROI=TRUE, useFIR=TRUE) 
+new_annotation <- resetAnnotation(updated_annotation, spectraPaths=new_spectraPaths, spectraMetadata=new_spectraMetadata, useUROI=TRUE, useFIR=TRUE, verbose=FALSE) 
 ```
 
 ```{r, eval=FALSE}
@@ -318,7 +318,7 @@ annotationTable(final_annotation, column='peakArea')
 pander::pandoc.table(annotationTable(final_annotation, column='peakArea'))
 ```
 
-Finnaly all annotation results can be saved to disk as `.csv` with `outputAnnotationResult()`. These `.csv` will contain the compound metadata, spectra metadata and a file for each column of peakTables (with samples as rows and compounds as columns:
+Finally all annotation results can be saved to disk as `.csv` with `outputAnnotationResult()`. These `.csv` will contain the compound metadata, spectra metadata and a file for each column of peakTables (with samples as rows and compounds as columns):
 
 ```{r, eval=FALSE}
 # save

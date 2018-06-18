@@ -244,34 +244,34 @@ annotation_result &lt;-<span class="st"> </span><span class="kw">peakPantheR_par
 <span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
 <span class="co">#&gt; Check input, mzMLPath must be a .mzML</span>
 <span class="co">#&gt; Reading data from 2 windows</span>
-<span class="co">#&gt; Data read in: 0.51 secs</span>
+<span class="co">#&gt; Data read in: 0.55 secs</span>
 <span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span>
 <span class="co">#&gt; Found 2/2 features in 0.04 secs</span>
 <span class="co">#&gt; Peak statistics done in: 0 secs</span>
-<span class="co">#&gt; Feature search done in: 0.96 secs</span>
+<span class="co">#&gt; Feature search done in: 1.01 secs</span>
 <span class="co">#&gt; ----- ko16 -----</span>
 <span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
 <span class="co">#&gt; Check input, mzMLPath must be a .mzML</span>
 <span class="co">#&gt; Reading data from 2 windows</span>
-<span class="co">#&gt; Data read in: 0.5 secs</span>
+<span class="co">#&gt; Data read in: 0.54 secs</span>
 <span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span>
 <span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2</span>
 <span class="co">#&gt; Found 2/2 features in 0.04 secs</span>
 <span class="co">#&gt; Peak statistics done in: 0 secs</span>
-<span class="co">#&gt; Feature search done in: 1.2 secs</span>
+<span class="co">#&gt; Feature search done in: 0.95 secs</span>
 <span class="co">#&gt; ----- ko18 -----</span>
 <span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span>
 <span class="co">#&gt; Check input, mzMLPath must be a .mzML</span>
 <span class="co">#&gt; Reading data from 2 windows</span>
-<span class="co">#&gt; Data read in: 0.48 secs</span>
+<span class="co">#&gt; Data read in: 0.52 secs</span>
 <span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span>
 <span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2</span>
 <span class="co">#&gt; Found 2/2 features in 0.04 secs</span>
 <span class="co">#&gt; Peak statistics done in: 0 secs</span>
-<span class="co">#&gt; Feature search done in: 0.87 secs</span>
+<span class="co">#&gt; Feature search done in: 0.94 secs</span>
 <span class="co">#&gt; Annotation object cannot be reordered by sample acquisition date</span>
 <span class="co">#&gt; ----------------</span>
-<span class="co">#&gt; Parallel annotation done in: 4.02 secs</span>
+<span class="co">#&gt; Parallel annotation done in: 3.95 secs</span>
 <span class="co">#&gt;   0 failure(s)</span>
 
 <span class="co"># successful fit</span>
@@ -520,16 +520,6 @@ new_spectraMetadata  &lt;-<span class="st"> </span><span class="kw">data.frame</
 </tr>
 </tbody>
 </table>
-<pre><code>#&gt; peakPantheRAnnotation object being reset:
-#&gt;   Previous &quot;ROI&quot;, &quot;cpdID&quot; and &quot;cpdName&quot; value kept
-#&gt;   Previous &quot;uROI&quot; value kept
-#&gt;   Previous &quot;FIR&quot; value kept
-#&gt;   Previous &quot;cpdMetadata&quot; value kept
-#&gt;   New &quot;spectraPaths&quot; value set
-#&gt;   New &quot;spectraMetadata&quot; value set
-#&gt;   Previous &quot;uROIExist&quot; value kept
-#&gt;   New &quot;useUROI&quot; value set
-#&gt;   New &quot;useFIR&quot; value set</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## add new samples to the annotation loaded from csv, useUROI, useFIR
 
 new_annotation &lt;-<span class="st"> </span><span class="kw">resetAnnotation</span>(new_annotation, <span class="dt">spectraPaths=</span>new_spectraPaths, <span class="dt">spectraMetadata=</span>new_spectraMetadata, <span class="dt">useUROI=</span><span class="ot">TRUE</span>, <span class="dt">useFIR=</span><span class="ot">TRUE</span>)
@@ -753,7 +743,7 @@ col_group  &lt;-<span class="st"> </span><span class="kw">unname</span>( <span c
 </tr>
 </tbody>
 </table>
-<p>Finnaly all annotation results can be saved to disk as <code>.csv</code> with <code>outputAnnotationResult()</code>. These <code>.csv</code> will contain the compound metadata, spectra metadata and a file for each column of peakTables (with samples as rows and compounds as columns:</p>
+<p>Finally all annotation results can be saved to disk as <code>.csv</code> with <code>outputAnnotationResult()</code>. These <code>.csv</code> will contain the compound metadata, spectra metadata and a file for each column of peakTables (with samples as rows and compounds as columns):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># save</span>
 <span class="kw">outputAnnotationResult</span>(final_annotation, <span class="dt">saveFolder=</span><span class="st">'/final_output_folder/'</span>, <span class="dt">annotationName=</span><span class="st">'ProjectName'</span>, <span class="dt">verbose=</span><span class="ot">TRUE</span>)
 <span class="co">#&gt; Compound metadata saved at /final_output_folder/ProjectName_cpdMetadata.csv</span>
