@@ -150,7 +150,7 @@ test_that('rtMin rtMax cannot be found, fit is rejected, verbose', {
   # results (output, warnings and messages)
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
-  # Check result table only (fit values to not match exactly on Linux)
+  # Check result table only
   expect_equal(result_foundPeaks$result, expected_foundPeaks)
   
   # Check result messages
@@ -180,12 +180,12 @@ test_that('mz cannot be calculated, fit is rejected, verbose', {
   expected_foundPeaks <- list(peakTable=expected_peakTable, curveFit=list(cFit))
   
   # expected messages
-  expected_messages   <- c("Warning: rtMax cannot be determined for ROI #1\n", "Fit of ROI #1 is unsuccessful (cannot determine rtMin/rtMax)\n")
+  expected_messages   <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #1 is unsuccessful (cannot determine mz/mzMin/mzMax)\n")
   
   # results (output, warnings and messages)
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
-  # Check result table only (fit values to not match exactly on Linux)
+  # Check result table only
   expect_equal(result_foundPeaks$result, expected_foundPeaks)
   
   # Check result messages
@@ -195,20 +195,64 @@ test_that('mz cannot be calculated, fit is rejected, verbose', {
 
 # No other curveModel currently available
 
+test_that('ratio of fit residuals at apex or across maximum is superior to "maxApexResidualRatio", fit is rejected, verbose', {
+  # Cpd3 fit fails, detected using the apex residuals ratio
+  # Need another sample, same ROI
+  
+  ## Prepare data
+  tmp_singleSpectraDataPath <- system.file('cdf/KO/ko18.CDF', package = "faahKO")
+  tmp_raw_data  						<- MSnbase::readMSData(tmp_singleSpectraDataPath, centroided=TRUE, mode='onDisk')
+  # ROIDataPoints for each window
+  tmp_input_ROIsDataPoints  <- extractSignalRawData(tmp_raw_data, rt=input_ROI[,c('rtMin','rtMax')], mz=input_ROI[,c('mzMin','mzMax')], verbose=F)
+  # found peaks
+  tmp_found_peakTable                 <- data.frame(matrix(vector(), 4, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+  tmp_found_peakTable[1,]             <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633)
+  tmp_found_peakTable[2,]             <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249)
+  tmp_found_peakTable[3,]             <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+  tmp_found_peakTable[4,]             <- c(TRUE, 3672.3110625980275, 3714.088, 3761.43921706666, 536.194638, 536.20001220703125, 536.205362, 6467062.4309558524, 196160, 189416.24807174454)
+  tmp_found_peakTable[,c(1)]       <- sapply(tmp_found_peakTable[,c(1)], as.logical)
+  tmp_found_peakTable[,c(2:10)] <- sapply(tmp_found_peakTable[,c(2:10)], as.numeric)
+  # fit
+  tmp_cFit1           <- list(amplitude=122363.51256736703, center=3362.233, sigma=0.075489598945304492, gamma=0.0025160536725299734, fitStatus=2, curveModel="skewedGaussian")
+  class(tmp_cFit1)    <- 'peakPantheR_curveFit'
+  tmp_cFit2           <- list(amplitude=204749.86097918145, center=3409.182, sigma=0.075731781812843249, gamma=0.0013318670577834328, fitStatus=2, curveModel="skewedGaussian")
+  class(tmp_cFit2)    <- 'peakPantheR_curveFit'
+  tmp_cFit3           <- NA
+  tmp_cFit4           <- list(amplitude=26628.505498512375, center=3708.088, sigma=0.064131129861254479, gamma=0.0015719426982490699, fitStatus=2, curveModel="skewedGaussian")
+  class(tmp_cFit4)    <- 'peakPantheR_curveFit'
+  tmp_found_curveFit  <- list(tmp_cFit1, tmp_cFit2, tmp_cFit3, tmp_cFit4)
+  
+  # expected results
+  expected_foundPeaks <- list(peakTable=tmp_found_peakTable, curveFit=tmp_found_curveFit)
+  
+  # expected messages
+  expected_messages   <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2\n", "Fit of ROI #3 is unsuccessful (apex residuals is 0.45 of max fit intensity, max intensity residuals is 0.46 of max fit intensity)\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
+  # Check result table only
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 5)
+  expect_equal(result_foundPeaks$messages[1:4], expected_messages)
+})
+
 test_that('change params for window #3', {
   # input params
-  tmp_params    <- list( init_params  = list(amplitude=1E7, center=3454.435, sigma=1, gamma=0),
-                         lower_bounds = list(amplitude=0,   center=3451.435, sigma=0, gamma=-0.1),
-                         upper_bounds = list(amplitude=1E9, center=3457.435, sigma=5, gamma=0.1))
+  tmp_params    <- list( init_params  = list(amplitude=1E5, center=3455., sigma=0.1, gamma=0),
+                         lower_bounds = list(amplitude=0,   center=3450., sigma=0,   gamma=-0.1),
+                         upper_bounds = list(amplitude=1E9, center=3460., sigma=5,   gamma=1))
   input_params  <- list('guess', 'guess', tmp_params, 'guess')
   # expected foundPeaks
   expected_foundPeaks                         <- foundPeaks
-  expected_foundPeaks$peakTable[3,2:10]        <- c(3456.2450570267611, 3457.435, 3499.0868240786049, 464.195358, 464.2000122, 464.204642, 5255410.5167749533, 380736, 174353.55750364260)
-  expected_foundPeaks$curveFit[[3]]$amplitude <- 36323.971046956591
-  expected_foundPeaks$curveFit[[3]]$center    <- 3457.435
-  expected_foundPeaks$curveFit[[3]]$sigma     <- 0.083113691800671921
-  expected_foundPeaks$curveFit[[3]]$gamma     <- 0.1
-  expected_foundPeaks$curveFit[[3]]$fitStatus <- 1
+  expected_foundPeaks$peakTable[3,2:10]       <- c(3418.0076795585401, 3455.6277710843374, 3495.4734240188186, 464.195358, 464.2000122, 464.204642, 11307215.264967661, 380736, 381327.26552768378)
+  expected_foundPeaks$curveFit[[3]]$amplitude <- 64246.052173667762
+  expected_foundPeaks$curveFit[[3]]$center    <- 3450
+  expected_foundPeaks$curveFit[[3]]$sigma     <- 0.07533469863886906
+  expected_foundPeaks$curveFit[[3]]$gamma     <- 0.0019238229766131536
+  expected_foundPeaks$curveFit[[3]]$fitStatus <- 2
   # expected messages
   expected_messages   <- c("Curve fitting parameters passed as input employed\n","Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #3\n")
   
@@ -241,6 +285,41 @@ test_that('change sampling', {
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 0)
+})
+
+test_that('In fit ratio calculation, special case when "IntRawApex" cannot be determined (no raw data scans exist a fit apex), verbose', {
+  # no scan fall at both sides of the fit apex (cannot be interpolated): the raw data intensity at fit apex ("IntRawApex") is set to 0
+  
+  tmp_ROI     	  <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+  tmp_ROI[1,] 	  <- c("ID-1", "testCpd 1", 216.4, 224.4, 232.4, 428.367, 428.3734, 428.3799)
+  tmp_ROI[,3:8]   <- sapply(tmp_ROI[,3:8], as.numeric)
+  
+  # ROI data points
+  rt  <- c(218.327, 219.601, 222.090, 224.978, 229.526)
+  mz  <- c(428.3786, 428.3707, 428.3705, 428.3772, 428.3787)
+  int <- c(249.0000, 183.1346, 112.0000, 134.0000, 104.0000)
+  tmp_DataPoints  <- list(data.frame(rt=rt, mz=mz, int=int))
+  
+  # expected foundPeaks
+  expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+  expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
+  
+  cFit                <- NA
+  expected_foundPeaks <- list(peakTable=expected_peakTable, curveFit=list(cFit))
+  
+  # expected messages
+  expected_messages   <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #1 is unsuccessful (apex residuals is 0.18 of max fit intensity, max intensity residuals is 1 of max fit intensity)\n")
+  
+  # results (output, warnings and messages)
+  result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
+  
+  # Check result table only
+  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  
+  # Check result messages
+  expect_equal(length(result_foundPeaks$messages), 3)
+  expect_equal(result_foundPeaks$messages[1:2], expected_messages)
 })
 
 test_that('raise errors', {

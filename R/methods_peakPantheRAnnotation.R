@@ -137,6 +137,30 @@ setMethod("filepath", "peakPantheRAnnotation",
             object@filepath
           })
 
+# cpdMetadata
+setGeneric("cpdMetadata", function(object, ...) standardGeneric("cpdMetadata"))
+#' cpdMetadata accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases cpdMetadata
+#' @export
+setMethod("cpdMetadata", "peakPantheRAnnotation",
+          function(object) {
+            object@cpdMetadata
+          })
+
+# spectraMetadata
+setGeneric("spectraMetadata", function(object, ...) standardGeneric("spectraMetadata"))
+#' spectraMetadata accessor
+#' @param object peakPantheRAnnotation
+#' @docType methods
+#' @aliases spectraMetadata
+#' @export
+setMethod("spectraMetadata", "peakPantheRAnnotation",
+          function(object) {
+            object@spectraMetadata
+          })
+
 # acquisitionTime
 # return converted to POSIXct
 setGeneric("acquisitionTime", function(object, ...) standardGeneric("acquisitionTime"))
@@ -387,10 +411,12 @@ setMethod("[", "peakPantheRAnnotation",
             ## sub-setting
             .cpdID            <- x@cpdID[j]
             .cpdName          <- x@cpdName[j]
-            .ROI              <- x@ROI[j,]
-            .FIR              <- x@FIR[j,]
-            .uROI             <- x@uROI[j,]
+            .ROI              <- x@ROI[j, ,drop=FALSE]
+            .FIR              <- x@FIR[j, ,drop=FALSE]
+            .uROI             <- x@uROI[j, ,drop=FALSE]
             .filepath         <- x@filepath[i]
+            .cpdMetadata      <- x@cpdMetadata[j, ,drop=FALSE]
+            .spectraMetadata  <- x@spectraMetadata[i, ,drop=FALSE]
             .acquisitionTime  <- x@acquisitionTime[i]
             .uROIExist        <- x@uROIExist
             .useUROI          <- x@useUROI
@@ -435,6 +461,8 @@ setMethod("[", "peakPantheRAnnotation",
                                   FIR = .FIR,
                                   uROI = .uROI,
                                   filepath = .filepath,
+                                  cpdMetadata = .cpdMetadata,
+                                  spectraMetadata = .spectraMetadata,
                                   acquisitionTime = .acquisitionTime,
                                   uROIExist = .uROIExist,
                                   useUROI = .useUROI,
@@ -444,4 +472,572 @@ setMethod("[", "peakPantheRAnnotation",
                                   dataPoints = .dataPoints,
                                   peakFit = .peakFit,
                                   isAnnotated = .isAnnotated)
+          })
+
+
+
+
+#####################################################################
+## Fit diagnosis
+
+## Set uROI and FIR based on annotation results
+setGeneric("annotationParamsDiagnostic", function(object, verbose=TRUE, ...) standardGeneric("annotationParamsDiagnostic"))
+#' Set uROI and FIR based on annotation results
+#' Set updated ROI (uROI) and Fallback Integration Regions (FIR) based on the annotation results. If the object is not annotated, it is returned untouched. ROI is not modified. If uROI exist they are left untouched, otherwise they are set as the minimum and maximum found peaks limits (+/-5\% of ROI in retention time). If FIR are used they are left untouched, otherwise they are set as the median of the found limits (rtMin, rtMax, mzMin, mzMax).
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param verbose (bool) If TRUE message progress of uROI and FIR calculation
+#' @return (peakPantheRAnnotation) object with updated ROI and FIR set from annotation results
+#' @docType methods
+#' @aliases annotationParamsDiagnostic
+#' @export
+setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
+          function(object, verbose) {
+            ## init
+            outAnnotation <- object
+            
+            ## not annotated, pass
+            if (!outAnnotation@isAnnotated) {
+              if (verbose) {message('Warning: the object has not been annotated, return the object untouched')}
+              return(outAnnotation)
+            }
+            
+            ## uROI
+            # uROI doesn't exist, set uROI with min/max of found peaks (if NA, use ROI value)
+            if (!outAnnotation@uROIExist) {
+              if (verbose) {message('uROI will be set as mimimum/maximum of found peaks (+/-5% of ROI in retention time)')}
+              # rt ROI 5% (no NA in ROI rtMin/rtMax)
+              rtMargin    <- (ROI(outAnnotation)$rtMax - ROI(outAnnotation)$rtMin) * 0.05
+              # rtMin (min found peak -5% of ROI)
+              rtMinUROI   <- unname(sapply(annotationTable(outAnnotation, 'rtMin'), min, na.rm=T))
+              rtMinUROI   <- rtMinUROI - rtMargin
+              if (sum(is.infinite(rtMinUROI)) != 0) {
+                if (verbose) {message('uROI min rtMin which are NA are replaced with ROI rtMin')}
+                rtMinUROI[is.infinite(rtMinUROI)]   <- outAnnotation@ROI[is.infinite(rtMinUROI), 'rtMin']
+              }
+              # rtMax (max found peak +5% of ROI)
+              rtMaxUROI   <- unname(sapply(annotationTable(outAnnotation, 'rtMax'), max, na.rm=T))
+              rtMaxUROI   <- rtMaxUROI + rtMargin
+              if (sum(is.infinite(rtMaxUROI)) != 0) {
+                if (verbose) {message('uROI max rtMax which are NA are replaced with ROI rtMax')}
+                rtMaxUROI[is.infinite(rtMaxUROI)]   <- outAnnotation@ROI[is.infinite(rtMaxUROI), 'rtMax']
+              }
+              # mzMin
+              mzMinUROI   <- unname(sapply(annotationTable(outAnnotation, 'mzMin'), min, na.rm=T))
+              if (sum(is.infinite(mzMinUROI)) != 0) {
+                if (verbose) {message('uROI min mzMin which are NA are replaced ROI mzMin')}
+                mzMinUROI[is.infinite(mzMinUROI)]   <- outAnnotation@ROI[is.infinite(mzMinUROI), 'mzMin']
+              }
+              # mzMax
+              mzMaxUROI   <- unname(sapply(annotationTable(outAnnotation, 'mzMax'), max, na.rm=T))
+              if (sum(is.infinite(mzMaxUROI)) != 0) {
+                if (verbose) {message('uROI max mzMax which are NA are replaced ROI mzMax')}
+                mzMaxUROI[is.infinite(mzMaxUROI)]   <- outAnnotation@ROI[is.infinite(mzMaxUROI), 'mzMax']
+              }
+              # store new uROI values
+              outAnnotation@uROI[,'rtMin'] <- rtMinUROI
+              outAnnotation@uROI[,'rtMax'] <- rtMaxUROI
+              outAnnotation@uROI[,'mzMin'] <- mzMinUROI
+              outAnnotation@uROI[,'mzMax'] <- mzMaxUROI
+              outAnnotation@uROI[,c('rt','mz')] <- outAnnotation@ROI[,c('rt','mz')]
+              # set uROIExist
+              outAnnotation@uROIExist <- TRUE
+            # uROI exist (even not used), no replacement
+            } else {
+              if (verbose) {message('uROI already exist, will not be changed')}
+            }
+            
+            ## FIR
+            # FIR not used, recalculate (if NA, use uROI value that was set previously)
+            if (!outAnnotation@useFIR) {
+              if (verbose) {message('FIR will be calculated as the median of found "rtMin","rtMax","mzMin","mzMax"')}
+              # rtMin
+              rtMinFIR   <- unname(sapply(annotationTable(outAnnotation, 'rtMin'), stats::median, na.rm=T))
+              if (sum(is.na(rtMinFIR)) != 0) {
+                if (verbose) {message('FIR median rtMin which are NA are replaced with uROI rtMin')}
+                rtMinFIR[is.na(rtMinFIR)]   <- outAnnotation@uROI[is.na(rtMinFIR), 'rtMin']
+              }
+              # rtMax
+              rtMaxFIR   <- unname(sapply(annotationTable(outAnnotation, 'rtMax'), stats::median, na.rm=T))
+              if (sum(is.na(rtMaxFIR)) != 0) {
+                if (verbose) {message('FIR median rtMax which are NA are replaced with uROI rtMax')}
+                rtMaxFIR[is.na(rtMaxFIR)]   <- outAnnotation@uROI[is.na(rtMaxFIR), 'rtMax']
+              }
+              # mzMin
+              mzMinFIR   <- unname(sapply(annotationTable(outAnnotation, 'mzMin'), stats::median, na.rm=T))
+              if (sum(is.na(mzMinFIR)) != 0) {
+                if (verbose) {message('FIR median mzMin which are NA are replaced uROI mzMin')}
+                mzMinFIR[is.na(mzMinFIR)]   <- outAnnotation@uROI[is.na(mzMinFIR), 'mzMin']
+              }
+              # mzMax
+              mzMaxFIR   <- unname(sapply(annotationTable(outAnnotation, 'mzMax'), stats::median, na.rm=T))
+              if (sum(is.na(mzMaxFIR)) != 0) {
+                if (verbose) {message('FIR median mzMax which are NA are replaced uROI mzMax')}
+                mzMaxFIR[is.na(mzMaxFIR)]   <- outAnnotation@uROI[is.na(mzMaxFIR), 'mzMax']
+              }
+              # store new FIR values
+              outAnnotation@FIR[,'rtMin'] <- rtMinFIR
+              outAnnotation@FIR[,'rtMax'] <- rtMaxFIR
+              outAnnotation@FIR[,'mzMin'] <- mzMinFIR
+              outAnnotation@FIR[,'mzMax'] <- mzMaxFIR
+              # FIR used, do not recalculate
+            } else {
+              if (verbose) {message('FIR in use, will not be changed')}
+            }
+            
+            return(outAnnotation)
+          })
+
+
+## Save annotation parameters as CSV
+setGeneric("outputAnnotationParamsCSV", function(object, saveFolder, verbose=TRUE, ...) standardGeneric("outputAnnotationParamsCSV"))
+#' Save annotation parameters as CSV
+#' Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param verbose (bool) If TRUE message progress
+#' @param saveFolder (str) Path of folder where annotationParameters_summary.csv will be saved
+#' @return None
+#' @docType methods
+#' @aliases outputAnnotationParamsCSV
+setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
+          function(object, saveFolder, verbose) {
+            # create table  
+            outTable          <- data.frame(matrix(,nrow=nbCompounds(object),ncol=0))
+            outTable          <- cbind(outTable, cpdID=cpdID(object), cpdName=cpdName(object))
+            # ROI
+            tmp_ROI           <- ROI(object)[,c('rt', 'mz', 'rtMin', 'rtMax', 'mzMin', 'mzMax')]
+            colnames(tmp_ROI) <- c('ROI_rt', 'ROI_mz', 'ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax')
+            outTable          <- cbind(outTable, X=rep('|',nbCompounds(object)), tmp_ROI)
+            # uROI
+            tmp_uROI            <- uROI(object)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax', 'rt', 'mz')]
+            colnames(tmp_uROI)  <- c('uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz')
+            outTable            <- cbind(outTable, X=rep('|',nbCompounds(object)), tmp_uROI)
+            # FIR
+            tmp_FIR           <- FIR(object)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]
+            colnames(tmp_FIR) <- c('FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax')
+            outTable          <- cbind(outTable, X=rep('|',nbCompounds(object)), tmp_FIR)
+            
+            # save table
+            dir.create(saveFolder, recursive=TRUE, showWarnings=FALSE)
+            targetFile  <- paste(saveFolder,'/annotationParameters_summary.csv',sep='')
+            if (verbose) {
+              message('Annotation parameters saved at ',targetFile)
+            }
+            utils::write.csv(outTable, file = targetFile, row.names=FALSE)
+          })
+
+
+## Generate fit diagnostic plots
+setGeneric("annotationDiagnosticPlots", function(object, sampleColour=NULL, sampling=250, verbose=TRUE, ...) standardGeneric("annotationDiagnosticPlots"))
+#' Generate fit diagnostic plots
+#' Generate fit diagnostic plots for each ROI: \code{EICFit} the raw data and detected feature fit, \code{rtPeakwidthVert} detected peaks retention time apex and peakwidth (vertical and no run order), \code{rtPeakwidthHorzRunOrder} detected peaks retention time apex and peakwidth by run order, \code{mzPeakwidthHorzRunOrder} detected peaks m/z apex and peakwidth by run order, \code{areaRunOrder} detected peaks area by run order, \code{rtHistogram} histogram of detected peaks retention time, \code{mzHistogram} histogram of detected peaks m/z, \code{areaHistogram} histogram of detected peaks area.
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param sampleColour (str) NULL or vector colour for each sample
+#' @param sampling (int) Number of points to employ when plotting fittedCurve
+#' @param verbose (bool) if TRUE message the plot generation progress
+#' @return A list (one list per compound) of diagnostic plots: \code{result[[i]]$EICFit}, \code{result[[i]]$rtPeakwidthVert}, \code{result[[i]]$rtPeakwidthHorzRunOrder}, \code{result[[i]]$mzPeakwidthHorzRunOrder}, \code{result[[i]]$areaRunOrder}, \code{result[[i]]$rtHistogram}, \code{result[[i]]$mzHistogram}, \code{result[[i]]$areaHistogram}, \code{result[[i]]$title}
+#' @docType methods
+#' @aliases annotationDiagnosticPlots
+setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
+          function(object, sampleColour, sampling, verbose) {
+            # Init
+            nbCpd   <- nbCompounds(object)
+            outList <- vector("list", nbCpd)
+            
+            ## Check object was annotated
+            if (!object@isAnnotated) {
+              message('Warning: the object has not been annotated, return an empty diagnostic plot list')
+              return(outList)
+            }
+            
+            # Iterate over compounds
+            for (cpd in 1:nbCpd) {
+              tmp_annotation      <- object[,cpd]
+              tmp_plotList        <- vector("list", 9)
+              names(tmp_plotList) <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram', 'title')
+              
+              # title
+              tmp_plotList$title                    <- paste(cpdID(tmp_annotation), '-', cpdName(tmp_annotation))
+              # plotEICFit
+              tmp_plotList$EICFit                   <- plotEICFit(ROIDataPointSampleList = unlist(dataPoints(tmp_annotation), recursive=FALSE),
+                                                                  curveFitSampleList = unlist(peakFit(tmp_annotation), recursive=FALSE),
+                                                                  rtMin = annotationTable(tmp_annotation, "rtMin")[,1],
+                                                                  rtMax = annotationTable(tmp_annotation, "rtMax")[,1],
+                                                                  sampling = sampling,
+                                                                  sampleColour = sampleColour,
+                                                                  verbose = verbose)
+              # RT plotPeakwidth vertical
+              tmp_plotList$rtPeakwidthVert          <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "rt")[,1],
+                                                                     widthMin = annotationTable(tmp_annotation, "rtMin")[,1],
+                                                                     widthMax = annotationTable(tmp_annotation, "rtMax")[,1],
+                                                                     acquTime = NULL,
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'Retention Time (sec)',
+                                                                     rotateAxis = TRUE,
+                                                                     verbose = verbose)
+              # RT plotPeakwidth horizontal run order
+              tmp_plotList$rtPeakwidthHorzRunOrder  <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "rt")[,1],
+                                                                     widthMin = annotationTable(tmp_annotation, "rtMin")[,1],
+                                                                     widthMax = annotationTable(tmp_annotation, "rtMax")[,1],
+                                                                     acquTime = acquisitionTime(tmp_annotation),
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'Retention Time (sec)',
+                                                                     rotateAxis = FALSE,
+                                                                     verbose = verbose)
+              # mz plotPeakwidth horizontal run order
+              tmp_plotList$mzPeakwidthHorzRunOrder  <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "mz")[,1],
+                                                                     widthMin = annotationTable(tmp_annotation, "mzMin")[,1],
+                                                                     widthMax = annotationTable(tmp_annotation, "mzMax")[,1],
+                                                                     acquTime = acquisitionTime(tmp_annotation),
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'm/z',
+                                                                     rotateAxis = FALSE,
+                                                                     verbose = verbose)
+              # peakarea horizontal run order
+              tmp_plotList$areaRunOrder             <- plotPeakwidth(apexValue = annotationTable(tmp_annotation, "peakArea")[,1],
+                                                                     widthMin = NULL,
+                                                                     widthMax = NULL,
+                                                                     acquTime = acquisitionTime(tmp_annotation),
+                                                                     sampleColour = sampleColour,
+                                                                     varName = 'Peak Area',
+                                                                     rotateAxis = FALSE,
+                                                                     verbose = verbose)
+              # RT plotHistogram
+              tmp_plotList$rtHistogram              <- plotHistogram(var = annotationTable(tmp_annotation, 'rt')[,1], 
+                                                                     varName='Retention Time (sec)',
+                                                                     density=TRUE)
+              # mz plotHistogram
+              tmp_plotList$mzHistogram              <- plotHistogram(var = annotationTable(tmp_annotation, 'mz')[,1],
+                                                                     varName='m/z',
+                                                                     density=TRUE)
+              # peak area plotHistogram
+              tmp_plotList$areaHistogram            <- plotHistogram(var = annotationTable(tmp_annotation, 'peakArea')[,1],
+                                                                     varName='Peak Area', 
+                                                                     density=TRUE)
+              # store results
+              outList[[cpd]]  <- tmp_plotList
+              if (verbose) {message('Compound ', cpd, '/', nbCpd,' done')}
+            }
+            return(outList)
+          })
+
+
+## Save to disk the annotation parameters as CSV and a diagnostic plot per fitted compound
+setGeneric("outputAnnotationDiagnostic", function(object, saveFolder, savePlots=TRUE, sampleColour=NULL, verbose=TRUE, ...) standardGeneric("outputAnnotationDiagnostic"))
+#' Save to disk the annotation parameters as CSV and a diagnostic plot per fitted compound
+#' Save to disk the annotation parameters as CSV (as generated by \code{outputAnnotationParamsCSV()}) and a diagnostic plot per fitted compound (as generated by \code{annotationDiagnosticMultiplot()}) if \code{savePlots} is TRUE
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param saveFolder (str) Path of folder where annotationParameters_summary.csv and plots will be saved
+#' @param savePlots (bool) If TRUE save a diagnostic plot for each compound
+#' @param sampleColour (str) NULL or vector colour for each sample
+#' @param verbose (bool) If TRUE message progress
+#' @param ... Additional parameters for plotting i.e. \code{sampling} for the number of points to employ when plotting fittedCurve
+#' @return None
+#' @docType methods
+#' @aliases outputAnnotationDiagnostic
+#' @export
+setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
+          function(object, saveFolder, savePlots, sampleColour, verbose, ...) {
+            ## Save standardised csv
+            outputAnnotationParamsCSV(object, saveFolder=saveFolder, verbose=verbose)
+            
+            ## Save all fit diagnostic
+            if (savePlots) {
+              nbCpd <- nbCompounds(object)
+              if (verbose) { message('Saving diagnostic plots:') }
+              
+              # iterate over compound (more progressive plot generation and save than generating all plots at once)
+              for (cpd in 1:nbCpd) {
+                tmp_annotation    <- object[,cpd]
+                # diagnostic plots
+                tmp_diagPlotList  <- annotationDiagnosticPlots(tmp_annotation, sampleColour=sampleColour, verbose=FALSE, ...)
+                # multiplot
+                suppressMessages(suppressWarnings(
+                  tmp_multiPlot   <- annotationDiagnosticMultiplot(tmp_diagPlotList)
+                ))
+                # save
+                if (length(tmp_multiPlot)!=0) {
+                  
+                  tmp_targetFile  <- paste('cpd_',cpd,'.png',sep='')
+                  ggplot2::ggsave(file=tmp_targetFile, plot=tmp_multiPlot[[1]], device='png', path=saveFolder, dpi=100, width=21, height=29.7, units='cm', limitsize=FALSE) # A4 page size
+    
+                  if (verbose) { message('  Compound ', cpd, '/', nbCpd, ' diagnostic plot saved at ', paste(saveFolder,'/',tmp_targetFile,sep='')) }
+                } else {
+                  if (verbose) { message('  No plot to save for compound ', cpd, '/', nbCpd) }
+                }
+              }
+            }
+          })
+
+
+
+## Save to disk all annotation results
+setGeneric("outputAnnotationResult", function(object, saveFolder, annotationName='annotationResult', verbose=TRUE) standardGeneric("outputAnnotationResult"))
+#' Save to disk all annotation results as csv files
+#' Save to disk all annotation results as \code{annotationName_ ... .csv} files: compound metadata (\code{cpdMetadata}, \code{cpdID}, \code{cpdName}) and spectra metadata (\code{spectraMetadata}, \code{acquisitionTime}, \code{TIC}) and a file for each column of \code{peakTables} (with samples as rows and compounds as columns)
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param saveFolder (str) Path of folder where the annotation result csv will be saved
+#' @param annotationName (str) name of annotation to use in the saved csv
+#' @param verbose (bool) If TRUE message progress
+#' @return None
+#' @docType methods
+#' @aliases outputAnnotationResult
+#' @export
+setMethod("outputAnnotationResult", "peakPantheRAnnotation",
+          function(object, saveFolder, annotationName, verbose) {
+            
+            ## Check object was annotated
+            if (!object@isAnnotated) {
+              stop('Object has not been annotated, no annotation results to save')
+            }
+            
+            ## Init folder
+            dir.create(saveFolder, recursive=TRUE, showWarnings=FALSE)
+            
+            ## Save compound metadata
+            tmp_cpdID       <- cpdID(object)
+            tmp_cpdName     <- cpdName(object)
+            tmp_cpdMetadata <- cpdMetadata(object)
+            tmp_outCpdMeta  <- data.frame(cpdID=tmp_cpdID, cpdName=tmp_cpdName)
+            tmp_outCpdMeta  <- cbind( tmp_outCpdMeta, tmp_cpdMetadata )
+            path_cpdMeta    <- paste(saveFolder, '/', annotationName, '_cpdMetadata.csv', sep='')
+            utils::write.csv(tmp_outCpdMeta, file = path_cpdMeta, row.names=FALSE)
+            if (verbose) { message('Compound metadata saved at ',path_cpdMeta) }
+            
+            ## Save spectra metadata
+            tmp_filepath        <- filepath(object)
+            tmp_acqTime         <- acquisitionTime(object)
+            tmp_TIC             <- TIC(object)
+            tmp_spectraMetadata <- spectraMetadata(object)
+            tmp_outSpecMeta     <- data.frame(filepath=tmp_filepath, acquisitionTime=tmp_acqTime, TIC=tmp_TIC)
+            tmp_outSpecMeta     <- cbind( tmp_outSpecMeta, tmp_spectraMetadata )
+            path_specMeta       <- paste(saveFolder, '/', annotationName, '_spectraMetadata.csv', sep='')
+            utils::write.csv(tmp_outSpecMeta, file = path_specMeta, row.names=FALSE)
+            if (verbose) { message('Spectra metadata saved at ',path_specMeta) }
+            
+            ## Save peakTables columns
+            for (i in colnames(object@peakTables[[1]])) {
+              tmp_var   <- annotationTable(object=object, column=i)
+              path_var  <- paste(saveFolder, '/', annotationName, '_', i, '.csv', sep='')
+              utils::write.csv(tmp_var, file = path_var, row.names=TRUE)
+              if (verbose) { message('Peak measurement "', i, '" saved at ',path_var) }
+            }
+          })
+
+
+
+
+#####################################################################
+# Reset a peakPantheRAnnotation and alter samples or compounds information
+
+setGeneric("resetAnnotation", function(previousAnnotation, spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL, FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL, uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE, ...) standardGeneric("resetAnnotation"))
+#' Reset a peakPantheRAnnotation and alter samples and compounds information
+#' Reset a peakPantheRAnnotation (remove results and set \code{isAnnotated=FALSE}). If a different number of samples (\code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the object will be initialised to the new size. For input values left as NULL, the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI}, \code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI}, \code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist}, \code{useUROI} and \code{useFIR}) will be filled with values from \code{previousAnnotation}.
+#' @param previousAnnotation (peakPantheRAnnotation) object to reset
+#' @param spectraPaths NULL or a character vector of spectra file paths, to set samples to process
+#' @param targetFeatTable NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.
+#' @param uROI NULL or a data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
+#' @param FIR NULL or a data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
+#' @param cpdMetadata NULL or a data.frame of compound metadata, with compounds as row and metadata as columns
+#' @param spectraMetadata NULL or a data.frame of sample metadata, with samples as row and metadata as columns
+#' @param uROIExist NULL or a logical stating if uROI have been set
+#' @param useUROI NULL or a logical stating if uROI are to be used
+#' @param useFIR NULL or a logical stating if FIR are to be used
+#' @param verbose (bool) If TRUE message progress
+#' @param ... Additional slots and values to set when resetting the object (\code{cpdID}, \code{cpdName}, \code{ROI}, \code{filepath}, \code{TIC}, \code{acquisitionTime}, \code{peakTables}, \code{dataPoints}, \code{peakFit})
+#' @return (peakPantheRAnnotation) object reset with previous results removed and slots updated
+#' @docType methods
+#' @aliases resetAnnotation
+#' @export
+setMethod("resetAnnotation", "peakPantheRAnnotation",
+          function(previousAnnotation,  spectraPaths, targetFeatTable, uROI, FIR, cpdMetadata, spectraMetadata, uROIExist, useUROI, useFIR, verbose, ...) {
+            
+            # If input is NULL, use previousAnnotation value, else use the passed value
+            # If number of compounds or spectra is changed, the previous values (metadata, uROI, FIR) cannot be reused (risk a mismatch of the metadata)
+            if (verbose) { message('peakPantheRAnnotation object being reset:') }
+            
+            ## targetFeatTable (cpdID, cpdName, ROI), uROI, FIR, cpdMetadata
+            if (all(is.null(targetFeatTable))) {
+              # previous values
+              .targetFeatTable  <- ROI(previousAnnotation)
+              if (verbose) { message('  Previous "ROI", "cpdID" and "cpdName" value kept') }
+              
+              # uROI
+              if (all(is.null(uROI))) {
+                # previous values
+                .uROI   <- uROI(previousAnnotation)[,c('rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax')]
+                if (verbose) { message('  Previous "uROI" value kept') }
+              } else {
+                # new value
+                .uROI   <- uROI
+                if (verbose) { message('  New "uROI" value set') }
+              }
+              
+              # FIR
+              if (all(is.null(FIR))) {
+                # previous values
+                .FIR    <- FIR(previousAnnotation)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]
+                if (verbose) { message('  Previous "FIR" value kept') }
+              } else {
+                # new value
+                .FIR    <- FIR
+                if (verbose) { message('  New "FIR" value set') }
+              }
+              
+              # cpdMetadata
+              if (all(is.null(cpdMetadata))) {
+                # previous values
+                .cpdMetadata  <- cpdMetadata(previousAnnotation)
+                if (verbose) { message('  Previous "cpdMetadata" value kept') }
+              } else {
+                # new value
+                .cpdMetadata  <- cpdMetadata
+                if (verbose) { message('  New "cpdMetadata" value set') }
+              }
+              
+              # new values
+            } else {
+              .targetFeatTable  <- targetFeatTable
+              if (verbose) { message('  New "targetFeatTable" value set ("ROI", "cpdID", "cpdName"') }
+              
+              # uROI
+              if (all(is.null(uROI))) {
+                # Do not reuse old values if we change the compounds targeted
+                .uROI   <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
+                if (verbose) { message('  Targeted compounds changed, previous "uROI" cannot be kept and set to default') }
+              } else {
+                # new value
+                .uROI   <- uROI
+                if (verbose) { message('  New "uROI" value set') }
+              }
+              
+              # FIR
+              if (all(is.null(FIR))) {
+                # Do not reuse old values if we change the compounds targeted
+                .FIR    <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F)
+                if (verbose) { message('  Targeted compounds changed, previous "FIR" cannot be kept and set to default') }
+              } else {
+                # new value
+                .FIR    <- FIR
+                if (verbose) { message('  New "FIR" value set') }
+              }
+              
+              # cpdMetadata
+              if (all(is.null(cpdMetadata))) {
+                # Do not reuse old values if we change the compounds targeted
+                .cpdMetadata  <- data.frame()
+                if (verbose) { message('  Targeted compounds changed, previous "cpdMetadata" cannot be kept and set to default') }
+              } else {
+                # new value
+                .cpdMetadata  <- cpdMetadata
+                if (verbose) { message('  New "cpdMetadata" value set') }
+              }
+            }
+            
+            
+            ## spectraPaths (filepath), spectraMetadata
+            if (all(is.null(spectraPaths))) {
+              # previous values
+              .spectraPaths       <- filepath(previousAnnotation)
+              if (verbose) { message('  Previous "filepath" value kept') }
+              
+              # spectraMetadata
+              if (all(is.null(spectraMetadata))) {
+                # previous values
+                .spectraMetadata  <- spectraMetadata(previousAnnotation)
+                if (verbose) { message('  Previous "spectraMetadata" value kept') }
+              } else {
+                # new value
+                .spectraMetadata  <- spectraMetadata
+                if (verbose) { message('  New "spectraMetadata" value set') }
+              }
+              
+              # new values
+            } else {
+              .spectraPaths       <- spectraPaths
+              if (verbose) { message('  New "spectraPaths" value set') }
+              
+              # spectraMetadata
+              if (all(is.null(spectraMetadata))) {
+                # Do not reuse old values if we change the spectra
+                .spectraMetadata  <- data.frame()
+                if (verbose) { message('  Targeted spectra changed, previous "spectraMetadata" cannot be kept and set to default') }
+              } else {
+                # new value
+                .spectraMetadata  <- spectraMetadata
+                if (verbose) { message('  New "spectraMetadata" value set') }
+              }  
+            }
+            
+            
+            ## uROIExist
+            if (all(is.null(uROIExist))) {
+              # previous values cannot be used if targetFeatTable is changed
+              if (all(is.null(targetFeatTable))) {
+                # previous values
+                .uROIExist    <- uROIExist(previousAnnotation)
+                if (verbose) { message('  Previous "uROIExist" value kept') }
+              } else {
+                # Do not reuse old values if we change the compounds
+                .uROIExist    <- FALSE
+                if (verbose) { message('  Targeted compounds changed, previous "uROIExist" cannot be kept and set to default') }
+              }
+            } else {
+              # new value
+              .uROIExist      <- uROIExist
+              if (verbose) { message('  New "uROIExist" value set') }
+            }
+            
+            ## useUROI
+            if (all(is.null(useUROI))) {
+              # previous values cannot be used if targetFeatTable is changed
+              if (all(is.null(targetFeatTable))) {
+                # previous values
+                .useUROI    <- useUROI(previousAnnotation)
+                if (verbose) { message('  Previous "useUROI" value kept') }
+              } else {
+                # Do not reuse old values if we change the compound
+                .useUROI    <- FALSE
+                if (verbose) { message('  Targeted compounds changed, previous "useUROI" cannot be kept and set to default') }
+              }
+            } else {
+              # new value
+              .useUROI      <- useUROI
+              if (verbose) { message('  New "useUROI" value set') }
+            }
+            
+            ## useFIR
+            if (all(is.null(useFIR))) {
+              # previous values cannot be used if targetFeatTable is changed
+              if (all(is.null(targetFeatTable))) {
+                # previous values
+                .useFIR     <- useFIR(previousAnnotation)
+                if (verbose) { message('  Previous "useFIR" value kept') }
+              } else {
+                # Do not reuse old values if we change the compound
+                .useFIR     <- FALSE
+                if (verbose) { message('  Targeted compounds changed, previous "useFIR" cannot be kept and set to default') }
+              }
+            } else {
+              # new value
+              .useFIR       <- useFIR
+              if (verbose) { message('  New "useFIR" value set') }
+            }
+            
+            ## is annotated
+            .isAnnotated  <- FALSE
+            
+            
+            ## Create new object
+            #   In all case (old or new value) spectraPaths and targetFeatTable will trigger the resetting of all results
+            peakPantheRAnnotation(spectraPaths = .spectraPaths,
+                                  targetFeatTable = .targetFeatTable,
+                                  uROI = .uROI,
+                                  FIR = .FIR,
+                                  cpdMetadata = .cpdMetadata,
+                                  spectraMetadata = .spectraMetadata,
+                                  uROIExist = .uROIExist,
+                                  useUROI = .useUROI,
+                                  useFIR = .useFIR,
+                                  isAnnotated = .isAnnotated,
+                                  ...)
           })

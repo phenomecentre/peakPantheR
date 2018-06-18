@@ -31,6 +31,12 @@ input_uROI[2,]  <- c(15., 16., 17., 18., 19., 20.)
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
+# cpdMetadata
+input_cpdMetadata     <- data.frame(matrix(data=c('a','b',1,2), nrow=2, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
+# spectraMetadata
+input_spectraMetadata <- data.frame(matrix(data=c('c','d','e',3,4,5), nrow=3, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
+
 # acquisitionTime
 input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
 
@@ -83,7 +89,7 @@ ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTabl
 input_dataPoints  <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
 
 test_that('no i j input returns an untouched object', {
@@ -110,6 +116,10 @@ test_that('no i j input returns an untouched object', {
   expect_equal(noChange@uROI, input_uROI)
   # filepath
   expect_equal(noChange@filepath, input_spectraPaths)
+  # cpdMetadata
+  expect_equal(noChange@cpdMetadata, input_cpdMetadata)
+  # spectraMetadata
+  expect_equal(noChange@spectraMetadata, input_spectraMetadata)
   # acquisitionTime
   expect_equal(noChange@acquisitionTime, input_acquisitionTime)
   # uROIExist
@@ -134,12 +144,13 @@ test_that('missing i, set j', {
   ## i will default to all samples, set j
 
   ## Expected values
-  expected_ROI        <- input_targetFeatTable[1, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
-  expected_FIR        <- input_FIR[1,]
-  expected_uROI       <- input_uROI[1,]
-  expected_peakTables <- list(peakTable1[1,], peakTable2[1,], peakTable3[1,])
-  expected_dataPoints <- list(list(input_dataPoints[[1]][[1]]), list(input_dataPoints[[2]][[1]]), list(input_dataPoints[[3]][[1]]))
-  expected_peakFit    <- list(list(input_peakFit[[1]][[1]]), list(input_peakFit[[2]][[1]]), list(input_peakFit[[3]][[1]]))
+  expected_ROI          <- input_targetFeatTable[1, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
+  expected_FIR          <- input_FIR[1,]
+  expected_uROI         <- input_uROI[1,]
+  expected_cpdMetadata  <- input_cpdMetadata[1,]
+  expected_peakTables   <- list(peakTable1[1,], peakTable2[1,], peakTable3[1,])
+  expected_dataPoints   <- list(list(input_dataPoints[[1]][[1]]), list(input_dataPoints[[2]][[1]]), list(input_dataPoints[[3]][[1]]))
+  expected_peakFit      <- list(list(input_peakFit[[1]][[1]]), list(input_peakFit[[2]][[1]]), list(input_peakFit[[3]][[1]]))
 
   # no sub-setting
   setJ <- filledAnnotation[,1]
@@ -156,6 +167,10 @@ test_that('missing i, set j', {
   expect_equal(setJ@uROI, expected_uROI)
   # filepath
   expect_equal(setJ@filepath, input_spectraPaths)
+  # cpdMetadata
+  expect_equal(setJ@cpdMetadata, expected_cpdMetadata)
+  # spectraMetadata
+  expect_equal(setJ@spectraMetadata, input_spectraMetadata)
   # acquisitionTime
   expect_equal(setJ@acquisitionTime, input_acquisitionTime)
   # uROIExist
@@ -184,6 +199,7 @@ test_that('set i, missing j', {
   expected_FIR              <- input_FIR
   expected_uROI             <- input_uROI
   expected_filepath         <- input_spectraPaths[1:2]
+  expected_spectraMetadata  <- input_spectraMetadata[1:2,]
   expected_acquisitionTime  <- input_acquisitionTime[1:2]
   expected_TIC              <- input_TIC[1:2]
   expected_peakTables       <- list(peakTable1, peakTable2)
@@ -205,6 +221,10 @@ test_that('set i, missing j', {
   expect_equal(setI@uROI, expected_uROI)
   # filepath
   expect_equal(setI@filepath, expected_filepath)
+  # cpdMetadata
+  expect_equal(setI@cpdMetadata, input_cpdMetadata)
+  # spectraMetadata
+  expect_equal(setI@spectraMetadata, expected_spectraMetadata)
   # acquisitionTime
   expect_equal(setI@acquisitionTime, expected_acquisitionTime)
   # uROIExist
@@ -229,7 +249,7 @@ test_that('set i, empty peakTables, dataPoints and peakFit', {
   ## peakTables, dataPoints and peakFit are all NULL for the selected samples, trigger a special case
 
   ## object with cpd and spectra set
-  defaultInit_cpd_spectra   <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, isAnnotated=TRUE)
+  defaultInit_cpd_spectra   <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, isAnnotated=TRUE)
 
   ## Expected values
   expected_ROI              <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
@@ -240,6 +260,7 @@ test_that('set i, empty peakTables, dataPoints and peakFit', {
   expected_uROI[1,]         <- sapply(expected_uROI[1,], as.numeric)
   expected_uROI[2,]         <- sapply(expected_uROI[2,], as.numeric)
   expected_filepath         <- input_spectraPaths[1:2]
+  expected_spectraMetadata  <- input_spectraMetadata[1:2,]
   expected_acquisitionTime  <- as.character(c(NA, NA))
 
   expected_peakTables <- vector("list", 2)
@@ -261,6 +282,10 @@ test_that('set i, empty peakTables, dataPoints and peakFit', {
   expect_equal(setIandNULL@uROI, expected_uROI)
   # filepath
   expect_equal(setIandNULL@filepath, expected_filepath)
+  # cpdMetadata
+  expect_equal(setIandNULL@cpdMetadata, input_cpdMetadata)
+  # spectraMetadata
+  expect_equal(setIandNULL@spectraMetadata, expected_spectraMetadata)
   # acquisitionTime
   expect_equal(setIandNULL@acquisitionTime, expected_acquisitionTime)
   # uROIExist
@@ -289,6 +314,8 @@ test_that('set i and j', {
   expected_FIR              <- input_FIR[1,]
   expected_uROI             <- input_uROI[1,]
   expected_filepath         <- input_spectraPaths[1:2]
+  expected_cpdMetadata      <- input_cpdMetadata[1,]
+  expected_spectraMetadata  <- input_spectraMetadata[1:2,]
   expected_acquisitionTime  <- input_acquisitionTime[1:2]
   expected_TIC              <- input_TIC[1:2]
   expected_peakTables       <- list(peakTable1[1,], peakTable2[1,])
@@ -310,6 +337,10 @@ test_that('set i and j', {
   expect_equal(setIJ@uROI, expected_uROI)
   # filepath
   expect_equal(setIJ@filepath, expected_filepath)
+  # cpdMetadata
+  expect_equal(setIJ@cpdMetadata, expected_cpdMetadata)
+  # spectraMetadata
+  expect_equal(setIJ@spectraMetadata, expected_spectraMetadata)
   # acquisitionTime
   expect_equal(setIJ@acquisitionTime, expected_acquisitionTime)
   # uROIExist
@@ -339,6 +370,8 @@ test_that('reorder i and j', {
   expected_uROI             <- input_uROI[c(2,1),]
   expected_filepath         <- input_spectraPaths[c(3,2,1)]
   expected_acquisitionTime  <- input_acquisitionTime[c(3,2,1)]
+  expected_cpdMetadata      <- input_cpdMetadata[c(2,1),]
+  expected_spectraMetadata  <- input_spectraMetadata[c(3,2,1),]
   expected_TIC              <- input_TIC[c(3,2,1)]
   expected_peakTables       <- list(peakTable3[c(2,1),], peakTable2[c(2,1),], peakTable1[c(2,1),])
   expected_dataPoints       <- list(input_dataPoints[[3]][c(2,1)], input_dataPoints[[2]][c(2,1)], input_dataPoints[[1]][c(2,1)])
@@ -359,6 +392,10 @@ test_that('reorder i and j', {
   expect_equal(reorderIJ@uROI, expected_uROI)
   # filepath
   expect_equal(reorderIJ@filepath, expected_filepath)
+  # cpdMetadata
+  expect_equal(reorderIJ@cpdMetadata, expected_cpdMetadata)
+  # spectraMetadata
+  expect_equal(reorderIJ@spectraMetadata, expected_spectraMetadata)
   # acquisitionTime
   expect_equal(reorderIJ@acquisitionTime, expected_acquisitionTime)
   # uROIExist

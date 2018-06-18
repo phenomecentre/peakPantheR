@@ -11,6 +11,8 @@
 #' @slot FIR A data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @slot uROI A data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @slot filepath A character vector of file paths, of length number of spectra files
+#' @slot cpdMetadata A data.frame of compound metadata, with compounds as row and metadata as columns
+#' @slot spectraMetadata A data.frame of sample metadata, with samples as row and metadata as columns
 #' @slot acquisitionTime A character vector of acquisition date-time (converted from POSIXct) or NA
 #' @slot uROIExist A logical stating if uROI have been set
 #' @slot useUROI A logical stating if uROI are to be used
@@ -73,9 +75,9 @@
 #' #   is not annotated
 #'
 #' slotNames(annotation)
-#' # [1]  "cpdID"           "cpdName"     "ROI"        "FIR"        "uROI"       "filepath"
-#' # [7]  "acquisitionTime" "uROIExist"   "useUROI"    "useFIR"     "TIC"        "peakTables"
-#' # [13] "dataPoints"      "peakFit"     "isAnnotated"
+#' # [1] "cpdID"       "cpdName"         "ROI"             "FIR"       "uROI"        "filepath"       
+#' # [7] "cpdMetadata" "spectraMetadata" "acquisitionTime" "uROIExist" "useUROI"     "useFIR"         
+#' # [13] "TIC"        "peakTables"      "dataPoints"      "peakFit"   "isAnnotated"
 #'
 #' annotation@cpdID
 #' # [1] "ID-1" "ID-2"
@@ -96,6 +98,10 @@
 #' annotation@filepath
 #' # [1] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko16.CDF"
 #' # [2] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko18.CDF"
+#' annotation@cpdMetadata
+#' # data frame with 0 columns and 2 rows
+#' annotation@spectraMetadata
+#' # data frame with 0 columns and 3 rows
 #' annotation@acquisitionTIme
 #' # [1] NA NA NA
 #' annotation@uROIExist
@@ -146,6 +152,8 @@ peakPantheRAnnotation <- setClass("peakPantheRAnnotation",
                                            FIR = "data.frame",
                                            uROI = "data.frame",
                                            filepath = "character",
+                                           cpdMetadata = "data.frame",
+                                           spectraMetadata = "data.frame",
                                            acquisitionTime = "character",
                                            uROIExist = "logical",
                                            useUROI = "logical",

@@ -27,8 +27,8 @@
 
 #' peakPantheR: A package for Peak Picking and ANnoTation of High resolution Experiments in R
 #'
-#' \pkg{peakPantheR} detects, integrates and reports pre-defined features in MS files using
-#' XCMS3. It enables the real time annotation of multiple compounds in a single file, or
+#' \pkg{peakPantheR} detects, integrates and reports pre-defined features in MS files.
+#' It enables the real time annotation of multiple compounds in a single file, or
 #' the parallel annotation of multiple compounds in multiple files.
 #'
 #' The main functions of \pkg{peakPantheR} are \code{\link{peakPantheR_singleFileSearch}} for

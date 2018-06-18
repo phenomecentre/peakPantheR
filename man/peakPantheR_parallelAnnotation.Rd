@@ -5,7 +5,7 @@
 \title{Search, integrate and report targeted features in a multiple spectra}
 \usage{
 peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
-  verbose = TRUE, ...)
+  resetWorkers = 1, verbose = TRUE, ...)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation object defining the samples to process and compounds to target. The slots \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR integrated if a feature is not found}
@@ -13,6 +13,8 @@ peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
 \item{ncores}{(int) Number of cores to use for parallelisation. Default 0 for no parallelisation.}
 
 \item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)}
+
+\item{resetWorkers}{(int) If 0, the parallel cluster is only initiated once. If >0 the cluster will be reset (and the memory of each worker freed) once \code{ncores * resetWorkers} files have been processed. Default value is 1, the cluster is reset once \code{ncores} files have been processed. While potentially impacting performance (need to wait until all \code{ncores * resetWorkers} files are processed before restarting the cluster), shutting down the workers processes regularly will ensure the OS can reallocate memory more efficiently. For values >1, ensure sufficient system memory is available}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken, number of features found (total and matched to targets) and failures}
 

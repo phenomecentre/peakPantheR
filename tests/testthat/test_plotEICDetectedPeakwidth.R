@@ -1,7 +1,5 @@
 context('plotEICDetectedPeakwidth()')
 
-skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
-library(faahKO)
 
 ## Input and expected data
 # fake sample 1
@@ -72,7 +70,7 @@ test_that('plot feature in 2 samples, rtMin and/or rtMax are NA', {
 
 test_that('colour warning, ratio replacement', {
   # Expected message
-  expected_message <- c("Warning: sampleColour length must match the number of samples; default colour used\n", "Error: ratio must be between 0 and 1, replaced by default value\n")
+  expected_message <- c("Error: ratio must be between 0 and 1, replaced by default value\n", "Warning: sampleColour length must match the number of samples; default colour used\n")
   
   # result plot
   result_plot <- evaluate_promise(plotEICDetectedPeakwidth(list(tmp_DataPoints1, tmp_DataPoints2), cpdID=c('ID-1', 'ID-2'), cpdName=c('testCpd 1', 'testCpd 2'), rt=c(1000., 1002.), rtMin=c(995., 997.), rtMax=c(1005.,1007.), mzMin=c(521.,521.), mzMax=c(523.,523.), ratio=2, sampling=250, curveFitSampleList=list(fit1, fit2), sampleColour=c('blue', 'red', 'grey'), verbose=TRUE))
@@ -102,12 +100,12 @@ test_that('raise errors', {
   msg3    <- c('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
   expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=c(1000., 1002.), rtMin=995., rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg3, fixed=TRUE)
   # rtmin length is wrong
-  msg4    <- c('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  msg4    <- c('"curveFitSampleList", "rtMin", "rtMax" and "ROIDataPointSampleList" must be the same length')
   expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=c(995., 997.), rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg4, fixed=TRUE)
   # rtmax length is wrong
-  msg5    <- c('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  msg5    <- c('"curveFitSampleList", "rtMin", "rtMax" and "ROIDataPointSampleList" must be the same length')
   expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=995., rtMax=c(1005.,1007.), mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg5, fixed=TRUE)
   # curveFitSampleList length is wrong
-  msg6    <- c('"curveFitSampleList", "ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
+  msg6    <- c('"curveFitSampleList", "rtMin", "rtMax" and "ROIDataPointSampleList" must be the same length')
   expect_error(plotEICDetectedPeakwidth(list(tmp_DataPoints1), cpdID='ID-1', cpdName='testCpd 1', rt=1000., rtMin=995., rtMax=1005., mzMin=521., mzMax=523., ratio=0.85, sampling=250, curveFitSampleList=list(fit1,fit2), sampleColour=NULL, verbose=FALSE), msg6, fixed=TRUE)
 })

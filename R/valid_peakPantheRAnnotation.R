@@ -141,7 +141,19 @@ valid_peakPantheRAnnotation <- function(object) {
       }
     }
   }
-
+  
+  # number of compounds (rows) in cpdMetadata
+  if (dim(object@cpdMetadata)[1] != nbCpd) {
+    valid <- FALSE
+    msg   <- c(msg, paste("cpdMetadata has ", dim(object@cpdMetadata)[1], " rows (compounds). Should be ", nbCpd, sep=""))
+  }
+  
+  # number of spectra (rows) in spectraMetadata
+  if (dim(object@spectraMetadata)[1] != nbSample) {
+    valid <- FALSE
+    msg   <- c(msg, paste("spectraMetadata has ", dim(object@spectraMetadata)[1], " rows (spectra). Should be ", nbSample, sep=""))
+  }
+  
   # number of acquisitionTime
   if (length(object@acquisitionTime) != nbSample) {
     valid <- FALSE

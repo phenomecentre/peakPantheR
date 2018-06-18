@@ -10,6 +10,8 @@
 #' @param FIR A data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @param uROI A data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @param filepath A character vector of file paths, of length number of spectra files
+#' @param cpdMetadata A data.frame of compound metadata, with compounds as row and metadata as columns
+#' @param spectraMetadata A data.frame of sample metadata, with samples as row and metadata as columns
 #' @param acquisitionTime A character vector of acquisition date-time (converted from POSIXct) or NA
 #' @param uROIExist A logical stating if uROI have been set
 #' @param useUROI A logical stating if uROI are to be used
@@ -27,6 +29,8 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
                                   FIR = data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F),
                                   uROI = data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F),
                                   filepath = character(),
+                                  cpdMetadata = data.frame(),
+                                  spectraMetadata = data.frame(),
                                   acquisitionTime = character(),
                                   uROIExist = FALSE,
                                   useUROI = FALSE,
@@ -66,6 +70,10 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
     # set peakFit default if no peakFit passed in
     if (length(peakFit) == 0) {
       peakFit         <- vector("list", nbSpectra)
+    }
+    # set spectraMetadata to the correct size if no spectraMetadata passed in (at the correct size)
+    if (dim(spectraMetadata)[1] != nbSpectra) {
+      spectraMetadata <- data.frame(matrix(, nrow=nbSpectra, ncol=0))
     }
   }
 
@@ -112,6 +120,10 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
     cpdID       <- targetFeatTable$cpdID
     cpdName     <- targetFeatTable$cpdName
     ROI         <- targetFeatTable[,c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
+    # set cpdMetadata to the correct size if no cpdMetadata passed in (at the correct size)
+    if (dim(cpdMetadata)[1] != nbCompound) {
+      cpdMetadata <- data.frame(matrix(, nrow=nbCompound, ncol=0))
+    }
     # only set FIR and uROI to the correct size if not provided in input (at the correct size)
     if (dim(FIR)[1] != nbCompound) {
       FIR       <- data.frame(rtMin=as.numeric(rep(NA,nbCompound)), rtMax=as.numeric(rep(NA,nbCompound)), mzMin=as.numeric(rep(NA,nbCompound)), mzMax=as.numeric(rep(NA,nbCompound)), stringsAsFactors=F)
@@ -126,5 +138,5 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
   }
 
   ## set the final values
-  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, dataPoints=dataPoints, peakFit=peakFit, isAnnotated=isAnnotated)
+  new("peakPantheRAnnotation", cpdID=cpdID, cpdName=cpdName, ROI=ROI, FIR=FIR, uROI=uROI, filepath=filepath, cpdMetadata=cpdMetadata, spectraMetadata=spectraMetadata, acquisitionTime=acquisitionTime, uROIExist=uROIExist, useUROI=useUROI, useFIR=useFIR, TIC=TIC, peakTables=peakTables, dataPoints=dataPoints, peakFit=peakFit, isAnnotated=isAnnotated)
 }

@@ -20,38 +20,11 @@
 plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin, rtMax, mzMin, mzMax, ratio=0.85, sampling=250, curveFitSampleList=NULL, sampleColour=NULL, verbose=TRUE) {
   
   ## Check input
-  # in case ROIDataPointSampleList is not a list
-  if (class(ROIDataPointSampleList) != "list") {
-    stop('Error: "ROIDataPointSampleList" must be a list of data.frame')
-  }
-  
-  # check length of input
+  # check length of input across subplots, (others are checked inside plotEICFit and plotPeakwidth)
   nbSpl   <- length(ROIDataPointSampleList)
-  if ((nbSpl!=length(rt)) | (nbSpl!=length(rtMin)) | (nbSpl!=length(rtMax))) {
+  if (nbSpl!=length(rt)) {
     stop('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
   }
-  
-  # check curveFitSampleList
-  plotFit     <- FALSE
-  if (!is.null(curveFitSampleList)) {
-    if (nbSpl==length(curveFitSampleList)) {
-      plotFit <- TRUE
-    } else {
-      stop('"curveFitSampleList", "ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
-    }
-  }
-  
-  # set default colour (add a sample color ID that will be match in the plot)
-  colourSpl     <- rep("black", nbSpl)
-  if (!is.null(sampleColour)) {
-    if (nbSpl==length(sampleColour)) {
-      colourSpl <- sampleColour
-    } else {
-      if (verbose) {message("Warning: sampleColour length must match the number of samples; default colour used")}
-    }
-  } 
-  sampleIDColour    <- paste('spl', seq(1:nbSpl), sep="")
-  names(colourSpl)  <- sampleIDColour
   
   # ratio must be between 0 and 1
   if ((ratio < 0) | (ratio > 1)) {
@@ -59,61 +32,27 @@ plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt
     ratio <- 0.85
   }
   
-  
-  
+
   ## Init
   title   <- paste('CpdID: ', cpdID, ' - ', cpdName, ' ', round(mzMin, 4), '-', round(mzMax, 4))
   
-  
   ## Plot raw spectra and curve fit
-  # init plot
-  p_spec      <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) + ggplot2::ggtitle(title) + ggplot2::theme_bw() + ggplot2::ylab('Intensity') + ggplot2::theme(axis.title.x=ggplot2::element_blank(), axis.text.x=ggplot2::element_blank(), plot.title=ggplot2::element_text(size=ggplot2::rel(1)))
-  
-  # add each spectra and fit to the plot
-  for (spectraID in 1:nbSpl){
-    # generate EIC
-    tmp_EIC <- generateIonChromatogram(ROIDataPointSampleList[[spectraID]], aggregationFunction='sum')
-    # plot EIC
-    p_spec  <- p_spec + ggplot2::geom_line(data=tmp_EIC, ggplot2::aes_string(x='rt', y='int'), colour=colourSpl[spectraID])
-
-    # fitted curve
-    if (plotFit & !(is.na(rtMin[spectraID])) & !(is.na(rtMax[spectraID]))) {
-      grid_rt   <- seq(from=rtMin[spectraID], to=rtMax[spectraID], by=((rtMax[spectraID]-rtMin[spectraID])/(sampling-1)))
-      # only if exist
-      if (all(!is.na(curveFitSampleList[[spectraID]]))) {
-        # project curve fit
-        tmp_fit <- data.frame(rt=grid_rt ,int=predictCurve(curveFitSampleList[[spectraID]], x=grid_rt))
-        # plot curve fit
-        p_spec  <- p_spec + ggplot2::geom_line(data=tmp_fit, ggplot2::aes_string(x='rt', y='int'), colour=colourSpl[spectraID], linetype="dashed")
-      }
-    }
-  }
-  
-  
-  
+  p_spec        <- plotEICFit(ROIDataPointSampleList=ROIDataPointSampleList,
+                              curveFitSampleList=curveFitSampleList,
+                              rtMin=rtMin, rtMax=rtMax, sampling=sampling,
+                              sampleColour=sampleColour, verbose=verbose)
+  p_spec        <- p_spec + ggplot2::ggtitle(title) + ggplot2::theme(axis.title.x=ggplot2::element_blank(), axis.text.x=ggplot2::element_blank(), plot.title=ggplot2::element_text(size=ggplot2::rel(1)))
+ 
   ## Plot peakwidth
-  y_placement   <- seq(nbSpl-1, 0) #first spectra on top
-  # init plot
-  p_peakwidth   <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) + ggplot2::theme_bw() + ggplot2::xlab('Retention Time (sec)') + ggplot2::theme(axis.title.y=ggplot2::element_blank(), axis.text.y=ggplot2::element_blank(), axis.ticks.y=ggplot2::element_blank()) + ggplot2::scale_y_continuous(breaks=NULL)
-  # set colourscale for p_peakwidth
-  tmp_col         <- colourSpl
-  p_peakwidth     <- p_peakwidth + ggplot2::scale_colour_manual(values=tmp_col, guide=FALSE)
-  # rt point (add the color ID to each point)
-  tmp_pt        <- data.frame(x=rt, y=y_placement, colr=sampleIDColour, stringsAsFactors=F)
-  tmp_pt        <- tmp_pt[!is.na(tmp_pt$x),]
-  p_peakwidth   <- p_peakwidth + ggplot2::geom_point(data=tmp_pt, ggplot2::aes(x=x, y=y, colour=colr), size=3)
-  # rt peakwidth (add color ID to each point)
-  tmp_pwidth    <- data.frame(x=c(rtMin,rtMax), y=c(y_placement,y_placement), colr=c(sampleIDColour,sampleIDColour), stringsAsFactors=F)
-  tmp_pwidth    <- tmp_pwidth[!is.na(tmp_pwidth$x),]
-  p_peakwidth   <- p_peakwidth + ggplot2::geom_line(data=tmp_pwidth, ggplot2::aes(x=x, y=y, group=y, colour=colr), size=1)
+  p_peakwidth   <- plotPeakwidth(apexValue=rt, widthMin=rtMin, widthMax=rtMax,
+                                 varName='Retention Time (sec)', acquTime=NULL,
+                                 sampleColour=sampleColour, rotateAxis=TRUE, verbose=FALSE)
   
-  
-  
-  ## Set common x lim
-  minX          <- min(ggplot2::layer_scales(p_spec)$x$range$range[1], ggplot2::layer_scales(p_peakwidth)$x$range$range[1])
-  maxX          <- max(ggplot2::layer_scales(p_spec)$x$range$range[2], ggplot2::layer_scales(p_peakwidth)$x$range$range[2])
+  ## Set common x lim (due to the rotation, x on p_peakwidth is originally y and accessed as such)
+  minX          <- min(ggplot2::layer_scales(p_spec)$x$range$range[1], ggplot2::layer_scales(p_peakwidth)$y$range$range[1])
+  maxX          <- max(ggplot2::layer_scales(p_spec)$x$range$range[2], ggplot2::layer_scales(p_peakwidth)$y$range$range[2])
   p_spec        <- p_spec + ggplot2::xlim(minX, maxX)
-  p_peakwidth   <- p_peakwidth + ggplot2::xlim(minX, maxX)
+  p_peakwidth   <- p_peakwidth + ggplot2::ylim(minX, maxX)
   # convert to gtables
   p_spec        <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_spec))
   p_peakwidth   <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_peakwidth))

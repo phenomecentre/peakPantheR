@@ -220,6 +220,10 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
     res[[i]] <- scanTable
   }
   
+  # clear variables
+  rm(msFilteredSpec, file_rt, keep_scan_idx, rtFilteredSpec, spectraData, spec_rt, scanDatapoint, scanTable)
+  gc(verbose=FALSE)
+  
   # Out
   etime <- Sys.time()
   if (verbose) { message('Data read in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime))) }

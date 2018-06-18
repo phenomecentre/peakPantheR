@@ -1,14 +1,11 @@
 context('saveMultiEIC()')
 
-skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
-library(faahKO)
-
 
 ## Input and expected data
 # fake ROI 1
 # ROI data points
 rt1  <- seq(990, 1010, by=20/250)
-mz1  <- rep(522.2, length(rt))
+mz1  <- rep(522.2, length(rt1))
 int1 <- (dnorm(rt1, mean=1000, sd=1.5) * 100) + 1
 tmp_DataPoints1  <- data.frame(rt=rt1, mz=mz1, int=int1)
 # fittedCurve
@@ -17,7 +14,7 @@ class(fit1) <- 'peakPantheR_curveFit'
 # fake ROI 2
 # ROI data points
 rt2  <- seq(990, 1010, by=20/250)
-mz2  <- rep(464.2, length(rt))
+mz2  <- rep(464.2, length(rt2))
 int2 <- (dnorm(rt2, mean=1002, sd=1.5) * 100) + 1
 tmp_DataPoints2  <- data.frame(rt=rt2, mz=mz2, int=int2)
 # fittedCurve

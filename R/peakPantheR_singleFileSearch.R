@@ -270,5 +270,9 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     message('Feature search done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
   }
 
+  # clear variables
+  rm(raw_data)
+  gc(verbose=FALSE)
+  
   return(list(TIC=TICvalue, peakTable=finalOutput, acquTime=AcquTime, curveFit=curveFit, ROIsDataPoint=ROIsDataPoint))
 }
