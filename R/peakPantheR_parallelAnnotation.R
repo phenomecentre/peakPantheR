@@ -319,6 +319,6 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, r
     message('Parallel annotation done in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime)))
     message('  ', dim(fail_table)[1], ' failure(s)')
   }
-  
+
   return(list(annotation=outObject, failures=fail_table))
 }
