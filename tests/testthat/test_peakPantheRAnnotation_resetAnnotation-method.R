@@ -99,7 +99,7 @@ test_that('reset, no size change', {
 
   # expected
   expected_annotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE)
-  expected_message    <- c('peakPantheRAnnotation object being reset:\n', '  Previous "ROI" value kept\n', '  Previous "uROI" value kept\n', '  Previous "FIR" value kept\n', '  Previous "cpdMetadata" value kept\n', '  Previous "filepath" value kept\n', '  Previous "spectraMetadata" value kept\n', '  Previous "uROIExist" value kept\n', '  Previous "useUROI" value kept\n', '  Previous "useFIR" value kept\n')
+  expected_message    <- c('peakPantheRAnnotation object being reset:\n', '  Previous "ROI", "cpdID" and "cpdName" value kept\n', '  Previous "uROI" value kept\n', '  Previous "FIR" value kept\n', '  Previous "cpdMetadata" value kept\n', '  Previous "filepath" value kept\n', '  Previous "spectraMetadata" value kept\n', '  Previous "uROIExist" value kept\n', '  Previous "useUROI" value kept\n', '  Previous "useFIR" value kept\n')
   
   # results (output, warnings and messages)
   result_reset        <- evaluate_promise(resetAnnotation(input_annotation, verbose=TRUE))
@@ -124,7 +124,7 @@ test_that('change number of spectra and spectraMetadata', {
   tmp_spectraPaths      <- input_spectraPaths[1:2]
   tmp_spectraMetadata   <- input_spectraMetadata[1:2,]
   expected_annotation   <- peakPantheRAnnotation(spectraPaths=tmp_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=tmp_spectraMetadata, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE)
-  expected_message    <- c('peakPantheRAnnotation object being reset:\n', '  Previous "ROI" value kept\n', '  Previous "uROI" value kept\n', '  Previous "FIR" value kept\n', '  Previous "cpdMetadata" value kept\n', '  New "spectraPaths" value set\n', '  New "spectraMetadata" value set\n', '  Previous "uROIExist" value kept\n', '  Previous "useUROI" value kept\n', '  Previous "useFIR" value kept\n')
+  expected_message    <- c('peakPantheRAnnotation object being reset:\n', '  Previous "ROI", "cpdID" and "cpdName" value kept\n', '  Previous "uROI" value kept\n', '  Previous "FIR" value kept\n', '  Previous "cpdMetadata" value kept\n', '  New "spectraPaths" value set\n', '  New "spectraMetadata" value set\n', '  Previous "uROIExist" value kept\n', '  Previous "useUROI" value kept\n', '  Previous "useFIR" value kept\n')
   
   # results (output, warnings and messages)
   result_reset        <- evaluate_promise(resetAnnotation(input_annotation, spectraPaths=tmp_spectraPaths, spectraMetadata=tmp_spectraMetadata, verbose=TRUE))
@@ -148,7 +148,7 @@ test_that('change number of spectra but not spectraMetadata (reset them to defau
   # expected
   tmp_spectraPaths      <- input_spectraPaths[1:2]
   expected_annotation   <- peakPantheRAnnotation(spectraPaths=tmp_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE)
-  expected_message    <- c('peakPantheRAnnotation object being reset:\n', '  Previous "ROI" value kept\n', '  Previous "uROI" value kept\n', '  Previous "FIR" value kept\n', '  Previous "cpdMetadata" value kept\n', '  New "spectraPaths" value set\n', '  Targeted spectra changed, previous "spectraMetadata" cannot be kept and set to default\n', '  Previous "uROIExist" value kept\n', '  Previous "useUROI" value kept\n', '  Previous "useFIR" value kept\n')
+  expected_message    <- c('peakPantheRAnnotation object being reset:\n', '  Previous "ROI", "cpdID" and "cpdName" value kept\n', '  Previous "uROI" value kept\n', '  Previous "FIR" value kept\n', '  Previous "cpdMetadata" value kept\n', '  New "spectraPaths" value set\n', '  Targeted spectra changed, previous "spectraMetadata" cannot be kept and set to default\n', '  Previous "uROIExist" value kept\n', '  Previous "useUROI" value kept\n', '  Previous "useFIR" value kept\n')
   
   # results (output, warnings and messages)
   result_reset        <- evaluate_promise(resetAnnotation(input_annotation, spectraPaths=tmp_spectraPaths, verbose=TRUE))
@@ -216,5 +216,33 @@ test_that('change number of compounds but not uROI, FIR, uROIExist, useUROI, use
   expect_equal(length(result_reset2$messages), 0)
 })
 
+test_that('change uROI, FIR, uROIExist, useUROI, useFIR, cpdMetadata and spectraMetadata (but not spectra and targetFeatTable)', {
+  # input
+  input_annotation  <- filledAnnotation
+  
+  # expected
+  tmp_spectraMetadata   <- input_spectraMetadata[,1,drop=FALSE]
+  tmp_cpdMetadata       <- input_cpdMetadata[,1,drop=FALSE]
+  tmp_uROI              <- input_uROI
+  tmp_uROI[2,]          <- c(100, 101, 102, 103, 104, 105)
+  tmp_FIR               <- input_FIR
+  tmp_FIR[2,]           <- c(106, 107, 108, 109)
+  expected_annotation   <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, spectraPaths=input_spectraPaths, cpdMetadata=tmp_cpdMetadata, spectraMetadata=tmp_spectraMetadata, FIR=tmp_FIR, uROI=tmp_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE)
+  expected_message    <- c('peakPantheRAnnotation object being reset:\n', '  Previous "ROI", "cpdID" and "cpdName" value kept\n', '  New "uROI" value set\n', '  New "FIR" value set\n', '  New "cpdMetadata" value set\n', '  Previous "filepath" value kept\n', '  New "spectraMetadata" value set\n', '  Previous "uROIExist" value kept\n', '  Previous "useUROI" value kept\n', '  Previous "useFIR" value kept\n')
+  
+  # results (output, warnings and messages)
+  result_reset        <- evaluate_promise(resetAnnotation(input_annotation, cpdMetadata=tmp_cpdMetadata, spectraMetadata=tmp_spectraMetadata, FIR=tmp_FIR, uROI=tmp_uROI, verbose=TRUE))
+  
+  # Check result
+  expect_equal(result_reset$result, expected_annotation)
+  
+  # Check result messages
+  expect_equal(length(result_reset$messages), 10)
+  expect_equal(result_reset$messages, expected_message)
+  
+  ## no verbose
+  result_reset2       <- evaluate_promise(resetAnnotation(input_annotation, cpdMetadata=tmp_cpdMetadata, spectraMetadata=tmp_spectraMetadata, FIR=tmp_FIR, uROI=tmp_uROI, verbose=FALSE))
+  expect_equal(length(result_reset2$messages), 0)
+})
 
 

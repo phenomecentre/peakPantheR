@@ -770,6 +770,62 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
 
 
 
+## Save to disk all annotation results
+setGeneric("outputAnnotationResult", function(object, saveFolder, annotationName='annotationResult', verbose=TRUE) standardGeneric("outputAnnotationResult"))
+#' Save to disk all annotation results as csv files
+#' Save to disk all annotation results as \code{annotationName_ ... .csv} files: compound metadata (\code{cpdMetadata}, \code{cpdID}, \code{cpdName}) and spectra metadata (\code{spectraMetadata}, \code{acquisitionTime}, \code{TIC}) and a file for each column of \code{peakTables} (with samples as rows and compounds as columns)
+#' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
+#' @param saveFolder (str) Path of folder where the annotation result csv will be saved
+#' @param annotationName (str) name of annotation to use in the saved csv
+#' @param verbose (bool) If TRUE message progress
+#' @return None
+#' @docType methods
+#' @aliases outputAnnotationResult
+#' @export
+setMethod("outputAnnotationResult", "peakPantheRAnnotation",
+          function(object, saveFolder, annotationName, verbose) {
+            
+            ## Check object was annotated
+            if (!object@isAnnotated) {
+              stop('Object has not been annotated, no annotation results to save')
+            }
+            
+            ## Init folder
+            dir.create(saveFolder, recursive=TRUE, showWarnings=FALSE)
+            
+            ## Save compound metadata
+            tmp_cpdID       <- cpdID(object)
+            tmp_cpdName     <- cpdName(object)
+            tmp_cpdMetadata <- cpdMetadata(object)
+            tmp_outCpdMeta  <- data.frame(cpdID=tmp_cpdID, cpdName=tmp_cpdName)
+            tmp_outCpdMeta  <- cbind( tmp_outCpdMeta, tmp_cpdMetadata )
+            path_cpdMeta    <- paste(saveFolder, '/', annotationName, '_cpdMetadata.csv', sep='')
+            utils::write.csv(tmp_outCpdMeta, file = path_cpdMeta, row.names=FALSE)
+            if (verbose) { message('Compound metadata saved at ',path_cpdMeta) }
+            
+            ## Save spectra metadata
+            tmp_filepath        <- filepath(object)
+            tmp_acqTime         <- acquisitionTime(object)
+            tmp_TIC             <- TIC(object)
+            tmp_spectraMetadata <- spectraMetadata(object)
+            tmp_outSpecMeta     <- data.frame(filepath=tmp_filepath, acquisitionTime=tmp_acqTime, TIC=tmp_TIC)
+            tmp_outSpecMeta     <- cbind( tmp_outSpecMeta, tmp_spectraMetadata )
+            path_specMeta       <- paste(saveFolder, '/', annotationName, '_spectraMetadata.csv', sep='')
+            utils::write.csv(tmp_outSpecMeta, file = path_specMeta, row.names=FALSE)
+            if (verbose) { message('Spectra metadata saved at ',path_specMeta) }
+            
+            ## Save peakTables columns
+            for (i in colnames(object@peakTables[[1]])) {
+              tmp_var   <- annotationTable(object=object, column=i)
+              path_var  <- paste(saveFolder, '/', annotationName, '_', i, '.csv', sep='')
+              utils::write.csv(tmp_var, file = path_var, row.names=TRUE)
+              if (verbose) { message('Peak measurement "', i, '" saved at ',path_var) }
+            }
+          })
+
+
+
+
 #####################################################################
 # Reset a peakPantheRAnnotation and alter samples or compounds information
 
@@ -803,7 +859,7 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
             if (all(is.null(targetFeatTable))) {
               # previous values
               .targetFeatTable  <- ROI(previousAnnotation)
-              if (verbose) { message('  Previous "ROI" value kept') }
+              if (verbose) { message('  Previous "ROI", "cpdID" and "cpdName" value kept') }
               
               # uROI
               if (all(is.null(uROI))) {
@@ -813,7 +869,7 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
               } else {
                 # new value
                 .uROI   <- uROI
-                if (verbose) { message('  New "ROI" value set') }
+                if (verbose) { message('  New "uROI" value set') }
               }
               
               # FIR
