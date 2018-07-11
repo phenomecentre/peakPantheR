@@ -9,10 +9,6 @@ tmp_val4 <- c(12.976824, 14.212054, 14.744901, 13.366618, 13.497829, 14.118244, 
 input_val <- c(tmp_val1, tmp_val2, tmp_val3, tmp_val4)
 
 
-## Expected data (load saved version of plots)
-path_expected_data      <- system.file("testdata/reference_plotHistogram.RData", package = "peakPantheR")
-load(path_expected_data) # expected_histoAndDensity + expected_histoNoDensity
-
 
 test_that('histogram and density, with NA in input', {
   ## warning for default bin number
@@ -20,6 +16,8 @@ test_that('histogram and density, with NA in input', {
   tmp_input <- c(NA, input_val, NA)
   # expected message   
   expected_message <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.\n"
+  # expected values
+  expected_data <- data.frame(x=input_val)
   
 	# generate plot
   result_histoAndDensity  <- plotHistogram(tmp_input, varName='Test variable', density=TRUE)
@@ -30,18 +28,17 @@ test_that('histogram and density, with NA in input', {
   expect_true(ggplot2::is.ggplot(result_histoAndDensity))
   expect_equal(result_histoAndDensity$labels$x, "Test variable")
   expect_equal(result_histoAndDensity$labels$y, "density")
+  expect_equal(result_histoAndDensity$data, expected_data)
   expect_equal(length(result_histoAndDensity), 9)
   
   # Check message (warning is caught as result and not warning!?!)
   expect_equal(result_message$messages, expected_message)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_histoAndDensity)
-  tmp_expected  <- ggplot2::ggplot_build(expected_histoAndDensity)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('histogram without density', {
+  # expected values
+  expected_data <- data.frame(x=input_val)
+  
   # generate plot
   result_histoNoDensity <- plotHistogram(input_val, varName='Test variable 2', density=FALSE)
   
@@ -49,16 +46,15 @@ test_that('histogram without density', {
   expect_true(ggplot2::is.ggplot(result_histoNoDensity))
   expect_equal(result_histoNoDensity$labels$x, "Test variable 2")
   expect_equal(result_histoNoDensity$labels$y, "count")
+  expect_equal(result_histoNoDensity$data, expected_data)
   expect_equal(length(result_histoNoDensity), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_histoNoDensity)
-  tmp_expected  <- ggplot2::ggplot_build(expected_histoNoDensity)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('histogram and density with modified ... (bins)', {
   ## Cannot match the plot itself, so check the warning message is not thrown as a proof 'bins' or 'binwidth' has been set
+  
+  # expected values
+  expected_data <- data.frame(x=input_val)
   
   # generate plot
   result_histoChangeBins  <- plotHistogram(input_val, varName='Test variable 3', density=TRUE, bins=20)
@@ -71,7 +67,6 @@ test_that('histogram and density with modified ... (bins)', {
   expect_true(ggplot2::is.ggplot(result_histoChangeBins))
   expect_equal(result_histoChangeBins$labels$x, "Test variable 3")
   expect_equal(result_histoChangeBins$labels$y, "density")
+  expect_equal(result_histoChangeBins$data, expected_data)
   expect_equal(length(result_histoChangeBins), 9)
-  
-  # Matching of plot vs reference doesn't work
 })

@@ -7,9 +7,6 @@ minVal  <- c(0, 0, 2, 2)
 maxVal  <- c(2, 4, 4, 5)
 acqTime <- as.POSIXct(c("2017-07-13 21:06:14", "2017-07-14 21:06:14", "2017-07-15 21:06:14", "2017-07-16 21:06:14"))
 
-## Expected data (load saved version of plots) | date axis can vary across platforms, cannot test plots matching
-path_expected_data      <- system.file("testdata/reference_plotPeakwidth.RData", package = "peakPantheR")
-load(path_expected_data) # expected_3splNoColNoRot + expected_3splNoColRot + expected_4splWithColNoRot + expected_4splWithColRot + expected_plotColourWarning + expected_plotNoWidth + expected_plotFallBackNAAcqu
 
 
 test_that('plot 3 samples, no color', {
@@ -23,11 +20,6 @@ test_that('plot 3 samples, no color', {
   expect_equal(result_3splNoColNoRot$labels$x, "x")
   expect_equal(result_3splNoColNoRot$labels$y, "Test variable")
   expect_equal(length(result_3splNoColNoRot), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_3splNoColNoRot)
-  tmp_expected  <- ggplot2::ggplot_build(expected_3splNoColNoRot)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot 3 samples, no color, acquisition time', {
@@ -41,7 +33,6 @@ test_that('plot 3 samples, no color, acquisition time', {
   expect_equal(result_3splNoColNoRotRunOrder$labels$x, "Acquisition Time")
   expect_equal(result_3splNoColNoRotRunOrder$labels$y, "Test variable 2")
   expect_equal(length(result_3splNoColNoRotRunOrder), 9)
-  # Date axis can vary across platforms, cannot test exact plot match
 })
 
 test_that('plot 3 samples, no color, rotate axis', {
@@ -55,11 +46,6 @@ test_that('plot 3 samples, no color, rotate axis', {
   expect_equal(result_3splNoColRot$labels$x, "x") #after rotations axis still have the previous name
   expect_equal(result_3splNoColRot$labels$y, "Test variable 3")
   expect_equal(length(result_3splNoColRot), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_3splNoColRot)
-  tmp_expected  <- ggplot2::ggplot_build(expected_3splNoColRot)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot 3 samples, no color, acquisition time, rotate axis', {
@@ -73,7 +59,6 @@ test_that('plot 3 samples, no color, acquisition time, rotate axis', {
   expect_equal(result_3splNoColRotRunOrder$labels$x, "Acquisition Time") #after rotations axis still have the previous name
   expect_equal(result_3splNoColRotRunOrder$labels$y, "Test variable 4")
   expect_equal(length(result_3splNoColRotRunOrder), 9)
-  # Date axis can vary across platforms, cannot test exact plot match
 })
 
 test_that('plot 4 samples with color', {
@@ -87,11 +72,6 @@ test_that('plot 4 samples with color', {
   expect_equal(result_4splWithColNoRot$labels$x, "x")
   expect_equal(result_4splWithColNoRot$labels$y, "Test variable 5")
   expect_equal(length(result_4splWithColNoRot), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_4splWithColNoRot)
-  tmp_expected  <- ggplot2::ggplot_build(expected_4splWithColNoRot)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot 4 samples with color, acquisition time', {
@@ -105,7 +85,6 @@ test_that('plot 4 samples with color, acquisition time', {
   expect_equal(result_4splWithColNoRotRunOrder$labels$x, "Acquisition Time")
   expect_equal(result_4splWithColNoRotRunOrder$labels$y, "Test variable 6")
   expect_equal(length(result_4splWithColNoRotRunOrder), 9)
-  # Date axis can vary across platforms, cannot test exact plot match
 })
 
 test_that('plot 4 samples with color, rotate axis', {
@@ -119,11 +98,6 @@ test_that('plot 4 samples with color, rotate axis', {
   expect_equal(result_4splWithColRot$labels$x, "x") #after rotations axis still have the previous name
   expect_equal(result_4splWithColRot$labels$y, "Test variable 7")
   expect_equal(length(result_4splWithColRot), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_4splWithColRot)
-  tmp_expected  <- ggplot2::ggplot_build(expected_4splWithColRot)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot 4 samples with color, acquisition time, rotate axis', {
@@ -137,7 +111,6 @@ test_that('plot 4 samples with color, acquisition time, rotate axis', {
   expect_equal(result_4splWithColRotRunOrder$labels$x, "Acquisition Time") #after rotations axis still have the previous name
   expect_equal(result_4splWithColRotRunOrder$labels$y, "Test variable 8")
   expect_equal(length(result_4splWithColRotRunOrder), 9)
-  # Date axis can vary across platforms, cannot test exact plot match
 })
 
 test_that('sampleColour length warning, peakwidth and rotate and input order message', {
@@ -157,11 +130,6 @@ test_that('sampleColour length warning, peakwidth and rotate and input order mes
   expect_equal(result_plotColourWarning$result$labels$x, "x")
   expect_equal(result_plotColourWarning$result$labels$y, "Test variable 9")
   expect_equal(length(result_plotColourWarning$result), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plotColourWarning$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plotColourWarning)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('sampleColour length warning, no peakwidth (missing widthMax) and no rotate and run order message', {
@@ -181,7 +149,6 @@ test_that('sampleColour length warning, no peakwidth (missing widthMax) and no r
   expect_equal(result_plotColourWarningRunOrder$result$labels$x, "Acquisition Time")
   expect_equal(result_plotColourWarningRunOrder$result$labels$y, "Test variable 10")
   expect_equal(length(result_plotColourWarningRunOrder$result), 9)
-  # Date axis can vary across platforms, cannot test exact plot match
 })
 
 test_that('missing widthMin, no peakwidth plot', {
@@ -201,11 +168,6 @@ test_that('missing widthMin, no peakwidth plot', {
   expect_equal(result_plotNoWidthMin$result$labels$x, "x")
   expect_equal(result_plotNoWidthMin$result$labels$y, "Test variable 11")
   expect_equal(length(result_plotNoWidthMin$result), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plotNoWidthMin$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plotNoWidth)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('missing widthMax, no peakwidth plot', {
@@ -225,11 +187,6 @@ test_that('missing widthMax, no peakwidth plot', {
   expect_equal(result_plotNoWidthMax$result$labels$x, "x")
   expect_equal(result_plotNoWidthMax$result$labels$y, "Test variable 11")
   expect_equal(length(result_plotNoWidthMax$result), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plotNoWidthMax$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plotNoWidth)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('NA in acquisition time, revert to input order plot', {
@@ -249,11 +206,6 @@ test_that('NA in acquisition time, revert to input order plot', {
   expect_equal(result_plotFallBackNAAcqu$result$labels$x, "x")
   expect_equal(result_plotFallBackNAAcqu$result$labels$y, "Test variable 12")
   expect_equal(length(result_plotFallBackNAAcqu$result), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plotFallBackNAAcqu$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plotFallBackNAAcqu)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('raise errors', {

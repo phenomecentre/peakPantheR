@@ -12,7 +12,7 @@
 #' @return a list: \code{list()$result} \emph{(peakPantheRAnnotation)} fully annotated object, \code{list()$failures} \emph{(list)} list of failed samples and error message
 #'
 #' @examples
-#' \dontrun{
+#' if(requireNamespace("faahKO")){
 #' ## Load data
 #' library(faahKO)
 #' 
@@ -109,6 +109,7 @@
 #'
 #' @import foreach
 #' @import doParallel
+#' @import mzR
 #'
 #' @export
 peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, resetWorkers=1, verbose=TRUE, ...) {

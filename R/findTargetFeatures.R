@@ -290,7 +290,11 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     # calculate mz (might be an approx) (weighted average of total intensity across all rt for each unique mz)
     mzRange           <- unique(tmpPt$mz)
     mzTotalIntensity  <- sapply(mzRange, function(x) {sum(tmpPt$int[tmpPt$mz == x])})
-    mz                <- stats::weighted.mean(mzRange, mzTotalIntensity)
+    if (length(mzTotalIntensity) > 0) { # make sure weighted.mean doesn't crash if no scan match
+      mz              <- stats::weighted.mean(mzRange, mzTotalIntensity)
+    } else {
+      mz              <- NA
+    }
     # tidy
     mzMin   <- tmpMzMin
     mzMax   <- tmpMzMax

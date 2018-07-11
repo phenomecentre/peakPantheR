@@ -5,3 +5,5 @@
 ^.gitignore
 ^.travis.yml
 LICENSE
+^cran-comments.md
+^.travis.yml

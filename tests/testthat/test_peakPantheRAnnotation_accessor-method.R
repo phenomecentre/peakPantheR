@@ -150,26 +150,26 @@ test_that('accessors return the correct values', {
   # simple value
   expected_annotationTable            <- data.frame(matrix(c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE), 3, 2), stringsAsFactors=F)
   rownames(expected_annotationTable)  <- input_spectraPaths
-  colnames(expected_annotationTable)  <- c("Cpd 1", "Cpd 2")
+  colnames(expected_annotationTable)  <- c("ID-1", "ID-2")
   expect_equal(annotationTable(filledAnnotation, 'found'), expected_annotationTable)
   # no sample
   tmp_noSample                <- peakPantheRAnnotation()
   expected_noSample           <- data.frame(matrix(vector(), 0, 0), stringsAsFactors=F)
   rownames(expected_noSample) <- tmp_noSample@filepath
-  colnames(expected_noSample) <- tmp_noSample@cpdName
+  colnames(expected_noSample) <- tmp_noSample@cpdID
   expect_equal(annotationTable(tmp_noSample, 'found'), expected_noSample)
   # no peakTables (not annotated or no compounds)
   tmp_noPeakTables            <- filledAnnotation
   tmp_noPeakTables@peakTables <- vector("list", 3)
   expected_noPeakTables           <- data.frame(matrix(vector(), 3, 2), stringsAsFactors=F)
   rownames(expected_noPeakTables) <- tmp_noPeakTables@filepath
-  colnames(expected_noPeakTables) <- tmp_noPeakTables@cpdName
+  colnames(expected_noPeakTables) <- tmp_noPeakTables@cpdID
   expect_equal(annotationTable(tmp_noPeakTables, 'found'), expected_noPeakTables)
   # only 1 compounds (sapply simplify to vector and not matrix)
   tmp_singleCpd         <- filledAnnotation[,1]
   expected_mz           <- data.frame(matrix(c(522.20001220703125, 522.20001220703125, 522.20001220703125), 3, 1), stringsAsFactors=F)
   rownames(expected_mz) <- filledAnnotation@filepath
-  colnames(expected_mz) <- filledAnnotation@cpdName[1]
+  colnames(expected_mz) <- filledAnnotation@cpdID[1]
   expect_equal(annotationTable(tmp_singleCpd, 'mz'), expected_mz)
   # raise error if column doesn't exist
   expect_error(annotationTable(filledAnnotation, 'notAnExistingColumn'), 'input column is not a column of peakTables', fixed=TRUE)
@@ -178,37 +178,37 @@ test_that('accessors return the correct values', {
   # mz
   expected_mz           <- data.frame(matrix(c(522.20001220703125, 522.20001220703125, 522.20001220703125, 496.20001220703125, 496.20001220703125, 496.20001220703125), 3, 2), stringsAsFactors=F)
   rownames(expected_mz) <- filledAnnotation@filepath
-  colnames(expected_mz) <- filledAnnotation@cpdName
+  colnames(expected_mz) <- filledAnnotation@cpdID
   expect_equal(annotationTable(filledAnnotation, 'mz'), expected_mz)
   # mzMin
   expected_mzMin           <- data.frame(matrix(c(522.194778, 522.194778, 522.194778, 496.20001220703125, 496.195038, 496.195038), 3, 2), stringsAsFactors=F)
   rownames(expected_mzMin) <- filledAnnotation@filepath
-  colnames(expected_mzMin) <- filledAnnotation@cpdName
+  colnames(expected_mzMin) <- filledAnnotation@cpdID
   expect_equal(annotationTable(filledAnnotation, 'mzMin'), expected_mzMin)
   # mzMax
   expected_mzMax           <- data.frame(matrix(c(522.205222, 522.205222, 522.205222, 496.20001220703125, 496.204962, 496.204962), 3, 2), stringsAsFactors=F)
   rownames(expected_mzMax) <- filledAnnotation@filepath
-  colnames(expected_mzMax) <- filledAnnotation@cpdName
+  colnames(expected_mzMax) <- filledAnnotation@cpdID
   expect_equal(annotationTable(filledAnnotation, 'mzMax'), expected_mzMax)
   # rt
   expected_rt           <- data.frame(matrix(c(3346.8277590361445, 3365.102, 3368.233, 3386.5288072289159, 3405.791, 3413.4952530120481), 3, 2), stringsAsFactors=F)
   rownames(expected_rt) <- filledAnnotation@filepath
-  colnames(expected_rt) <- filledAnnotation@cpdName
+  colnames(expected_rt) <- filledAnnotation@cpdID
   expect_equal(annotationTable(filledAnnotation, 'rt'), expected_rt)
   # rtMin
   expected_rtMin           <- data.frame(matrix(c(3309.7589296586070, 3326.1063495851854, 3333.8625894557053, 3345.3766648628907, 3365.0238566258713, 3373.3998828113113), 3, 2), stringsAsFactors=F)
   rownames(expected_rtMin) <- filledAnnotation@filepath
-  colnames(expected_rtMin) <- filledAnnotation@cpdName
+  colnames(expected_rtMin) <- filledAnnotation@cpdID
   expect_equal(annotationTable(filledAnnotation, 'rtMin'), expected_rtMin)
   # rtMax
   expected_rtMax           <- data.frame(matrix(c(3385.4098874628098, 3407.2726475892355, 3407.4362838927614, 3428.2788374983961, 3453.4049569205681, 3454.4490330927388), 3, 2), stringsAsFactors=F)
   rownames(expected_rtMax) <- filledAnnotation@filepath
-  colnames(expected_rtMax) <- filledAnnotation@cpdName
+  colnames(expected_rtMax) <- filledAnnotation@cpdID
   expect_equal(annotationTable(filledAnnotation, 'rtMax'), expected_rtMax)
   # peakArea
   expected_peakArea           <- data.frame(matrix(c(26133726.6811244078, 24545301.622835573, 21447174.404490683, 35472141.3330242932, 37207579.286265120, 35659353.614476241), 3, 2), stringsAsFactors=F)
   rownames(expected_peakArea) <- filledAnnotation@filepath
-  colnames(expected_peakArea) <- filledAnnotation@cpdName
+  colnames(expected_peakArea) <- filledAnnotation@cpdID
   expect_equal(annotationTable(filledAnnotation, 'peakArea'), expected_peakArea)
   
   # EICs

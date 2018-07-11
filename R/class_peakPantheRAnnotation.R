@@ -47,7 +47,7 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' if(requireNamespace("faahKO")){
 #' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
 #'
 #' # Paths to spectra files
@@ -102,7 +102,7 @@
 #' # data frame with 0 columns and 2 rows
 #' annotation@spectraMetadata
 #' # data frame with 0 columns and 3 rows
-#' annotation@acquisitionTIme
+#' annotation@acquisitionTime
 #' # [1] NA NA NA
 #' annotation@uROIExist
 #' # [1] FALSE

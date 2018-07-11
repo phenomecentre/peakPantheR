@@ -3,6 +3,7 @@ cache: packages
 
 os:
   - linux
+  - osx
 
 r:
   - bioc-devel
@@ -11,12 +12,13 @@ r:
 
 matrix:
   allow_failures:
-    - r: bioc-devel 
+    - r: bioc-devel
 
 bioc_required: true
 
 r_packages:
   - covr
+  - faahKO
 
 addons:
   apt:

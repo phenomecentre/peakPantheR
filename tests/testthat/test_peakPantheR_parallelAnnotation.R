@@ -134,7 +134,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (centwave output)
@@ -223,7 +223,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, mo
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE, params=new_params))
 
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (centwave output)
@@ -274,7 +274,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, pe
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
   
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
   
   # Check messages (centwave output)
@@ -326,7 +326,7 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
   
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
   
   # Check messages (centwave output)
@@ -358,7 +358,7 @@ test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no v
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (centwave output)

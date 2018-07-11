@@ -44,7 +44,7 @@
 #' }
 #'
 #' @examples
-#' \dontrun{
+#' if(requireNamespace("faahKO")){
 #' ## Load data
 #' library(faahKO)
 #' netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")

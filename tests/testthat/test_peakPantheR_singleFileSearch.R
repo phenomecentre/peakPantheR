@@ -229,8 +229,8 @@ test_that('change peak fitting params with ..., no peakStatistic, no plotEICsPat
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-7)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-5)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   

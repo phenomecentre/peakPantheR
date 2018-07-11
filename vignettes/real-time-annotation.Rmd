@@ -15,6 +15,12 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+```{r, echo = FALSE, include = FALSE}
+required <- c("faahKO")
+if (!all(unlist(lapply(required, function(pkg) requireNamespace(pkg, quietly = TRUE))))) {
+  knitr::opts_chunk$set(eval = FALSE)
+}
+```
 
 The `peakPantheR` package is designed for the detection, integration and reporting of pre-defined features in MS files.
 
@@ -45,6 +51,10 @@ Real time compound integration is set to:
 ## Real Time Annotation Example
 
 We can target two features in a MS spectra file from the _`faahKO`_ package with `peakPantheR_singleFileSearch()`:
+```{r, eval = FALSE}
+setRepositories(ind=1:4)
+install.packages('faahKO')
+```
 
 ### Input Data
 

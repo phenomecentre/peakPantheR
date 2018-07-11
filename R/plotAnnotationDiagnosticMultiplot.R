@@ -65,16 +65,16 @@ annotationDiagnosticMultiplot   <- function(annotationDiagnosticPlotList) {
     p_areaHisto         <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_areaHisto))
     # find the widths of each of the plots, calculate the maximum and then apply it to each of them individually. This effectively applies a uniform layout to each of the plots.
     # EIC + rt peakwidth
-    maxWidthEIC     <- grid::unit.pmax(p_EIC$widths[2:3], p_rtPeakwidthVert$widths[2:3])
-    p_EIC$widths[2:3]               <- maxWidthEIC
-    p_rtPeakwidthVert$widths[2:3]   <- maxWidthEIC
+    maxWidthEIC     <- grid::unit.pmax(p_EIC$widths[2:5], p_rtPeakwidthVert$widths[2:5])
+    p_EIC$widths[2:5]               <- maxWidthEIC
+    p_rtPeakwidthVert$widths[2:5]   <- maxWidthEIC
     # rt peakwidth + mz peakwidth + peak area (x axis)
-    maxWidthRtMzArea                <- grid::unit.pmax(p_rtPeakwidthHorz$widths[2:3], p_mzPeakwidthHorz$widths[2:3], p_peakAreaHorz$widths[2:3])
-    p_rtPeakwidthHorz$widths[2:3]   <- maxWidthRtMzArea
-    p_mzPeakwidthHorz$widths[2:3]   <- maxWidthRtMzArea
-    p_peakAreaHorz$widths[2:3]      <- maxWidthRtMzArea
+    maxWidthRtMzArea                <- grid::unit.pmax(p_rtPeakwidthHorz$widths[2:5], p_mzPeakwidthHorz$widths[2:5], p_peakAreaHorz$widths[2:5])
+    p_rtPeakwidthHorz$widths[2:5]   <- maxWidthRtMzArea
+    p_mzPeakwidthHorz$widths[2:5]   <- maxWidthRtMzArea
+    p_peakAreaHorz$widths[2:5]      <- maxWidthRtMzArea
     # rt + mz + area peakwidth and histo (y axis)
-    maxHeight       <- grid::unit.pmin(p_rtPeakwidthHorz$heights[2:3],p_mzPeakwidthHorz$heights[2:3],p_peakAreaHorz$heights[2:3],  p_rtHisto$widths[2:3],p_mzHisto$widths[2:3],p_areaHisto$widths[2:3])
+    maxHeight       <- grid::unit.pmin(p_rtPeakwidthHorz$heights[2:3],p_mzPeakwidthHorz$heights[2:3],p_peakAreaHorz$heights[2:3],  p_rtHisto$widths[2:5],p_mzHisto$widths[2:3],p_areaHisto$widths[2:3])
     p_rtPeakwidthHorz$heights[2:3]  <- maxHeight
     p_mzPeakwidthHorz$heights[2:3]  <- maxHeight
     p_peakAreaHorz$heights[2:3]     <- maxHeight
