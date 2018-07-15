@@ -1,7 +1,7 @@
 Package: peakPantheR
 Title: Peak Picking and Annotation of High Resolution Experiments
-Version: 1.2.0
-Date: 2018-07-08
+Version: 1.2.1
+Date: 2018-07-15
 Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre")),
 	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "ctb"),
 	person("Jake", "Pearce", email = "jake.pearce@imperial.ac.uk", role = "ctb"))
