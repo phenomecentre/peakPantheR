@@ -15,6 +15,12 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+```{r, echo = FALSE, include = FALSE}
+required <- c("faahKO")
+if (!all(unlist(lapply(required, function(pkg) requireNamespace(pkg, quietly = TRUE))))) {
+  knitr::opts_chunk$set(eval = FALSE)
+}
+```
 
 # peakPantheR
 Package for _Peak Picking and ANnoTation of High resolution Experiments in R_, implemented in `R` and `Shiny`
@@ -54,7 +60,11 @@ Both real time and parallel compound integration require a common set of informa
 * An expected region of interest (`RT` / `m/z` window) for each compound.
 
 
-The _`faahKO`_ package provides with a set of MS spectra that we can use for `peakPantheR` annotation:
+The _`faahKO`_ package provides with a set of MS spectra that we can use for `peakPantheR` annotation and is installed as follow:
+```{r, eval = FALSE}
+setRepositories(ind=1:4)
+install.packages('faahKO')
+```
 ```{r, echo = FALSE, include = FALSE}
 # hide package load message
 library(faahKO)

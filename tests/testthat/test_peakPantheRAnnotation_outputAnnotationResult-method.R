@@ -55,7 +55,7 @@ peakTable2[,c(2:10,12:15)] <- sapply(peakTable2[,c(2:10,12:15)], as.numeric)
 # 3
 peakTable3     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
 peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
-peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
+peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, TRUE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
 peakTable3[,c(1,11)]       <- sapply(peakTable3[,c(1,11)], as.logical)
 peakTable3[,c(2:10,12:15)] <- sapply(peakTable3[,c(2:10,12:15)], as.numeric)
 input_peakTables <- list(peakTable1, peakTable2, peakTable3)
@@ -92,7 +92,7 @@ filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths
 
 
 
-test_that('csv output, verbose, no verbose', {
+test_that('csv output with FIR, verbose, no verbose', {
   # temporary file
   savePath1         <- tempdir()
   
@@ -102,6 +102,7 @@ test_that('csv output, verbose, no verbose', {
   # expected
   expected_path_cpdMeta     <- file.path(savePath1, "testProject_cpdMetadata.csv")
   expected_path_specMeta    <- file.path(savePath1, "testProject_spectraMetadata.csv")
+  expected_path_summary     <- file.path(savePath1, "testProject_summary.csv")
   expected_path_asym        <- file.path(savePath1, "testProject_asymmetryFactor.csv")
   expected_path_found       <- file.path(savePath1, "testProject_found.csv")
   expected_path_is_filled   <- file.path(savePath1, "testProject_is_filled.csv")
@@ -126,48 +127,52 @@ test_that('csv output, verbose, no verbose', {
   expected_specMeta$TIC             <- input_TIC
   expected_specMeta$testcol1        <- input_spectraMetadata$testcol1
   expected_specMeta$testcol2        <- as.numeric(input_spectraMetadata$testcol2)
+  expected_summary        <- data.frame(matrix(data=c('Cpd 1 - ID-1',1,0,0.02337616,8.499586, 'Cpd 2 - ID-2',0.6666667,0.333333,0.02460103,16.361353), nrow=2,ncol=5,dimnames=list(c(), c('X', 'ratio_peaks_found', 'ratio_peaks_filled', 'ppm_error', 'rt_dev_sec')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_summary[,2:5]  <- sapply(expected_summary[,2:5], as.numeric)
   expected_asym         <- annotationTable(input_annotation, column='asymmetryFactor')
-  expected_asym         <- data.frame(X=rownames(expected_asym), Cpd.1=expected_asym$`Cpd 1`, Cpd.2=expected_asym$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_asym         <- data.frame(X=rownames(expected_asym), ID.1=expected_asym$`ID-1`, ID.2=expected_asym$`ID-2`, stringsAsFactors=FALSE)
   expected_found        <- annotationTable(input_annotation, column='found')
-  expected_found        <- data.frame(X=rownames(expected_found), Cpd.1=expected_found$`Cpd 1`, Cpd.2=expected_found$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_found        <- data.frame(X=rownames(expected_found), ID.1=expected_found$`ID-1`, ID.2=expected_found$`ID-2`, stringsAsFactors=FALSE)
   expected_is_filled    <- annotationTable(input_annotation, column='is_filled')
-  expected_is_filled    <- data.frame(X=rownames(expected_is_filled), Cpd.1=expected_is_filled$`Cpd 1`, Cpd.2=expected_is_filled$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_is_filled    <- data.frame(X=rownames(expected_is_filled), ID.1=expected_is_filled$`ID-1`, ID.2=expected_is_filled$`ID-2`, stringsAsFactors=FALSE)
   expected_maxIntMeas   <- annotationTable(input_annotation, column='maxIntMeasured')
-  expected_maxIntMeas   <- data.frame(X=rownames(expected_maxIntMeas), Cpd.1=expected_maxIntMeas$`Cpd 1`, Cpd.2=expected_maxIntMeas$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_maxIntMeas   <- data.frame(X=rownames(expected_maxIntMeas), ID.1=expected_maxIntMeas$`ID-1`, ID.2=expected_maxIntMeas$`ID-2`, stringsAsFactors=FALSE)
   expected_maxIntPred   <- annotationTable(input_annotation, column='maxIntPredicted')
-  expected_maxIntPred   <- data.frame(X=rownames(expected_maxIntPred), Cpd.1=expected_maxIntPred$`Cpd 1`, Cpd.2=expected_maxIntPred$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_maxIntPred   <- data.frame(X=rownames(expected_maxIntPred), ID.1=expected_maxIntPred$`ID-1`, ID.2=expected_maxIntPred$`ID-2`, stringsAsFactors=FALSE)
   expected_mz           <- annotationTable(input_annotation, column='mz')
-  expected_mz           <- data.frame(X=rownames(expected_mz), Cpd.1=expected_mz$`Cpd 1`, Cpd.2=expected_mz$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_mz           <- data.frame(X=rownames(expected_mz), ID.1=expected_mz$`ID-1`, ID.2=expected_mz$`ID-2`, stringsAsFactors=FALSE)
   expected_mzMax        <- annotationTable(input_annotation, column='mzMax')
-  expected_mzMax        <- data.frame(X=rownames(expected_mzMax), Cpd.1=expected_mzMax$`Cpd 1`, Cpd.2=expected_mzMax$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_mzMax        <- data.frame(X=rownames(expected_mzMax), ID.1=expected_mzMax$`ID-1`, ID.2=expected_mzMax$`ID-2`, stringsAsFactors=FALSE)
   expected_mzMin        <- annotationTable(input_annotation, column='mzMin')
-  expected_mzMin        <- data.frame(X=rownames(expected_mzMin), Cpd.1=expected_mzMin$`Cpd 1`, Cpd.2=expected_mzMin$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_mzMin        <- data.frame(X=rownames(expected_mzMin), ID.1=expected_mzMin$`ID-1`, ID.2=expected_mzMin$`ID-2`, stringsAsFactors=FALSE)
   expected_peakArea     <- annotationTable(input_annotation, column='peakArea')
-  expected_peakArea     <- data.frame(X=rownames(expected_peakArea), Cpd.1=expected_peakArea$`Cpd 1`, Cpd.2=expected_peakArea$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_peakArea     <- data.frame(X=rownames(expected_peakArea), ID.1=expected_peakArea$`ID-1`, ID.2=expected_peakArea$`ID-2`, stringsAsFactors=FALSE)
   expected_ppmErr       <- annotationTable(input_annotation, column='ppm_error')
-  expected_ppmErr       <- data.frame(X=rownames(expected_ppmErr), Cpd.1=expected_ppmErr$`Cpd 1`, Cpd.2=expected_ppmErr$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_ppmErr       <- data.frame(X=rownames(expected_ppmErr), ID.1=expected_ppmErr$`ID-1`, ID.2=expected_ppmErr$`ID-2`, stringsAsFactors=FALSE)
   expected_rt           <- annotationTable(input_annotation, column='rt')
-  expected_rt           <- data.frame(X=rownames(expected_rt), Cpd.1=expected_rt$`Cpd 1`, Cpd.2=expected_rt$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_rt           <- data.frame(X=rownames(expected_rt), ID.1=expected_rt$`ID-1`, ID.2=expected_rt$`ID-2`, stringsAsFactors=FALSE)
   expected_rtDev        <- annotationTable(input_annotation, column='rt_dev_sec')
-  expected_rtDev        <- data.frame(X=rownames(expected_rtDev), Cpd.1=expected_rtDev$`Cpd 1`, Cpd.2=expected_rtDev$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_rtDev        <- data.frame(X=rownames(expected_rtDev), ID.1=expected_rtDev$`ID-1`, ID.2=expected_rtDev$`ID-2`, stringsAsFactors=FALSE)
   expected_rtMax        <- annotationTable(input_annotation, column='rtMax')
-  expected_rtMax        <- data.frame(X=rownames(expected_rtMax), Cpd.1=expected_rtMax$`Cpd 1`, Cpd.2=expected_rtMax$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_rtMax        <- data.frame(X=rownames(expected_rtMax), ID.1=expected_rtMax$`ID-1`, ID.2=expected_rtMax$`ID-2`, stringsAsFactors=FALSE)
   expected_rtMin        <- annotationTable(input_annotation, column='rtMin')
-  expected_rtMin        <- data.frame(X=rownames(expected_rtMin), Cpd.1=expected_rtMin$`Cpd 1`, Cpd.2=expected_rtMin$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_rtMin        <- data.frame(X=rownames(expected_rtMin), ID.1=expected_rtMin$`ID-1`, ID.2=expected_rtMin$`ID-2`, stringsAsFactors=FALSE)
   expected_tailfact     <- annotationTable(input_annotation, column='tailingFactor')
-  expected_tailfact     <- data.frame(X=rownames(expected_tailfact), Cpd.1=expected_tailfact$`Cpd 1`, Cpd.2=expected_tailfact$`Cpd 2`, stringsAsFactors=FALSE)
+  expected_tailfact     <- data.frame(X=rownames(expected_tailfact), ID.1=expected_tailfact$`ID-1`, ID.2=expected_tailfact$`ID-2`, stringsAsFactors=FALSE)
   
   # results (output, warnings and messages)
   result_save     <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath1, annotationName='testProject', verbose=TRUE))
   
   # Check CSV has been produced
-  expect_true(all(file.exists(expected_path_cpdMeta, expected_path_specMeta, expected_path_asym, expected_path_found, expected_path_is_filled,  expected_path_maxIntMeas,  expected_path_maxIntPred, expected_path_mz, expected_path_mzMax, expected_path_mzMin, expected_path_peakArea, expected_path_ppmErr, expected_path_rt, expected_path_rtDev, expected_path_rtMax, expected_path_rtMin, expected_path_tailfact)))
+  expect_true(all(file.exists(expected_path_cpdMeta, expected_path_specMeta, expected_path_summary, expected_path_asym, expected_path_found, expected_path_is_filled,  expected_path_maxIntMeas,  expected_path_maxIntPred, expected_path_mz, expected_path_mzMax, expected_path_mzMin, expected_path_peakArea, expected_path_ppmErr, expected_path_rt, expected_path_rtDev, expected_path_rtMax, expected_path_rtMin, expected_path_tailfact)))
   
   # Check values saved
   saved_cpdMeta     <- read.csv(expected_path_cpdMeta, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_cpdMeta, expected_cpdMeta)
   saved_specMeta    <- read.csv(expected_path_specMeta, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE) # no filepath
   expect_equal(saved_specMeta[,-1], expected_specMeta)
+  saved_summary     <- read.csv(expected_path_summary, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_summary, expected_summary, tolerance=1e-6)
   saved_asym        <- read.csv(expected_path_asym, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_asym, expected_asym)
   saved_found       <- read.csv(expected_path_found, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
@@ -200,13 +205,138 @@ test_that('csv output, verbose, no verbose', {
   expect_equal(saved_tailfact, expected_tailfact)
   
   # Check result messages (save path)
-  expect_equal(length(result_save$messages), 17)
+  expect_equal(length(result_save$messages), 18)
   
   ## no verbose
   savePath2       <- tempdir()
   result_save2    <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath2, annotationName='testProject', verbose=FALSE))
   expect_equal(length(result_save2$messages), 0)
 })
+
+test_that('csv output without FIR, verbose, no verbose', {
+  # temporary file
+  savePath3         <- tempdir()
+  # clear temp folder
+  suppressWarnings(do.call(file.remove, list(list.files(savePath3, full.names = TRUE))))
+  
+  # input
+  filledAnnotation2   <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=FALSE, uROIExist=TRUE, useUROI=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
+  input_annotation    <- filledAnnotation2
+  
+  # expected
+  expected_path_cpdMeta     <- file.path(savePath3, "testProject_cpdMetadata.csv")
+  expected_path_specMeta    <- file.path(savePath3, "testProject_spectraMetadata.csv")
+  expected_path_summary     <- file.path(savePath3, "testProject_summary.csv")
+  expected_path_asym        <- file.path(savePath3, "testProject_asymmetryFactor.csv")
+  expected_path_found       <- file.path(savePath3, "testProject_found.csv")
+  expected_path_is_filled   <- file.path(savePath3, "testProject_is_filled.csv")
+  expected_path_maxIntMeas  <- file.path(savePath3, "testProject_maxIntMeasured.csv")
+  expected_path_maxIntPred  <- file.path(savePath3, "testProject_maxIntPredicted.csv")
+  expected_path_mz          <- file.path(savePath3, "testProject_mz.csv")
+  expected_path_mzMax       <- file.path(savePath3, "testProject_mzMax.csv")
+  expected_path_mzMin       <- file.path(savePath3, "testProject_mzMin.csv")
+  expected_path_peakArea    <- file.path(savePath3, "testProject_peakArea.csv")
+  expected_path_ppmErr      <- file.path(savePath3, "testProject_ppm_error.csv")
+  expected_path_rt          <- file.path(savePath3, "testProject_rt.csv")
+  expected_path_rtDev       <- file.path(savePath3, "testProject_rt_dev_sec.csv")
+  expected_path_rtMax       <- file.path(savePath3, "testProject_rtMax.csv")
+  expected_path_rtMin       <- file.path(savePath3, "testProject_rtMin.csv")
+  expected_path_tailfact    <- file.path(savePath3, "testProject_tailingFactor.csv")
+  
+  # expected values
+  expected_cpdMeta          <- data.frame(matrix(data=c('ID-1','Cpd 1','a',1,'ID-2','Cpd 2','b',2), nrow=2,ncol=4,dimnames=list(c(), c('cpdID', 'cpdName', 'testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_cpdMeta$testcol2  <- as.numeric(expected_cpdMeta$testcol2)
+  expected_specMeta     <- data.frame(matrix(nrow=3,ncol=4,dimnames=list(c(), c('acquisitionTime', 'TIC', 'testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE) # no filepath
+  expected_specMeta$acquisitionTime <- input_acquisitionTime
+  expected_specMeta$TIC             <- input_TIC
+  expected_specMeta$testcol1        <- input_spectraMetadata$testcol1
+  expected_specMeta$testcol2        <- as.numeric(input_spectraMetadata$testcol2)
+  expected_summary        <- data.frame(matrix(data=c('Cpd 1 - ID-1',1,0,0.02337616,8.499586, 'Cpd 2 - ID-2',1,0,0.02460103,16.361353), nrow=2,ncol=5,dimnames=list(c(), c('X', 'ratio_peaks_found', 'ratio_peaks_filled', 'ppm_error', 'rt_dev_sec')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_summary[,2:5]  <- sapply(expected_summary[,2:5], as.numeric)
+  expected_asym         <- annotationTable(input_annotation, column='asymmetryFactor')
+  expected_asym         <- data.frame(X=rownames(expected_asym), ID.1=expected_asym$`ID-1`, ID.2=expected_asym$`ID-2`, stringsAsFactors=FALSE)
+  expected_found        <- annotationTable(input_annotation, column='found')
+  expected_found        <- data.frame(X=rownames(expected_found), ID.1=expected_found$`ID-1`, ID.2=expected_found$`ID-2`, stringsAsFactors=FALSE)
+  expected_is_filled    <- annotationTable(input_annotation, column='is_filled')
+  expected_is_filled    <- data.frame(X=rownames(expected_is_filled), ID.1=expected_is_filled$`ID-1`, ID.2=expected_is_filled$`ID-2`, stringsAsFactors=FALSE)
+  expected_maxIntMeas   <- annotationTable(input_annotation, column='maxIntMeasured')
+  expected_maxIntMeas   <- data.frame(X=rownames(expected_maxIntMeas), ID.1=expected_maxIntMeas$`ID-1`, ID.2=expected_maxIntMeas$`ID-2`, stringsAsFactors=FALSE)
+  expected_maxIntPred   <- annotationTable(input_annotation, column='maxIntPredicted')
+  expected_maxIntPred   <- data.frame(X=rownames(expected_maxIntPred), ID.1=expected_maxIntPred$`ID-1`, ID.2=expected_maxIntPred$`ID-2`, stringsAsFactors=FALSE)
+  expected_mz           <- annotationTable(input_annotation, column='mz')
+  expected_mz           <- data.frame(X=rownames(expected_mz), ID.1=expected_mz$`ID-1`, ID.2=expected_mz$`ID-2`, stringsAsFactors=FALSE)
+  expected_mzMax        <- annotationTable(input_annotation, column='mzMax')
+  expected_mzMax        <- data.frame(X=rownames(expected_mzMax), ID.1=expected_mzMax$`ID-1`, ID.2=expected_mzMax$`ID-2`, stringsAsFactors=FALSE)
+  expected_mzMin        <- annotationTable(input_annotation, column='mzMin')
+  expected_mzMin        <- data.frame(X=rownames(expected_mzMin), ID.1=expected_mzMin$`ID-1`, ID.2=expected_mzMin$`ID-2`, stringsAsFactors=FALSE)
+  expected_peakArea     <- annotationTable(input_annotation, column='peakArea')
+  expected_peakArea     <- data.frame(X=rownames(expected_peakArea), ID.1=expected_peakArea$`ID-1`, ID.2=expected_peakArea$`ID-2`, stringsAsFactors=FALSE)
+  expected_ppmErr       <- annotationTable(input_annotation, column='ppm_error')
+  expected_ppmErr       <- data.frame(X=rownames(expected_ppmErr), ID.1=expected_ppmErr$`ID-1`, ID.2=expected_ppmErr$`ID-2`, stringsAsFactors=FALSE)
+  expected_rt           <- annotationTable(input_annotation, column='rt')
+  expected_rt           <- data.frame(X=rownames(expected_rt), ID.1=expected_rt$`ID-1`, ID.2=expected_rt$`ID-2`, stringsAsFactors=FALSE)
+  expected_rtDev        <- annotationTable(input_annotation, column='rt_dev_sec')
+  expected_rtDev        <- data.frame(X=rownames(expected_rtDev), ID.1=expected_rtDev$`ID-1`, ID.2=expected_rtDev$`ID-2`, stringsAsFactors=FALSE)
+  expected_rtMax        <- annotationTable(input_annotation, column='rtMax')
+  expected_rtMax        <- data.frame(X=rownames(expected_rtMax), ID.1=expected_rtMax$`ID-1`, ID.2=expected_rtMax$`ID-2`, stringsAsFactors=FALSE)
+  expected_rtMin        <- annotationTable(input_annotation, column='rtMin')
+  expected_rtMin        <- data.frame(X=rownames(expected_rtMin), ID.1=expected_rtMin$`ID-1`, ID.2=expected_rtMin$`ID-2`, stringsAsFactors=FALSE)
+  expected_tailfact     <- annotationTable(input_annotation, column='tailingFactor')
+  expected_tailfact     <- data.frame(X=rownames(expected_tailfact), ID.1=expected_tailfact$`ID-1`, ID.2=expected_tailfact$`ID-2`, stringsAsFactors=FALSE)
+  
+  # results (output, warnings and messages)
+  result_save     <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath3, annotationName='testProject', verbose=TRUE))
+  
+  # Check CSV has been produced
+  expect_true(all(file.exists(expected_path_cpdMeta, expected_path_specMeta, expected_path_summary, expected_path_asym, expected_path_found, expected_path_is_filled,  expected_path_maxIntMeas,  expected_path_maxIntPred, expected_path_mz, expected_path_mzMax, expected_path_mzMin, expected_path_peakArea, expected_path_ppmErr, expected_path_rt, expected_path_rtDev, expected_path_rtMax, expected_path_rtMin, expected_path_tailfact)))
+  
+  # Check values saved
+  saved_cpdMeta     <- read.csv(expected_path_cpdMeta, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_cpdMeta, expected_cpdMeta)
+  saved_specMeta    <- read.csv(expected_path_specMeta, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE) # no filepath
+  expect_equal(saved_specMeta[,-1], expected_specMeta)
+  saved_summary     <- read.csv(expected_path_summary, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_summary, expected_summary, tolerance=1e-6)
+  saved_asym        <- read.csv(expected_path_asym, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_asym, expected_asym)
+  saved_found       <- read.csv(expected_path_found, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_found, expected_found)
+  saved_is_filled   <- read.csv(expected_path_is_filled, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_is_filled, expected_is_filled)
+  saved_maxIntMeas  <- read.csv(expected_path_maxIntMeas, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_maxIntMeas, expected_maxIntMeas)
+  saved_maxIntPred  <- read.csv(expected_path_maxIntPred, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_maxIntPred, expected_maxIntPred)
+  saved_mz          <- read.csv(expected_path_mz, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_mz, expected_mz)
+  saved_mzMax       <- read.csv(expected_path_mzMax, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_mzMax, expected_mzMax)
+  saved_mzMin       <- read.csv(expected_path_mzMin, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_mzMin, expected_mzMin)
+  saved_peakArea    <- read.csv(expected_path_peakArea, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_peakArea, expected_peakArea)
+  saved_ppmErr      <- read.csv(expected_path_ppmErr, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_ppmErr, expected_ppmErr)
+  saved_rt          <- read.csv(expected_path_rt, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_rt, expected_rt)
+  saved_rtDev       <- read.csv(expected_path_rtDev, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_rtDev, expected_rtDev)
+  saved_rtMax       <- read.csv(expected_path_rtMax, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_rtMax, expected_rtMax)
+  saved_rtMin       <- read.csv(expected_path_rtMin, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_rtMin, expected_rtMin)
+  saved_tailfact    <- read.csv(expected_path_tailfact, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_tailfact, expected_tailfact)
+  
+  # Check result messages (save path)
+  expect_equal(length(result_save$messages), 18)
+  
+  ## no verbose
+  savePath4       <- tempdir()
+  result_save4    <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath4, annotationName='testProject', verbose=FALSE))
+  expect_equal(length(result_save4$messages), 0)
+})
+
 
 test_that('raise error', {
   # error if object is not annotated

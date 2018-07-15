@@ -23,10 +23,6 @@ fit2            <- list(amplitude=37.073067416755556, center=1001.3736564832565,
 class(fit2)     <- 'peakPantheR_curveFit'
 
 
-## Expected data (load saved version of plots)
-path_expected_data      <- system.file("testdata/reference_plotEICFit.RData", package = "peakPantheR")
-load(path_expected_data) # expected_plot1SplNoCol + expected_plot1SplNoFitNoCol + expected_plot2SplWithCol + expected_plot2SplRTNA + expected_plotFitWarning + expected_plotColourWarning
-
 
 test_that('plot feature in 1 sample', {
 	# generate plot
@@ -40,11 +36,6 @@ test_that('plot feature in 1 sample', {
   expect_equal(result_plot1SplNoCol$labels$x, "Retention Time (sec)")
   expect_equal(result_plot1SplNoCol$labels$y, "Intensity")
   expect_equal(length(result_plot1SplNoCol), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plot1SplNoCol)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plot1SplNoCol)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot feature in 1 sample, no curveFit with warning', {
@@ -66,11 +57,6 @@ test_that('plot feature in 1 sample, no curveFit with warning', {
   expect_equal(result_plot1SplNoFitNoCol$result$labels$x, "Retention Time (sec)")
   expect_equal(result_plot1SplNoFitNoCol$result$labels$y, "Intensity")
   expect_equal(length(result_plot1SplNoFitNoCol$result), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plot1SplNoFitNoCol$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plot1SplNoFitNoCol)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot feature in 2 samples, change colours and sampling', {
@@ -85,11 +71,6 @@ test_that('plot feature in 2 samples, change colours and sampling', {
   expect_equal(result_plot2SplWithCol$labels$x, "Retention Time (sec)")
   expect_equal(result_plot2SplWithCol$labels$y, "Intensity")
   expect_equal(length(result_plot2SplWithCol), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plot2SplWithCol)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plot2SplWithCol)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('plot feature in 2 samples, rtMin and/or rtMax have a NA (cannot plot fit)', {
@@ -104,11 +85,6 @@ test_that('plot feature in 2 samples, rtMin and/or rtMax have a NA (cannot plot 
   expect_equal(result_plot2SplRTNA$labels$x, "Retention Time (sec)")
   expect_equal(result_plot2SplRTNA$labels$y, "Intensity")
   expect_equal(length(result_plot2SplRTNA), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plot2SplRTNA)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plot2SplRTNA)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('no rtMin and/or rtMax, cannot plot fit warning', {
@@ -129,11 +105,6 @@ test_that('no rtMin and/or rtMax, cannot plot fit warning', {
   expect_equal(result_plotFitWarning$result$labels$x, "Retention Time (sec)")
   expect_equal(result_plotFitWarning$result$labels$y, "Intensity")
   expect_equal(length(result_plotFitWarning$result), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plotFitWarning$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plotFitWarning)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('sampleColour length warning', {
@@ -155,11 +126,6 @@ test_that('sampleColour length warning', {
   expect_equal(result_plotColourWarning$result$labels$x, "Retention Time (sec)")
   expect_equal(result_plotColourWarning$result$labels$y, "Intensity")
   expect_equal(length(result_plotColourWarning$result), 9)
-  
-  # Check against reference version
-  tmp_result    <- ggplot2::ggplot_build(result_plotColourWarning$result)
-  tmp_expected  <- ggplot2::ggplot_build(expected_plotColourWarning)
-  expect_equal(tmp_result, tmp_expected)
 })
 
 test_that('raise errors', {

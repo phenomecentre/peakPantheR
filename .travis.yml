@@ -3,6 +3,7 @@ cache: packages
 
 os:
   - linux
+  - osx
 
 r:
   - bioc-devel
@@ -11,12 +12,13 @@ r:
 
 matrix:
   allow_failures:
-    - r: bioc-devel 
+    - r: bioc-devel
 
 bioc_required: true
 
 r_packages:
   - covr
+  - faahKO
 
 addons:
   apt:
@@ -24,6 +26,10 @@ addons:
       - libnetcdf-dev
       - netcdf-bin
       - libhdf5-dev
+
+before_install:
+ - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew update; fi"
+ - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew install libgit2; fi"
 
 after_success:
   - Rscript -e 'library(covr); codecov(line_exclusions = "R/zzz.R")'

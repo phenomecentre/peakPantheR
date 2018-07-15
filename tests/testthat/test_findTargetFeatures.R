@@ -260,7 +260,7 @@ test_that('change params for window #3', {
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params=input_params, sampling=250, verbose=TRUE))
   
   # Check result table
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-5)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 4)

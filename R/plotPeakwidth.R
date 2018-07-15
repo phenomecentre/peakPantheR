@@ -131,7 +131,7 @@ plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax=NULL, acquTime=NULL
         name  <- paste(a$name, b$name, sep = "-")
         trans <- function(x) a$trans(b$trans(x))
         inv   <- function(x) b$inverse(a$inverse(x))
-        scales::trans_new(name, trans, inv, breaks, format)
+        scales::trans_new(name=name, transform=trans, inverse=inv, breaks=breaks, format=format)
       }
       rev_date  <- c_trans("reverse", "time")
       

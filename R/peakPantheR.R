@@ -25,9 +25,9 @@
 
 
 
-#' peakPantheR: A package for Peak Picking and ANnoTation of High resolution Experiments in R
+#' peakPantheR: A package for Peak Picking and ANnoTation of High resolution Experiments
 #'
-#' \pkg{peakPantheR} detects, integrates and reports pre-defined features in MS files.
+#' \pkg{peakPantheR} detects, integrates and reports pre-defined features in mass spectrometry data files.
 #' It enables the real time annotation of multiple compounds in a single file, or
 #' the parallel annotation of multiple compounds in multiple files.
 #'

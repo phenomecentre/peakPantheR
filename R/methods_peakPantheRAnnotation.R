@@ -316,14 +316,14 @@ setMethod("annotationTable", "peakPantheRAnnotation",
               # an empty data.frame
               tmpAnnotation           <- data.frame(matrix(vector(), nbSample, nbCpd), stringsAsFactors=F)
               rownames(tmpAnnotation) <- object@filepath
-              colnames(tmpAnnotation) <- object@cpdName
+              colnames(tmpAnnotation) <- object@cpdID
               return(tmpAnnotation)
             }
             if (is.null(object@peakTables[[1]])) {
               # an empty data.frame
               tmpAnnotation           <- data.frame(matrix(vector(), nbSample, nbCpd), stringsAsFactors=F)
               rownames(tmpAnnotation) <- object@filepath
-              colnames(tmpAnnotation) <- object@cpdName
+              colnames(tmpAnnotation) <- object@cpdID
               return(tmpAnnotation)
             }
 
@@ -340,7 +340,7 @@ setMethod("annotationTable", "peakPantheRAnnotation",
               tmpAnnotation         <- data.frame(t(sapply(object@peakTables, function(x, y){x[,y]}, y=column)), stringsAsFactors=F)
             }
             rownames(tmpAnnotation) <- object@filepath
-            colnames(tmpAnnotation) <- object@cpdName
+            colnames(tmpAnnotation) <- object@cpdID
             return(tmpAnnotation)
           })
 
@@ -622,7 +622,7 @@ setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
             if (verbose) {
               message('Annotation parameters saved at ',targetFile)
             }
-            utils::write.csv(outTable, file = targetFile, row.names=FALSE)
+            utils::write.csv(outTable, file = targetFile, row.names=FALSE, fileEncoding="UTF-8")
           })
 
 
@@ -773,7 +773,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
 ## Save to disk all annotation results
 setGeneric("outputAnnotationResult", function(object, saveFolder, annotationName='annotationResult', verbose=TRUE) standardGeneric("outputAnnotationResult"))
 #' Save to disk all annotation results as csv files
-#' Save to disk all annotation results as \code{annotationName_ ... .csv} files: compound metadata (\code{cpdMetadata}, \code{cpdID}, \code{cpdName}) and spectra metadata (\code{spectraMetadata}, \code{acquisitionTime}, \code{TIC}) and a file for each column of \code{peakTables} (with samples as rows and compounds as columns)
+#' Save to disk all annotation results as \code{annotationName_ ... .csv} files: compound metadata (\code{cpdMetadata}, \code{cpdID}, \code{cpdName}) and spectra metadata (\code{spectraMetadata}, \code{acquisitionTime}, \code{TIC}), summary of fit (ratio of peaks found: \code{ratio_peaks_found}, ratio of peaks filled: \code{ratio_peaks_filled}, mean ppm_error: \code{ppm_error}, mean rt_dev_sec: \code{rt_dev_sec}), and a file for each column of \code{peakTables} (with samples as rows and compounds as columns)
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
 #' @param saveFolder (str) Path of folder where the annotation result csv will be saved
 #' @param annotationName (str) name of annotation to use in the saved csv
@@ -800,7 +800,7 @@ setMethod("outputAnnotationResult", "peakPantheRAnnotation",
             tmp_outCpdMeta  <- data.frame(cpdID=tmp_cpdID, cpdName=tmp_cpdName)
             tmp_outCpdMeta  <- cbind( tmp_outCpdMeta, tmp_cpdMetadata )
             path_cpdMeta    <- paste(saveFolder, '/', annotationName, '_cpdMetadata.csv', sep='')
-            utils::write.csv(tmp_outCpdMeta, file = path_cpdMeta, row.names=FALSE)
+            utils::write.csv(tmp_outCpdMeta, file = path_cpdMeta, row.names=FALSE, fileEncoding="UTF-8")
             if (verbose) { message('Compound metadata saved at ',path_cpdMeta) }
             
             ## Save spectra metadata
@@ -811,16 +811,34 @@ setMethod("outputAnnotationResult", "peakPantheRAnnotation",
             tmp_outSpecMeta     <- data.frame(filepath=tmp_filepath, acquisitionTime=tmp_acqTime, TIC=tmp_TIC)
             tmp_outSpecMeta     <- cbind( tmp_outSpecMeta, tmp_spectraMetadata )
             path_specMeta       <- paste(saveFolder, '/', annotationName, '_spectraMetadata.csv', sep='')
-            utils::write.csv(tmp_outSpecMeta, file = path_specMeta, row.names=FALSE)
+            utils::write.csv(tmp_outSpecMeta, file = path_specMeta, row.names=FALSE, fileEncoding="UTF-8")
             if (verbose) { message('Spectra metadata saved at ',path_specMeta) }
             
             ## Save peakTables columns
             for (i in colnames(object@peakTables[[1]])) {
               tmp_var   <- annotationTable(object=object, column=i)
               path_var  <- paste(saveFolder, '/', annotationName, '_', i, '.csv', sep='')
-              utils::write.csv(tmp_var, file = path_var, row.names=TRUE)
+              utils::write.csv(tmp_var, file = path_var, row.names=TRUE, fileEncoding="UTF-8")
               if (verbose) { message('Peak measurement "', i, '" saved at ',path_var) }
             }
+            
+            ## Save summary table
+            tmp_summary               <- data.frame(matrix(ncol=0, nrow=nbCompounds(object)), stringsAsFactors=FALSE)
+            rownames(tmp_summary)     <- paste(cpdName(object), '-', cpdID(object))
+            # used FIR (found = not filled, filled from is_filled)
+            if(object@useFIR){
+              tmp_summary$ratio_peaks_found   <- 1 - (colSums(annotationTable(object, column = 'is_filled')) / nbSamples(object))
+              tmp_summary$ratio_peaks_filled  <- (colSums(annotationTable(object, column = 'is_filled')) / nbSamples(object))
+              # didn't use FIR (found from found, None are filled)
+            } else {
+              tmp_summary$ratio_peaks_found   <- colSums(annotationTable(object, column = 'found')) / nbSamples(object)
+              tmp_summary$ratio_peaks_filled  <- 0
+            }
+            tmp_summary$ppm_error     <- colMeans(annotationTable(object, column = 'ppm_error'), na.rm = TRUE)
+            tmp_summary$rt_dev_sec    <- colMeans(annotationTable(object, column = 'rt_dev_sec'), na.rm = TRUE)
+            path_summary              <- paste(saveFolder, '/', annotationName, '_summary.csv', sep='')
+            utils::write.csv(tmp_summary, file=path_summary, row.names=TRUE, fileEncoding="UTF-8")
+            if (verbose) { message('Summary saved at ',path_specMeta) }
           })
 
 

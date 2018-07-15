@@ -55,7 +55,7 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
 Report for a raw spectra the TIC, acquisition time, integrated targeted features, fitted curves and datapoints for each region of interest. Optimised to reduce the number of file access. Features not detected can be integrated using fallback integration regions (FIR).
 }
 \examples{
-\dontrun{
+if(requireNamespace("faahKO")){
 ## Load data
 library(faahKO)
 netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")

@@ -15,6 +15,12 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+```{r, echo = FALSE, include = FALSE}
+required <- c("faahKO")
+if (!all(unlist(lapply(required, function(pkg) requireNamespace(pkg, quietly = TRUE))))) {
+  knitr::opts_chunk$set(eval = FALSE)
+}
+```
 
 The `peakPantheR` package is designed for the detection, integration and reporting of pre-defined features in MS files.
 
@@ -60,6 +66,10 @@ Parallel compound integration is set to:
 ## Parallel Annotation Example
 
 We can target 2 features in 3 MS spectra file from the _`faahKO`_ package with `peakPantheR_parallelAnnotation()`:
+```{r, eval = FALSE}
+setRepositories(ind=1:4)
+install.packages('faahKO')
+```
 
 
 ### Input Data
@@ -340,6 +350,7 @@ outputAnnotationResult(final_annotation, saveFolder='/final_output_folder/', ann
 #> Peak measurement "rt_dev_sec" saved at /final_output_folder/ProjectName_rt_dev_sec.csv
 #> Peak measurement "tailingFactor" saved at /final_output_folder/ProjectName_tailingFactor.csv
 #> Peak measurement "asymmetryFactor" saved at /final_output_folder/ProjectName_asymmetryFactor.csv
+#> Summary saved at /final_output_folder/ProjectName_summary.csv
 ```
 
 ## See Also

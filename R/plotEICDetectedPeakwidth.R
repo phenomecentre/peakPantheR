@@ -57,9 +57,9 @@ plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt
   p_spec        <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_spec))
   p_peakwidth   <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_peakwidth))
   #  find the widths of each of the plots, calculate the maximum and then apply it to each of them individually. This effectively applies a uniform layout to each of the plots.
-  maxWidth                <- grid::unit.pmax(p_spec$widths[2:3], p_peakwidth$widths[2:3])
-  p_spec$widths[2:3]      <- maxWidth
-  p_peakwidth$widths[2:3] <- maxWidth
+  maxWidth                <- grid::unit.pmax(p_spec$widths[2:5], p_peakwidth$widths[2:5])
+  p_spec$widths[2:5]      <- maxWidth
+  p_peakwidth$widths[2:5] <- maxWidth
   
   # Group plots with y axis ratio
   topSize     <- ratio * 10
