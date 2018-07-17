@@ -127,7 +127,7 @@ test_that('csv output with FIR, verbose, no verbose', {
   expected_specMeta$TIC             <- input_TIC
   expected_specMeta$testcol1        <- input_spectraMetadata$testcol1
   expected_specMeta$testcol2        <- as.numeric(input_spectraMetadata$testcol2)
-  expected_summary        <- data.frame(matrix(data=c('Cpd 1 - ID-1',1,0,0.02337616,8.499586, 'Cpd 2 - ID-2',0.6666667,0.333333,0.02460103,16.361353), nrow=2,ncol=5,dimnames=list(c(), c('X', 'ratio_peaks_found', 'ratio_peaks_filled', 'ppm_error', 'rt_dev_sec')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_summary        <- data.frame(matrix(data=c('ID-1 - Cpd 1',1,0,0.02337616,8.499586, 'ID-2 - Cpd 2',0.6666667,0.333333,0.02460103,16.361353), nrow=2,ncol=5,dimnames=list(c(), c('X', 'ratio_peaks_found', 'ratio_peaks_filled', 'ppm_error', 'rt_dev_sec')), byrow=TRUE), stringsAsFactors=FALSE)
   expected_summary[,2:5]  <- sapply(expected_summary[,2:5], as.numeric)
   expected_asym         <- annotationTable(input_annotation, column='asymmetryFactor')
   expected_asym         <- data.frame(X=rownames(expected_asym), ID.1=expected_asym$`ID-1`, ID.2=expected_asym$`ID-2`, stringsAsFactors=FALSE)
@@ -251,7 +251,7 @@ test_that('csv output without FIR, verbose, no verbose', {
   expected_specMeta$TIC             <- input_TIC
   expected_specMeta$testcol1        <- input_spectraMetadata$testcol1
   expected_specMeta$testcol2        <- as.numeric(input_spectraMetadata$testcol2)
-  expected_summary        <- data.frame(matrix(data=c('Cpd 1 - ID-1',1,0,0.02337616,8.499586, 'Cpd 2 - ID-2',1,0,0.02460103,16.361353), nrow=2,ncol=5,dimnames=list(c(), c('X', 'ratio_peaks_found', 'ratio_peaks_filled', 'ppm_error', 'rt_dev_sec')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_summary        <- data.frame(matrix(data=c('ID-1 - Cpd 1',1,0,0.02337616,8.499586, 'ID-2 - Cpd 2',1,0,0.02460103,16.361353), nrow=2,ncol=5,dimnames=list(c(), c('X', 'ratio_peaks_found', 'ratio_peaks_filled', 'ppm_error', 'rt_dev_sec')), byrow=TRUE), stringsAsFactors=FALSE)
   expected_summary[,2:5]  <- sapply(expected_summary[,2:5], as.numeric)
   expected_asym         <- annotationTable(input_annotation, column='asymmetryFactor')
   expected_asym         <- data.frame(X=rownames(expected_asym), ID.1=expected_asym$`ID-1`, ID.2=expected_asym$`ID-2`, stringsAsFactors=FALSE)
@@ -336,7 +336,6 @@ test_that('csv output without FIR, verbose, no verbose', {
   result_save4    <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath4, annotationName='testProject', verbose=FALSE))
   expect_equal(length(result_save4$messages), 0)
 })
-
 
 test_that('raise error', {
   # error if object is not annotated

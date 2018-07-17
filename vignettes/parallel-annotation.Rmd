@@ -63,6 +63,10 @@ Parallel compound integration is set to:
 * return result object and/or table (_row: file, col: compound_)
 
 
+```{r, out.width = "700px", echo = FALSE}
+knitr::include_graphics("../man/figures/parallelAnnotation_procedure.png")
+```
+
 ## Parallel Annotation Example
 
 We can target 2 features in 3 MS spectra file from the _`faahKO`_ package with `peakPantheR_parallelAnnotation()`:

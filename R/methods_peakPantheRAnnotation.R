@@ -824,7 +824,7 @@ setMethod("outputAnnotationResult", "peakPantheRAnnotation",
             
             ## Save summary table
             tmp_summary               <- data.frame(matrix(ncol=0, nrow=nbCompounds(object)), stringsAsFactors=FALSE)
-            rownames(tmp_summary)     <- paste(cpdName(object), '-', cpdID(object))
+            rownames(tmp_summary)     <- paste(cpdID(object), '-', cpdName(object))
             # used FIR (found = not filled, filled from is_filled)
             if(object@useFIR){
               tmp_summary$ratio_peaks_found   <- 1 - (colSums(annotationTable(object, column = 'is_filled')) / nbSamples(object))
