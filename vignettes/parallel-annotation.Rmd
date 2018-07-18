@@ -177,14 +177,14 @@ updated_annotation  <- annotationParamsDiagnostic(data_annotation, verbose=TRUE)
 updated_annotation
 ```
 
-`outputAnnotationDiagnostic()` will save to disk `annotationParameters_summary.csv` containing the original `ROI` and newly determined `uROI` and `FIR` for manual validation. Additionnaly a diagnostic plot for each compound is saved for reference:
+`outputAnnotationDiagnostic()` will save to disk `annotationParameters_summary.csv` containing the original `ROI` and newly determined `uROI` and `FIR` for manual validation. Additionnaly a diagnostic plot for each compound is saved for reference and can be generated in parallel with the argument `ncores`:
 ```{r, eval = FALSE}
 # create a colourScale based on the sampleType
 uniq_sType <- sort(unique(spectraMetadata(updated_annotation)$sampleType),na.last=TRUE)
 col_sType  <- unname( setNames(c('blue', 'red'),c(uniq_sType))[spectraMetadata(updated_annotation)$sampleType] )
 
 # output fit diagnostic to disk
-outputAnnotationDiagnostic(updated_annotation, saveFolder='/output_folder/', savePlots=TRUE, sampleColour=col_sType, verbose=TRUE)
+outputAnnotationDiagnostic(updated_annotation, saveFolder='/output_folder/', savePlots=TRUE, sampleColour=col_sType, verbose=TRUE, ncores=2)
 ```
 
 

@@ -7,3 +7,4 @@
 LICENSE
 ^cran-comments.md
 ^.travis.yml
+tests\testthat\Rplots.pdf

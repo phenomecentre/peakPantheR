@@ -120,8 +120,8 @@ test_that('csv output with FIR, verbose, no verbose', {
   expected_path_tailfact    <- file.path(savePath1, "testProject_tailingFactor.csv")
   
   # expected values
-  expected_cpdMeta          <- data.frame(matrix(data=c('ID-1','Cpd 1','a',1,'ID-2','Cpd 2','b',2), nrow=2,ncol=4,dimnames=list(c(), c('cpdID', 'cpdName', 'testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE)
-  expected_cpdMeta$testcol2  <- as.numeric(expected_cpdMeta$testcol2)
+  expected_cpdMeta            <- data.frame(matrix(data=c('ID-1','Cpd 1',3360.0542530120501,522.20001220703102,'a',1,'ID-2','Cpd 2',3396.1599036144598,496.20001220703102,'b',2), nrow=2,ncol=6,dimnames=list(c(), c('cpdID', 'cpdName', 'Retention.Time','m.z','testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_cpdMeta[,c(3,4,6)] <- apply(expected_cpdMeta[,c(3,4,6)], 2, as.numeric)
   expected_specMeta     <- data.frame(matrix(nrow=3,ncol=4,dimnames=list(c(), c('acquisitionTime', 'TIC', 'testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE) # no filepath
   expected_specMeta$acquisitionTime <- input_acquisitionTime
   expected_specMeta$TIC             <- input_TIC
@@ -207,6 +207,7 @@ test_that('csv output with FIR, verbose, no verbose', {
   # Check result messages (save path)
   expect_equal(length(result_save$messages), 18)
   
+  
   ## no verbose
   savePath2       <- tempdir()
   result_save2    <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath2, annotationName='testProject', verbose=FALSE))
@@ -244,8 +245,8 @@ test_that('csv output without FIR, verbose, no verbose', {
   expected_path_tailfact    <- file.path(savePath3, "testProject_tailingFactor.csv")
   
   # expected values
-  expected_cpdMeta          <- data.frame(matrix(data=c('ID-1','Cpd 1','a',1,'ID-2','Cpd 2','b',2), nrow=2,ncol=4,dimnames=list(c(), c('cpdID', 'cpdName', 'testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE)
-  expected_cpdMeta$testcol2  <- as.numeric(expected_cpdMeta$testcol2)
+  expected_cpdMeta            <- data.frame(matrix(data=c('ID-1','Cpd 1',3360.0542530120501,522.20001220703102,'a',1,'ID-2','Cpd 2',3396.1599036144598,496.20001220703102,'b',2), nrow=2,ncol=6,dimnames=list(c(), c('cpdID', 'cpdName', 'Retention.Time','m.z','testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_cpdMeta[,c(3,4,6)] <- apply(expected_cpdMeta[,c(3,4,6)], 2, as.numeric)
   expected_specMeta     <- data.frame(matrix(nrow=3,ncol=4,dimnames=list(c(), c('acquisitionTime', 'TIC', 'testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE) # no filepath
   expected_specMeta$acquisitionTime <- input_acquisitionTime
   expected_specMeta$TIC             <- input_TIC
@@ -335,6 +336,60 @@ test_that('csv output without FIR, verbose, no verbose', {
   savePath4       <- tempdir()
   result_save4    <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath4, annotationName='testProject', verbose=FALSE))
   expect_equal(length(result_save4$messages), 0)
+})
+
+test_that('cpdMetadata mean rt mz calculation with and without filled, verbose, no verbose', {
+  # Calculate mean rt mz of found peaks but not filled
+  # only the peakTable is correctly generated in the test data
+  
+  # temporary file
+  savePath5         <- tempdir()
+  # clear temp folder
+  suppressWarnings(do.call(file.remove, list(list.files(savePath5, full.names = TRUE))))
+  
+  # cpd 1 (no FIR used) sample 1-2 found (not filled), sample 3 not found, (not filled) 
+  # cpd 2 (FIR used) sample 1 found (filled), sample 2-3 found, (not filled) 
+  # peakTables
+  # sample 1
+  tmp_peakTable1     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+  tmp_peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.21, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
+  tmp_peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, TRUE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
+  tmp_peakTable1[,c(1,11)]       <- sapply(tmp_peakTable1[,c(1,11)], as.logical)
+  tmp_peakTable1[,c(2:10,12:15)] <- sapply(tmp_peakTable1[,c(2:10,12:15)], as.numeric)
+  # sample 2
+  tmp_peakTable2     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+  tmp_peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 0.2139999999999, 1.0339153786516375, 1.0630802030537212)
+  tmp_peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
+  tmp_peakTable2[,c(1,11)]       <- sapply(tmp_peakTable2[,c(1,11)], as.logical)
+  tmp_peakTable2[,c(2:10,12:15)] <- sapply(tmp_peakTable2[,c(2:10,12:15)], as.numeric)
+  # sample 3
+  tmp_peakTable3     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+  tmp_peakTable3[1,] <- c(FALSE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
+  tmp_peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.21, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
+  tmp_peakTable3[,c(1,11)]       <- sapply(tmp_peakTable3[,c(1,11)], as.logical)
+  tmp_peakTable3[,c(2:10,12:15)] <- sapply(tmp_peakTable3[,c(2:10,12:15)], as.numeric)
+  tmp_peakTables <- list(tmp_peakTable1, tmp_peakTable2, tmp_peakTable3)
+  
+  # input
+  filledAnnotation3   <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=FALSE, uROIExist=TRUE, useUROI=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=tmp_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
+  input_annotation    <- filledAnnotation3
+  
+  # expected
+  expected_path_cpdMeta     <- file.path(savePath5, "testCpdMeta_cpdMetadata.csv")
+  
+  # expected values
+  expected_cpdMeta            <- data.frame(matrix(data=c('ID-1','Cpd 1',3355.9648795180719,522.205,'a',1,'ID-2','Cpd 2',3409.6431265060241,496.205,'b',2), nrow=2,ncol=6,dimnames=list(c(), c('cpdID', 'cpdName', 'Retention.Time','m.z','testcol1', 'testcol2')), byrow=TRUE), stringsAsFactors=FALSE)
+  expected_cpdMeta[,c(3,4,6)] <- apply(expected_cpdMeta[,c(3,4,6)], 2, as.numeric)
+  
+  # results (output, warnings and messages)
+  result_save     <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath5, annotationName='testCpdMeta', verbose=TRUE))
+  
+  # Check CSV has been produced
+  expect_true(file.exists(expected_path_cpdMeta))
+  
+  # Check values saved
+  saved_cpdMeta     <- read.csv(expected_path_cpdMeta, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_cpdMeta, expected_cpdMeta)
 })
 
 test_that('raise error', {
