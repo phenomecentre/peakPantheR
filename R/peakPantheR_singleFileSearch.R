@@ -178,6 +178,12 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     stop('Check input, file \"', singleSpectraDataPath ,'\" does not exist')
   }
 
+  if (dim(targetFeatTable)[1] != 0){
+    # rtMin < rtMax and mzMin < mzMax
+    if(!all(targetFeatTable[,'rtMax'] >= targetFeatTable[,'rtMin'])) {stop('Check input, "rtMin" must be <= to "rtMax"')}
+    if(!all(targetFeatTable[,'mzMax'] >= targetFeatTable[,'mzMin'])) {stop('Check input, "mzMin" must be <= to "mzMax"')}
+  }
+  
   if (!is.na(plotEICsPath)) {
     plotEICsPath  <- normalizePath(plotEICsPath, mustWork=FALSE)
     # folder exist
@@ -226,7 +232,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
   ## Only integrate if there is at minimum 1 target feature.
   if (dim(targetFeatTable)[1] != 0){
-
+    
     ## Integrate features using ROI
     foundPeaks      <- findTargetFeatures(ROIsDataPoint, targetFeatTable, verbose=verbose, ...)
     foundPeakTable  <- foundPeaks$peakTable

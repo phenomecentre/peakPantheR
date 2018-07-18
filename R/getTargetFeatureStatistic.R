@@ -162,7 +162,7 @@ getTargetFeatureStatistic <- function(fittedCurves, targetFeatTable, foundPeakTa
       }
       # rt_dev_sec
       if (!is.na(targetFeatTable$rt[i])) {
-        peakStat$rt_dev_sec[i]    <- abs(foundPeakTable$rt[i] - targetFeatTable$rt[i])
+        peakStat$rt_dev_sec[i]    <- foundPeakTable$rt[i] - targetFeatTable$rt[i]
       }
       # Tailing Factor
       peakStat$tailingFactor[i]   <- peak_shape_stat(fittedCurves[[i]], foundPeakTable$rt[i], foundPeakTable$rtMin[i], foundPeakTable$rtMax[i], statistic = "tailingFactor")
