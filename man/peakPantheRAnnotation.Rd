@@ -4,34 +4,35 @@
 \name{peakPantheRAnnotation}
 \alias{peakPantheRAnnotation}
 \alias{peakPantheRAnnotation-class}
-\alias{peakPantheRAnnotation}
 \title{An S4 class to represent peakPantheR annotation results}
 \usage{
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
-  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin =
-  numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
-  numeric(), mzMax = numeric(), stringsAsFactors = F), FIR = data.frame(rtMin
-  = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), uROI = data.frame(rtMin = numeric(), rt = numeric(),
-  rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), filepath = character(), cpdMetadata = data.frame(),
+  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin
+  = numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
+  numeric(), mzMax = numeric(), stringsAsFactors = F),
+  FIR = data.frame(rtMin = numeric(), rtMax = numeric(), mzMin =
+  numeric(), mzMax = numeric(), stringsAsFactors = F),
+  uROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
+  mzMin = numeric(), mz = numeric(), mzMax = numeric(), stringsAsFactors =
+  F), filepath = character(), cpdMetadata = data.frame(),
   spectraMetadata = data.frame(), acquisitionTime = character(),
-  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE, TIC = numeric(),
-  peakTables = list(), dataPoints = list(), peakFit = list(),
-  isAnnotated = FALSE)
+  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE,
+  TIC = numeric(), peakTables = list(), dataPoints = list(),
+  peakFit = list(), isAnnotated = FALSE)
 
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
-  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin =
-  numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
-  numeric(), mzMax = numeric(), stringsAsFactors = F), FIR = data.frame(rtMin
-  = numeric(), rtMax = numeric(), mzMin = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), uROI = data.frame(rtMin = numeric(), rt = numeric(),
-  rtMax = numeric(), mzMin = numeric(), mz = numeric(), mzMax = numeric(),
-  stringsAsFactors = F), filepath = character(), cpdMetadata = data.frame(),
+  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin
+  = numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
+  numeric(), mzMax = numeric(), stringsAsFactors = F),
+  FIR = data.frame(rtMin = numeric(), rtMax = numeric(), mzMin =
+  numeric(), mzMax = numeric(), stringsAsFactors = F),
+  uROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
+  mzMin = numeric(), mz = numeric(), mzMax = numeric(), stringsAsFactors =
+  F), filepath = character(), cpdMetadata = data.frame(),
   spectraMetadata = data.frame(), acquisitionTime = character(),
-  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE, TIC = numeric(),
-  peakTables = list(), dataPoints = list(), peakFit = list(),
-  isAnnotated = FALSE)
+  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE,
+  TIC = numeric(), peakTables = list(), dataPoints = list(),
+  peakFit = list(), isAnnotated = FALSE)
 }
 \arguments{
 \item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
@@ -241,3 +242,5 @@ Other peakPantheR: \code{\link{peakPantheR_parallelAnnotation}},
 Other parallelAnnotation: \code{\link{peakPantheR_parallelAnnotation}},
   \code{\link{peakPantheR_singleFileSearch}}
 }
+\concept{parallelAnnotation}
+\concept{peakPantheR}

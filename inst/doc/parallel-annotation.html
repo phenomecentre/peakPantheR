@@ -342,9 +342,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb2-4" data-line-number="4">                         <span class="kw">system.file</span>(<span class="st">'cdf/KO/ko16.CDF'</span>, <span class="dt">package =</span> <span class="st">&quot;faahKO&quot;</span>),</a>
 <a class="sourceLine" id="cb2-5" data-line-number="5">                         <span class="kw">system.file</span>(<span class="st">'cdf/KO/ko18.CDF'</span>, <span class="dt">package =</span> <span class="st">&quot;faahKO&quot;</span>))</a>
 <a class="sourceLine" id="cb2-6" data-line-number="6">input_spectraPaths</a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; [1] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko15.CDF&quot;</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; [2] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko16.CDF&quot;</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; [3] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko18.CDF&quot;</span></a></code></pre></div>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt; [1] &quot;C:/R/R-3.5.1/library/faahKO/cdf/KO/ko15.CDF&quot;</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt; [2] &quot;C:/R/R-3.5.1/library/faahKO/cdf/KO/ko16.CDF&quot;</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt; [3] &quot;C:/R/R-3.5.1/library/faahKO/cdf/KO/ko18.CDF&quot;</span></a></code></pre></div>
 <p>Two targeted features are defined and stored in a table with as columns:</p>
 <ul>
 <li><code>cpdID</code> (numeric)</li>
@@ -366,11 +366,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <col width="10%"></col>
 <col width="12%"></col>
 <col width="10%"></col>
-<col width="13%"></col>
+<col width="14%"></col>
 <col width="10%"></col>
 <col width="16%"></col>
 <col width="10%"></col>
-<col width="16%"></col>
+<col width="15%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -410,9 +410,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>Additional compound and spectra metadata can be provided but isn’t employed during the fit:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># spectra Metadata</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">input_spectraMetadata  &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="kw">c</span>(<span class="st">&quot;sample type 1&quot;</span>, <span class="st">&quot;sample type 2&quot;</span>, <span class="st">&quot;sample type 1&quot;</span>), <span class="dv">3</span>, <span class="dv">1</span>, <span class="dt">dimnames=</span><span class="kw">list</span>(<span class="kw">c</span>(), <span class="kw">c</span>(<span class="st">&quot;sampleType&quot;</span>))), <span class="dt">stringsAsFactors=</span>F)</a></code></pre></div>
-<table style="width:22%;">
+<table style="width:21%;">
 <colgroup>
-<col width="22%"></col>
+<col width="20%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -457,34 +457,34 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></a>
 <a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt; Check input, mzMLPath must be a .mzML</span></a>
 <a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt; Reading data from 2 windows</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; Data read in: 0.53 secs</span></a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; Data read in: 0.58 secs</span></a>
 <a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; Found 2/2 features in 0.04 secs</span></a>
-<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; Peak statistics done in: 0 secs</span></a>
-<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; Feature search done in: 1.02 secs</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; Found 2/2 features in 0.13 secs</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; Peak statistics done in: 0.03 secs</span></a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"><span class="co">#&gt; Feature search done in: 1.21 secs</span></a>
 <a class="sourceLine" id="cb7-15" data-line-number="15"><span class="co">#&gt; ----- ko16 -----</span></a>
 <a class="sourceLine" id="cb7-16" data-line-number="16"><span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></a>
 <a class="sourceLine" id="cb7-17" data-line-number="17"><span class="co">#&gt; Check input, mzMLPath must be a .mzML</span></a>
 <a class="sourceLine" id="cb7-18" data-line-number="18"><span class="co">#&gt; Reading data from 2 windows</span></a>
-<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co">#&gt; Data read in: 0.52 secs</span></a>
+<a class="sourceLine" id="cb7-19" data-line-number="19"><span class="co">#&gt; Data read in: 0.53 secs</span></a>
 <a class="sourceLine" id="cb7-20" data-line-number="20"><span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span></a>
 <a class="sourceLine" id="cb7-21" data-line-number="21"><span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2</span></a>
 <a class="sourceLine" id="cb7-22" data-line-number="22"><span class="co">#&gt; Found 2/2 features in 0.04 secs</span></a>
 <a class="sourceLine" id="cb7-23" data-line-number="23"><span class="co">#&gt; Peak statistics done in: 0 secs</span></a>
-<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">#&gt; Feature search done in: 1.23 secs</span></a>
+<a class="sourceLine" id="cb7-24" data-line-number="24"><span class="co">#&gt; Feature search done in: 1.26 secs</span></a>
 <a class="sourceLine" id="cb7-25" data-line-number="25"><span class="co">#&gt; ----- ko18 -----</span></a>
 <a class="sourceLine" id="cb7-26" data-line-number="26"><span class="co">#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></a>
 <a class="sourceLine" id="cb7-27" data-line-number="27"><span class="co">#&gt; Check input, mzMLPath must be a .mzML</span></a>
 <a class="sourceLine" id="cb7-28" data-line-number="28"><span class="co">#&gt; Reading data from 2 windows</span></a>
-<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt; Data read in: 0.52 secs</span></a>
+<a class="sourceLine" id="cb7-29" data-line-number="29"><span class="co">#&gt; Data read in: 0.51 secs</span></a>
 <a class="sourceLine" id="cb7-30" data-line-number="30"><span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1</span></a>
 <a class="sourceLine" id="cb7-31" data-line-number="31"><span class="co">#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2</span></a>
 <a class="sourceLine" id="cb7-32" data-line-number="32"><span class="co">#&gt; Found 2/2 features in 0.04 secs</span></a>
 <a class="sourceLine" id="cb7-33" data-line-number="33"><span class="co">#&gt; Peak statistics done in: 0 secs</span></a>
-<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co">#&gt; Feature search done in: 0.93 secs</span></a>
+<a class="sourceLine" id="cb7-34" data-line-number="34"><span class="co">#&gt; Feature search done in: 0.91 secs</span></a>
 <a class="sourceLine" id="cb7-35" data-line-number="35"><span class="co">#&gt; Annotation object cannot be reordered by sample acquisition date</span></a>
 <a class="sourceLine" id="cb7-36" data-line-number="36"><span class="co">#&gt; ----------------</span></a>
-<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co">#&gt; Parallel annotation done in: 4.22 secs</span></a>
+<a class="sourceLine" id="cb7-37" data-line-number="37"><span class="co">#&gt; Parallel annotation done in: 4.47 secs</span></a>
 <a class="sourceLine" id="cb7-38" data-line-number="38"><span class="co">#&gt;   0 failure(s)</span></a>
 <a class="sourceLine" id="cb7-39" data-line-number="39"></a>
 <a class="sourceLine" id="cb7-40" data-line-number="40"><span class="co"># successful fit</span></a>
@@ -536,11 +536,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <col width="10%"></col>
 <col width="12%"></col>
 <col width="5%"></col>
-<col width="13%"></col>
+<col width="14%"></col>
 <col width="11%"></col>
 <col width="15%"></col>
 <col width="15%"></col>
-<col width="16%"></col>
+<col width="15%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -580,13 +580,13 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <table>
 <caption>Table continues below</caption>
 <colgroup>
-<col width="15%"></col>
-<col width="4%"></col>
-<col width="15%"></col>
-<col width="15%"></col>
-<col width="15%"></col>
-<col width="15%"></col>
-<col width="15%"></col>
+<col width="16%"></col>
+<col width="5%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="16%"></col>
+<col width="12%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -695,17 +695,17 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb11-5" data-line-number="5">                       <span class="kw">system.file</span>(<span class="st">'cdf/WT/wt16.CDF'</span>, <span class="dt">package =</span> <span class="st">&quot;faahKO&quot;</span>),</a>
 <a class="sourceLine" id="cb11-6" data-line-number="6">                       <span class="kw">system.file</span>(<span class="st">'cdf/KO/ko18.CDF'</span>, <span class="dt">package =</span> <span class="st">&quot;faahKO&quot;</span>),</a>
 <a class="sourceLine" id="cb11-7" data-line-number="7">                       <span class="kw">system.file</span>(<span class="st">'cdf/WT/wt18.CDF'</span>, <span class="dt">package =</span> <span class="st">&quot;faahKO&quot;</span>))</a></code></pre></div>
-<pre><code>#&gt; [1] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko15.CDF&quot;
-#&gt; [2] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/WT/wt15.CDF&quot;
-#&gt; [3] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko16.CDF&quot;
-#&gt; [4] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/WT/wt16.CDF&quot;
-#&gt; [5] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko18.CDF&quot;
-#&gt; [6] &quot;C:/Program Files/R/R-3.5.1/library/faahKO/cdf/WT/wt18.CDF&quot;</code></pre>
+<pre><code>#&gt; [1] &quot;C:/R/R-3.5.1/library/faahKO/cdf/KO/ko15.CDF&quot;
+#&gt; [2] &quot;C:/R/R-3.5.1/library/faahKO/cdf/WT/wt15.CDF&quot;
+#&gt; [3] &quot;C:/R/R-3.5.1/library/faahKO/cdf/KO/ko16.CDF&quot;
+#&gt; [4] &quot;C:/R/R-3.5.1/library/faahKO/cdf/WT/wt16.CDF&quot;
+#&gt; [5] &quot;C:/R/R-3.5.1/library/faahKO/cdf/KO/ko18.CDF&quot;
+#&gt; [6] &quot;C:/R/R-3.5.1/library/faahKO/cdf/WT/wt18.CDF&quot;</code></pre>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">## new spectra metadata</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">new_spectraMetadata  &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="kw">c</span>(<span class="st">&quot;KO&quot;</span>, <span class="st">&quot;WT&quot;</span>, <span class="st">&quot;KO&quot;</span>, <span class="st">&quot;WT&quot;</span>, <span class="st">&quot;KO&quot;</span>, <span class="st">&quot;WT&quot;</span>), <span class="dv">6</span>, <span class="dv">1</span>, <span class="dt">dimnames=</span><span class="kw">list</span>(<span class="kw">c</span>(), <span class="kw">c</span>(<span class="st">&quot;Group&quot;</span>))), <span class="dt">stringsAsFactors=</span>F)</a></code></pre></div>
-<table style="width:11%;">
+<table style="width:10%;">
 <colgroup>
-<col width="11%"></col>
+<col width="9%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -796,7 +796,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>For each processed sample, a <code>peakTables</code> contains all the fit information for all compounds targeted. <code>annotationTable( , column)</code> will group the values across all samples and compounds for any <code>peakTables</code> column:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="co"># peakTables for the first sample</span></a>
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw">peakTables</span>(final_annotation)[[<span class="dv">1</span>]]</a></code></pre></div>
-<table style="width:92%;">
+<table style="width:90%;">
 <caption>Table continues below</caption>
 <colgroup>
 <col width="11%"></col>
@@ -806,7 +806,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <col width="11%"></col>
 <col width="11%"></col>
 <col width="11%"></col>
-<col width="15%"></col>
+<col width="13%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -843,14 +843,14 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tr>
 </tbody>
 </table>
-<table>
+<table style="width:99%;">
 <caption>Table continues below</caption>
 <colgroup>
 <col width="23%"></col>
 <col width="25%"></col>
 <col width="16%"></col>
 <col width="16%"></col>
-<col width="18%"></col>
+<col width="16%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -878,12 +878,12 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tr>
 </tbody>
 </table>
-<table style="width:72%;">
+<table style="width:71%;">
 <colgroup>
 <col width="22%"></col>
 <col width="25%"></col>
 <col width="11%"></col>
-<col width="13%"></col>
+<col width="12%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -925,32 +925,32 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center"><strong>C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko15.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.5.1/library/faahKO/cdf/KO/ko15.CDF</strong></td>
 <td align="center">18409123</td>
 <td align="center">35467323</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>C:/Program Files/R/R-3.5.1/library/faahKO/cdf/WT/wt15.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.5.1/library/faahKO/cdf/WT/wt15.CDF</strong></td>
 <td align="center">23871264</td>
 <td align="center">37965512</td>
 </tr>
 <tr class="odd">
-<td align="center"><strong>C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko16.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.5.1/library/faahKO/cdf/KO/ko16.CDF</strong></td>
 <td align="center">24775525</td>
 <td align="center">37795145</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>C:/Program Files/R/R-3.5.1/library/faahKO/cdf/WT/wt16.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.5.1/library/faahKO/cdf/WT/wt16.CDF</strong></td>
 <td align="center">25012332</td>
 <td align="center">34499235</td>
 </tr>
 <tr class="odd">
-<td align="center"><strong>C:/Program Files/R/R-3.5.1/library/faahKO/cdf/KO/ko18.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.5.1/library/faahKO/cdf/KO/ko18.CDF</strong></td>
 <td align="center">21909568</td>
 <td align="center">36717689</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>C:/Program Files/R/R-3.5.1/library/faahKO/cdf/WT/wt18.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.5.1/library/faahKO/cdf/WT/wt18.CDF</strong></td>
 <td align="center">21729136</td>
 <td align="center">36961319</td>
 </tr>

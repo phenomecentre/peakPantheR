@@ -8,9 +8,10 @@
 Reset a peakPantheRAnnotation (remove results and set \code{isAnnotated=FALSE}). If a different number of samples (\code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the object will be initialised to the new size. For input values left as NULL, the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI}, \code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI}, \code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist}, \code{useUROI} and \code{useFIR}) will be filled with values from \code{previousAnnotation}.}
 \usage{
 \S4method{resetAnnotation}{peakPantheRAnnotation}(previousAnnotation,
-  spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL, FIR = NULL,
-  cpdMetadata = NULL, spectraMetadata = NULL, uROIExist = NULL,
-  useUROI = NULL, useFIR = NULL, verbose = TRUE, ...)
+  spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL,
+  FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL,
+  uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{previousAnnotation}{(peakPantheRAnnotation) object to reset}

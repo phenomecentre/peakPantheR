@@ -126,3 +126,5 @@ Other peakPantheR: \code{\link{peakPantheRAnnotation}},
 Other parallelAnnotation: \code{\link{peakPantheRAnnotation}},
   \code{\link{peakPantheR_singleFileSearch}}
 }
+\concept{parallelAnnotation}
+\concept{peakPantheR}

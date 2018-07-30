@@ -6,8 +6,8 @@
 Using reference samples (\code{referenceSpectraFiles}), save (to \code{saveFolder}) each ROI EIC (\code{ROI}) and reports the mean apex RT for all IS (\code{IS_ROI}) across samples}
 \usage{
 peakPantheR_ROIStatistics(referenceSpectraFiles, saveFolder, ROI = NULL,
-  IS_ROI = NULL, sampleColour = NULL, ncores = 0, saveISPlots = TRUE,
-  verbose = TRUE)
+  IS_ROI = NULL, sampleColour = NULL, ncores = 0,
+  saveISPlots = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{referenceSpectraFiles}{(str) A character vector of paths to the reference spectra files}
