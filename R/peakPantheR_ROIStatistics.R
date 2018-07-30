@@ -19,6 +19,7 @@ peakPantheR_ROIStatistics <- function(referenceSpectraFiles, saveFolder, ROI=NUL
   
   # save folder
   if((typeof(saveFolder)!='character')|(length(saveFolder)!=1)) {stop('Check input, "saveFolder" must be a path')}
+  saveFolder    <- normalizePath(saveFolder, mustWork=FALSE)
   dir.create(saveFolder, recursive=TRUE, showWarnings=FALSE)
   
   # sampleColour
@@ -129,7 +130,7 @@ peakPantheR_ROIStatistics <- function(referenceSpectraFiles, saveFolder, ROI=NUL
     mean_IS_rt            <- data.frame(colMeans(annotationTable(IS_annotation, column='rt'), na.rm=TRUE))
     colnames(mean_IS_rt)  <- 'mean_rt'
     # save to disk
-    path_meanRT           <- file.path(saveFolder, 'IS_mean_RT.csv', sep='')
+    path_meanRT           <- file.path(saveFolder, 'IS_mean_RT.csv')
     utils::write.csv(mean_IS_rt, file=path_meanRT, row.names=TRUE, fileEncoding="UTF-8")
     if (verbose) { message('IS mean RT saved at ', path_meanRT) }
   }

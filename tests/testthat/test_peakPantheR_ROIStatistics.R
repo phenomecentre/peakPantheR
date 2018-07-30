@@ -37,7 +37,7 @@ test_that('3 files, save EICS, mean IS RT, save IS fit, with sampleColour, verbo
   expected_path_plot2 <- file.path(saveFolder1, "ID-2.png")
   expected_path_plot3 <- file.path(saveFolder1, "ID-3.png")
   expected_path_plot4 <- file.path(saveFolder1, "ID-4.png")
-  expected_path_CSV   <- file.path(saveFolder1, "IS_mean_rt.csv")
+  expected_path_CSV   <- file.path(saveFolder1, "IS_mean_RT.csv")
   expected_path_IS_plot1 <- file.path(saveFolder1,"IS_search", "cpd_1.png")
   expected_path_IS_plot2 <- file.path(saveFolder1,"IS_search", "cpd_2.png")
   expected_path_IS_plot3 <- file.path(saveFolder1,"IS_search", "cpd_3.png")
@@ -100,7 +100,7 @@ test_that('3 files (1 missing), save EICs, no IS RT, no IS fit, sampleColour is 
   expected_path_plot2 <- file.path(saveFolder2, "ID-2.png")
   expected_path_plot3 <- file.path(saveFolder2, "ID-3.png")
   expected_path_plot4 <- file.path(saveFolder2, "ID-4.png")
-  expected_path_CSV   <- file.path(saveFolder2, "IS_mean_rt.csv")
+  expected_path_CSV   <- file.path(saveFolder2, "IS_mean_RT.csv")
   # Expected message
   expected_message    <- c("Check input, \"sampleColour\" must be a vector of colour of same length as \"referenceSpectraFile\": default colour used instead\n", "No IS_ROI provided, mean RT of IS will not be calculated\n", "    4 ROI in 3 reference samples\n", "- Mean RT of IS will not be calculated\n", "\n-- Saving EICs for each ROI --\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n")
   
@@ -130,7 +130,7 @@ test_that('3 files, no save EICs, mean IS RT, no IS fit, without sampleColour, v
   input_IS_ROI  <- input_targetFeatTable
   
   # Expected save paths
-  expected_path_CSV   <- file.path(saveFolder3, "IS_mean_rt.csv")
+  expected_path_CSV   <- file.path(saveFolder3, "IS_mean_RT.csv")
   # Expected IS mean RT
   expected_meanIS     <- data.frame(matrix(nrow=4,ncol=2,dimnames=list(c(), c('X','mean_rt'))))
   expected_meanIS[1,] <- c('ID-1', 3360.054253)
@@ -274,7 +274,7 @@ test_that('parallel give the same result: 3 files, no save EICs, mean IS RT, sav
   expected_meanIS[4,] <- c('ID-4', 3712.859261)
   expected_meanIS[,2] <- sapply(expected_meanIS[,2], as.numeric)
   # Expected save paths
-  expected_path_CSV       <- file.path(saveFolder6, "IS_mean_rt.csv")
+  expected_path_CSV       <- file.path(saveFolder6, "IS_mean_RT.csv")
   expected_path_IS_plot1  <- file.path(saveFolder6,"IS_search", "cpd_1.png")
   expected_path_IS_plot2  <- file.path(saveFolder6,"IS_search", "cpd_2.png")
   expected_path_IS_plot3  <- file.path(saveFolder6,"IS_search", "cpd_3.png")
