@@ -182,3 +182,6 @@ Other peakPantheR: \code{\link{peakPantheRAnnotation}},
 Other parallelAnnotation: \code{\link{peakPantheRAnnotation}},
   \code{\link{peakPantheR_parallelAnnotation}}
 }
+\concept{parallelAnnotation}
+\concept{peakPantheR}
+\concept{realTimeAnnotation}

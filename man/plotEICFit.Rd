@@ -4,8 +4,9 @@
 \alias{plotEICFit}
 \title{Plot samples raw data and detected feature for a single ROI}
 \usage{
-plotEICFit(ROIDataPointSampleList, curveFitSampleList = NULL, rtMin = NULL,
-  rtMax = NULL, sampling = 250, sampleColour = NULL, verbose = TRUE)
+plotEICFit(ROIDataPointSampleList, curveFitSampleList = NULL,
+  rtMin = NULL, rtMax = NULL, sampling = 250, sampleColour = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).}

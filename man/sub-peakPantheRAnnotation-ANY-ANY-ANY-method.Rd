@@ -6,7 +6,8 @@
 \alias{[,peakPantheRAnnotation-method}
 \title{extract parts of peakPantheRAnnotation class}
 \usage{
-\S4method{[}{peakPantheRAnnotation,ANY,ANY,ANY}(x, i, j, drop = "missing")
+\S4method{[}{peakPantheRAnnotation,ANY,ANY,ANY}(x, i, j,
+  drop = "missing")
 }
 \arguments{
 \item{x}{object from which to extract element(s) or in which to replace element(s).}

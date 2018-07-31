@@ -7,8 +7,8 @@
 \title{Save to disk all annotation results as csv files
 Save to disk all annotation results as \code{annotationName_ ... .csv} files: compound metadata (\code{cpdMetadata}, \code{cpdID}, \code{cpdName}) and spectra metadata (\code{spectraMetadata}, \code{acquisitionTime}, \code{TIC}), summary of fit (ratio of peaks found: \code{ratio_peaks_found}, ratio of peaks filled: \code{ratio_peaks_filled}, mean ppm_error: \code{ppm_error}, mean rt_dev_sec: \code{rt_dev_sec}), and a file for each column of \code{peakTables} (with samples as rows and compounds as columns)}
 \usage{
-\S4method{outputAnnotationResult}{peakPantheRAnnotation}(object, saveFolder,
-  annotationName = "annotationResult", verbose = TRUE)
+\S4method{outputAnnotationResult}{peakPantheRAnnotation}(object,
+  saveFolder, annotationName = "annotationResult", verbose = TRUE)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}
