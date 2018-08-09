@@ -45,30 +45,41 @@ plotEICFit  <- function(ROIDataPointSampleList, curveFitSampleList=NULL, rtMin=N
   names(colourSpl)  <- sampleIDColour
   
   
+  ## Prepare data
+  # raw spectra EICs
+  all_EIC   <- lapply(seq_along(ROIDataPointSampleList), function(x) {
+    # generate ion chromatogram and add sampleIDColour
+    tmp_EIC <- generateIonChromatogram(ROIDataPointSampleList[[x]], aggregationFunction='sum')
+    tmp_EIC <- cbind(tmp_EIC, specID=rep(paste('spl', x, sep=""), nrow(tmp_EIC)), stringsAsFactors=FALSE)
+  })
+  input_EIC <- do.call(rbind, all_EIC)
+  
+  # curve fit
+  if (plotFit) {
+    all_fit     <- lapply(seq_along(ROIDataPointSampleList), function(x) {
+      # check rtMin, rtMax and curveFit exist, project curveFit and add sampleIDColour
+      if(!(is.na(rtMin[x])) & !(is.na(rtMax[x])) & all(!is.na(curveFitSampleList[[x]]))) {
+        grid_rt <- seq(from=rtMin[x], to=rtMax[x], by=((rtMax[x]-rtMin[x])/(sampling-1)))
+        tmp_fit <- data.frame(rt=grid_rt, int=predictCurve(curveFitSampleList[[x]], x=grid_rt))
+        tmp_fit <- cbind(tmp_fit, specID=rep(paste('spl', x, sep=""), nrow(tmp_fit)), stringsAsFactors=FALSE)
+      }
+    })
+    input_fit <- do.call(rbind, all_fit)
+    # catch no curve fit left to plot
+    if (is.null(input_fit)) { input_fit <- data.frame(matrix(,ncol=3, nrow=0, dimnames=list(c(),c('rt','int','specID'))))}
+  }
+  
+  
   ## Plot raw spectra and curve fit
   # init plot
-  p_spec      <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) + ggplot2::theme_bw() + ggplot2::xlab('Retention Time (sec)') + ggplot2::ylab('Intensity') + ggplot2::scale_y_continuous(expand=c(0.01, 0.01))
-  
-  # add each spectra and fit to the plot
-  for (spectraID in 1:nbSpl){
-    # generate EIC
-    tmp_EIC <- generateIonChromatogram(ROIDataPointSampleList[[spectraID]], aggregationFunction='sum')
-    # plot EIC
-    p_spec  <- p_spec + ggplot2::geom_line(data=tmp_EIC, ggplot2::aes_string(x='rt', y='int'), colour=colourSpl[spectraID])
+  p_spec    <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) + ggplot2::theme_bw() + ggplot2::xlab('Retention Time (sec)') + ggplot2::ylab('Intensity') + ggplot2::scale_y_continuous(expand=c(0.01, 0.01)) + ggplot2::scale_color_manual(values=colourSpl) + ggplot2::theme(legend.position="none")
 
-    # fitted curve
-    if (plotFit) {
-      if(!(is.na(rtMin[spectraID])) & !(is.na(rtMax[spectraID]))) {
-        grid_rt   <- seq(from=rtMin[spectraID], to=rtMax[spectraID], by=((rtMax[spectraID]-rtMin[spectraID])/(sampling-1)))
-        # only if exist
-        if (all(!is.na(curveFitSampleList[[spectraID]]))) {
-          # project curve fit
-          tmp_fit <- data.frame(rt=grid_rt ,int=predictCurve(curveFitSampleList[[spectraID]], x=grid_rt))
-          # plot curve fit
-          p_spec  <- p_spec + ggplot2::geom_line(data=tmp_fit, ggplot2::aes_string(x='rt', y='int'), colour=colourSpl[spectraID], linetype="dashed")
-        }
-      }
-    }
+  # plot EIC
+  p_spec    <- p_spec + ggplot2::geom_line(data=input_EIC, ggplot2::aes(x=rt, y=int, group=factor(specID), colour=factor(specID)))
+  
+  # plot curve fit
+  if (plotFit) {
+    p_spec  <- p_spec + ggplot2::geom_line(data=input_fit, ggplot2::aes(x=rt, y=int, group=factor(specID), colour=factor(specID)), linetype="dashed")
   }
   
   return(p_spec)
