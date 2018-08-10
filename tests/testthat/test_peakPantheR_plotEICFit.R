@@ -1,4 +1,4 @@
-context('plotEICFit()')
+context('peakPantheR_plotEICFit()')
 
 
 ## Input data
@@ -26,10 +26,10 @@ class(fit2)     <- 'peakPantheR_curveFit'
 
 test_that('plot feature in 1 sample', {
 	# generate plot
-  result_plot1SplNoCol <- plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1),
-                                     curveFitSampleList=list(fit1),
-                                     rtMin=995., rtMax=1005.,
-                                     sampling=250, sampleColour=NULL, verbose=FALSE)
+  result_plot1SplNoCol <- peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1),
+                                                 curveFitSampleList=list(fit1),
+                                                 rtMin=995., rtMax=1005.,
+                                                 sampling=250, sampleColour=NULL, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_plot1SplNoCol))
@@ -43,11 +43,11 @@ test_that('plot feature in 1 sample, no curveFit with warning', {
   expected_message  <- c("\"curveFitSampleList\", \"rtMin\" or \"rtMax\" no provided, curveFit will not be plotted\n")
   
   # generate plot
-  result_plot1SplNoFitNoCol <- evaluate_promise(plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1),
-                                                          curveFitSampleList=NULL,
-                                                          rtMin=995., rtMax=1005.,
-                                                          sampling=250, sampleColour=NULL, 
-                                                          verbose=TRUE))
+  result_plot1SplNoFitNoCol <- evaluate_promise(peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1),
+                                                                       curveFitSampleList=NULL,
+                                                                       rtMin=995., rtMax=1005.,
+                                                                       sampling=250, sampleColour=NULL, 
+                                                                       verbose=TRUE))
   
   # Check messages confirming the replacements
   expect_equal(result_plot1SplNoFitNoCol$messages, expected_message)
@@ -61,10 +61,10 @@ test_that('plot feature in 1 sample, no curveFit with warning', {
 
 test_that('plot feature in 2 samples, change colours and sampling', {
   # generate plot
-  result_plot2SplWithCol <- plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1, tmp_DataPoints2),
-                                       curveFitSampleList=list(fit1, fit2),
-                                       rtMin=c(995., 997.), rtMax=c(1005.,1007.),
-                                       sampling=300, sampleColour=c('blue', 'red'), verbose=FALSE)
+  result_plot2SplWithCol <- peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1, tmp_DataPoints2),
+                                                   curveFitSampleList=list(fit1, fit2),
+                                                   rtMin=c(995., 997.), rtMax=c(1005.,1007.),
+                                                   sampling=300, sampleColour=c('blue', 'red'), verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_plot2SplWithCol))
@@ -75,10 +75,10 @@ test_that('plot feature in 2 samples, change colours and sampling', {
 
 test_that('plot feature in 2 samples, rtMin and/or rtMax have a NA (cannot plot fit)', {
   # generate plot
-  result_plot2SplRTNA <- plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1, tmp_DataPoints2),
-                                    curveFitSampleList=list(fit1, fit2),
-                                    rtMin=c(NA, 997.), rtMax=c(1005.,NA),
-                                    sampling=250, sampleColour=NULL, verbose=FALSE)
+  result_plot2SplRTNA <- peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1, tmp_DataPoints2),
+                                                curveFitSampleList=list(fit1, fit2),
+                                                rtMin=c(NA, 997.), rtMax=c(1005.,NA),
+                                                sampling=250, sampleColour=NULL, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_plot2SplRTNA))
@@ -92,10 +92,10 @@ test_that('no rtMin and/or rtMax, cannot plot fit warning', {
   expected_message  <- c("\"curveFitSampleList\", \"rtMin\" or \"rtMax\" no provided, curveFit will not be plotted\n")
   
   # generate plot
-  result_plotFitWarning <- evaluate_promise(plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1, tmp_DataPoints2),
-                                            curveFitSampleList=list(fit1, fit2),
-                                            rtMin=NULL, rtMax=NULL,
-                                            sampling=250, sampleColour=NULL, verbose=TRUE))
+  result_plotFitWarning <- evaluate_promise(peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1, tmp_DataPoints2),
+                                                                   curveFitSampleList=list(fit1, fit2),
+                                                                   rtMin=NULL, rtMax=NULL,
+                                                                   sampling=250, sampleColour=NULL, verbose=TRUE))
   
   # Check messages confirming the replacements
   expect_equal(result_plotFitWarning$messages, expected_message)
@@ -112,11 +112,11 @@ test_that('sampleColour length warning', {
   expected_message <- c("Warning: sampleColour length must match the number of samples; default colour used\n")
   
   # generate plot
-  result_plotColourWarning <- evaluate_promise(plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1),
-                                                          curveFitSampleList=list(fit1),
-                                                          rtMin=995., rtMax=1005., sampling=250,
-                                                          sampleColour=c('green','purple'),
-                                                          verbose=TRUE))
+  result_plotColourWarning <- evaluate_promise(peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1),
+                                                                      curveFitSampleList=list(fit1),
+                                                                      rtMin=995., rtMax=1005., sampling=250,
+                                                                      sampleColour=c('green','purple'),
+                                                                      verbose=TRUE))
   
   # check messages confirming the replacements
   expect_equal(result_plotColourWarning$messages, expected_message)
@@ -131,21 +131,21 @@ test_that('sampleColour length warning', {
 test_that('raise errors', {
   # ROIDataPointSampleList is not a list
   msg1    <- c('Error: "ROIDataPointSampleList" must be a list of data.frame')
-  expect_error(plotEICFit('not a list', rtMin=995., rtMax=1005., sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg1, fixed=TRUE)
+  expect_error(peakPantheR_plotEICFit('not a list', rtMin=995., rtMax=1005., sampling=250, curveFitSampleList=list(fit1), sampleColour=NULL, verbose=FALSE), msg1, fixed=TRUE)
   
   # ROIDataPointSampleList length is wrong
   msg2    <- c('"curveFitSampleList", "rtMin", "rtMax" and "ROIDataPointSampleList" must be the same length')
-  expect_error(plotEICFit(list(tmp_DataPoints1, tmp_DataPoints2), curveFitSampleList=list(fit1), rtMin=995., rtMax=1005., sampling=250, sampleColour=NULL, verbose=FALSE), msg2, fixed=TRUE)
+  expect_error(peakPantheR_plotEICFit(list(tmp_DataPoints1, tmp_DataPoints2), curveFitSampleList=list(fit1), rtMin=995., rtMax=1005., sampling=250, sampleColour=NULL, verbose=FALSE), msg2, fixed=TRUE)
   
   # rtMin length is wrong
   msg3    <- c('"curveFitSampleList", "rtMin", "rtMax" and "ROIDataPointSampleList" must be the same length')
-  expect_error(plotEICFit(list(tmp_DataPoints1), curveFitSampleList=list(fit1), rtMin=c(995.,997.), rtMax=1005., sampling=250, sampleColour=NULL, verbose=FALSE), msg3, fixed=TRUE)
+  expect_error(peakPantheR_plotEICFit(list(tmp_DataPoints1), curveFitSampleList=list(fit1), rtMin=c(995.,997.), rtMax=1005., sampling=250, sampleColour=NULL, verbose=FALSE), msg3, fixed=TRUE)
   
   # rtmMax length is wrong
   msg4    <- c('"curveFitSampleList", "rtMin", "rtMax" and "ROIDataPointSampleList" must be the same length')
-  expect_error(plotEICFit(list(tmp_DataPoints1), curveFitSampleList=list(fit1), rtMin=995., rtMax=c(1005., 1006.), sampling=250, sampleColour=NULL, verbose=FALSE), msg4, fixed=TRUE)
+  expect_error(peakPantheR_plotEICFit(list(tmp_DataPoints1), curveFitSampleList=list(fit1), rtMin=995., rtMax=c(1005., 1006.), sampling=250, sampleColour=NULL, verbose=FALSE), msg4, fixed=TRUE)
   
   # curveFitSampleList length is wrong
   msg5    <- c('"curveFitSampleList", "rtMin", "rtMax" and "ROIDataPointSampleList" must be the same length')
-  expect_error(plotEICFit(list(tmp_DataPoints1), curveFitSampleList=list(fit1,fit2), rtMin=995., rtMax=c(1005.,1007.), sampleColour=NULL, verbose=FALSE), msg5, fixed=TRUE)
+  expect_error(peakPantheR_plotEICFit(list(tmp_DataPoints1), curveFitSampleList=list(fit1,fit2), rtMin=995., rtMax=c(1005.,1007.), sampleColour=NULL, verbose=FALSE), msg5, fixed=TRUE)
 })

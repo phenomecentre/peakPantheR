@@ -100,7 +100,7 @@ peakPantheR_ROIStatistics <- function(referenceSpectraFiles, saveFolder, ROI=NUL
     # generate and save plots
     for(i in seq(nbROI)) {
       tmp_ROI_datapoints  <- unlist(lapply(all_ROIs, function(x,y) {x[y]}, y=i), recursive=FALSE)
-      tmp_EIC_plot        <- plotEICFit(ROIDataPointSampleList = tmp_ROI_datapoints, curveFitSampleList=NULL, rtMin=NULL, rtMax=NULL, sampling=250, sampleColour=sampleColour, verbose=FALSE)
+      tmp_EIC_plot        <- peakPantheR_plotEICFit(ROIDataPointSampleList = tmp_ROI_datapoints, curveFitSampleList=NULL, rtMin=NULL, rtMax=NULL, sampling=250, sampleColour=sampleColour, verbose=FALSE)
       # add box limits and apex
       tmp_EIC_plot <- tmp_EIC_plot + ggplot2::geom_vline(ggplot2::aes(xintercept=c(ROI[i,'rtMin'], ROI[i,'rtMax'])), colour='darkgrey', linetype='dashed')
       tmp_EIC_plot <- tmp_EIC_plot + ggplot2::geom_vline(ggplot2::aes(xintercept=ROI[i,'rt']), colour='red')

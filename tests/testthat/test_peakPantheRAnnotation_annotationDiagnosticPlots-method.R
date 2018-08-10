@@ -98,40 +98,40 @@ test_that('default diagnostic plots, no sampleColour, default sampling, verbose/
   # expected
   # check on second compound (need verbose/no verbose for plot_env)
   # with verbose
-  expected_EICFit2v       <- plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
-                                        curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
-                                        rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                        rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                        sampling = 250,
-                                        sampleColour = NULL,
-                                        verbose = TRUE)
-  expected_rtPeakwidth2v  <- plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
-                                           widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                           widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                           acquTime = NULL,
-                                           sampleColour = NULL,
-                                           varName = 'Retention Time (sec)',
-                                           rotateAxis = TRUE,
-                                           verbose = TRUE)
+  expected_EICFit2v       <- peakPantheR_plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
+                                                    curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
+                                                    rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                    rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                    sampling = 250,
+                                                    sampleColour = NULL,
+                                                    verbose = TRUE)
+  expected_rtPeakwidth2v  <- peakPantheR_plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
+                                                       widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                       widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                       acquTime = NULL,
+                                                       sampleColour = NULL,
+                                                       varName = 'Retention Time (sec)',
+                                                       rotateAxis = TRUE,
+                                                       verbose = TRUE)
   expected_rtHistogram2   <- plotHistogram(var = c(3386.5288072289159, 3405.791, 3413.4952530120481), 
                                            varName='Retention Time (sec)',
                                            density=TRUE)
   # with verbose
-  expected_EICFit2nv      <- plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
-                                        curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
-                                        rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                        rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                        sampling = 250,
-                                        sampleColour = NULL,
-                                        verbose = FALSE)
-  expected_rtPeakwidth2nv <- plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
-                                           widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                           widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                           acquTime = NULL,
-                                           sampleColour = NULL,
-                                           varName = 'Retention Time (sec)',
-                                           rotateAxis = TRUE,
-                                           verbose = FALSE)
+  expected_EICFit2nv      <- peakPantheR_plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
+                                                    curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
+                                                    rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                    rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                    sampling = 250,
+                                                    sampleColour = NULL,
+                                                    verbose = FALSE)
+  expected_rtPeakwidth2nv <- peakPantheR_plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
+                                                       widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                       widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                       acquTime = NULL,
+                                                       sampleColour = NULL,
+                                                       varName = 'Retention Time (sec)',
+                                                       rotateAxis = TRUE,
+                                                       verbose = FALSE)
   # message
   expected_message        <- c("Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 1/2 done\n", "Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 2/2 done\n")
   expected_plotNames      <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram', 'title')
@@ -178,40 +178,40 @@ test_that('default diagnostic plots, set sampleColour, change sampling, verbose/
   # expected
   # check on second compound (need verbose/no verbose for plot_env)
   # with verbose
-  expected_EICFit2v       <- plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
-                                        curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
-                                        rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                        rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                        sampling = 10,
-                                        sampleColour = input_colour,
-                                        verbose = TRUE)
-  expected_rtPeakwidth2v  <- plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
-                                           widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                           widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                           acquTime = NULL,
-                                           sampleColour = input_colour,
-                                           varName = 'Retention Time (sec)',
-                                           rotateAxis = TRUE,
-                                           verbose = TRUE)
+  expected_EICFit2v       <- peakPantheR_plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
+                                                    curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
+                                                    rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                    rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                    sampling = 10,
+                                                    sampleColour = input_colour,
+                                                    verbose = TRUE)
+  expected_rtPeakwidth2v  <- peakPantheR_plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
+                                                       widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                       widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                       acquTime = NULL,
+                                                       sampleColour = input_colour,
+                                                       varName = 'Retention Time (sec)',
+                                                       rotateAxis = TRUE,
+                                                       verbose = TRUE)
   expected_rtHistogram2   <- plotHistogram(var = c(3386.5288072289159, 3405.791, 3413.4952530120481), 
                                            varName='Retention Time (sec)',
                                            density=TRUE)
   # with verbose
-  expected_EICFit2nv      <- plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
-                                        curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
-                                        rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                        rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                        sampling = 10,
-                                        sampleColour = input_colour,
-                                        verbose = FALSE)
-  expected_rtPeakwidth2nv <- plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
-                                           widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
-                                           widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
-                                           acquTime = NULL,
-                                           sampleColour = input_colour,
-                                           varName = 'Retention Time (sec)',
-                                           rotateAxis = TRUE,
-                                           verbose = FALSE)
+  expected_EICFit2nv      <- peakPantheR_plotEICFit(ROIDataPointSampleList = list(ROIDataPoints1[[2]], ROIDataPoints2[[2]], ROIDataPoints3[[2]]),
+                                                    curveFitSampleList = list(cFit1.2, cFit2.2, cFit3.2),
+                                                    rtMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                    rtMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                    sampling = 10,
+                                                    sampleColour = input_colour,
+                                                    verbose = FALSE)
+  expected_rtPeakwidth2nv <- peakPantheR_plotPeakwidth(apexValue = c(3386.5288072289159, 3405.791, 3413.4952530120481),
+                                                       widthMin = c(3345.3766648628907, 3365.0238566258713, 3373.3998828113113),
+                                                       widthMax = c(3428.2788374983961, 3453.4049569205681, 3454.4490330927388),
+                                                       acquTime = NULL,
+                                                       sampleColour = input_colour,
+                                                       varName = 'Retention Time (sec)',
+                                                       rotateAxis = TRUE,
+                                                       verbose = FALSE)
   # message
   expected_message        <- c("Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 1/2 done\n", "Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Peakwidth values plotted\n", "Values plotted by run order\n", "Values plotted by run order\n", "Compound 2/2 done\n")
   expected_plotNames      <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram', 'title')

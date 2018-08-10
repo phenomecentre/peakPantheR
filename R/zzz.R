@@ -5,7 +5,7 @@
   if(getRversion() >= "2.15.1") {
     utils::globalVariables(
       # data.frame column names used in ggplot (cannot use aes_string due to transformations to the column in aes())
-      c("x","y","colr","..density..")
+      c("x","y","colr","..density..","rt","int","specID")
       )
     invisible()
   }
