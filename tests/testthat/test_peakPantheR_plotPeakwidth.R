@@ -1,4 +1,4 @@
-context('plotPeakWidth()')
+context('peakPantheR_plotPeakWidth()')
 
 
 ## Input data
@@ -11,9 +11,9 @@ acqTime <- as.POSIXct(c("2017-07-13 21:06:14", "2017-07-14 21:06:14", "2017-07-1
 
 test_that('plot 3 samples, no color', {
 	# generate plot
-  result_3splNoColNoRot <- plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3], 
-                                         acquTime=NULL, varName='Test variable', sampleColour=NULL,
-                                         rotateAxis=FALSE, verbose=FALSE)
+  result_3splNoColNoRot <- peakPantheR_plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3], 
+                                                     acquTime=NULL, varName='Test variable', sampleColour=NULL,
+                                                     rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_3splNoColNoRot))
@@ -24,9 +24,9 @@ test_that('plot 3 samples, no color', {
 
 test_that('plot 3 samples, no color, acquisition time', {
   # generate plot
-  result_3splNoColNoRotRunOrder <- plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3], 
-                                                 acquTime=acqTime[1:3], varName='Test variable 2', sampleColour=NULL,
-                                                 rotateAxis=FALSE, verbose=FALSE)
+  result_3splNoColNoRotRunOrder <- peakPantheR_plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3], 
+                                                             acquTime=acqTime[1:3], varName='Test variable 2', sampleColour=NULL,
+                                                             rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_3splNoColNoRotRunOrder))
@@ -37,9 +37,9 @@ test_that('plot 3 samples, no color, acquisition time', {
 
 test_that('plot 3 samples, no color, rotate axis', {
   # generate plot
-  result_3splNoColRot <- plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3],
-                                       acquTime=NULL, varName='Test variable 3', sampleColour=NULL,
-                                       rotateAxis=TRUE, verbose=FALSE)
+  result_3splNoColRot <- peakPantheR_plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3],
+                                                   acquTime=NULL, varName='Test variable 3', sampleColour=NULL,
+                                                   rotateAxis=TRUE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_3splNoColRot))
@@ -50,9 +50,9 @@ test_that('plot 3 samples, no color, rotate axis', {
 
 test_that('plot 3 samples, no color, acquisition time, rotate axis', {
   # generate plot
-  result_3splNoColRotRunOrder <- plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3], 
-                                                 acquTime=acqTime[1:3], varName='Test variable 4', sampleColour=NULL,
-                                                 rotateAxis=TRUE, verbose=FALSE)
+  result_3splNoColRotRunOrder <- peakPantheR_plotPeakwidth(apexValue=apexVal[1:3], widthMin=minVal[1:3], widthMax=maxVal[1:3], 
+                                                           acquTime=acqTime[1:3], varName='Test variable 4', sampleColour=NULL,
+                                                           rotateAxis=TRUE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_3splNoColRotRunOrder))
@@ -63,9 +63,9 @@ test_that('plot 3 samples, no color, acquisition time, rotate axis', {
 
 test_that('plot 4 samples with color', {
   # generate plot
-  result_4splWithColNoRot <- plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
-                                           acquTime=NULL, varName='Test variable 5', sampleColour=c('blue','red','green','orange'),
-                                           rotateAxis=FALSE, verbose=FALSE)
+  result_4splWithColNoRot <- peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
+                                                       acquTime=NULL, varName='Test variable 5', sampleColour=c('blue','red','green','orange'),
+                                                       rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_4splWithColNoRot))
@@ -76,9 +76,9 @@ test_that('plot 4 samples with color', {
 
 test_that('plot 4 samples with color, acquisition time', {
   # generate plot
-  result_4splWithColNoRotRunOrder <- plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
-                                                   acquTime=acqTime, varName='Test variable 6',
-                                                   sampleColour=c('blue','red','green','orange'), rotateAxis=FALSE, verbose=FALSE)
+  result_4splWithColNoRotRunOrder <- peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
+                                                               acquTime=acqTime, varName='Test variable 6',
+                                                               sampleColour=c('blue','red','green','orange'), rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_4splWithColNoRotRunOrder))
@@ -89,9 +89,9 @@ test_that('plot 4 samples with color, acquisition time', {
 
 test_that('plot 4 samples with color, rotate axis', {
   # generate plot
-  result_4splWithColRot <- plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
-                                         acquTime=NULL, varName='Test variable 7', sampleColour=c('blue','red','green','orange'),
-                                         rotateAxis=TRUE, verbose=FALSE)
+  result_4splWithColRot <- peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
+                                                     acquTime=NULL, varName='Test variable 7', sampleColour=c('blue','red','green','orange'),
+                                                     rotateAxis=TRUE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_4splWithColRot))
@@ -102,9 +102,9 @@ test_that('plot 4 samples with color, rotate axis', {
 
 test_that('plot 4 samples with color, acquisition time, rotate axis', {
   # generate plot
-  result_4splWithColRotRunOrder <- plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
-                                                 acquTime=acqTime, varName='Test variable 8',
-                                                 sampleColour=c('blue','red','green','orange'), rotateAxis=FALSE, verbose=FALSE)
+  result_4splWithColRotRunOrder <- peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
+                                                             acquTime=acqTime, varName='Test variable 8',
+                                                             sampleColour=c('blue','red','green','orange'), rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_4splWithColRotRunOrder))
@@ -118,9 +118,9 @@ test_that('sampleColour length warning, peakwidth and rotate and input order mes
   expected_message <- c("Warning: sampleColour length must match the number of samples; default colour used\n", "Peakwidth values plotted\n", "Values plotted by input order\n", "x and y axis rotated\n")
   
   # generate plot
-  result_plotColourWarning <- evaluate_promise(plotPeakwidth(apexVal, minVal, maxVal, acquTime=NULL,
-                                                             varName='Test variable 9', sampleColour=c('blue','red','green'),
-                                                             rotateAxis=TRUE, verbose=TRUE))
+  result_plotColourWarning <- evaluate_promise(peakPantheR_plotPeakwidth(apexVal, minVal, maxVal, acquTime=NULL,
+                                                                         varName='Test variable 9', sampleColour=c('blue','red','green'),
+                                                                         rotateAxis=TRUE, verbose=TRUE))
   
   # check messages confirming the replacements
   expect_equal(result_plotColourWarning$messages, expected_message)
@@ -137,9 +137,9 @@ test_that('sampleColour length warning, no peakwidth (missing widthMax) and no r
   expected_message <- c("Warning: sampleColour length must match the number of samples; default colour used\n", "Values plotted by run order\n")
   
   # generate plot
-  result_plotColourWarningRunOrder <- evaluate_promise(plotPeakwidth(apexVal, widthMin=minVal, widthMax=NULL, acquTime=acqTime,
-                                                                     varName='Test variable 10', sampleColour=c('blue','red','green'),
-                                                                     rotateAxis=FALSE, verbose=TRUE))
+  result_plotColourWarningRunOrder <- evaluate_promise(peakPantheR_plotPeakwidth(apexVal, widthMin=minVal, widthMax=NULL, acquTime=acqTime,
+                                                                                 varName='Test variable 10', sampleColour=c('blue','red','green'),
+                                                                                 rotateAxis=FALSE, verbose=TRUE))
   
   # check messages confirming the replacements
   expect_equal(result_plotColourWarningRunOrder$messages, expected_message)
@@ -156,9 +156,9 @@ test_that('missing widthMin, no peakwidth plot', {
   expected_message <- c("Values plotted by input order\n")
   
   # generate plot
-  result_plotNoWidthMin <- evaluate_promise(plotPeakwidth(apexValue=apexVal, widthMin=NULL, widthMax=maxVal, acquTime=NULL,
-                                                          varName='Test variable 11', sampleColour=NULL,
-                                                          rotateAxis=FALSE, verbose=TRUE))
+  result_plotNoWidthMin <- evaluate_promise(peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=NULL, widthMax=maxVal, acquTime=NULL,
+                                                                      varName='Test variable 11', sampleColour=NULL,
+                                                                      rotateAxis=FALSE, verbose=TRUE))
   
   # check messages confirming the replacements
   expect_equal(result_plotNoWidthMin$messages, expected_message)
@@ -175,9 +175,9 @@ test_that('missing widthMax, no peakwidth plot', {
   expected_message <- c("Values plotted by input order\n")
   
   # generate plot
-  result_plotNoWidthMax <- evaluate_promise(plotPeakwidth(apexValue=apexVal, widthMin=NULL, widthMax=maxVal, acquTime=NULL,
-                                                          varName='Test variable 11', sampleColour=NULL,
-                                                          rotateAxis=FALSE, verbose=TRUE))
+  result_plotNoWidthMax <- evaluate_promise(peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=NULL, widthMax=maxVal, acquTime=NULL,
+                                                                      varName='Test variable 11', sampleColour=NULL,
+                                                                      rotateAxis=FALSE, verbose=TRUE))
   
   # check messages confirming the replacements
   expect_equal(result_plotNoWidthMax$messages, expected_message)
@@ -194,9 +194,9 @@ test_that('NA in acquisition time, revert to input order plot', {
   expected_message <- c("Warning: \"acquTime\" contains NA, run order will not be plotted\n", "Peakwidth values plotted\n", "Values plotted by input order\n" )
   
   # generate plot
-  result_plotFallBackNAAcqu <- evaluate_promise(plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
-                                                              acquTime=c(acqTime[1:3],NA), varName='Test variable 12',
-                                                              sampleColour=NULL, rotateAxis=FALSE, verbose=TRUE))
+  result_plotFallBackNAAcqu <- evaluate_promise(peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
+                                                                          acquTime=c(acqTime[1:3],NA), varName='Test variable 12',
+                                                                          sampleColour=NULL, rotateAxis=FALSE, verbose=TRUE))
   
   # check messages confirming the replacements
   expect_equal(result_plotFallBackNAAcqu$messages, expected_message)
@@ -211,21 +211,21 @@ test_that('NA in acquisition time, revert to input order plot', {
 test_that('raise errors', {
   # acquTime is not POSIXct
   msg1    <- c('Error: \"acquTime\" must be a vector of POSIXct')
-  expect_error(plotPeakwidth(apexVal=apexVal, acquTime='not a POSIXct'), msg1, fixed=TRUE)
+  expect_error(peakPantheR_plotPeakwidth(apexVal=apexVal, acquTime='not a POSIXct'), msg1, fixed=TRUE)
   
   # apexValue/acquTime length is wrong
   msg2    <- c('\"apexValue\" and \"acquTime\" must be the same length')
-  expect_error(plotPeakwidth(apexValue=apexVal[1:3], acquTime=acqTime), msg2, fixed=TRUE)
+  expect_error(peakPantheR_plotPeakwidth(apexValue=apexVal[1:3], acquTime=acqTime), msg2, fixed=TRUE)
   
   # apexValue length is wrong
   msg3    <- c('"apexValue", "widthMin" and "widthMax" must be the same length')
-  expect_error(plotPeakwidth(apexVal[1:3], widthMin=minVal, widthMax=maxVal), msg3, fixed=TRUE)
+  expect_error(peakPantheR_plotPeakwidth(apexVal[1:3], widthMin=minVal, widthMax=maxVal), msg3, fixed=TRUE)
   
   # widthMin length is wrong
   msg4    <- c('"apexValue", "widthMin" and "widthMax" must be the same length')
-  expect_error(plotPeakwidth(apexVal, widthMin=minVal[1:3], widthMax=maxVal), msg4, fixed=TRUE)
+  expect_error(peakPantheR_plotPeakwidth(apexVal, widthMin=minVal[1:3], widthMax=maxVal), msg4, fixed=TRUE)
   
   # widthMax length is wrong
   msg5    <- c('"apexValue", "widthMin" and "widthMax" must be the same length')
-  expect_error(plotPeakwidth(apexVal, widthMin=minVal, widthMax=maxVal[1:3]), msg5, fixed=TRUE)
+  expect_error(peakPantheR_plotPeakwidth(apexVal, widthMin=minVal, widthMax=maxVal[1:3]), msg5, fixed=TRUE)
 })

@@ -20,7 +20,7 @@
 plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin, rtMax, mzMin, mzMax, ratio=0.85, sampling=250, curveFitSampleList=NULL, sampleColour=NULL, verbose=TRUE) {
   
   ## Check input
-  # check length of input across subplots, (others are checked inside plotEICFit and plotPeakwidth)
+  # check length of input across subplots, (others are checked inside peakPantheR_plotEICFit and peakPantheR_plotPeakwidth)
   nbSpl   <- length(ROIDataPointSampleList)
   if (nbSpl!=length(rt)) {
     stop('"ROIDataPointSampleList", "rt", "rtMin" and "rtMax" must be the same length')
@@ -37,16 +37,16 @@ plotEICDetectedPeakwidth  <- function(ROIDataPointSampleList, cpdID, cpdName, rt
   title   <- paste('CpdID: ', cpdID, ' - ', cpdName, ' ', round(mzMin, 4), '-', round(mzMax, 4))
   
   ## Plot raw spectra and curve fit
-  p_spec        <- plotEICFit(ROIDataPointSampleList=ROIDataPointSampleList,
-                              curveFitSampleList=curveFitSampleList,
-                              rtMin=rtMin, rtMax=rtMax, sampling=sampling,
-                              sampleColour=sampleColour, verbose=verbose)
+  p_spec        <- peakPantheR_plotEICFit(ROIDataPointSampleList=ROIDataPointSampleList,
+                                          curveFitSampleList=curveFitSampleList,
+                                          rtMin=rtMin, rtMax=rtMax, sampling=sampling,
+                                          sampleColour=sampleColour, verbose=verbose)
   p_spec        <- p_spec + ggplot2::ggtitle(title) + ggplot2::theme(axis.title.x=ggplot2::element_blank(), axis.text.x=ggplot2::element_blank(), plot.title=ggplot2::element_text(size=ggplot2::rel(1)))
  
   ## Plot peakwidth
-  p_peakwidth   <- plotPeakwidth(apexValue=rt, widthMin=rtMin, widthMax=rtMax,
-                                 varName='Retention Time (sec)', acquTime=NULL,
-                                 sampleColour=sampleColour, rotateAxis=TRUE, verbose=FALSE)
+  p_peakwidth   <- peakPantheR_plotPeakwidth(apexValue=rt, widthMin=rtMin, widthMax=rtMax,
+                                             varName='Retention Time (sec)', acquTime=NULL,
+                                             sampleColour=sampleColour, rotateAxis=TRUE, verbose=FALSE)
   
   ## Set common x lim (due to the rotation, x on p_peakwidth is originally y and accessed as such)
   minX          <- min(ggplot2::layer_scales(p_spec)$x$range$range[1], ggplot2::layer_scales(p_peakwidth)$y$range$range[1])
