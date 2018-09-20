@@ -25,7 +25,8 @@ Refer to the vignettes for graphical user interface and command line tutorials.
 Other contributors:
 \itemize{
   \item Goncalo Correia \email{gscorreia89@gmail.com} [contributor]
-  \item Jake Pearce \email{jake.pearce@imperial.ac.uk} [contributor]
+  \item Jake Pearce \email{jake.pearce@gmail.com} [contributor]
+  \item Caroline Sands \email{caz119@hotmail.co.uk} [contributor]
 }
 
 }
