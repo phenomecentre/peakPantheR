@@ -43,6 +43,14 @@ peakPantheR_loadAnnotationParamsCSV <- function(CSVParamPath, verbose=TRUE) {
     if (verbose) { message('NA in uROI, uROIExist is set to FALSE') }
   }
   
+  # check loaded data
+  # ROI
+  if ( !(all(tmp_targetFeatTable$rtMin <= tmp_targetFeatTable$rtMax) & all(tmp_targetFeatTable$mzMin <= tmp_targetFeatTable$mzMax)) ) {stop('Check ROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')}
+  # uROI
+  if (tmp_uROIExist) {
+    if ( !(all(tmp_uROI$rtMin <= tmp_uROI$rtMax) & all(tmp_uROI$mzMin <= tmp_uROI$mzMax)) ) {stop('Check uROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')}
+  }
+  
   # Initialise new object
   tmp_annotation <- peakPantheRAnnotation(targetFeatTable=tmp_targetFeatTable, uROI=tmp_uROI, FIR=tmp_FIR, uROIExist=tmp_uROIExist)
   if (verbose) { message('New peakPantheRAnnotation object initialised for ', nbCompounds(tmp_annotation), ' compounds') }

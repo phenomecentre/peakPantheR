@@ -1,3 +1,5 @@
+^Meta$
+^doc$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
@@ -6,6 +8,5 @@
 ^.travis.yml
 LICENSE
 ^cran-comments.md
-^.travis.yml
 tests\testthat\Rplots.pdf
 ^Rplots.pdf
