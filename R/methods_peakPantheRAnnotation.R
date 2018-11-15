@@ -1104,3 +1104,33 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
                                   isAnnotated = .isAnnotated,
                                   ...)
           })
+
+
+
+## Reset FIR windows to uROI or ROI values
+setGeneric("resetFIR", function(object, verbose=TRUE, ...) standardGeneric("resetFIR"))
+#' Reset FIR windows to uROI or ROI values
+#' Reset FIR windows to uROI (or ROI if \code{uROIExist=FALSE})
+#' @param object (peakPantheRAnnotation) object for which FIR are to be reset
+#' @param verbose (bool) If TRUE message progress
+#' @return (peakPantheRAnnotation) object with FIR values reset
+#' @docType methods
+#' @aliases resetFIR
+#' @export
+setMethod("resetFIR", "peakPantheRAnnotation",
+          function(object, verbose) {
+            
+            # uROI exist
+            if (uROIExist(object)) {
+              if (verbose) {message('FIR will be reset with uROI values')}
+              newFIR  <- uROI(object)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]
+
+            # uROI not defined
+            } else {
+              if (verbose) {message('FIR will be reset with ROI values as uROI values are not set')}
+              newFIR  <- ROI(object)[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]
+            }
+            
+            object@FIR[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]  <- newFIR[,c('rtMin', 'rtMax', 'mzMin', 'mzMax')]
+            return(object)
+          })
