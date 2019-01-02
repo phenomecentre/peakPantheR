@@ -28,9 +28,9 @@ Package for _Peak Picking and ANnoTation of High resolution Experiments in R_, i
 `peakPantheR` implements functions to detect, integrate and report pre-defined features in MS files.
 It is designed for:
 
-* **Real time** feature detection and integration (see [Real Time Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/real-time-annotation.html))
+* **Real time** feature detection and integration (see [Real Time Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/real-time-annotation.html))
     + process `multiple` compounds in `one` file at a time
-* **Post-acquisition** feature detection, integration and reporting (see [Parallel Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/parallel-annotation.html))
+* **Post-acquisition** feature detection, integration and reporting (see [Parallel Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/parallel-annotation.html))
     + process `multiple` compounds in `multiple` files in `parallel`, store results in a `single` object
 
 
@@ -61,9 +61,9 @@ Both real time and parallel compound integration require a common set of informa
 
 More information is available in the following vignettes:
 
-* [Getting Started with peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/getting-started.html)
-* [Real Time Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/real-time-annotation.html)
-* [Parallel Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/parallel-annotation.html)
+* [Getting Started with peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/getting-started.html)
+* [Real Time Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/real-time-annotation.html)
+* [Parallel Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/parallel-annotation.html)
 
 
 ## Copyright
@@ -72,6 +72,6 @@ More information is available in the following vignettes:
 
 As a summary, the GPLv3 license requires attribution, inclusion of copyright and license information, disclosure of source code and changes. Derivative work must be available under the same terms.
 
-&copy; National Phenome Centre (2018)
+&copy; National Phenome Centre (2019)
 
 

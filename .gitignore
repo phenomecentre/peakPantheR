@@ -1,5 +1,4 @@
 Meta
-doc
 .Rproj.user
 .Rhistory
 .RData
@@ -17,8 +16,8 @@ doc
 # produced vignettes
 vignettes/*.html
 #vignettes/*.pdf
-inst/doc/*.R
-inst/doc/*.Rmd
+doc/*.R
+doc/*.Rmd
 # inst/doc
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth

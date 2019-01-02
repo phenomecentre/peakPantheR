@@ -20,11 +20,11 @@ in R*, implemented in `R` and `Shiny`
 pre-defined features in MS files. It is designed for:
 
   - **Real time** feature detection and integration (see [Real Time
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/real-time-annotation.html))
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/real-time-annotation.html))
       - process `multiple` compounds in `one` file at a time
   - **Post-acquisition** feature detection, integration and reporting
     (see [Parallel
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/parallel-annotation.html))
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/parallel-annotation.html))
       - process `multiple` compounds in `multiple` files in `parallel`,
         store results in a `single` object
 
@@ -60,11 +60,11 @@ information:
 More information is available in the following vignettes:
 
   - [Getting Started with
-    peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/getting-started.html)
+    peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/getting-started.html)
   - [Real Time
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/real-time-annotation.html)
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/real-time-annotation.html)
   - [Parallel
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/inst/doc/parallel-annotation.html)
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/parallel-annotation.html)
 
 ## Copyright
 
@@ -75,4 +75,4 @@ As a summary, the GPLv3 license requires attribution, inclusion of
 copyright and license information, disclosure of source code and
 changes. Derivative work must be available under the same terms.
 
-© National Phenome Centre (2018)
+© National Phenome Centre (2019)
