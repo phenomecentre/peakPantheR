@@ -2,6 +2,7 @@
 
 export(peakPantheRAnnotation)
 export(peakPantheR_ROIStatistics)
+export(peakPantheR_applyRTCorrection)
 export(peakPantheR_loadAnnotationParamsCSV)
 export(peakPantheR_parallelAnnotation)
 export(peakPantheR_plotEICFit)
