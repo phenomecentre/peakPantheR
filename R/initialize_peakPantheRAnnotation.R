@@ -48,6 +48,10 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
     if (!is.vector(spectraPaths) | is.list(spectraPaths) | !is.character(spectraPaths)){
       stop("specified spectraPaths is not a vector of character")
     }
+    # no duplicated spectraPaths
+    if (length(spectraPaths) != length(unique(spectraPaths))){
+      stop("duplicated spectraPaths passed as input")
+    }
     # load values and allocate size
     nbSpectra         <- length(spectraPaths)
     filepath          <- spectraPaths

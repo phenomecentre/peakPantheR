@@ -30,20 +30,26 @@ pre-defined features in MS files. It is designed for:
 
 ## Installation
 
+`peakPantheR` can directly be installed from CRAN with:
+
+``` r
+install.packages("peakPantheR")
+```
+
 Install the development version of the package directly from GitHub
 with:
 
 ``` r
 # Install devtools
 if(!require("devtools")) install.packages("devtools")
-devtools::install_github("phenomecentre/peakPantheR")
+devtools::install_github("phenomecentre/peakPantheR", ref="develop")
 ```
 
 If the dependencies `mzR` and `MSnbase` are not successfully installed,
 `Bioconductor` must be added to the default repositories with:
 
 ``` r
-setRepositories(ind=1:2)
+setRepositories(ind=c(1:2))
 ```
 
 ## Usage

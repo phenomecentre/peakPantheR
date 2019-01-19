@@ -36,16 +36,21 @@ It is designed for:
 
 ## Installation
 
+`peakPantheR` can directly be installed from CRAN with:
+```{r, eval = FALSE}
+install.packages("peakPantheR")
+```
+
 Install the development version of the package directly from GitHub with:
 ```{r, eval = FALSE}
 # Install devtools
 if(!require("devtools")) install.packages("devtools")
-devtools::install_github("phenomecentre/peakPantheR")
+devtools::install_github("phenomecentre/peakPantheR", ref="develop")
 ```
 
 If the dependencies `mzR` and `MSnbase` are not successfully installed, `Bioconductor` must be added to the default repositories with:
 ```{r, eval = FALSE}
-setRepositories(ind=1:2)
+setRepositories(ind=c(1:2))
 ```
 
 

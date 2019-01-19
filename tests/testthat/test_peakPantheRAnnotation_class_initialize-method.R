@@ -302,6 +302,8 @@ test_that('initialize with spectraPaths', {
   # spectraPaths not a character vector
   expect_error(peakPantheRAnnotation(spectraPaths=c(1,2,3)), 'specified spectraPaths is not a vector of character')
   expect_error(peakPantheRAnnotation(spectraPaths=list()), 'specified spectraPaths is not a vector of character')
+  # duplicated spectraPaths
+  expect_error(peakPantheRAnnotation(spectraPaths=c('./path/file1', './path/file1', './path/file2')), 'duplicated spectraPaths passed as input')
 })
 
 test_that('initialize with targetFeatTable', {
@@ -482,11 +484,11 @@ test_that('initialize with targetFeatTable', {
   wrongDF1           <- input_targetFeatTable
   colnames(wrongDF1) <- c("not cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")
   expect_error(peakPantheRAnnotation(targetFeatTable=wrongDF1), 'expected columns in targetFeatTable are "cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz" and "mzMax"')
-  # targetFeatTable$cpdID not numeric
+  # targetFeatTable$cpdID not character
   wrongDF2        <- input_targetFeatTable
   wrongDF2$cpdID  <- c(5, 5)
   expect_error(peakPantheRAnnotation(targetFeatTable=wrongDF2), 'cpdID must be character')
-  # targetFeatTable$cpdID not character
+  # targetFeatTable$cpdName not character
   wrongDF3          <- input_targetFeatTable
   wrongDF3$cpdName  <- c(5, 5)
   expect_error(peakPantheRAnnotation(targetFeatTable=wrongDF3), 'cpdName must be character')
