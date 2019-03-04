@@ -1,0 +1,50 @@
+<h1>peakPantheR</h1>
+<h3 style="color:#3e648d;font-weight:bold">Peak Picking and ANnoTation of High resolution Experiments in R</h3>
+<p><i>peakPantheR</i> is designed to detect and integrate multiple compounds in multiple files in parallel and store results in a single object.</p>
+<p>To extract compounds intensity from data files, the following information is required:</p>
+<ul>
+  <li>Path(s) to <code>netCDF</code> / <code>mzML</code> MS file(s)</li>
+  <li>An expected region of interest (<code>RT</code> / <code>m/z</code> window) for each compound</li>
+</ul>
+<p>The following steps take place during parallel compound annotation:</p>
+<ul>
+  <li><b>Data Import:</b> Load a list of regions of interest and files to process.</li>
+  <li><b>Detection and integration:</b> Detect features in each region of interest, integrate and calculate peak statistics</li>
+  <li><b>Diagnostic:</b> Update regions of interest, plot the resulting fits and return the corresponding statistics</li>
+  <li><b>Export:</b> Save the integration values and fit statistics, plot the extracted ion chromatograms</li>
+</ul>
+<p>Abbreviations:</p>
+<ul>
+  <li><b>EIC:</b> extration ion chromatogram</li>
+  <li><b>RT:</b> retention time</li>
+  <li><b>m/z:</b> mass over charge ratio</li>
+  <li><b>ROI:</b> region of interest, region to search for a targeted compound</li>
+  <li><b>uROI:</b> updated region of interest, refined search region</li>
+  <li><b>FIR:</b> Fallback integration region, region to integrate if not valid peak can be found</li>
+</ul>
+<img src="parallelAnnotation.png" alt="Parallel Annotation">
+
+<h3 style="color:#3e648d;font-weight:bold">1 - Import Data</h3>
+<p>Inputs:</p>
+<ul>
+  <li>Path(s) to <code>netCDF</code> / <code>mzML</code> MS file(s)</li>
+  <li>An expected region of interest (<code>RT</code> / <code>m/z</code> window) for each compound</li>
+</ul>
+<p>The output object will be initialised with the targeted ROI and file paths.</p>
+
+<h3 style="color:#3e648d;font-weight:bold">2 - Detection and Integration</h3>
+<p>Once the object is initialised, the data can be processed.</p>
+<p>For each file, features in each region of interest are detected, the highest intensity feature is integrated and peak statistics determined.</p>
+<p>Results and EICs for each ROI are stored in the output object.</p>
+
+<h3 style="color:#3e648d;font-weight:bold">3 - Diagnostic</h3>
+<p>Based on the results obtained, updated regions of interest (uROI) and fallback integration regions (FIR, <i>if no feature is detected (median <code>RT</code> / <code>m/z</code> start and end of found features</i>)) can be determined.</p>
+<p>The resulting fit can be visually inspected and diagnostic plots (all EICs, peak apex <code>RT</code> / <code>m/z</code> and peak width evolution) generated.</p>
+
+<h3 style="color:#3e648d;font-weight:bold">4 - Export</h3>
+<p>The integration values (<i>row</i>: file, <i>col</i>: compound), fit statistics, EIC plots and resulting object can be saved.</p>
+
+<h3 style="color:#3e648d;font-weight:bold">Copyright</h3>
+<p>The present software is licensed under GPLv3.<br/>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or
+any later version.
+<br/>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br/>See the GNU General Public License for more details. <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a></p>

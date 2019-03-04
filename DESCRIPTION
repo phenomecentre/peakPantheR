@@ -1,7 +1,7 @@
 Package: peakPantheR
 Title: Peak Picking and Annotation of High Resolution Experiments
-Version: 1.2.3.1
-Date: 2018-09-20
+Version: 1.2.4
+Date: 2019-03-01
 Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre")),
 	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "ctb"),
 	person("Jake", "Pearce", email = "jake.pearce@gmail.com", role = "ctb"),
@@ -18,7 +18,9 @@ Imports: foreach (>= 1.4.4),
 	methods (>= 3.4.0),
 	XML (>= 3.98.1.10),
 	minpack.lm (>= 1.2.1),
-	scales(>= 0.5.0)
+	scales(>= 0.5.0),
+  shiny (>= 1.0.5),
+  shinythemes (>= 1.1.1)
 biocViews: MSnbase (>= 2.4.0),
 	mzR (>= 2.12.0)
 License: GPL-3
