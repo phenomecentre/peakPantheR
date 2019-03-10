@@ -32,10 +32,10 @@ shinyServer( function(input, output, session){
 
   ## General Initialisation ------------------------------------------------------
   
-  # give version of spline used
+  # get peakPantheR version
   output$peakPantheR_ver <- renderText({ paste("peakPantheR v",packageVersion('peakPantheR'),sep="") })
   
-  # give max number of cpu cores
+  # get max number of cpu cores
   output$cpu <- renderText({ maxCores })
   
   

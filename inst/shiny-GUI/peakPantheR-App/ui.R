@@ -30,7 +30,7 @@
 # update + refit in UI?
 
 
-shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"),
+shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPantheR',
   navbarPage(textOutput("peakPantheR_ver"),
     inverse = TRUE,
     collapsible = TRUE,
