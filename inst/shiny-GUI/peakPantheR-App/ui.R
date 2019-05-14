@@ -44,7 +44,7 @@ shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPanthe
     
     # IMPORT - Tab panel  ------------------------------------------------------ # 
     tabPanel("Import Data",
-      # from files or from modified uROI/FIR
+      # spectraPaths, CSVParamPaths, Optional: cpdMetadata and spectraMetadata
       uiOutput("importUI")
     ), # end IMPORT Tab panel
     
