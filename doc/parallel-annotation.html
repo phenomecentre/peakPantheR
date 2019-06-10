@@ -1929,7 +1929,7 @@ input_spectraPaths
 <li><code>mz</code> (m/z, optional / <code>NA</code>)</li>
 </ul>
 <pre class="r"><code># targetFeatTable
-input_targetFeatTable     &lt;- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c(&quot;cpdID&quot;, &quot;cpdName&quot;, &quot;rtMin&quot;, &quot;rt&quot;, &quot;rtMax&quot;, &quot;mzMin&quot;, &quot;mz&quot;, &quot;mzMax&quot;))), stringsAsFactors=F)
+input_targetFeatTable     &lt;- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c(&quot;cpdID&quot;, &quot;cpdName&quot;, &quot;rtMin&quot;, &quot;rt&quot;, &quot;rtMax&quot;, &quot;mzMin&quot;, &quot;mz&quot;, &quot;mzMax&quot;))), stringsAsFactors=FALSE)
 input_targetFeatTable[1,] &lt;- c(&quot;ID-1&quot;, &quot;Cpd 1&quot;, 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 input_targetFeatTable[2,] &lt;- c(&quot;ID-2&quot;, &quot;Cpd 2&quot;, 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_targetFeatTable[,c(3:8)] &lt;- sapply(input_targetFeatTable[,c(3:8)], as.numeric)</code></pre>
@@ -1981,7 +1981,7 @@ input_targetFeatTable[,c(3:8)] &lt;- sapply(input_targetFeatTable[,c(3:8)], as.n
 </table>
 <p>Additional compound and spectra metadata can be provided but isn’t employed during the fitting procedure:</p>
 <pre class="r"><code># spectra Metadata
-input_spectraMetadata  &lt;- data.frame(matrix(c(&quot;sample type 1&quot;, &quot;sample type 2&quot;, &quot;sample type 1&quot;), 3, 1, dimnames=list(c(), c(&quot;sampleType&quot;))), stringsAsFactors=F)</code></pre>
+input_spectraMetadata  &lt;- data.frame(matrix(c(&quot;sample type 1&quot;, &quot;sample type 2&quot;, &quot;sample type 1&quot;), 3, 1, dimnames=list(c(), c(&quot;sampleType&quot;))), stringsAsFactors=FALSE)</code></pre>
 <table style="width:21%;">
 <colgroup>
 <col width="20%"></col>
@@ -2029,34 +2029,34 @@ annotation_result &lt;- peakPantheR_parallelAnnotation(init_annotation, ncores=0
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.78 secs
+#&gt; Data read in: 0.79 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-#&gt; Found 2/2 features in 0.04 secs
+#&gt; Found 2/2 features in 0.08 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.57 secs
+#&gt; Feature search done in: 1.73 secs
 #&gt; ----- ko16 -----
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.85 secs
+#&gt; Data read in: 1.23 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
-#&gt; Found 2/2 features in 0.04 secs
-#&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 2.06 secs
+#&gt; Found 2/2 features in 0.05 secs
+#&gt; Peak statistics done in: 0.01 secs
+#&gt; Feature search done in: 1.89 secs
 #&gt; ----- ko18 -----
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 1.02 secs
+#&gt; Data read in: 0.65 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
-#&gt; Found 2/2 features in 0.05 secs
+#&gt; Found 2/2 features in 0.04 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.75 secs
+#&gt; Feature search done in: 1.26 secs
 #&gt; Annotation object cannot be reordered by sample acquisition date
 #&gt; ----------------
-#&gt; Parallel annotation done in: 6.89 secs
+#&gt; Parallel annotation done in: 6.05 secs
 #&gt;   0 failure(s)
 
 # successful fit
@@ -2281,7 +2281,7 @@ new_spectraPaths
 #&gt; [6] &quot;C:/R/R-3.6.0/library/faahKO/cdf/WT/wt18.CDF&quot;</code></pre>
 <p>Below we define the metadata of these new samples:</p>
 <pre class="r"><code>## new spectra metadata
-new_spectraMetadata  &lt;- data.frame(matrix(c(&quot;KO&quot;, &quot;WT&quot;, &quot;KO&quot;, &quot;WT&quot;, &quot;KO&quot;, &quot;WT&quot;), 6, 1, dimnames=list(c(), c(&quot;Group&quot;))), stringsAsFactors=F)</code></pre>
+new_spectraMetadata  &lt;- data.frame(matrix(c(&quot;KO&quot;, &quot;WT&quot;, &quot;KO&quot;, &quot;WT&quot;, &quot;KO&quot;, &quot;WT&quot;), 6, 1, dimnames=list(c(), c(&quot;Group&quot;))), stringsAsFactors=FALSE)</code></pre>
 <table style="width:10%;">
 <colgroup>
 <col width="9%"></col>

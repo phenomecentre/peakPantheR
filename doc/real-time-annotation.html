@@ -1904,7 +1904,7 @@ input_spectraPath
 <li><code>mz</code> (m/z, optional / <code>NA</code>)</li>
 </ul>
 <pre class="r"><code># targetFeatTable
-input_targetFeatTable     &lt;- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c(&quot;cpdID&quot;, &quot;cpdName&quot;, &quot;rtMin&quot;, &quot;rt&quot;, &quot;rtMax&quot;, &quot;mzMin&quot;, &quot;mz&quot;, &quot;mzMax&quot;))), stringsAsFactors=F)
+input_targetFeatTable     &lt;- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c(&quot;cpdID&quot;, &quot;cpdName&quot;, &quot;rtMin&quot;, &quot;rt&quot;, &quot;rtMax&quot;, &quot;mzMin&quot;, &quot;mz&quot;, &quot;mzMax&quot;))), stringsAsFactors=FALSE)
 input_targetFeatTable[1,] &lt;- c(&quot;ID-1&quot;, &quot;Cpd 1&quot;, 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 input_targetFeatTable[2,] &lt;- c(&quot;ID-2&quot;, &quot;Cpd 2&quot;, 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_targetFeatTable[,c(3:8)] &lt;- sapply(input_targetFeatTable[,c(3:8)], as.numeric)</code></pre>
@@ -1965,11 +1965,11 @@ annotation &lt;- peakPantheR_singleFileSearch(singleSpectraDataPath = input_spec
                                            verbose = TRUE)
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 1.01 secs
+#&gt; Data read in: 0.92 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-#&gt; Found 2/2 features in 0.05 secs
+#&gt; Found 2/2 features in 0.04 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.74 secs</code></pre>
+#&gt; Feature search done in: 1.52 secs</code></pre>
 <pre class="r"><code>annotation$TIC
 #&gt; [1] 2410533091</code></pre>
 <pre class="r"><code>## acquisition time cannot be extracted from NetCDF files

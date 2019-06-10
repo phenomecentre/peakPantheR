@@ -6,9 +6,9 @@ context('peakPantheRAnnotation_class_initializeMethod()')
 test_that('initialize with default values', {
   # Expected values
   expected_slotName <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "cpdMetadata", "spectraMetadata", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "dataPoints", "peakFit", "isAnnotated")
-  expected_ROI              <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
-  expected_FIR              <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F)
-  expected_uROI             <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
+  expected_ROI              <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
+  expected_FIR              <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
+  expected_uROI             <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
   expected_cpdMetadata      <- data.frame(matrix(, nrow=0, ncol=0))
   expected_spectraMetadata  <- data.frame(matrix(, nrow=0, ncol=0))
 
@@ -101,7 +101,7 @@ test_that('slot types are set in class definition', {
 
 test_that('initialize with spectraPaths', {
   # Input and expected values
-  tmp_peakTables            <-  data.frame(matrix(vector(), 0, 15, dimnames=list(c(), c('found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
+  tmp_peakTables            <-  data.frame(matrix(vector(), 0, 15, dimnames=list(c(), c('found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=FALSE)
   input_spectraPaths        <- c('./path/file1', './path/file2', './path/file3')
   input_spectraMetadata     <- data.frame(matrix(data=c('a','b','c'), nrow=3, ncol=1, dimnames=list(c(),c('testcol')), byrow=TRUE), stringsAsFactors=FALSE)
   input_acquisitionTime     <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))
@@ -113,9 +113,9 @@ test_that('initialize with spectraPaths', {
   expected_slotName         <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "cpdMetadata", "spectraMetadata", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "dataPoints", "peakFit", "isAnnotated")
   expected_filepath         <- c('./path/file1', './path/file2', './path/file3')
   expected_acquisitionTime  <- as.character(c(NA, NA, NA))
-  expected_ROI              <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
-  expected_FIR              <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F)
-  expected_uROI             <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
+  expected_ROI              <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
+  expected_FIR              <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
+  expected_uROI             <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
   expected_TIC              <- as.numeric(c(NA, NA, NA))
   expected_peakTables       <- vector('list', 3)
   expected_dataPoints       <- vector('list', 3)
@@ -308,25 +308,25 @@ test_that('initialize with spectraPaths', {
 
 test_that('initialize with targetFeatTable', {
   # Input and expected values
-  input_targetFeatTable             <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+  input_targetFeatTable             <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
   input_targetFeatTable[1,]         <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
   input_targetFeatTable[2,]         <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
   input_targetFeatTable[,c(3:8)]  <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
-  input_FIR         <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=F)
+  input_FIR         <- data.frame(rtMin=numeric(), rtMax=numeric(), mzMin=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
   input_FIR[1,]     <- c(1., 2., 3., 4.)
   input_FIR[2,]     <- c(5., 6., 7., 8.)
-  input_uROI        <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=F)
+  input_uROI        <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(), mzMin=numeric(), mz=numeric(), mzMax=numeric(), stringsAsFactors=FALSE)
   input_uROI[1,]    <- c(10., 11., 12., 13., 14., 15.)
   input_uROI[2,]    <- c(16., 17., 18., 19., 20., 21.)
   input_cpdMetadata <- data.frame(matrix(data=c('a','b'), nrow=2, ncol=1, dimnames=list(c(),c('testcol')), byrow=TRUE), stringsAsFactors=FALSE)
   expected_slotName         <- c("cpdID", "cpdName", "ROI", "FIR", "uROI", "filepath", "cpdMetadata", "spectraMetadata", "acquisitionTime", "uROIExist", "useUROI", "useFIR", "TIC", "peakTables", "dataPoints", "peakFit", "isAnnotated")
   expected_cpdID            <- c("ID-1", "ID-2")
   expected_cpdName          <- c('Cpd 1', 'Cpd 2')
-  expected_ROI              <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+  expected_ROI              <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
   expected_ROI[1,]          <- c(3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
   expected_ROI[2,]          <- c(3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-  expected_FIR              <- data.frame(rtMin=as.numeric(rep(NA,2)), rtMax=as.numeric(rep(NA,2)), mzMin=as.numeric(rep(NA,2)), mzMax=as.numeric(rep(NA,2)), stringsAsFactors=F)
-  expected_uROI             <- data.frame(rtMin=as.numeric(rep(NA,2)), rt=as.numeric(rep(NA,2)), rtMax=as.numeric(rep(NA,2)), mzMin=as.numeric(rep(NA,2)), mz=as.numeric(rep(NA,2)), mzMax=as.numeric(rep(NA,2)), stringsAsFactors=F)
+  expected_FIR              <- data.frame(rtMin=as.numeric(rep(NA,2)), rtMax=as.numeric(rep(NA,2)), mzMin=as.numeric(rep(NA,2)), mzMax=as.numeric(rep(NA,2)), stringsAsFactors=FALSE)
+  expected_uROI             <- data.frame(rtMin=as.numeric(rep(NA,2)), rt=as.numeric(rep(NA,2)), rtMax=as.numeric(rep(NA,2)), mzMin=as.numeric(rep(NA,2)), mz=as.numeric(rep(NA,2)), mzMax=as.numeric(rep(NA,2)), stringsAsFactors=FALSE)
   expected_cpdMetadata      <- data.frame(matrix(, nrow=2, ncol=0))
   expected_spectraMetadata  <- data.frame(matrix(, nrow=0, ncol=0))
 

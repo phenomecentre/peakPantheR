@@ -16,12 +16,12 @@ context('peakPantheR_applyRTCorrection()')
 
 test_that('raises error()', {
   # Input
-  tmp_targetFeatTable           <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+  tmp_targetFeatTable           <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
   tmp_targetFeatTable[1,]       <- c("ID-1", "Cpd 1", 0.5, 1, 1.5, 90, 100, 110)
   tmp_targetFeatTable[2,]       <- c("ID-2", "Cpd 2", 5, 10, 15, 900, 1000, 1100)
   tmp_targetFeatTable[,c(3:8)]  <- sapply(tmp_targetFeatTable[,c(3:8)], as.numeric)
   
-  tmp_referenceTable            <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("cpdID", "cpdName", "rt", "rt_dev_sec"))), stringsAsFactors=F)
+  tmp_referenceTable            <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("cpdID", "cpdName", "rt", "rt_dev_sec"))), stringsAsFactors=FALSE)
   tmp_referenceTable[1,]        <- c("Ref-1", "Ref Cpd 1", 10, 1)
   tmp_referenceTable[2,]        <- c("Ref-2", "Ref Cpd 2", 20, 1.5)
   tmp_referenceTable[,c(3:4)]   <- sapply(tmp_referenceTable[,c(3:4)], as.numeric)

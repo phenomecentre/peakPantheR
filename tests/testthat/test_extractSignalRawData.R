@@ -17,7 +17,7 @@ test_that('1 numeric rt-mz window', {
   expected_messages <- 'Reading data from 1 windows\n'
 
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=c(3310., 3390.), mz=c(520., 522.4), msLevel=1L, verbose=T))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=c(3310., 3390.), mz=c(520., 522.4), msLevel=1L, verbose=TRUE))
 
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -40,7 +40,7 @@ test_that('2 matrix rt-mz windows', {
   expected_signal   <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
 
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390.,2900., 2990.),ncol=2, byrow=T), mz=matrix(c(520., 522.4, 460., 462.4), ncol=2, byrow=T), msLevel=1L, verbose=F))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390.,2900., 2990.),ncol=2, byrow=TRUE), mz=matrix(c(520., 522.4, 460., 462.4), ncol=2, byrow=TRUE), msLevel=1L, verbose=FALSE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -62,7 +62,7 @@ test_that('2 data.frame rt-mz windows', {
   expected_signal   <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=data.frame(rtMin=c(3310., 2900.), rtMax=c(3390., 2990.)), mz=data.frame(mzMin=c(520.,460.), mzMax=c(522.4, 462.4)), msLevel=1L, verbose=F))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=data.frame(rtMin=c(3310., 2900.), rtMax=c(3390., 2990.)), mz=data.frame(mzMin=c(520.,460.), mzMax=c(522.4, 462.4)), msLevel=1L, verbose=FALSE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -84,7 +84,7 @@ test_that('1 numeric rt, 2 matrix mz (extend rt, no verbose)', {
   expected_signal   <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=c(3310., 3390.), mz=matrix(c(520., 522.4, 460., 462.4), ncol=2, byrow=T), msLevel=1L, verbose=F))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=c(3310., 3390.), mz=matrix(c(520., 522.4, 460., 462.4), ncol=2, byrow=TRUE), msLevel=1L, verbose=FALSE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -106,7 +106,7 @@ test_that('2 matrix rt, 1 numeric mz (extend mz, no verbose)', {
   expected_signal   <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390., 2900., 2990.), ncol=2, byrow=T), mz=c(520., 522.4), msLevel=1L, verbose=F))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390., 2900., 2990.), ncol=2, byrow=TRUE), mz=c(520., 522.4), msLevel=1L, verbose=FALSE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -129,7 +129,7 @@ test_that('1 matrix rt, 2 data.frame mz (extend rt, verbose)', {
   expected_messages <- c('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be ducplicated to match the other input\n', 'Reading data from 2 windows\n')
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390.), ncol=2, byrow=T), mz=data.frame(matrix(c(520., 522.4, 460., 462.4), ncol=2, byrow=T)), msLevel=1L, verbose=T))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390.), ncol=2, byrow=TRUE), mz=data.frame(matrix(c(520., 522.4, 460., 462.4), ncol=2, byrow=TRUE)), msLevel=1L, verbose=TRUE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -153,7 +153,7 @@ test_that('2 data.frame rt, 1 matrix mz (extend mz, verbose)', {
   expected_messages <- c('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be ducplicated to match the other input\n', 'Reading data from 2 windows\n')
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=data.frame(matrix(c(3310., 3390., 2900., 2990.), ncol=2, byrow=T)), mz=matrix(c(520., 522.4), ncol=2, byrow=T), msLevel=1L, verbose=T))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=data.frame(matrix(c(3310., 3390., 2900., 2990.), ncol=2, byrow=TRUE)), mz=matrix(c(520., 522.4), ncol=2, byrow=TRUE), msLevel=1L, verbose=TRUE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -183,7 +183,7 @@ test_that('no rt window defined, 2 data.frame mz (all rt range + extend rt)', {
   expected_signal <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, mz=data.frame(matrix(c(520., 521., 460.8, 460.9), ncol=2, byrow=T)), msLevel=1L, verbose=F))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, mz=data.frame(matrix(c(520., 521., 460.8, 460.9), ncol=2, byrow=TRUE)), msLevel=1L, verbose=FALSE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -212,7 +212,7 @@ test_that('no mz window defined, 2 data.frame rt (all mz range + extend mz)', {
   expected_signal <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3382., 3385., 3390., 3390.5), ncol=2, byrow=T), msLevel=1L, verbose=F))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3382., 3385., 3390., 3390.5), ncol=2, byrow=TRUE), msLevel=1L, verbose=FALSE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -227,7 +227,7 @@ test_that('set msLevel (warning no msLevel', {
   expected_messages <- c("Reading data from 1 windows\n", "No data exist for MS level 2\n")
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, msLevel=2L, verbose=T))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, msLevel=2L, verbose=TRUE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -242,7 +242,7 @@ test_that('no rt found across all windows (message)', {
   expected_messages <- c('Reading data from 1 windows\n', 'No data exist for the rt provided\n')
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=c(3310., 3310.), mz=c(520., 520.), msLevel=1L, verbose=T))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=c(3310., 3310.), mz=c(520., 520.), msLevel=1L, verbose=TRUE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -260,7 +260,7 @@ test_that('no data for 1 window (no scans in rt range)', {
   expected_messages <- c('Reading data from 2 windows\n', 'No data exist for window 2\n')
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390., 3310., 3310.), ncol=2, byrow=T), mz=matrix(c(520., 522.4, 520., 522.4), ncol=2, byrow=T), msLevel=1L, verbose=T))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390., 3310., 3310.), ncol=2, byrow=TRUE), mz=matrix(c(520., 522.4, 520., 522.4), ncol=2, byrow=TRUE), msLevel=1L, verbose=TRUE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -279,7 +279,7 @@ test_that('no data for 1 window (no scans in mz range)', {
   expected_messages <- c('Reading data from 2 windows\n')
   
   # results (output, warnings and messages)
-  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390., 3310., 3390.), ncol=2, byrow=T), mz=matrix(c(520., 522.4, 521.1, 521.1), ncol=2, byrow=T), msLevel=1L, verbose=T))
+  result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390., 3310., 3390.), ncol=2, byrow=TRUE), mz=matrix(c(520., 522.4, 521.1, 521.1), ncol=2, byrow=TRUE), msLevel=1L, verbose=TRUE))
   
   # Check results
   expect_equal(result_extractSignalRawData$result, expected_signal)
@@ -310,8 +310,8 @@ test_that('raise errors', {
   expect_error(extractSignalRawData(rawSpec=raw_data, mz=data.frame(matrix(c(520.), ncol=1))), 'Check input "mz" must be a matrix or data.frame with 2 columns', fixed=TRUE)
   
   # rt and mz have different number of rows
-  expect_error(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3380.,3381.,3390.,3391., 3392.,3393.), ncol=2, byrow=T), mz=matrix(c(520.,521., 521.,522.), ncol=2, byrow=T)), 'Check input "rt" and "mz" matrix or data.frame must have the same number of rows', fixed=TRUE)
-  expect_error(extractSignalRawData(rawSpec=raw_data, rt=data.frame(matrix(c(3380.,3381.,3390.,3391., 3392.,3393.), ncol=2, byrow=T)), mz=data.frame(matrix(c(520.,521., 521.,522.), ncol=2, byrow=T))), 'Check input "rt" and "mz" matrix or data.frame must have the same number of rows', fixed=TRUE)
+  expect_error(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3380.,3381.,3390.,3391., 3392.,3393.), ncol=2, byrow=TRUE), mz=matrix(c(520.,521., 521.,522.), ncol=2, byrow=TRUE)), 'Check input "rt" and "mz" matrix or data.frame must have the same number of rows', fixed=TRUE)
+  expect_error(extractSignalRawData(rawSpec=raw_data, rt=data.frame(matrix(c(3380.,3381.,3390.,3391., 3392.,3393.), ncol=2, byrow=TRUE)), mz=data.frame(matrix(c(520.,521., 521.,522.), ncol=2, byrow=TRUE))), 'Check input "rt" and "mz" matrix or data.frame must have the same number of rows', fixed=TRUE)
 })
 
 

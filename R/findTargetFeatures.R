@@ -40,7 +40,7 @@
 #' ## targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
 #'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
-#'                          stringsAsFactors=F)
+#'                          stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,3:8] <- sapply(targetFeatTable[,3:8], as.numeric)
@@ -49,7 +49,7 @@
 #'                                        mz=targetFeatTable[,c('mzMin','mzMax')], verbose=TRUE)
 #' # Reading data from 2 windows
 #'
-#' foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, verbose=T)
+#' foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, verbose=TRUE)
 #' # Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation,
 #' # approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 #' # Found 2/2 features in 0.07 secs
@@ -138,7 +138,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
   
   
   ## Init output
-  outTable        <- data.frame(matrix(vector(), nROI, 10, dimnames=list(c(),c('found','rtMin','rt','rtMax','mzMin','mz','mzMax','peakArea','maxIntMeasured','maxIntPredicted'))), stringsAsFactors=F)
+  outTable        <- data.frame(matrix(vector(), nROI, 10, dimnames=list(c(),c('found','rtMin','rt','rtMax','mzMin','mz','mzMax','peakArea','maxIntMeasured','maxIntPredicted'))), stringsAsFactors=FALSE)
   outTable$found  <- rep(FALSE, nROI)     # set found to FALSE
   outCurveFit     <- rep(list(NA), nROI)
   # use input params or guess 

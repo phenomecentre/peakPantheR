@@ -20,7 +20,7 @@
 #' dataPoints  <- extractSignalRawData(rawSpec,
 #'                                     rt = c(3290., 3410.), 
 #'                                     mz = c(522.194778, 522.205222), 
-#'                                     verbose=T)
+#'                                     verbose=TRUE)
 #' # Reading data from 1 windows
 #' 
 #' dataPoints
@@ -133,24 +133,24 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
   ##  Express rt and mz as matrix/data.frame of identical number of rows
   # replace missing by whole range
   if (missing(rt)) {
-    rt <- matrix(c(-Inf, Inf), ncol=2, byrow=T)
+    rt <- matrix(c(-Inf, Inf), ncol=2, byrow=TRUE)
   }
   if (missing(mz)) {
-    mz <- matrix(c(-Inf, Inf), ncol=2, byrow=T)
+    mz <- matrix(c(-Inf, Inf), ncol=2, byrow=TRUE)
   }
   # convert all numeric to matrix
   if (class(rt) == 'numeric') {
-    rt <- matrix(rt, nrow=1, ncol=2, byrow=T)
+    rt <- matrix(rt, nrow=1, ncol=2, byrow=TRUE)
   }
   if (class(mz) == 'numeric') {
-    mz <- matrix(mz, nrow=1, ncol=2, byrow=T)
+    mz <- matrix(mz, nrow=1, ncol=2, byrow=TRUE)
   }
   # Replicate rows (if only 1) to match other
   if (nrow(rt) == 1) {
-    rt <- matrix(rep(as.numeric(rt), nrow(mz)), ncol=2, byrow=T)
+    rt <- matrix(rep(as.numeric(rt), nrow(mz)), ncol=2, byrow=TRUE)
   }
   if (nrow(mz) == 1) {
-    mz <- matrix(rep(as.numeric(mz), nrow(rt)), ncol=2, byrow=T)
+    mz <- matrix(rep(as.numeric(mz), nrow(rt)), ncol=2, byrow=TRUE)
   }
     
   ## now both rt and mz are either a matrix/data.frame of matching size
@@ -168,7 +168,7 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
   
   ## Filter only scans falling into the rt of interest (across all windows)
   file_rt       <- MSnbase::rtime(msFilteredSpec)
-  keep_scan_idx <- sort(unique(as.integer(unlist(apply(rt, MARGIN=1, function(x) {which((file_rt >= x[1]) & (file_rt <= x[2]))}), use.names=F))))
+  keep_scan_idx <- sort(unique(as.integer(unlist(apply(rt, MARGIN=1, function(x) {which((file_rt >= x[1]) & (file_rt <= x[2]))}), use.names=FALSE))))
   # if no scans
   if (length(keep_scan_idx) == 0) {
     if (verbose) { message('No data exist for the rt provided') }

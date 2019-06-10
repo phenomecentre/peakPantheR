@@ -33,7 +33,7 @@ rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = "faa
 dataPoints  <- extractSignalRawData(rawSpec,
                                     rt = c(3290., 3410.), 
                                     mz = c(522.194778, 522.205222), 
-                                    verbose=T)
+                                    verbose=TRUE)
 # Reading data from 1 windows
 
 dataPoints

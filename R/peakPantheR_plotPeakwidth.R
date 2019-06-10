@@ -123,7 +123,7 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax=NULL, a
   ## peak width (must go first to be the bottom most layer)
   if (useWidth) {
     # value peakwidth (add color ID to each point)
-    tmp_pwidth  <- data.frame(x=c(x_axis,x_axis), y=c(widthMin,widthMax), colr=c(sampleIDColour,sampleIDColour), stringsAsFactors=F)
+    tmp_pwidth  <- data.frame(x=c(x_axis,x_axis), y=c(widthMin,widthMax), colr=c(sampleIDColour,sampleIDColour), stringsAsFactors=FALSE)
     tmp_pwidth  <- tmp_pwidth[!is.na(tmp_pwidth$y),]
     p           <- p + ggplot2::geom_line(data=tmp_pwidth, ggplot2::aes(x=x, y=y, group=x, colour=colr), size=1)
     if (verbose) {message('Peakwidth values plotted')}
@@ -133,12 +133,12 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax=NULL, a
   ## apex value
   if (useRunOrder) {
     p       <- p + ggplot2::xlab('Acquisition Time') #labels are flipped, themes are not
-    tmp_pt  <- data.frame(x=acquTime, y=apexValue, colr=sampleIDColour, stringsAsFactors=F)
+    tmp_pt  <- data.frame(x=acquTime, y=apexValue, colr=sampleIDColour, stringsAsFactors=FALSE)
     if (verbose) {message('Values plotted by run order')}
   } else {
     # labels are flipped, themes are not
     # add apex point(add the color ID to each point, and an ID pointing to the black stroke)
-    tmp_pt  <- data.frame(x=x_axis, y=apexValue, colr=sampleIDColour, stringsAsFactors=F)
+    tmp_pt  <- data.frame(x=x_axis, y=apexValue, colr=sampleIDColour, stringsAsFactors=FALSE)
     if (verbose) {message('Values plotted by input order')}
   }
   # add apex points

@@ -57,7 +57,7 @@ input_fitCurves <- list(cFit1, cFit2)
 
 input_ROI       <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", 
                      "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
-                     stringsAsFactors=F)
+                     stringsAsFactors=FALSE)
 input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.88, 3390., 522.19, 522.2, 522.21)
 input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.58, 3440., 496.19, 496.2, 496.21)
 input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
@@ -66,7 +66,7 @@ input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
 input_foundPeakTable      <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), 
                                c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax",
                                "peakArea", "maxIntMeasured", "maxIntPredicted"))),
-                               stringsAsFactors=F)
+                               stringsAsFactors=FALSE)
 input_foundPeakTable[1,]  <- c(TRUE, 3309.758, 3346.827, 3385.410, 522.19, 522.2, 522.21, 
                                26133726, 889280, 901015)
 input_foundPeakTable[2,]  <- c(TRUE, 3345.376, 3386.529, 3428.279, 496.19, 496.2, 496.21,
