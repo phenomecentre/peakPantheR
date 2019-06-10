@@ -1,13 +1,13 @@
 Package: peakPantheR
 Title: Peak Picking and Annotation of High Resolution Experiments
-Version: 1.2.3.1
-Date: 2018-09-20
-Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre")),
-	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "ctb"),
+Version: 0.99.0
+Date: 2019-06-09
+Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-5856-3218")),
+	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "ctb", comment = c(ORCID = "0000-0001-8271-9294")),
 	person("Jake", "Pearce", email = "jake.pearce@gmail.com", role = "ctb"),
 	person("Caroline", "Sands", email = "caz119@hotmail.co.uk", role = "ctb"))
 Description: An automated pipeline for the detection, integration and reporting of predefined features across a large number of mass spectrometry data files.
-Depends: R (>= 3.4.0)
+Depends: R (>= 3.5.0)
 Imports: foreach (>= 1.4.4),
 	doParallel (>= 1.0.11),
 	ggplot2 (>= 2.2.1),
@@ -19,9 +19,10 @@ Imports: foreach (>= 1.4.4),
 	XML (>= 3.98.1.10),
 	minpack.lm (>= 1.2.1),
 	scales(>= 0.5.0)
-biocViews: MSnbase (>= 2.4.0),
-	mzR (>= 2.12.0)
+biocViews: MassSpectrometry, Metabolomics
 License: GPL-3
+BugReports: https://github.com/phenomecentre/peakPantheR/issues/new
+URL: https://github.com/phenomecentre/peakPantheR
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
@@ -29,5 +30,6 @@ Suggests: testthat,
 	faahKO,
 	knitr,
 	rmarkdown,
-	pander
+	pander,
+	BiocStyle
 VignetteBuilder: knitr
