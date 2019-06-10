@@ -8,7 +8,6 @@ os:
 r:
   - bioc-devel
   - bioc-release
-  - 3.5.0
 
 matrix:
   allow_failures:
