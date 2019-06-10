@@ -15,6 +15,7 @@ matrix:
     - r: bioc-devel
 
 bioc_required: true
+bioc_check: true
 
 r_packages:
   - covr
