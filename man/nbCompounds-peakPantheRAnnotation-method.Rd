@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(int) number of samples
+}
 \description{
 nbCompounds accessor established on cpdID
 }

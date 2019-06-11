@@ -18,6 +18,9 @@
 
 \item{drop}{not applicable}
 }
+\value{
+(peakPantheRAnnotation) object subset
+}
 \description{
 extract parts of peakPantheRAnnotation class
 }

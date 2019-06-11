@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(float) A numeric vector of Total Ion Chromatogram or NA, of length number of spectra files
+}
 \description{
 TIC accessor
 }

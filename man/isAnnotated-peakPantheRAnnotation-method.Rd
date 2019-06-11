@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(bool) flag if the annotation has taken place
+}
 \description{
 isAnnotated accessor
 }

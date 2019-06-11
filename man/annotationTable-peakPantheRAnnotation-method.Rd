@@ -14,6 +14,9 @@ annotationTable returns a dataframe (row samples, col compounds) filled with a s
 
 \item{column}{a peakTable columns}
 }
+\value{
+(data.frame) (row samples, col compounds) filled with a specific peakTable column
+}
 \description{
 annotationTable accessor
 annotationTable returns a dataframe (row samples, col compounds) filled with a specific peakTable column

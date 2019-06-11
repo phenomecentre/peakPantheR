@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI
+}
 \description{
 peakFit accessor
 }

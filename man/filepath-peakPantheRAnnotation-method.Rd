@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(str) A character vector of file paths, of length number of spectra files
+}
 \description{
 filepath accessor
 }

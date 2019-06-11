@@ -13,6 +13,9 @@
 
 \item{aggregationFunction}{(str) Function to use in order to aggregate intensities across mz in each scan. One of \code{sum}, \code{max}, \code{min}, \code{mean}}
 }
+\value{
+(float) Extracted Ion Chromatogram aggregated across mz in each scan
+}
 \description{
 EICs accessor
 }

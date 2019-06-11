@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(str) A character vector of compound IDs, of length number of compounds
+}
 \description{
 cpdID accessor
 }

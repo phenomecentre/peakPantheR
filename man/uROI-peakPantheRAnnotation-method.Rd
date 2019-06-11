@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(data.frame) target feature table with compounds as row and uROI parameters as columns
+}
 \description{
 uROI accessor returns targetFeatTable with cpdID, cpdName added
 }

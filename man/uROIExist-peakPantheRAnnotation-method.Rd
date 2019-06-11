@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(bool) flag if uROI have been set
+}
 \description{
 uROIExist accessor
 }

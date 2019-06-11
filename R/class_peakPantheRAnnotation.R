@@ -46,6 +46,7 @@
 #'   }
 #' }
 #'
+#' @return (peakPantheRAnnotation)
 #' @examples
 #' if(requireNamespace("faahKO")){
 #' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds

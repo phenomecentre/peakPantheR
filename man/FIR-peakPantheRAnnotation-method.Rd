@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(data.frame) target feature table with compounds as row and FIR parameters as columns
+}
 \description{
 FIR accessor returns targetFeatTable with cpdID, cpdName added
 }

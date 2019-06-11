@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(data.frame) A data.frame of compound metadata, with compounds as row and metadata as columns
+}
 \description{
 cpdMetadata accessor
 }

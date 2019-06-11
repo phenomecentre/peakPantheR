@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row))
+}
 \description{
 dataPoints accessor
 }

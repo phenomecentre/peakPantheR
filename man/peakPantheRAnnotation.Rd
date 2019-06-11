@@ -73,6 +73,9 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
 
 \item{isAnnotated}{A logical stating in the annotation took place}
 }
+\value{
+(peakPantheRAnnotation)
+}
 \description{
 The \code{peakPantheRAnnotation} class is designed to run and store peakPantheR parallel annotation results. Instances of the class are created with the \code{peakPantheRAnnotation} constructor function, which initialises an object of proper dimension with \code{spectraPaths} (set samples to process) and \code{targetFeatTable} (set compounds to target). \code{spectraPaths} is a character vector of spectra file paths. \code{targetFeatTable} is a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (int), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 

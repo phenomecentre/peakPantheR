@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(POSIXct) A character vector of acquisition date-time (converted from POSIXct) or NA
+}
 \description{
 acquisitionTime accessor returns value as.POSIXct
 }

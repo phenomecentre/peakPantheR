@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(bool) flag if FIR are to be used
+}
 \description{
 useFIR accessor
 }

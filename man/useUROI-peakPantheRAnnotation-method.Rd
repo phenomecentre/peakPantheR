@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(bool) flag if uROI are to be used
+}
 \description{
 useUROI accessor
 }

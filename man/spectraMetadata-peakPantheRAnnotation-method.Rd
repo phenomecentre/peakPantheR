@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(data.frame) A data.frame of sample metadata, with samples as row and metadata as columns
+}
 \description{
 spectraMetadata accessor
 }

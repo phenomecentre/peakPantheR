@@ -58,6 +58,8 @@ setValidity("peakPantheRAnnotation", function(object) valid_peakPantheRAnnotatio
 setGeneric("cpdID", function(object, ...) standardGeneric("cpdID"))
 #' cpdID accessor
 #' @param object peakPantheRAnnotation
+#' @return (str) A character vector of compound IDs, of length number of compounds
+#' @docType methods
 #' @aliases cpdID
 #' @export
 setMethod("cpdID", "peakPantheRAnnotation",
@@ -69,6 +71,7 @@ setMethod("cpdID", "peakPantheRAnnotation",
 setGeneric("cpdName", function(object, ...) standardGeneric("cpdName"))
 #' cpdName accessor
 #' @param object peakPantheRAnnotation
+#' @return (str) A character vector of compound names, of length number of compounds
 #' @docType methods
 #' @aliases cpdName
 #' @export
@@ -82,6 +85,7 @@ setMethod("cpdName", "peakPantheRAnnotation",
 setGeneric("ROI", function(object, ...) standardGeneric("ROI"))
 #' ROI accessor returns targetFeatTable with cpdID, cpdName added
 #' @param object peakPantheRAnnotation
+#' @return (data.frame) target feature table with compounds as row and ROI parameters as columns
 #' @docType methods
 #' @aliases ROI
 #' @export
@@ -98,6 +102,7 @@ setMethod("ROI", "peakPantheRAnnotation",
 setGeneric("uROI", function(object, ...) standardGeneric("uROI"))
 #' uROI accessor returns targetFeatTable with cpdID, cpdName added
 #' @param object peakPantheRAnnotation
+#' @return (data.frame) target feature table with compounds as row and uROI parameters as columns
 #' @docType methods
 #' @aliases uROI
 #' @export
@@ -114,6 +119,7 @@ setMethod("uROI", "peakPantheRAnnotation",
 setGeneric("FIR", function(object, ...) standardGeneric("FIR"))
 #' FIR accessor returns targetFeatTable with cpdID, cpdName added
 #' @param object peakPantheRAnnotation
+#' @return (data.frame) target feature table with compounds as row and FIR parameters as columns
 #' @docType methods
 #' @aliases FIR
 #' @export
@@ -129,6 +135,7 @@ setMethod("FIR", "peakPantheRAnnotation",
 setGeneric("filepath", function(object, ...) standardGeneric("filepath"))
 #' filepath accessor
 #' @param object peakPantheRAnnotation
+#' @return (str) A character vector of file paths, of length number of spectra files
 #' @docType methods
 #' @aliases filepath
 #' @export
@@ -141,6 +148,7 @@ setMethod("filepath", "peakPantheRAnnotation",
 setGeneric("cpdMetadata", function(object, ...) standardGeneric("cpdMetadata"))
 #' cpdMetadata accessor
 #' @param object peakPantheRAnnotation
+#' @return (data.frame) A data.frame of compound metadata, with compounds as row and metadata as columns
 #' @docType methods
 #' @aliases cpdMetadata
 #' @export
@@ -153,6 +161,7 @@ setMethod("cpdMetadata", "peakPantheRAnnotation",
 setGeneric("spectraMetadata", function(object, ...) standardGeneric("spectraMetadata"))
 #' spectraMetadata accessor
 #' @param object peakPantheRAnnotation
+#' @return (data.frame) A data.frame of sample metadata, with samples as row and metadata as columns
 #' @docType methods
 #' @aliases spectraMetadata
 #' @export
@@ -166,6 +175,7 @@ setMethod("spectraMetadata", "peakPantheRAnnotation",
 setGeneric("acquisitionTime", function(object, ...) standardGeneric("acquisitionTime"))
 #' acquisitionTime accessor returns value as.POSIXct
 #' @param object peakPantheRAnnotation
+#' @return (POSIXct) A character vector of acquisition date-time (converted from POSIXct) or NA
 #' @docType methods
 #' @aliases acquisitionTime
 #' @export
@@ -178,6 +188,7 @@ setMethod("acquisitionTime", "peakPantheRAnnotation",
 setGeneric("uROIExist", function(object, ...) standardGeneric("uROIExist"))
 #' uROIExist accessor
 #' @param object peakPantheRAnnotation
+#' @return (bool) flag if uROI have been set
 #' @docType methods
 #' @aliases uROIExist
 #' @export
@@ -190,6 +201,7 @@ setMethod("uROIExist", "peakPantheRAnnotation",
 setGeneric("useUROI", function(object, ...) standardGeneric("useUROI"))
 #' useUROI accessor
 #' @param object peakPantheRAnnotation
+#' @return (bool) flag if uROI are to be used
 #' @docType methods
 #' @aliases useUROI
 #' @export
@@ -202,6 +214,7 @@ setMethod("useUROI", "peakPantheRAnnotation",
 setGeneric("useFIR", function(object, ...) standardGeneric("useFIR"))
 #' useFIR accessor
 #' @param object peakPantheRAnnotation
+#' @return (bool) flag if FIR are to be used
 #' @docType methods
 #' @aliases useFIR
 #' @export
@@ -214,6 +227,7 @@ setMethod("useFIR", "peakPantheRAnnotation",
 setGeneric("TIC", function(object, ...) standardGeneric("TIC"))
 #' TIC accessor
 #' @param object peakPantheRAnnotation
+#' @return (float) A numeric vector of Total Ion Chromatogram or NA, of length number of spectra files
 #' @docType methods
 #' @aliases TIC
 #' @export
@@ -226,6 +240,7 @@ setMethod("TIC", "peakPantheRAnnotation",
 setGeneric("peakTables", function(object, ...) standardGeneric("peakTables"))
 #' peakTables accessor with cpdID and cpdName added back
 #' @param object peakPantheRAnnotation
+#' @return (data.frame) A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns, with added compound ID and name.
 #' @docType methods
 #' @aliases peakTables
 #' @export
@@ -239,6 +254,7 @@ setMethod("peakTables", "peakPantheRAnnotation",
 setGeneric("dataPoints", function(object, ...) standardGeneric("dataPoints"))
 #' dataPoints accessor
 #' @param object peakPantheRAnnotation
+#' @return A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row))
 #' @docType methods
 #' @aliases dataPoints
 #' @export
@@ -251,6 +267,7 @@ setMethod("dataPoints", "peakPantheRAnnotation",
 setGeneric("peakFit", function(object, ...) standardGeneric("peakFit"))
 #' peakFit accessor
 #' @param object peakPantheRAnnotation
+#' @return A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI
 #' @docType methods
 #' @aliases peakFit
 #' @export
@@ -263,6 +280,7 @@ setMethod("peakFit", "peakPantheRAnnotation",
 setGeneric("isAnnotated", function(object, ...) standardGeneric("isAnnotated"))
 #' isAnnotated accessor
 #' @param object peakPantheRAnnotation
+#' @return (bool) flag if the annotation has taken place
 #' @docType methods
 #' @aliases isAnnotated
 #' @export
@@ -275,6 +293,7 @@ setMethod("isAnnotated", "peakPantheRAnnotation",
 setGeneric("nbSamples", function(object, ...) standardGeneric("nbSamples"))
 #' nbSamples accessor established on filepath
 #' @param object peakPantheRAnnotation
+#' @return (int) number of samples
 #' @docType methods
 #' @aliases nbSamples
 #' @export
@@ -287,6 +306,7 @@ setMethod("nbSamples", "peakPantheRAnnotation",
 setGeneric("nbCompounds", function(object, ...) standardGeneric("nbCompounds"))
 #' nbCompounds accessor established on cpdID
 #' @param object peakPantheRAnnotation
+#' @return (int) number of samples
 #' @docType methods
 #' @aliases nbCompounds
 #' @export
@@ -301,6 +321,7 @@ setGeneric("annotationTable", function(object, column) standardGeneric("annotati
 #' annotationTable returns a dataframe (row samples, col compounds) filled with a specific peakTable column
 #' @param object peakPantheRAnnotation
 #' @param column a peakTable columns
+#' @return (data.frame) (row samples, col compounds) filled with a specific peakTable column
 #' @docType methods
 #' @aliases annotationTable
 #' @export
@@ -349,6 +370,7 @@ setGeneric("EICs", function(object, aggregationFunction='sum', ...) standardGene
 #' EICs accessor
 #' @param object peakPantheRAnnotation
 #' @param aggregationFunction (str) Function to use in order to aggregate intensities across mz in each scan. One of \code{sum}, \code{max}, \code{min}, \code{mean}
+#' @return (float) Extracted Ion Chromatogram aggregated across mz in each scan
 #' @docType methods
 #' @aliases EICs
 #' @export
@@ -362,6 +384,7 @@ setMethod("EICs", "peakPantheRAnnotation",
 setGeneric("filename", function(object, ...) standardGeneric("filename"))
 #' filename accessor by spliting filepath
 #' @param object peakPantheRAnnotation
+#' @return (str) filename
 #' @docType methods
 #' @aliases filename
 #' @export
@@ -380,6 +403,7 @@ setMethod("filename", "peakPantheRAnnotation",
 #' @param i (sample) indices specifying elements to extract or replace
 #' @param j (compound) indices specifying elements to extract or replace
 #' @param drop not applicable
+#' @return (peakPantheRAnnotation) object subset
 #'
 #' @aliases [,peakPantheRAnnotation-method
 #' @docType methods

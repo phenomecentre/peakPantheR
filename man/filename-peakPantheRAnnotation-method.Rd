@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(str) filename
+}
 \description{
 filename accessor by spliting filepath
 }

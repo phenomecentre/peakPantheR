@@ -11,6 +11,9 @@
 \arguments{
 \item{object}{peakPantheRAnnotation}
 }
+\value{
+(int) number of samples
+}
 \description{
 nbSamples accessor established on filepath
 }
