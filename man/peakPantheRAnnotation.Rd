@@ -82,7 +82,7 @@ The \code{peakPantheRAnnotation} class is designed to run and store peakPantheR 
 \code{peakPantheRAnnotation()}: create an instance of the \code{peakPantherAnnotation} class.
 }
 \details{
-The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on \code{@cpdID} length, and the number of samples is based on \code{@filepath} length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
+The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on \code{cpdID()} length, and the number of samples is based on \code{filepath()} length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
          \code{annotationTable(object, column)} where \emph{column} is a column from \emph{peakTable}, returns a data.frame of values with the samples as rows, ROI as columns.
 }
 \section{Slots}{
@@ -179,61 +179,62 @@ slotNames(annotation)
 # [7] "cpdMetadata" "spectraMetadata" "acquisitionTime" "uROIExist" "useUROI"     "useFIR"         
 # [13] "TIC"        "peakTables"      "dataPoints"      "peakFit"   "isAnnotated"
 
-annotation@cpdID
+## Slots shouldn't be accessed directly, accessors are available:
+cpdID(annotation)
 # [1] "ID-1" "ID-2"
-annotation@cpdName
+cpdName(annotation)
 # [1] "Cpd 1" "Cpd 2"
-annotation@ROI
+ROI(annotation)
 #   rtMin       rt rtMax    mzMin    mz    mzMax
 # 1  3310 3344.888  3390 522.1948 522.2 522.2052
 # 2  3280 3385.577  3440 496.1950 496.2 496.2050
-annotation@FIR
+FIR(annotation)
 #   rtMin rtMax mzMin mzMax
 # 1    NA    NA    NA    NA
 # 2    NA    NA    NA    NA
-annotation@uROI
+uROI(annotation)
 #   rtMin rt rtMax mzMin mz mzMax
 # 1    NA NA    NA    NA NA    NA
 # 2    NA NA    NA    NA NA    NA
-annotation@filepath
+filepath(annotation)
 # [1] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko16.CDF"
 # [2] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko18.CDF"
-annotation@cpdMetadata
+cpdMetadata(annotation)
 # data frame with 0 columns and 2 rows
-annotation@spectraMetadata
+spectraMetadata(annotation)
 # data frame with 0 columns and 3 rows
-annotation@acquisitionTime
+acquisitionTime(annotation)
 # [1] NA NA NA
-annotation@uROIExist
+uROIExist(annotation)
 # [1] FALSE
-annotation@useUROI
+useUROI(annotation)
 # [1] FALSE
-annotation@useFIR
+useFIR(annotation)
 # [1] FALSE
-annotation@TIC
+TIC(annotation)
 # [1] NA NA NA
-annotation@peakTables
+peakTables(annotation)
 # [[1]]
 # NULL
 # [[2]]
 # NULL
 # [[3]]
 # NULL
-annotation@dataPoints
+dataPoints(annotation)
 # [[1]]
 # NULL
 # [[2]]
 # NULL
 # [[3]]
 # NULL
-annotation@peakFit
+peakFit(annotation)
 # [[1]]
 # NULL
 # [[2]]
 # NULL
 # [[3]]
 # NULL
-annotation@isAnnotated
+isAnnotated(annotation)
 # [1] FALSE
 }
 
