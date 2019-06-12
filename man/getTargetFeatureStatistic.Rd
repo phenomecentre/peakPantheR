@@ -60,7 +60,7 @@ input_ROI       <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID
                      stringsAsFactors=FALSE)
 input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.88, 3390., 522.19, 522.2, 522.21)
 input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.58, 3440., 496.19, 496.2, 496.21)
-input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
+input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(2))
 
 # foundPeakTable
 input_foundPeakTable      <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), 
@@ -71,7 +71,7 @@ input_foundPeakTable[1,]  <- c(TRUE, 3309.758, 3346.827, 3385.410, 522.19, 522.2
                                26133726, 889280, 901015)
 input_foundPeakTable[2,]  <- c(TRUE, 3345.376, 3386.529, 3428.279, 496.19, 496.2, 496.21,
                                35472141, 1128960, 1113576)
-input_foundPeakTable[,1]  <- sapply(input_foundPeakTable[,c(1)], as.logical)
+input_foundPeakTable[,1]  <- vapply(input_foundPeakTable[,c(1)], as.logical, FUN.VALUE=logical(1))
 
 # Run peak statistics
 peakStatistics <- getTargetFeatureStatistic(input_fitCurves, input_ROI, input_foundPeakTable)

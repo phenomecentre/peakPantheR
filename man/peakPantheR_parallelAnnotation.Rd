@@ -45,7 +45,7 @@ input_ROI[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 5
 input_ROI[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_ROI[3,] <- c("ID-3", "Cpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
 input_ROI[4,] <- c("ID-4", "Cpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-input_ROI[,c(3:8)] <- sapply(input_ROI[,c(3:8)], as.numeric)
+input_ROI[,c(3:8)] <- vapply(input_ROI[,c(3:8)], as.numeric, FUN.VALUE=numeric(4))
 
 # Initialise object
 initAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths,

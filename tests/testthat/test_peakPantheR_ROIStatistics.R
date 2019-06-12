@@ -16,7 +16,7 @@ input_targetFeatTable[1,] 	<- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194
 input_targetFeatTable[2,] 	<- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_targetFeatTable[3,] 	<- c("ID-3", "Cpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
 input_targetFeatTable[4,] 	<- c("ID-4", "Cpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
+input_targetFeatTable[,c(3:8)] <- vapply(input_targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(4))
 
 
 
@@ -48,7 +48,7 @@ test_that('3 files, save EICS, mean IS RT, save IS fit, with sampleColour, verbo
   expected_meanIS[2,] <- c('ID-2', 3401.938353)
   expected_meanIS[3,] <- c('ID-3', 3458.840343)
   expected_meanIS[4,] <- c('ID-4', 3712.859261)
-  expected_meanIS[,2] <- sapply(expected_meanIS[,2], as.numeric)
+  expected_meanIS[,2] <- vapply(expected_meanIS[,2], as.numeric, FUN.VALUE=numeric(1))
   # Expected message
   expected_message    <- c("    4 ROI in 3 reference samples\n", "    4 IS in 3 reference samples\n", "\n-- Saving EICs for each ROI --\n","Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n", "\n-- Calculating mean RT for each IS --\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #3\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  0 failure(s)\n", "Saving diagnostic plots:\n")
 
@@ -137,7 +137,7 @@ test_that('3 files, no save EICs, mean IS RT, no IS fit, without sampleColour, v
   expected_meanIS[2,] <- c('ID-2', 3401.938353)
   expected_meanIS[3,] <- c('ID-3', 3458.840343)
   expected_meanIS[4,] <- c('ID-4', 3712.859261)
-  expected_meanIS[,2] <- sapply(expected_meanIS[,2], as.numeric)
+  expected_meanIS[,2] <- vapply(expected_meanIS[,2], as.numeric, FUN.VALUE=numeric(1))
   # Expected message
   expected_message    <- c("No ROI provided, EICs of ROI windows will not be saved\n", "- EICs of ROI windows will not be saved\n" , "    4 IS in 3 reference samples\n", "\n-- Calculating mean RT for each IS --\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "----------------\n", "  0 failure(s)\n")
 

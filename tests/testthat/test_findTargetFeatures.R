@@ -15,7 +15,7 @@ input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522
 input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_ROI[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
 input_ROI[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
+input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(4))
 
 # ROIDataPoints for each window
 input_ROIsDataPoints <- extractSignalRawData(raw_data, rt=input_ROI[,c('rtMin','rtMax')], mz=input_ROI[,c('mzMin','mzMax')], verbose=FALSE)
@@ -26,7 +26,7 @@ found_peakTable[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098
 found_peakTable[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298)
 found_peakTable[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412)
 found_peakTable[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 330176, 326763.87246511364)
-found_peakTable[,1] <- sapply(found_peakTable[,c(1)], as.logical)
+found_peakTable[,1] <- vapply(found_peakTable[,c(1)], as.logical, FUN.VALUE=logical(1))
 
 cFit1           <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
 class(cFit1)    <- 'peakPantheR_curveFit'
@@ -126,7 +126,7 @@ test_that('rtMin rtMax cannot be found, fit is rejected, verbose', {
   # fake data which never reaches 0.5% of maxInt in 5x ROI rt width
   tmp_ROI     	  <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=FALSE)
   tmp_ROI[1,] 	  <- c("ID-1", "testCpd 1", 990., 1000., 1010., 521., 522., 523.)
-  tmp_ROI[,3:8]   <- sapply(tmp_ROI[,3:8], as.numeric)
+  tmp_ROI[,3:8]   <- vapply(tmp_ROI[,3:8], as.numeric, FUN.VALUE=numeric(1))
   
   # fake ROI data points
   #int <- (dnorm(rt, mean=1000, sd=0.5) * 100) + 20000
