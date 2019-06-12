@@ -28,7 +28,7 @@
 generateIonChromatogram <- function(ROIDataPoint, aggregationFunction='sum') {
   
   # Check input
-  if (class(ROIDataPoint) != 'data.frame') {
+  if (!is(ROIDataPoint, 'data.frame')) {
     stop('Check input "ROIDataPoint" must be a data.frame')
   } else if (!all(c('rt', 'mz', 'int') %in% colnames(ROIDataPoint))) {
     stop('Check input "ROIDataPoint must have the following columns: "rt", "mz", "int"')

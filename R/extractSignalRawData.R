@@ -107,15 +107,15 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
   if (!is.integer(msLevel)) {stop('Check input "msLevel" must be integer')}
   #   rt
   if (!missing(rt)) {
-    if (!(class(rt) %in% c('numeric', 'matrix', 'data.frame'))) {stop('Check input "rt" must be numeric, matrix or data.frame')}
-    if ((class(rt) == 'numeric') & (length(rt) != 2)) {stop('Check input "rt" must be numeric of length 2')}
-    if (class(rt) %in% c('matrix','data.frame')) { if (ncol(rt) != 2) {stop('Check input "rt" must be a matrix or data.frame with 2 columns')} }
+    if (!is(rt, 'numeric') & !is(rt, 'matrix') & !is(rt, 'data.frame')) {stop('Check input "rt" must be numeric, matrix or data.frame')}
+    if (is(rt, 'numeric') & (length(rt) != 2)) {stop('Check input "rt" must be numeric of length 2')}
+    if (is(rt, 'matrix') | is(rt, 'data.frame')) { if (ncol(rt) != 2) {stop('Check input "rt" must be a matrix or data.frame with 2 columns')} }
   }
   #   mz
   if (!missing(mz)) {
-    if (!(class(mz) %in% c('numeric', 'matrix', 'data.frame'))) {stop('Check input "mz" must be numeric, matrix or data.frame')}
-    if ((class(mz) == 'numeric') & (length(mz) != 2)) {stop('Check input "mz" must be numeric of length 2')}
-    if (class(mz) %in% c('matrix','data.frame')) { if (ncol(mz) != 2) {stop('Check input "mz" must be a matrix or data.frame with 2 columns')} }
+    if (!is(mz, 'numeric') & !is(mz, 'matrix') & !is(mz, 'data.frame')) {stop('Check input "mz" must be numeric, matrix or data.frame')}
+    if (is(mz, 'numeric') & (length(mz) != 2)) {stop('Check input "mz" must be numeric of length 2')}
+    if (is(mz, 'matrix') | is(mz, 'data.frame')) { if (ncol(mz) != 2) {stop('Check input "mz" must be a matrix or data.frame with 2 columns')} }
   }
   #   both rt and mz have same number of rows (unless one of them has only 1 rowe)
   if (!missing(rt) & !missing(mz)) {
@@ -124,7 +124,7 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
         if ((nrow(rt) != 1) & (nrow(mz) !=1)) {
           stop('Check input "rt" and "mz" matrix or data.frame must have the same number of rows')
         } else {
-          if (verbose) {message('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be ducplicated to match the other input')}
+          if (verbose) {message('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be duplicated to match the other input')}
         }
       }
     } 
@@ -139,10 +139,10 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
     mz <- matrix(c(-Inf, Inf), ncol=2, byrow=TRUE)
   }
   # convert all numeric to matrix
-  if (class(rt) == 'numeric') {
+  if (is(rt, 'numeric')) {
     rt <- matrix(rt, nrow=1, ncol=2, byrow=TRUE)
   }
-  if (class(mz) == 'numeric') {
+  if (is(mz, 'numeric')) {
     mz <- matrix(mz, nrow=1, ncol=2, byrow=TRUE)
   }
   # Replicate rows (if only 1) to match other

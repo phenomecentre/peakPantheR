@@ -58,7 +58,7 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax=NULL, a
   useRunOrder   <- FALSE
   if (!is.null(acquTime)) {
     # acquTime is not a POSIXct
-    if (!("POSIXct" %in% class(acquTime))) {
+    if (!is(acquTime, "POSIXct")) {
       stop('Error: "acquTime" must be a vector of POSIXct')
     }
     # NA in acquTime

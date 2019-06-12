@@ -56,7 +56,7 @@ peakPantheR_plotEICFit  <- function(ROIDataPointSampleList, curveFitSampleList=N
   
   ## Check input
   # in case ROIDataPointSampleList is not a list
-  if (class(ROIDataPointSampleList) != "list") {
+  if (!is(ROIDataPointSampleList, "list")) {
     stop('Error: "ROIDataPointSampleList" must be a list of data.frame')
   }
   nbSpl   <- length(ROIDataPointSampleList)

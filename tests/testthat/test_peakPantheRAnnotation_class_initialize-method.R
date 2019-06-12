@@ -16,7 +16,7 @@ test_that('initialize with default values', {
   defaultInit <- peakPantheRAnnotation()
 
   # Check object
-  expect_true(class(defaultInit) == "peakPantheRAnnotation")
+  expect_true(is(defaultInit, "peakPantheRAnnotation"))
   expect_equal(slotNames(defaultInit), expected_slotName)
   expect_true(is.character(defaultInit@cpdID))
   expect_equal(length(defaultInit@cpdID), 0)
@@ -126,7 +126,7 @@ test_that('initialize with spectraPaths', {
   # Init object with spectraPaths
   spectraAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths)
   # Check object values
-  expect_true(class(spectraAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(spectraAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(spectraAnnotation), expected_slotName)
   expect_true(is.character(spectraAnnotation@cpdID))
   expect_equal(length(spectraAnnotation@cpdID), 0)
@@ -151,7 +151,7 @@ test_that('initialize with spectraPaths', {
   # Provide a spectraMetadata that shouldn't get replaced
   specMetaAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, spectraMetadata = input_spectraMetadata)
   # Check acquisitionTime get set from input and not default with spectraPaths
-  expect_true(class(specMetaAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(specMetaAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(specMetaAnnotation), expected_slotName)
   expect_true(is.character(specMetaAnnotation@cpdID))
   expect_equal(length(specMetaAnnotation@cpdID), 0)
@@ -176,7 +176,7 @@ test_that('initialize with spectraPaths', {
   # Provide a acquisitionTime that shouldn't get replaced
   acquAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, acquisitionTime=input_acquisitionTime)
   # Check acquisitionTime get set from input and not default with spectraPaths
-  expect_true(class(acquAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(acquAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(acquAnnotation), expected_slotName)
   expect_true(is.character(acquAnnotation@cpdID))
   expect_equal(length(acquAnnotation@cpdID), 0)
@@ -201,7 +201,7 @@ test_that('initialize with spectraPaths', {
   # Provide a TIC that shouldn't get replaced
   TICAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, TIC=input_TIC)
   # Check TIC get set from input and not default with spectraPaths
-  expect_true(class(TICAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(TICAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(TICAnnotation), expected_slotName)
   expect_true(is.character(TICAnnotation@cpdID))
   expect_equal(length(TICAnnotation@cpdID), 0)
@@ -226,7 +226,7 @@ test_that('initialize with spectraPaths', {
   # Provide a peakTables that shouldn't get replaced
   peakTablesAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, peakTables=input_peakTables)
   # Check peakTables get set from input and not default with spectraPaths
-  expect_true(class(peakTablesAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(peakTablesAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(peakTablesAnnotation), expected_slotName)
   expect_true(is.character(peakTablesAnnotation@cpdID))
   expect_equal(length(peakTablesAnnotation@cpdID), 0)
@@ -251,7 +251,7 @@ test_that('initialize with spectraPaths', {
   # Provide a dataPoints that shouldn't get replaced
   dataPointsAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, dataPoints=input_dataPoints)
   # Check dataPoints get set from input and not default with spectraPaths
-  expect_true(class(dataPointsAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(dataPointsAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(dataPointsAnnotation), expected_slotName)
   expect_true(is.character(dataPointsAnnotation@cpdID))
   expect_equal(length(dataPointsAnnotation@cpdID), 0)
@@ -276,7 +276,7 @@ test_that('initialize with spectraPaths', {
   # Provide a peakFit that shouldn't get replaced
   peakFitAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, peakFit=input_peakFit)
   # Check peakFit get set from input and not default with spectraPaths
-  expect_true(class(peakFitAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(peakFitAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(peakFitAnnotation), expected_slotName)
   expect_true(is.character(peakFitAnnotation@cpdID))
   expect_equal(length(peakFitAnnotation@cpdID), 0)
@@ -334,7 +334,7 @@ test_that('initialize with targetFeatTable', {
   # Init object with targetFeatTable
   targetFeatTableAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable)
   # Check object values
-  expect_true(class(targetFeatTableAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(targetFeatTableAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(targetFeatTableAnnotation), expected_slotName)
   expect_equal(targetFeatTableAnnotation@cpdID, expected_cpdID)
   expect_equal(targetFeatTableAnnotation@cpdName, expected_cpdName)
@@ -363,7 +363,7 @@ test_that('initialize with targetFeatTable', {
   # Provide a cpdMetadata that shouldn't get replaced
   cpdMetadataAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata)
   # check object
-  expect_true(class(cpdMetadataAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(cpdMetadataAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(cpdMetadataAnnotation), expected_slotName)
   expect_equal(cpdMetadataAnnotation@cpdID, expected_cpdID)
   expect_equal(cpdMetadataAnnotation@cpdName, expected_cpdName)
@@ -392,7 +392,7 @@ test_that('initialize with targetFeatTable', {
   # Provide a FIR that shouldn't get replaced, and set useFIR
   FIRAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, FIR=input_FIR, useFIR=TRUE)
   # check object
-  expect_true(class(FIRAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(FIRAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(FIRAnnotation), expected_slotName)
   expect_equal(FIRAnnotation@cpdID, expected_cpdID)
   expect_equal(FIRAnnotation@cpdName, expected_cpdName)
@@ -421,7 +421,7 @@ test_that('initialize with targetFeatTable', {
   # Provide a uROI that shouldn't get replaced, and set uROIExist
   uROIAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, uROI=input_uROI, uROIExist=TRUE)
   # check object
-  expect_true(class(uROIAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(uROIAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(uROIAnnotation), expected_slotName)
   expect_equal(uROIAnnotation@cpdID, expected_cpdID)
   expect_equal(uROIAnnotation@cpdName, expected_cpdName)
@@ -450,7 +450,7 @@ test_that('initialize with targetFeatTable', {
   # Force uROIExist and useUROI to FALSE (despite setting to TRUE) as uROI is reset
   uROIResetAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, uROIExist=TRUE, useUROI=TRUE)
   # check object
-  expect_true(class(uROIResetAnnotation) == "peakPantheRAnnotation")
+  expect_true(is(uROIResetAnnotation, "peakPantheRAnnotation"))
   expect_equal(slotNames(uROIResetAnnotation), expected_slotName)
   expect_equal(uROIResetAnnotation@cpdID, expected_cpdID)
   expect_equal(uROIResetAnnotation@cpdName, expected_cpdName)

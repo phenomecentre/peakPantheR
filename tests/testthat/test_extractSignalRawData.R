@@ -126,7 +126,7 @@ test_that('1 matrix rt, 2 data.frame mz (extend rt, verbose)', {
   expected_int2 <- c(308, 452, 2757, 250, 242, 499, 3260, 311, 547, 3423, 292, 356, 552, 3396, 372, 372, 547, 3410, 427, 536, 3420, 428, 653, 3286, 439, 694, 3117, 467, 582, 2929, 544, 438, 430, 2608, 636, 336, 336, 2204, 722, 1928, 738, 308, 1768, 613, 334, 1561, 483, 330, 1282, 389, 288, 1071, 343, 260, 964, 266, 229, 290, 952, 280, 372, 991, 333, 376, 939, 342, 293, 799, 339, 225, 717, 357, 235, 809, 371, 241, 961, 277, 372, 229, 1084, 393, 276, 1042, 449, 355, 953, 527, 432, 944, 537, 476, 1038, 476, 561, 1206, 418, 649, 1321, 421, 705, 1422, 517, 697, 1551, 646, 646, 1765, 705, 603, 1923, 629, 618, 2032, 592, 643, 1956, 579, 637, 1763, 544, 554, 1578, 445, 427, 1427, 422, 359, 1399, 481, 409, 1307, 543, 494, 1119, 479, 463, 982, 807, 444, 380, 870, 812, 493, 362, 857, 828, 592, 364, 923, 644, 394, 914, 616, 385, 843, 518, 379, 798, 383, 467, 790)
   
   expected_signal   <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
-  expected_messages <- c('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be ducplicated to match the other input\n', 'Reading data from 2 windows\n')
+  expected_messages <- c('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be duplicated to match the other input\n', 'Reading data from 2 windows\n')
   
   # results (output, warnings and messages)
   result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=matrix(c(3310., 3390.), ncol=2, byrow=TRUE), mz=data.frame(matrix(c(520., 522.4, 460., 462.4), ncol=2, byrow=TRUE)), msLevel=1L, verbose=TRUE))
@@ -150,7 +150,7 @@ test_that('2 data.frame rt, 1 matrix mz (extend mz, verbose)', {
   expected_int2 <- c(774, 974, 510, 746, 1082, 647, 750, 1155, 771, 794, 1131, 849, 930, 1012, 924, 1068, 956, 949, 1022, 1039, 915, 871, 1156, 918, 786, 1170, 1033, 852, 1092, 1114, 925, 1041, 950, 1013, 957, 713, 1067, 811, 644, 1047, 663, 594, 974, 602, 582, 969, 584, 535, 1055, 643, 498, 1104, 737, 563, 1204, 842, 714, 1510, 1083, 842, 2064, 1523, 895, 2463, 1973, 855, 2464, 1971, 2144, 1539, 964, 1871, 1059, 991, 1020, 1598, 865, 1146, 1354, 1239, 1419, 771, 1157, 1605, 804, 950, 1646, 719, 774, 1668, 576, 702, 1420, 622, 554, 719, 1006, 656, 591, 801, 837, 597, 560, 810, 923, 412, 469, 845, 985, 454, 833, 1070, 508, 724, 1224, 572, 614, 1459, 552, 596, 1588, 597, 597, 621, 1455, 673, 535, 569, 1251, 769, 625, 1290, 883, 872, 1461, 1031, 1168, 1506, 1172, 1279, 1405, 1193, 1180, 1378, 1168, 1182, 1438, 968, 1390, 1482, 825, 1526, 1267, 734, 1408, 1047, 1040, 714, 1145, 1298, 1529, 1147, 1464, 589, 1202, 1189, 622, 1239, 684, 867, 665, 1202, 742, 753, 664, 1059, 882, 638, 961)
   
   expected_signal   <- list(data.frame(rt=expected_rt1, mz=expected_mz1, int=expected_int1), data.frame(rt=expected_rt2, mz=expected_mz2, int=expected_int2))
-  expected_messages <- c('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be ducplicated to match the other input\n', 'Reading data from 2 windows\n')
+  expected_messages <- c('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be duplicated to match the other input\n', 'Reading data from 2 windows\n')
   
   # results (output, warnings and messages)
   result_extractSignalRawData <- evaluate_promise(extractSignalRawData(rawSpec=raw_data, rt=data.frame(matrix(c(3310., 3390., 2900., 2990.), ncol=2, byrow=TRUE)), mz=matrix(c(520., 522.4), ncol=2, byrow=TRUE), msLevel=1L, verbose=TRUE))

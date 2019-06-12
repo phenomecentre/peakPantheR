@@ -85,7 +85,7 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
   if (!is.null(targetFeatTable)){
     # check input
     # is data.frame
-    if (class(targetFeatTable) != "data.frame"){
+    if (!is(targetFeatTable, "data.frame")){
       stop("specified targetFeatTable is not a data.frame")
     }
     # required columns are present

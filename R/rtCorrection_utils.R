@@ -18,7 +18,7 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable, metho
   ## Check inputs
   # Check targetFeatTable
   # is data.frame
-  if (class(targetFeatTable) != "data.frame"){
+  if (!is(targetFeatTable, "data.frame")){
     stop("specified targetFeatTable is not a data.frame")
   }
   # required columns are present
@@ -55,7 +55,7 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable, metho
   
   # Check referenceTable
   # is data.frame
-  if (class(referenceTable) != "data.frame"){
+  if (!is(referenceTable, "data.frame")){
     stop("specified referenceTable is not a data.frame")
   }
   # required columns are present
