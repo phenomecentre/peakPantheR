@@ -246,7 +246,14 @@ setGeneric("peakTables", function(object, ...) standardGeneric("peakTables"))
 #' @export
 setMethod("peakTables", "peakPantheRAnnotation",
           function(object) {
-            tmpPeakTables <- lapply(object@peakTables, function(x) {cbind.data.frame(x, cpdID=object@cpdID, cpdName=object@cpdName, stringsAsFactors=FALSE)})
+            tmpPeakTables <- lapply(object@peakTables, function(x) {
+                if (!is.null(x)){
+                    return( cbind.data.frame(x, cpdID=object@cpdID, cpdName=object@cpdName, stringsAsFactors=FALSE) )
+                } else {
+                    return( NULL )
+                }
+            })
+
             return(tmpPeakTables)
           })
 
