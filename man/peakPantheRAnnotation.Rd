@@ -185,20 +185,20 @@ cpdID(annotation)
 cpdName(annotation)
 # [1] "Cpd 1" "Cpd 2"
 ROI(annotation)
-#   rtMin       rt rtMax    mzMin    mz    mzMax
-# 1  3310 3344.888  3390 522.1948 522.2 522.2052
-# 2  3280 3385.577  3440 496.1950 496.2 496.2050
+#   rtMin       rt rtMax    mzMin    mz    mzMax cpdID cpdName
+# 1  3310 3344.888  3390 522.1948 522.2 522.2052  ID-1   Cpd 1
+# 2  3280 3385.577  3440 496.1950 496.2 496.2050  ID-2   Cpd 2
 FIR(annotation)
-#   rtMin rtMax mzMin mzMax
-# 1    NA    NA    NA    NA
-# 2    NA    NA    NA    NA
+#   rtMin rtMax mzMin mzMax cpdID cpdName
+# 1    NA    NA    NA    NA  ID-1   Cpd 1
+# 2    NA    NA    NA    NA  ID-2   Cpd 2
 uROI(annotation)
-#   rtMin rt rtMax mzMin mz mzMax
-# 1    NA NA    NA    NA NA    NA
-# 2    NA NA    NA    NA NA    NA
+#   rtMin rt rtMax mzMin mz mzMax cpdID cpdName
+# 1    NA NA    NA    NA NA    NA  ID-1   Cpd 1
+# 2    NA NA    NA    NA NA    NA  ID-2   Cpd 2
 filepath(annotation)
-# [1] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko16.CDF"
-# [2] "C:/R/R-3.4.3/library/faahKO/cdf/KO/ko18.CDF"
+# [1] "C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF"
+# [2] "C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF"
 cpdMetadata(annotation)
 # data frame with 0 columns and 2 rows
 spectraMetadata(annotation)
