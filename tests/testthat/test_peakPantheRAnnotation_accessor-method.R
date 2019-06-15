@@ -90,6 +90,8 @@ input_dataPoints  <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 # Object, fully filled
 filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
+# Empty annotation, special case for peakTables
+emptyAnnotation         <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
 
 
 test_that('accessors return the correct values', {
@@ -234,5 +236,8 @@ test_that('accessors return the correct values', {
                             list(tmp_EIC_max_2.1, tmp_EIC_max_2.2),
                             list(tmp_EIC_max_3.1, tmp_EIC_max_3.2))
   expect_equal(EICs(filledAnnotation, 'max'), expected_EIC_max)
+  
+  # Special peakTables behaviour when peakTable is NULL
+  expect_equal(peakTables(emptyAnnotation), list(NULL, NULL, NULL))
 })
 
