@@ -22,3 +22,33 @@ Set updated ROI (uROI) and Fallback Integration Regions (FIR) based on the annot
 Set uROI and FIR based on annotation results
 Set updated ROI (uROI) and Fallback Integration Regions (FIR) based on the annotation results. If the object is not annotated, it is returned untouched. ROI is not modified. If uROI exist they are left untouched, otherwise they are set as the minimum and maximum found peaks limits (+/-5\% of ROI in retention time). If FIR are used they are left untouched, otherwise they are set as the median of the found limits (rtMin, rtMax, mzMin, mzMax).
 }
+\examples{
+if(requireNamespace("faahKO")){
+## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+
+# Paths to spectra files
+library(faahKO)
+spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+                  system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                  system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+
+# targetFeatTable
+targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
+                         "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+                         stringsAsFactors=FALSE)
+targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+
+emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+
+annotationParamsDiagnostic(emptyAnnotation, verbose=TRUE)
+# Warning: the object has not been annotated, return the object untouched
+# An object of class peakPantheRAnnotation
+#  2 compounds in 3 samples.
+#   updated ROI do not exist (uROI)
+#   does not use updated ROI (uROI)
+#   does not use fallback integration regions (FIR)
+#   is not annotated
+}
+}
