@@ -115,7 +115,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
     stop('Check input, number of ROIsDataPoints entries must match the number of rows of ROI')
   }
   # Check all data points fall into the corresponding ROI
-  for(r in 1:nROI) {
+  for(r in seq_len(nROI)) {
     if(!all((ROIsDataPoints[[r]]$rt >= ROI[r,c('rtMin')]) & (ROIsDataPoints[[r]]$rt <= ROI[r,c('rtMax')]))) {stop('Check input not all datapoints for window #', r, ' are into the corresponding ROI (rt)')}
     if(!all((ROIsDataPoints[[r]]$mz >= ROI[r,c('mzMin')]) & (ROIsDataPoints[[r]]$mz <= ROI[r,c('mzMax')]))) {stop('Check input not all datapoints for window #', r, ' are into the corresponding ROI (mz)')}
   }
@@ -151,7 +151,7 @@ findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian',
   
   
   ## Iterate over ROIs
-  for (i in 1:nROI) {
+  for (i in seq_len(nROI)) {
     # set params for fitting
     new_params    <- 'guess'
     if (useParams) {

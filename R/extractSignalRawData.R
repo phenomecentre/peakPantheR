@@ -184,7 +184,7 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
   ## Get data points from each window (subset rt and check mz)
   res   <- empty_res
   # iterage over windows
-  for (i in 1:nrow(rt)) {
+  for (i in seq_len(nrow(rt))) {
     
     # subset the scans we need from the ones we have extracted
     scans_to_keep   <- (spec_rt >= rt[i, 1]) & (spec_rt <= rt[i, 2])

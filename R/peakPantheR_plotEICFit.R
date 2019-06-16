@@ -82,7 +82,7 @@ peakPantheR_plotEICFit  <- function(ROIDataPointSampleList, curveFitSampleList=N
       if (verbose) {message("Warning: sampleColour length must match the number of samples; default colour used")}
     }
   } 
-  sampleIDColour    <- paste('spl', seq(1:nbSpl), sep="")
+  sampleIDColour    <- paste('spl', seq(1, nbSpl), sep="")
   names(colourSpl)  <- sampleIDColour
   
   

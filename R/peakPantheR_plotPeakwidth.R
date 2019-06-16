@@ -95,7 +95,7 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax=NULL, a
       if (verbose) {message("Warning: sampleColour length must match the number of samples; default colour used")}
     }
   } 
-  sampleIDColour    <- paste('spl', seq(1:nbSpl), sep="")
+  sampleIDColour    <- paste('spl', seq(1, nbSpl), sep="")
   names(colourSpl)  <- sampleIDColour
   
   

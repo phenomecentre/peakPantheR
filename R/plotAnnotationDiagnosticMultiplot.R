@@ -12,7 +12,7 @@ annotationDiagnosticMultiplot   <- function(annotationDiagnosticPlotList) {
   outList <- vector("list", nbCpd)
   
   # Iterate over compounds
-  for (cpd in 1:nbCpd) {
+  for (cpd in seq_len(nbCpd)) {
     
     ## Check input
     if (!all(c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram", "title") %in% names(annotationDiagnosticPlotList[[cpd]]))) {

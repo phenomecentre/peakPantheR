@@ -47,7 +47,7 @@ generateIonChromatogram <- function(ROIDataPoint, aggregationFunction='sum') {
   res           <- data.frame(matrix(vector(), nrow=length(unique_scans), ncol=2, dimnames=list(c(),c('rt','int'))))
   
   # for each scan, aggregate intensity
-  for (i in 1:length(unique_scans)) {
+  for (i in seq_len(length(unique_scans))) {
     cur_scan  <- unique_scans[i]
     tmp_int   <- ROIDataPoint[ROIDataPoint$rt == cur_scan, c('int')]
     res[i,]   <- c(cur_scan, do.call(aggregationFunction, list(tmp_int)))

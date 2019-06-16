@@ -681,7 +681,7 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
             }
             
             # Iterate over compounds
-            for (cpd in 1:nbCpd) {
+            for (cpd in seq_len(nbCpd)) {
               tmp_annotation      <- object[,cpd]
               tmp_plotList        <- vector("list", 9)
               names(tmp_plotList) <- c('EICFit', 'rtPeakwidthVert', 'rtPeakwidthHorzRunOrder', 'mzPeakwidthHorzRunOrder', 'areaRunOrder', 'rtHistogram', 'mzHistogram', 'areaHistogram', 'title')
@@ -816,7 +816,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
                 cl          <- parallel::makeCluster(ncores)
                 doParallel::registerDoParallel(cl)
                 # Run      
-                savedPlots  <- foreach::foreach( x=1:nbCpd, .inorder=TRUE) %dopar% saveSingleMultiPlot(cpdNb=x, annotation=object, saveFolder=saveFolder, sampleColour=sampleColour, verbose=verbose, ...)
+                savedPlots  <- foreach::foreach( x=seq_len(nbCpd), .inorder=TRUE) %dopar% saveSingleMultiPlot(cpdNb=x, annotation=object, saveFolder=saveFolder, sampleColour=sampleColour, verbose=verbose, ...)
                 # Close
                 parallel::stopCluster(cl)
                 if (verbose) { message('All plots saved')}
@@ -824,7 +824,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
               # run serial
               } else {
                 if (verbose) { message('Saving diagnostic plots:') }
-                for (cpd in 1:nbCpd) {
+                for (cpd in seq_len(nbCpd)) {
                   saveSingleMultiPlot(cpdNb=cpd, annotation=object, saveFolder=saveFolder, sampleColour=sampleColour, verbose=verbose, ...)
                 }
               }
@@ -867,7 +867,7 @@ setMethod("outputAnnotationResult", "peakPantheRAnnotation",
             all_rt  <- annotationTable(object, column='rt')
             all_mz  <- annotationTable(object, column='mz')
             to_keep <- annotationTable(object, column='found') & !annotationTable(object, column='is_filled')
-            for (i in 1:nbCpd){
+            for (i in seq_len(nbCpd)){
               tmp_rt[i] <- mean(all_rt[to_keep[,i], i])
               tmp_mz[i] <- mean(all_mz[to_keep[,i], i])
             }

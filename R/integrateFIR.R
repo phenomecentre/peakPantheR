@@ -33,7 +33,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
     all_peakData    <- extractSignalRawData(rawSpec, mz = data.frame(mzMin=FIR$mzMin[needsFilling_idx], mzMax=FIR$mzMax[needsFilling_idx]), rt = data.frame(rtMin=FIR$rtMin[needsFilling_idx], rtMax=FIR$rtMax[needsFilling_idx]), verbose=verbose)
     
     ## iterate over features to integrate
-    for (cnt in 1:length(needsFilling_idx)) {
+    for (cnt in seq_len(length(needsFilling_idx))) {
       peakData  <- all_peakData[[cnt]]
       i         <- needsFilling_idx[cnt]
       

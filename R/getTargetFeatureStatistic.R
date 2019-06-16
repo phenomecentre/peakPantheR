@@ -153,7 +153,7 @@ getTargetFeatureStatistic <- function(fittedCurves, targetFeatTable, foundPeakTa
   ## Calculate the statistics
   peakStat	<- data.frame(matrix(vector(), dim(targetFeatTable)[1], 4, dimnames=list(c(), c("ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))), stringsAsFactors=FALSE)
 
-  for (i in 1:dim(targetFeatTable)[1]) {
+  for (i in seq_len(dim(targetFeatTable)[1])) {
     # If the feature wasn't found we cannot work with it
     if (foundPeakTable$found[i]) {
       # ppm_error

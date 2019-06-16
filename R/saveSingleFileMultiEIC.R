@@ -24,7 +24,7 @@ saveSingleFileMultiEIC   <- function(ROIsDataPoint, curveFit, foundPeakTable, sa
 
   ## Generate each ROI plot
   p_all         <- vector("list", nbROI)
-  for (i in 1:nbROI) {
+  for (i in seq_len(nbROI)) {
     p_all[[i]]  <- plotEICDetectedPeakwidth(ROIDataPointSampleList = list(ROIsDataPoint[[i]]),
                                             cpdID = foundPeakTable$cpdID[i],
                                             cpdName = foundPeakTable$cpdName[i],
