@@ -268,7 +268,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, r
 
   ## Collect and process results
   # identify annotations that failed
-  fail_status     <- sapply(allFilesRes, function(x){x$failure})
+  fail_status     <- unlist(lapply(allFilesRes, function(x){x$failure}), use.names=TRUE)
   failures        <- !is.na(fail_status)
   names(failures) <- NULL
   fail_table      <- data.frame(matrix(c(names(fail_status)[failures], fail_status[failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
@@ -285,9 +285,9 @@ peakPantheR_parallelAnnotation <- function(object, ncores=0, getAcquTime=TRUE, r
   # unlist result into final object (if there is a minimum of 1 file left)
   if (sum(!failures) > 0) {
     # acquisitionTime
-    outObject@acquisitionTime <- sapply(allFilesRes, function(x) {as.character(x$acquTime)})
+    outObject@acquisitionTime <- vapply(allFilesRes, function(x) {as.character(x$acquTime)}, FUN.VALUE=character(1))
     # TIC
-    outObject@TIC             <- sapply(allFilesRes, function(x) {x$TIC})
+    outObject@TIC             <- vapply(allFilesRes, function(x) {x$TIC}, FUN.VALUE=numeric(1))
     # peakTables (all columns but cpdID and cpdName)
     outObject@peakTables      <- lapply(allFilesRes, function(x) {x$peakTable[,!names(x$peakTable) %in% c("cpdID", "cpdName")] })
     # dataPoints

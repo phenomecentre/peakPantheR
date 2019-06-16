@@ -180,7 +180,7 @@ valid_peakPantheRAnnotation <- function(object) {
     # only check peakTables if min 1 sample and not NULL
     if (nbSample >= 1){
       # if ALL peakTables are not NULL
-      peakTables_isNULL <- sapply(object@peakTables, is.null)
+      peakTables_isNULL <- vapply(object@peakTables, is.null, FUN.VALUE=logical(1))
       if (!all(peakTables_isNULL)) {
         # if one peakTable is nuLL but not all, raise an error
         if (any(peakTables_isNULL)) {
@@ -222,7 +222,7 @@ valid_peakPantheRAnnotation <- function(object) {
     # only check dataPoints if min 1 sample and not NULL
     if (nbSample >= 1){
       # if ALL dataPoints are not NULL
-      dataPoints_isNULL <- sapply(object@dataPoints, is.null)
+      dataPoints_isNULL <- vapply(object@dataPoints, is.null, FUN.VALUE=logical(1))
       if (!all(dataPoints_isNULL)) {
         # if one dataPoints is NULL but not all, raise an error
         if (any(dataPoints_isNULL)) {
@@ -273,7 +273,7 @@ valid_peakPantheRAnnotation <- function(object) {
     # only check peakFit if min 1 sample and not NULL
     if (nbSample >= 1){
       # if ALL peakFit are not NULL
-      peakFit_isNULL <- sapply(object@peakFit, is.null)
+      peakFit_isNULL <- vapply(object@peakFit, is.null, FUN.VALUE=logical(1))
       if (!all(peakFit_isNULL)) {
         # if one peakFit is NULL but not all, raise an error
         if (any(peakFit_isNULL)) {

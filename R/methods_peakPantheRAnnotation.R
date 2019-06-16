@@ -361,12 +361,11 @@ setMethod("annotationTable", "peakPantheRAnnotation",
             }
 
             ## Concatenate all the results in a single data.frame
-            if(nbCpd == 1) {
-              # if only 1 compounds, sapply simplify to vector and not matrix
-              tmpAnnotation         <- data.frame(matrix(sapply(object@peakTables, function(x, y){x[,y]}, y=column)), stringsAsFactors=FALSE)
-            } else {
-              tmpAnnotation         <- data.frame(t(sapply(object@peakTables, function(x, y){x[,y]}, y=column)), stringsAsFactors=FALSE)
+            tmpAnnotation           <- vector("list", nbSample)
+            for (fl in seq_len(nbSample)){
+                tmpAnnotation[fl]   <- object@peakTables[[fl]][column]
             }
+            tmpAnnotation           <- data.frame(t(do.call('cbind', tmpAnnotation)))
             rownames(tmpAnnotation) <- object@filepath
             colnames(tmpAnnotation) <- object@cpdID
             return(tmpAnnotation)
@@ -457,7 +456,7 @@ setMethod("[", "peakPantheRAnnotation",
 
             ## peakTables, filter samples first, then compounds in each table
             tmp_peakTables  <- x@peakTables[i]
-            if (all(sapply(tmp_peakTables, is.null))) {
+            if (all(vapply(tmp_peakTables, is.null, FUN.VALUE = logical(1)))) {
               # no cpd filter if all NULL
               .peakTables   <- tmp_peakTables
             } else {
@@ -467,7 +466,7 @@ setMethod("[", "peakPantheRAnnotation",
             
             ## dataPoints, filter samples first, then compounds in each ROIsDataPoint
             tmp_dataPoints  <- x@dataPoints[i]
-            if (all(sapply(tmp_dataPoints, is.null))) {
+            if (all(vapply(tmp_dataPoints, is.null, FUN.VALUE=logical(1)))) {
               # no cpd filter if all NULL
               .dataPoints   <- tmp_dataPoints
             } else {
@@ -477,7 +476,7 @@ setMethod("[", "peakPantheRAnnotation",
             
             ## peakFit, filter samples first, then compounds in each curveFit list
             tmp_peakFit     <- x@peakFit[i]
-            if (all(sapply(tmp_peakFit, is.null))) {
+            if (all(vapply(tmp_peakFit, is.null, FUN.VALUE=logical(1)))) {
               # no cpd filter if all NULL
               .peakFit      <- tmp_peakFit
             } else {
@@ -539,27 +538,27 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
               # rt ROI 5% (no NA in ROI rtMin/rtMax)
               rtMargin    <- (ROI(outAnnotation)$rtMax - ROI(outAnnotation)$rtMin) * 0.05
               # rtMin (min found peak -5% of ROI)
-              rtMinUROI   <- unname(sapply(annotationTable(outAnnotation, 'rtMin'), min, na.rm=TRUE))
+              rtMinUROI   <- unname(vapply(annotationTable(outAnnotation, 'rtMin'), min, na.rm=TRUE, FUN.VALUE=numeric(1)))
               rtMinUROI   <- rtMinUROI - rtMargin
               if (sum(is.infinite(rtMinUROI)) != 0) {
                 if (verbose) {message('uROI min rtMin which are NA are replaced with ROI rtMin')}
                 rtMinUROI[is.infinite(rtMinUROI)]   <- outAnnotation@ROI[is.infinite(rtMinUROI), 'rtMin']
               }
               # rtMax (max found peak +5% of ROI)
-              rtMaxUROI   <- unname(sapply(annotationTable(outAnnotation, 'rtMax'), max, na.rm=TRUE))
+              rtMaxUROI   <- unname(vapply(annotationTable(outAnnotation, 'rtMax'), max, na.rm=TRUE, FUN.VALUE=numeric(1)))
               rtMaxUROI   <- rtMaxUROI + rtMargin
               if (sum(is.infinite(rtMaxUROI)) != 0) {
                 if (verbose) {message('uROI max rtMax which are NA are replaced with ROI rtMax')}
                 rtMaxUROI[is.infinite(rtMaxUROI)]   <- outAnnotation@ROI[is.infinite(rtMaxUROI), 'rtMax']
               }
               # mzMin
-              mzMinUROI   <- unname(sapply(annotationTable(outAnnotation, 'mzMin'), min, na.rm=TRUE))
+              mzMinUROI   <- unname(vapply(annotationTable(outAnnotation, 'mzMin'), min, na.rm=TRUE, FUN.VALUE=numeric(1)))
               if (sum(is.infinite(mzMinUROI)) != 0) {
                 if (verbose) {message('uROI min mzMin which are NA are replaced ROI mzMin')}
                 mzMinUROI[is.infinite(mzMinUROI)]   <- outAnnotation@ROI[is.infinite(mzMinUROI), 'mzMin']
               }
               # mzMax
-              mzMaxUROI   <- unname(sapply(annotationTable(outAnnotation, 'mzMax'), max, na.rm=TRUE))
+              mzMaxUROI   <- unname(vapply(annotationTable(outAnnotation, 'mzMax'), max, na.rm=TRUE, FUN.VALUE=numeric(1)))
               if (sum(is.infinite(mzMaxUROI)) != 0) {
                 if (verbose) {message('uROI max mzMax which are NA are replaced ROI mzMax')}
                 mzMaxUROI[is.infinite(mzMaxUROI)]   <- outAnnotation@ROI[is.infinite(mzMaxUROI), 'mzMax']
@@ -582,25 +581,25 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
             if (!outAnnotation@useFIR) {
               if (verbose) {message('FIR will be calculated as the median of found "rtMin","rtMax","mzMin","mzMax"')}
               # rtMin
-              rtMinFIR   <- unname(sapply(annotationTable(outAnnotation, 'rtMin'), stats::median, na.rm=TRUE))
+              rtMinFIR   <- unname(vapply(annotationTable(outAnnotation, 'rtMin'), stats::median, na.rm=TRUE, FUN.VALUE=numeric(1)))
               if (sum(is.na(rtMinFIR)) != 0) {
                 if (verbose) {message('FIR median rtMin which are NA are replaced with uROI rtMin')}
                 rtMinFIR[is.na(rtMinFIR)]   <- outAnnotation@uROI[is.na(rtMinFIR), 'rtMin']
               }
               # rtMax
-              rtMaxFIR   <- unname(sapply(annotationTable(outAnnotation, 'rtMax'), stats::median, na.rm=TRUE))
+              rtMaxFIR   <- unname(vapply(annotationTable(outAnnotation, 'rtMax'), stats::median, na.rm=TRUE, FUN.VALUE=numeric(1)))
               if (sum(is.na(rtMaxFIR)) != 0) {
                 if (verbose) {message('FIR median rtMax which are NA are replaced with uROI rtMax')}
                 rtMaxFIR[is.na(rtMaxFIR)]   <- outAnnotation@uROI[is.na(rtMaxFIR), 'rtMax']
               }
               # mzMin
-              mzMinFIR   <- unname(sapply(annotationTable(outAnnotation, 'mzMin'), stats::median, na.rm=TRUE))
+              mzMinFIR   <- unname(vapply(annotationTable(outAnnotation, 'mzMin'), stats::median, na.rm=TRUE, FUN.VALUE=numeric(1)))
               if (sum(is.na(mzMinFIR)) != 0) {
                 if (verbose) {message('FIR median mzMin which are NA are replaced uROI mzMin')}
                 mzMinFIR[is.na(mzMinFIR)]   <- outAnnotation@uROI[is.na(mzMinFIR), 'mzMin']
               }
               # mzMax
-              mzMaxFIR   <- unname(sapply(annotationTable(outAnnotation, 'mzMax'), stats::median, na.rm=TRUE))
+              mzMaxFIR   <- unname(vapply(annotationTable(outAnnotation, 'mzMax'), stats::median, na.rm=TRUE, FUN.VALUE=numeric(1)))
               if (sum(is.na(mzMaxFIR)) != 0) {
                 if (verbose) {message('FIR median mzMax which are NA are replaced uROI mzMax')}
                 mzMaxFIR[is.na(mzMaxFIR)]   <- outAnnotation@uROI[is.na(mzMaxFIR), 'mzMax']

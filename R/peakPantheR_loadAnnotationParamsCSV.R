@@ -27,13 +27,13 @@ peakPantheR_loadAnnotationParamsCSV <- function(CSVParamPath, verbose=TRUE) {
   # Prepare ROI, uROI and FIR
   tmp_targetFeatTable           <- tmp_csv[,c("cpdID", "cpdName", "ROI_rtMin", "ROI_rt", "ROI_rtMax", "ROI_mzMin", "ROI_mz", "ROI_mzMax")]
   colnames(tmp_targetFeatTable) <- c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")
-  tmp_targetFeatTable[,c(3:8)]  <- sapply(tmp_targetFeatTable[,c(3:8)], as.numeric)
+  tmp_targetFeatTable[,c(3:8)]  <- vapply(tmp_targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(nrow(tmp_targetFeatTable)))
   tmp_uROI                      <- tmp_csv[,c("uROI_rtMin", "uROI_rt", "uROI_rtMax", "uROI_mzMin", "uROI_mz", "uROI_mzMax")]
   colnames(tmp_uROI)            <- c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")
-  tmp_uROI[,c(1:6)]             <- sapply(tmp_uROI[,c(1:6)], as.numeric)
+  tmp_uROI[,c(1:6)]             <- vapply(tmp_uROI[,c(1:6)], as.numeric, FUN.VALUE=numeric(nrow(tmp_targetFeatTable)))
   tmp_FIR                       <- tmp_csv[,c("FIR_rtMin", "FIR_rtMax", "FIR_mzMin", "FIR_mzMax")]
   colnames(tmp_FIR)             <- c("rtMin", "rtMax", "mzMin", "mzMax")
-  tmp_FIR[,c(1:4)]              <- sapply(tmp_FIR[,c(1:4)], as.numeric)
+  tmp_FIR[,c(1:4)]              <- vapply(tmp_FIR[,c(1:4)], as.numeric, FUN.VALUE=numeric(nrow(tmp_targetFeatTable)))
   
   # establish if uROIExist
   tmp_uROIExist                 <- !any(is.na(tmp_uROI[,c("rtMin", "rtMax", "mzMin", "mzMax")]))

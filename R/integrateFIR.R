@@ -53,7 +53,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
         # mz (weighted average of total intensity across all rt for each mz)
         # total intensity across rt for each mz
         mzRange               <- unique(peakData$mz)
-        mzTotalIntensity      <- sapply(mzRange, function(x) {sum(peakData$i[peakData$mz == x])})
+        mzTotalIntensity      <- vapply(mzRange, function(x) {sum(peakData$i[peakData$mz == x])}, FUN.VALUE = numeric(1))
         # mz (is weighted average)
         tmpResult[i, "mz"]    <- stats::weighted.mean(mzRange, mzTotalIntensity)
 
@@ -64,7 +64,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose=TRUE) {
         
         # into
         # max intensity across mz for each rt
-        rtMaxIntensity  <- sapply(rtRange, function(x) {max(peakData$i[peakData$rt == x])})
+        rtMaxIntensity  <- vapply(rtRange, function(x) {max(peakData$i[peakData$rt == x])}, FUN.VALUE = numeric(1))
         # peakArea is the max intensities summed over (discrete) rt, multiplied by the mean distance in sec between scans
         tmpResult[i, "peakArea"]  <- sum(rtMaxIntensity) * scanDist
 

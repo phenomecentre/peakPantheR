@@ -93,7 +93,7 @@ peakPantheR_ROIStatistics <- function(referenceSpectraFiles, saveFolder, ROI=NUL
       return(ROIsDataPoint)
     })
     # remove failures
-    specToKeep    <- sapply(all_ROIs, function(x) {!is.null(x)})
+    specToKeep    <- vapply(all_ROIs, function(x) {!is.null(x)}, FUN.VALUE=logical(1))
     all_ROIs      <- all_ROIs[specToKeep]
     sampleColour  <- sampleColour[specToKeep]
     
