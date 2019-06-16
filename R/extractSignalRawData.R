@@ -10,8 +10,8 @@
 #'
 #' @return a list (one entry per window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns.
 #' 
-#' @examples
-#' \dontrun{
+#' @details
+#' ## Examples cannot be computed as the function is not exported:
 #' ## Use a file form the faahKO package and extract datafrom a region of interest
 #' library(faahKO)
 #' rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -97,7 +97,6 @@
 #' # 69 3405.921 522.2 598912
 #' # 70 3407.486 522.2 595008
 #' # 71 3409.051 522.2 588416
-#' }
 extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
   stime <- Sys.time()
   

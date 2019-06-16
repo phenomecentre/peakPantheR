@@ -29,8 +29,8 @@
 #'   }
 #' }
 #'
-#' @examples
-#' \dontrun{
+#' @details
+#' ## Examples cannot be computed as the function is not exported:
 #' ## Load data
 #' library(faahKO)
 #' library(MSnbase)
@@ -104,7 +104,6 @@
 #' # 
 #' # attr(,"class")
 #' # [1] "peakPantheR_curveFit"
-#' }
 findTargetFeatures <- function(ROIsDataPoints, ROI, curveModel='skewedGaussian', params='guess', sampling=250, maxApexResidualRatio=0.2, verbose=FALSE, ...){
   stime <- Sys.time()
   

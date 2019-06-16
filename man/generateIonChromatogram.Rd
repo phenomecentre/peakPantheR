@@ -17,8 +17,8 @@ A data.frame of retention time "rt" and aggregated intensities "int"
 \description{
 On the input raw data, aggregate intensites across the mz range at each retention time to generate an ion chromatogram: \code{sum} for EIC/TIC, \code{max}, \code{min} or \code{mean}. The number of data points returned correspond to the number of unique scans/retention time measurements in the input data
 }
-\examples{
-\dontrun{
+\details{
+## Examples cannot be computed as the function is not exported:
 ## Input data points
 in_rt   <- c(3362.102, 3362.102, 3363.667, 3363.667, 3365.232, 3365.232, 3366.797, 3366.797,
              3368.362, 3368.362)
@@ -35,5 +35,4 @@ EIC
 # 3 3365.232 138288
 # 4 3366.797 233920
 # 5 3368.362 376448
-}
 }

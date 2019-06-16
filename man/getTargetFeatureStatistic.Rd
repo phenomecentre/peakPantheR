@@ -42,8 +42,8 @@ A \code{data.frame} with measured compounds as rows and measurements and propert
 \description{
 Calculate the ppm error, retention time deviation, tailing factor and asymmetry factor for each measured feature.
 }
-\examples{
-\dontrun{
+\details{
+## Examples cannot be computed as the function is not exported:
 # fittedCurve
 cFit1           <- list(amplitude=162404.8057918259, center=3341.888,
                         sigma=0.078786133031045896, gamma=0.0018336101984172684,
@@ -82,5 +82,4 @@ peakStatistics
 #   ppm_error rt_dev_sec tailingFactor asymmetryFactor
 # 1        0      1.947      1.015385        1.026886
 # 2        0      0.949      1.005372        1.009304
-}
 }

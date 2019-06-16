@@ -47,8 +47,8 @@ A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as ro
 \description{
 For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 8 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned and the peak fit rejected. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz would be NA, the peak is rejected). If any of the two following ratio are superior to \code{maxApexResidualRatio}, the fit is rejected: 1) ratio of fit residuals at the apex (predicted apex fit intensity vs measured apex intensity: fit overshoots the apex), 2) ratio of predicted apex fit intensity vs maximum measured peak intensity (fit misses the real apex in the peak).
 }
-\examples{
-\dontrun{
+\details{
+## Examples cannot be computed as the function is not exported:
 ## Load data
 library(faahKO)
 library(MSnbase)
@@ -122,5 +122,4 @@ foundPeaks
 # 
 # attr(,"class")
 # [1] "peakPantheR_curveFit"
-}
 }

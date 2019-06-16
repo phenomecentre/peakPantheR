@@ -21,8 +21,8 @@ A 'peakPantheR_curveFit': a list of fitted curve parameters, \code{fitStatus} fr
 \description{
 Fit different curve models using minpack. Fitting parameters can be passed or guessed.
 }
-\examples{
-\dontrun{
+\details{
+## Examples cannot be computed as the function is not exported:
 ## x is retention time, y corresponding intensity
 input_x  <- c(3362.102, 3363.667, 3365.232, 3366.797, 3368.362, 3369.927, 3371.492, 3373.057,
              3374.622, 3376.187, 3377.752, 3379.317, 3380.882, 3382.447, 3384.012, 3385.577,
@@ -59,5 +59,4 @@ fitted_curve
 #
 # attr(,"class")
 # [1] "peakPantheR_curveFit"
-}
 }

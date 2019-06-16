@@ -6,8 +6,8 @@
 #'
 #' @return A data.frame of retention time "rt" and aggregated intensities "int"
 #' 
-#' @examples
-#' \dontrun{
+#' @details
+#' ## Examples cannot be computed as the function is not exported:
 #' ## Input data points
 #' in_rt   <- c(3362.102, 3362.102, 3363.667, 3363.667, 3365.232, 3365.232, 3366.797, 3366.797,
 #'              3368.362, 3368.362)
@@ -24,7 +24,6 @@
 #' # 3 3365.232 138288
 #' # 4 3366.797 233920
 #' # 5 3368.362 376448
-#' }
 generateIonChromatogram <- function(ROIDataPoint, aggregationFunction='sum') {
   
   # Check input
