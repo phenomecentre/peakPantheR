@@ -59,6 +59,6 @@ annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
 
 # temporary location
 savePath1       <- tempdir()
-outputAnnotationDiagnostic(annotation, saveFolder=savePath1, savePlots=FALSE, verbose=TRUE, ncores=0)
+outputAnnotationDiagnostic(annotation, saveFolder=savePath1, savePlots=FALSE, verbose=TRUE)
 }
 }
