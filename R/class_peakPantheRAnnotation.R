@@ -19,7 +19,7 @@
 #' @slot useFIR A logical stating if FIR are to be used
 #' @slot TIC A numeric vector of TIC or NA, of length number of spectra files
 #' @slot peakTables A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.
-#' @slot dataPoints A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row))
+#' @slot dataPoints A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row))
 #' @slot peakFit A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI
 #' @slot isAnnotated A logical stating if the annotation has taken place
 #'
@@ -48,21 +48,21 @@
 #'
 #' @return (peakPantheRAnnotation)
 #' @examples
-#' if(requireNamespace("faahKO")){
+#' if(requireNamespace('faahKO')){
 #' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
-#' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'                   system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'                   system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
+#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
-#'                          "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
+#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
 #'                          stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
 #'
 #' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
@@ -76,15 +76,15 @@
 #' #   is not annotated
 #'
 #' slotNames(annotation)
-#' # [1] "cpdID"       "cpdName"         "ROI"             "FIR"       "uROI"        "filepath"       
-#' # [7] "cpdMetadata" "spectraMetadata" "acquisitionTime" "uROIExist" "useUROI"     "useFIR"         
-#' # [13] "TIC"        "peakTables"      "dataPoints"      "peakFit"   "isAnnotated"
+#' # [1] 'cpdID'       'cpdName'         'ROI'             'FIR'       'uROI'        'filepath'       
+#' # [7] 'cpdMetadata' 'spectraMetadata' 'acquisitionTime' 'uROIExist' 'useUROI'     'useFIR'         
+#' # [13] 'TIC'        'peakTables'      'dataPoints'      'peakFit'   'isAnnotated'
 #'
 #' ## Slots shouldn't be accessed directly, accessors are available:
 #' cpdID(annotation)
-#' # [1] "ID-1" "ID-2"
+#' # [1] 'ID-1' 'ID-2'
 #' cpdName(annotation)
-#' # [1] "Cpd 1" "Cpd 2"
+#' # [1] 'Cpd 1' 'Cpd 2'
 #' ROI(annotation)
 #' #   rtMin       rt rtMax    mzMin    mz    mzMax cpdID cpdName
 #' # 1  3310 3344.888  3390 522.1948 522.2 522.2052  ID-1   Cpd 1
@@ -98,8 +98,8 @@
 #' # 1    NA NA    NA    NA NA    NA  ID-1   Cpd 1
 #' # 2    NA NA    NA    NA NA    NA  ID-2   Cpd 2
 #' filepath(annotation)
-#' # [1] "C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF" "C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF"
-#' # [2] "C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF"
+#' # [1] 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF' 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF'
+#' # [2] 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF'
 #' cpdMetadata(annotation)
 #' # data frame with 0 columns and 2 rows
 #' spectraMetadata(annotation)
@@ -147,22 +147,22 @@
 #' @import methods
 #'
 #' @export
-peakPantheRAnnotation <- setClass("peakPantheRAnnotation",
-                                  slot = c(cpdID = "character",
-                                           cpdName = "character",
-                                           ROI = "data.frame",
-                                           FIR = "data.frame",
-                                           uROI = "data.frame",
-                                           filepath = "character",
-                                           cpdMetadata = "data.frame",
-                                           spectraMetadata = "data.frame",
-                                           acquisitionTime = "character",
-                                           uROIExist = "logical",
-                                           useUROI = "logical",
-                                           useFIR = "logical",
-                                           TIC = "numeric",
-                                           peakTables = "list",
-                                           dataPoints = "list",
-                                           peakFit = "list",
-                                           isAnnotated = "logical"))
+peakPantheRAnnotation   <- setClass("peakPantheRAnnotation",
+                                slot = c(cpdID = "character",
+                                        cpdName = "character",
+                                        ROI = "data.frame",
+                                        FIR = "data.frame",
+                                        uROI = "data.frame",
+                                        filepath = "character",
+                                        cpdMetadata = "data.frame",
+                                        spectraMetadata = "data.frame",
+                                        acquisitionTime = "character",
+                                        uROIExist = "logical",
+                                        useUROI = "logical",
+                                        useFIR = "logical",
+                                        TIC = "numeric",
+                                        peakTables = "list",
+                                        dataPoints = "list",
+                                        peakFit = "list",
+                                        isAnnotated = "logical"))
 

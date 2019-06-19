@@ -8,13 +8,13 @@
 #' @param msLevel (int) the MS level at which the data should be extracted (default to MS level 1)
 #' @param verbose (bool) If TRUE message progress and warnings
 #'
-#' @return a list (one entry per window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns.
+#' @return a list (one entry per window) of data.frame with signal as row and retention time ('rt'), mass ('mz') and intensity ('int) as columns.
 #' 
 #' @details
 #' ## Examples cannot be computed as the function is not exported:
 #' ## Use a file form the faahKO package and extract datafrom a region of interest
 #' library(faahKO)
-#' rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#' rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
 #'                                    centroided=TRUE,
 #'                                    mode='onDisk')
 #' dataPoints  <- extractSignalRawData(rawSpec,
@@ -97,135 +97,152 @@
 #' # 69 3405.921 522.2 598912
 #' # 70 3407.486 522.2 595008
 #' # 71 3409.051 522.2 588416
-extractSignalRawData <- function(rawSpec, rt, mz, msLevel=1L, verbose=TRUE) {
-  stime <- Sys.time()
-  
-  ## Check input
-  # check type and dimensions
-  #   msLevel
-  if (!is.integer(msLevel)) {stop('Check input "msLevel" must be integer')}
-  #   rt
-  if (!missing(rt)) {
-    if (!is(rt, 'numeric') & !is(rt, 'matrix') & !is(rt, 'data.frame')) {stop('Check input "rt" must be numeric, matrix or data.frame')}
-    if (is(rt, 'numeric') & (length(rt) != 2)) {stop('Check input "rt" must be numeric of length 2')}
-    if (is(rt, 'matrix') | is(rt, 'data.frame')) { if (ncol(rt) != 2) {stop('Check input "rt" must be a matrix or data.frame with 2 columns')} }
-  }
-  #   mz
-  if (!missing(mz)) {
-    if (!is(mz, 'numeric') & !is(mz, 'matrix') & !is(mz, 'data.frame')) {stop('Check input "mz" must be numeric, matrix or data.frame')}
-    if (is(mz, 'numeric') & (length(mz) != 2)) {stop('Check input "mz" must be numeric of length 2')}
-    if (is(mz, 'matrix') | is(mz, 'data.frame')) { if (ncol(mz) != 2) {stop('Check input "mz" must be a matrix or data.frame with 2 columns')} }
-  }
-  #   both rt and mz have same number of rows (unless one of them has only 1 rowe)
-  if (!missing(rt) & !missing(mz)) {
-    if ((class(rt) %in% c('matrix','data.frame')) & (class(mz) %in% c('matrix','data.frame'))) {
-      if (nrow(rt) != nrow(mz)) {
-        if ((nrow(rt) != 1) & (nrow(mz) !=1)) {
-          stop('Check input "rt" and "mz" matrix or data.frame must have the same number of rows')
-        } else {
-          if (verbose) {message('"rt" or "mz" is a matrix/data.frame of 1 row, rows will be duplicated to match the other input')}
+extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE) {
+    stime <- Sys.time()
+    
+    ## Check input check type and dimensions msLevel
+    if (!is.integer(msLevel)) {
+        stop("Check input \"msLevel\" must be integer")
+    }
+    # rt
+    if (!missing(rt)) {
+        if (!is(rt, "numeric") & !is(rt, "matrix") & !is(rt, "data.frame")) {
+            stop("Check input \"rt\" must be numeric, matrix or data.frame")}
+        if (is(rt, "numeric") & (length(rt) != 2)) {
+            stop("Check input \"rt\" must be numeric of length 2")}
+        if (is(rt, "matrix") | is(rt, "data.frame")) {
+            if (ncol(rt) != 2) {
+                stop("Check input \"rt\" must be a matrix or data.frame with 2 columns")
+            }
         }
-      }
-    } 
-  }
-  
-  ##  Express rt and mz as matrix/data.frame of identical number of rows
-  # replace missing by whole range
-  if (missing(rt)) {
-    rt <- matrix(c(-Inf, Inf), ncol=2, byrow=TRUE)
-  }
-  if (missing(mz)) {
-    mz <- matrix(c(-Inf, Inf), ncol=2, byrow=TRUE)
-  }
-  # convert all numeric to matrix
-  if (is(rt, 'numeric')) {
-    rt <- matrix(rt, nrow=1, ncol=2, byrow=TRUE)
-  }
-  if (is(mz, 'numeric')) {
-    mz <- matrix(mz, nrow=1, ncol=2, byrow=TRUE)
-  }
-  # Replicate rows (if only 1) to match other
-  if (nrow(rt) == 1) {
-    rt <- matrix(rep(as.numeric(rt), nrow(mz)), ncol=2, byrow=TRUE)
-  }
-  if (nrow(mz) == 1) {
-    mz <- matrix(rep(as.numeric(mz), nrow(rt)), ncol=2, byrow=TRUE)
-  }
-    
-  ## now both rt and mz are either a matrix/data.frame of matching size
-  if (verbose) { message('Reading data from ', nrow(rt), ' windows') }
-  # empty output
-  empty_res <- lapply(vector('list', nrow(rt)), function(x) {data.frame(rt=numeric(), mz=numeric(), int=integer())})
-  
-  ## Filter msLevel
-  msFilteredSpec <- MSnbase::filterMsLevel(rawSpec, msLevel=msLevel)
-  # if msLevel doesn't exist, exit
-  if (length(msFilteredSpec) == 0) {
-    if (verbose) { message('No data exist for MS level ', msLevel) }
-    return(empty_res)
-  }
-  
-  ## Filter only scans falling into the rt of interest (across all windows)
-  file_rt       <- MSnbase::rtime(msFilteredSpec)
-  keep_scan_idx <- sort(unique(as.integer(unlist(apply(rt, MARGIN=1, function(x) {which((file_rt >= x[1]) & (file_rt <= x[2]))}), use.names=FALSE))))
-  # if no scans
-  if (length(keep_scan_idx) == 0) {
-    if (verbose) { message('No data exist for the rt provided') }
-    return(empty_res)
-  }
-  # file with only the needed scans
-  rtFilteredSpec <- msFilteredSpec[keep_scan_idx]
-  
-  # Extract only scans we need (only file access)
-  spectraData <- MSnbase::spectra(rtFilteredSpec)
-  spec_rt     <- MSnbase::rtime(rtFilteredSpec)
-  
-  ## Get data points from each window (subset rt and check mz)
-  res   <- empty_res
-  # iterage over windows
-  for (i in seq_len(nrow(rt))) {
-    
-    # subset the scans we need from the ones we have extracted
-    scans_to_keep   <- (spec_rt >= rt[i, 1]) & (spec_rt <= rt[i, 2])
-    if (!any(scans_to_keep)) {
-      if (verbose) { message('No data exist for window ', i) }
-      # move to next window (empty df was already initialised)
-      next
+    }
+    # mz
+    if (!missing(mz)) {
+        if (!is(mz, "numeric") & !is(mz, "matrix") & !is(mz, "data.frame")) {
+            stop("Check input \"mz\" must be numeric, matrix or data.frame")}
+        if (is(mz, "numeric") & (length(mz) != 2)) {
+            stop("Check input \"mz\" must be numeric of length 2")}
+        if (is(mz, "matrix") | is(mz, "data.frame")) {
+            if (ncol(mz) != 2) {
+                stop("Check input \"mz\" must be a matrix or data.frame with 2 columns")
+            }
+        }
+    }
+    # both rt and mz have same number of rows (unless one of them has only 1 rowe)
+    if (!missing(rt) & !missing(mz)) {
+        if ((class(rt) %in% c("matrix", "data.frame")) & (class(mz) %in% c("matrix", 
+            "data.frame"))) {
+            if (nrow(rt) != nrow(mz)) {
+                if ((nrow(rt) != 1) & (nrow(mz) != 1)) {
+                  stop("Check input \"rt\" and \"mz\" matrix or data.frame must have the same number of rows")
+                } else {
+                  if (verbose) {
+                    message("\"rt\" or \"mz\" is a matrix/data.frame of 1 row, rows will be duplicated to match the other input")
+                  }
+                }
+            }
+        }
     }
     
-    # only keep scans matching the window
-    scanSubset  <- spectraData[scans_to_keep]
-
-    # subset each scan based on mz and extract datapoints
-    scanDatapoint <- lapply(scanSubset, function(scan, mzScan) {
-      # filter mz
-      suppressWarnings(
-        filtScan  <- MSnbase::filterMz(scan, mzScan)
-      )
-      # extract datapoint
-      if(!filtScan@peaksCount) {
-        # no datapoints
-        data.frame(rt=numeric(), mz=numeric(), int=integer())
-      } else {
-        data.frame(rt=rep_len(filtScan@rt, length(filtScan@mz)), mz=filtScan@mz, int=filtScan@intensity)
-      }
-    }, mzScan = mz[i,])
+    ## Express rt and mz as matrix/data.frame of identical number of rows replace
+    ## missing by whole range
+    if (missing(rt)) {
+        rt <- matrix(c(-Inf, Inf), ncol = 2, byrow = TRUE)}
+    if (missing(mz)) {
+        mz <- matrix(c(-Inf, Inf), ncol = 2, byrow = TRUE)}
+    # convert all numeric to matrix
+    if (is(rt, "numeric")) {
+        rt <- matrix(rt, nrow = 1, ncol = 2, byrow = TRUE)}
+    if (is(mz, "numeric")) {
+        mz <- matrix(mz, nrow = 1, ncol = 2, byrow = TRUE)}
+    # Replicate rows (if only 1) to match other
+    if (nrow(rt) == 1) {
+        rt <- matrix(rep(as.numeric(rt), nrow(mz)), ncol = 2, byrow = TRUE)}
+    if (nrow(mz) == 1) {
+        mz <- matrix(rep(as.numeric(mz), nrow(rt)), ncol = 2, byrow = TRUE)}
     
-    # concatenate all scans data.frame
-    scanTable            <- do.call(rbind, scanDatapoint)
-    rownames(scanTable)  <- NULL
+    ## now both rt and mz are either a matrix/data.frame of matching size
+    if (verbose) {message("Reading data from ", nrow(rt), " windows")}
+    # empty output
+    empty_res <- lapply(vector("list", nrow(rt)), function(x) {
+        data.frame(rt = numeric(), mz = numeric(), int = integer())
+    })
     
-    # store results
-    res[[i]] <- scanTable
-  }
-  
-  # clear variables
-  rm(msFilteredSpec, file_rt, keep_scan_idx, rtFilteredSpec, spectraData, spec_rt, scanDatapoint, scanTable)
-  gc(verbose=FALSE)
-  
-  # Out
-  etime <- Sys.time()
-  if (verbose) { message('Data read in: ', round(as.double(difftime(etime,stime)),2),' ',units( difftime(etime,stime))) }
-  return(res)
+    ## Filter msLevel
+    msFilteredSpec <- MSnbase::filterMsLevel(rawSpec, msLevel = msLevel)
+    # if msLevel doesn't exist, exit
+    if (length(msFilteredSpec) == 0) {
+        if (verbose) {message("No data exist for MS level ", msLevel)}
+        return(empty_res)
+    }
+    
+    ## Filter only scans falling into the rt of interest (across all windows)
+    file_rt         <- MSnbase::rtime(msFilteredSpec)
+    keep_scan_idx   <- sort(unique(as.integer(unlist(apply(rt, MARGIN = 1, function(x) {
+        which((file_rt >= x[1]) & (file_rt <= x[2]))
+    }), use.names = FALSE))))
+    # if no scans
+    if (length(keep_scan_idx) == 0) {
+        if (verbose) {message("No data exist for the rt provided")}
+        return(empty_res)
+    }
+    # file with only the needed scans
+    rtFilteredSpec <- msFilteredSpec[keep_scan_idx]
+    
+    # Extract only scans we need (only file access)
+    spectraData <- MSnbase::spectra(rtFilteredSpec)
+    spec_rt     <- MSnbase::rtime(rtFilteredSpec)
+    
+    ## Get data points from each window (subset rt and check mz)
+    res <- empty_res
+    # iterage over windows
+    for (i in seq_len(nrow(rt))) {
+        
+        # subset the scans we need from the ones we have extracted
+        scans_to_keep <- (spec_rt >= rt[i, 1]) & (spec_rt <= rt[i, 2])
+        if (!any(scans_to_keep)) {
+            if (verbose) {message("No data exist for window ", i)}
+            # move to next window (empty df was already initialised)
+            next
+        }
+        
+        # only keep scans matching the window
+        scanSubset <- spectraData[scans_to_keep]
+        
+        # subset each scan based on mz and extract datapoints
+        scanDatapoint <- lapply(scanSubset, function(scan, mzScan) {
+            # filter mz
+            suppressWarnings(filtScan <- MSnbase::filterMz(scan, mzScan))
+            # extract datapoint
+            if (!filtScan@peaksCount) {
+                # no datapoints
+                data.frame(rt = numeric(), mz = numeric(), int = integer())
+            } else {
+                data.frame(rt = rep_len(filtScan@rt, length(filtScan@mz)),
+                            mz = filtScan@mz, int = filtScan@intensity)
+            }
+        }, mzScan = mz[i, ])
+        
+        # concatenate all scans data.frame
+        scanTable           <- do.call(rbind, scanDatapoint)
+        rownames(scanTable) <- NULL
+        
+        # store results
+        res[[i]] <- scanTable
+    }
+    
+    # clear variables
+    rm(msFilteredSpec, file_rt, keep_scan_idx, rtFilteredSpec, spectraData,
+        spec_rt, scanDatapoint, scanTable)
+    gc(verbose = FALSE)
+    
+    # Out
+    etime <- Sys.time()
+    if (verbose) {
+        message("Data read in: ",
+                round(as.double(difftime(etime, stime)), 2),
+                " ", units(difftime(etime, stime)))
+    }
+    return(res)
 }
 

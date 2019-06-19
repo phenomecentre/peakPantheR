@@ -26,7 +26,7 @@ peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
 \item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters (e.g. \code{curveModel}, \code{sampling}, \code{params} as a list of parameters for each ROI or 'guess',...)}
 }
 \value{
-a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{(data.frame)} targeted features results (see Details), \code{list()$curveFit} \emph{(list)} list of \code{peakPantheR_curveFit} or NA for each ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata, \code{list()$ROIsDataPoint} \emph{(list)} a list of \code{data.frame} of raw data points for each ROI (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).
+a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{(data.frame)} targeted features results (see Details), \code{list()$curveFit} \emph{(list)} list of \code{peakPantheR_curveFit} or NA for each ROI, \code{list()$acquTime} \emph{(POSIXct or NA)} date-time of sample acquisition from mzML metadata, \code{list()$ROIsDataPoint} \emph{(list)} a list of \code{data.frame} of raw data points for each ROI (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row)).
 
 \subsection{Details:}{
   The returned \emph{peakTable} \code{data.frame} is structured as follow:
@@ -55,17 +55,17 @@ a list: \code{list()$TIC} \emph{(int)} TIC value, \code{list()$peakTable} \emph{
 Report for a raw spectra the TIC, acquisition time, integrated targeted features, fitted curves and datapoints for each region of interest. Optimised to reduce the number of file access. Features not detected can be integrated using fallback integration regions (FIR).
 }
 \examples{
-if(requireNamespace("faahKO")){
+if(requireNamespace('faahKO')){
 ## Load data
 library(faahKO)
-netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = 'faahKO')
 
 ## targetFeatTable
-targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
-                         "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
+                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
                          stringsAsFactors=FALSE)
-targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
 
 res <- peakPantheR_singleFileSearch(netcdfFilePath,targetFeatTable, peakStatistic=TRUE)
@@ -116,10 +116,10 @@ res
 # [1] 2
 # 
 # $curveModel
-# [1] "skewedGaussian"
+# [1] 'skewedGaussian'
 # 
-# attr(,"class")
-# [1] "peakPantheR_curveFit"
+# attr(,'class')
+# [1] 'peakPantheR_curveFit'
 # 
 # $curveFit[[2]]
 # $amplitude
@@ -138,10 +138,10 @@ res
 # [1] 2
 # 
 # $curveModel
-# [1] "skewedGaussian"
+# [1] 'skewedGaussian'
 # 
-# attr(,"class")
-# [1] "peakPantheR_curveFit"
+# attr(,'class')
+# [1] 'peakPantheR_curveFit'
 #
 #
 # $ROIsDataPoint

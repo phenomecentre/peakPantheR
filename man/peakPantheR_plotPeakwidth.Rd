@@ -36,8 +36,8 @@ For a single ROI, plot the peak value and peakwidth (RT, m/z, ...) of detected p
 apexVal <- c(1, 2, 3, 4)
 minVal  <- c(0, 0, 2, 2)
 maxVal  <- c(2, 4, 4, 5)
-acqTime <- as.POSIXct(c("2017-07-13 21:06:14", "2017-07-14 21:06:14", 
-                        "2017-07-15 21:06:14", "2017-07-16 21:06:14"))
+acqTime <- as.POSIXct(c('2017-07-13 21:06:14', '2017-07-14 21:06:14', 
+                        '2017-07-15 21:06:14', '2017-07-16 21:06:14'))
 
 ## Plot 4 sampels with colour
 peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 

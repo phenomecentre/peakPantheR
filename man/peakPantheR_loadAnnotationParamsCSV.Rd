@@ -31,7 +31,7 @@ input_CSV[,-c(1,2,3,10,17)]  <- vapply(input_CSV[,-c(1,2,3,10,17)], as.numeric,
                                 FUN.VALUE=numeric(2))
 
 # temporary file location
-savePath1      <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+savePath1      <- tempfile(pattern='file', tmpdir=tempdir(), fileext='.csv')
 # save csv
 utils::write.csv(input_CSV, file=savePath1, row.names=FALSE)
 

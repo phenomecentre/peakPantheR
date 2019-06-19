@@ -27,24 +27,24 @@ a list: \code{list()$result} \emph{(peakPantheRAnnotation)} fully annotated obje
 Integrate all target features in all files defined in the initialised input object and store results. The use of updated ROI and the integration of FIR are controled by the input object slots \code{useUROI} and \code{useFIR}. Files are processed in parallel using \code{link{peakPantheR_singleFileSearch}}; \code{ncores} controls the number of cores used for parallelisation, with \code{ncores=0} corresponding to serial processing. If the processing of a file fails (file does not exist or error during execution) the sample is removed from the outputed object.
 }
 \examples{
-if(requireNamespace("faahKO")){
+if(requireNamespace('faahKO')){
 ## Load data
 library(faahKO)
 
 # 3 files
-input_spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+input_spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
+                        system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+                        system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 
 # 4 features
 input_ROI     <- data.frame(matrix(vector(), 4, 8,
-                                   dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt",
-                                                        "rtMax", "mzMin", "mz", "mzMax"))),
+                                   dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt',
+                                                        'rtMax', 'mzMin', 'mz', 'mzMax'))),
                                    stringsAsFactors=FALSE)
-input_ROI[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_ROI[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_ROI[3,] <- c("ID-3", "Cpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
-input_ROI[4,] <- c("ID-4", "Cpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
+input_ROI[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+input_ROI[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+input_ROI[3,] <- c('ID-3', 'Cpd 3', 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
+input_ROI[4,] <- c('ID-4', 'Cpd 4', 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
 input_ROI[,c(3:8)] <- vapply(input_ROI[,c(3:8)], as.numeric, FUN.VALUE=numeric(4))
 
 # Initialise object
@@ -60,8 +60,8 @@ result_parallelAnnotation <- peakPantheR_parallelAnnotation(initAnnotation, ncor
                                                             getAcquTime=FALSE,
                                                             verbose=TRUE)
 # Processing 4 compounds in 3 samples:
-#  uROI:	FALSE
-#  FIR:	FALSE
+#  uROI:\\tFALSE
+#  FIR:\\tFALSE
 # ----- ko15 -----
 # Polarity can not be extracted from netCDF files, please set manually the polarity
 #  with the 'polarity' method.

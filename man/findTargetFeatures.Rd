@@ -9,13 +9,13 @@ findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
   verbose = FALSE, ...)
 }
 \arguments{
-\item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns. Must match each row of ROI.}
+\item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame with signal as row and retention time ('rt'), mass ('mz') and intensity ('int) as columns. Must match each row of ROI.}
 
 \item{ROI}{(data.frame) A data.frame of compounds to target as rows. Columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float)}
 
 \item{curveModel}{(str) Name of the curve model to fit (currently \code{skewedGaussian})}
 
-\item{params}{(list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of "guess" or list of curve fit parameters}
+\item{params}{(list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of 'guess' or list of curve fit parameters}
 
 \item{sampling}{(int) Number of points to employ when subsampling the fittedCurve (rt, rtMin, rtMax, integral calculation)}
 
@@ -52,15 +52,15 @@ For each ROI, fit a curve and integrate the largest feature in the box. Each ent
 ## Load data
 library(faahKO)
 library(MSnbase)
-netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = 'faahKO')
 raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
 
 ## targetFeatTable
-targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
-                         "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
+                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
                          stringsAsFactors=FALSE)
-targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
+targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
+targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,3:8] <- vapply(targetFeatTable[,3:8], as.numeric, FUN.VALUE=numeric(2))
 
 ROIsPt         <- extractSignalRawData(raw_data, rt=targetFeatTable[,c('rtMin','rtMax')],
@@ -96,10 +96,10 @@ foundPeaks
 # [1] 2
 # 
 # $curveModel
-# [1] "skewedGaussian"
+# [1] 'skewedGaussian'
 # 
-# attr(,"class")
-# [1] "peakPantheR_curveFit"
+# attr(,'class')
+# [1] 'peakPantheR_curveFit'
 # 
 # $curveFit[[2]]
 # $amplitude
@@ -118,8 +118,8 @@ foundPeaks
 # [1] 2
 # 
 # $curveModel
-# [1] "skewedGaussian"
+# [1] 'skewedGaussian'
 # 
-# attr(,"class")
-# [1] "peakPantheR_curveFit"
+# attr(,'class')
+# [1] 'peakPantheR_curveFit'
 }

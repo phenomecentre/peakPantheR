@@ -9,7 +9,7 @@ peakPantheR_plotEICFit(ROIDataPointSampleList, curveFitSampleList = NULL,
   verbose = TRUE)
 }
 \arguments{
-\item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).}
+\item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row)).}
 
 \item{curveFitSampleList}{(list) NULL or a list of \code{peakPantheR_curveFit} (or NA) for each sample}
 
@@ -40,7 +40,7 @@ tmp_DataPoints1 <- data.frame(rt=rt1, mz=mz1, int=int1)
 # fittedCurve
 fit1            <- list(amplitude=37.068916502809756, center=999.3734222573454, 
                         sigma=0.58493182568124724, gamma=0.090582029276037035,
-                        fitStatus=2, curveModel="skewedGaussian")
+                        fitStatus=2, curveModel='skewedGaussian')
 class(fit1)     <- 'peakPantheR_curveFit'
 
 # fake sample 2
@@ -52,7 +52,7 @@ tmp_DataPoints2 <- data.frame(rt=rt2, mz=mz2, int=int2)
 # fittedCurve
 fit2            <- list(amplitude=37.073067416755556, center=1001.3736564832565,
                         sigma=0.58496485738212201, gamma=0.090553713725151905,
-                        fitStatus=2, curveModel="skewedGaussian")
+                        fitStatus=2, curveModel='skewedGaussian')
 class(fit2)     <- 'peakPantheR_curveFit'
 
 ## Plot features in 1 sample without colours

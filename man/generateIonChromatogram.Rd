@@ -7,12 +7,12 @@
 generateIonChromatogram(ROIDataPoint, aggregationFunction = "sum")
 }
 \arguments{
-\item{ROIDataPoint}{(data.frame) retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row) to use for the ion chromatogram}
+\item{ROIDataPoint}{(data.frame) retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row) to use for the ion chromatogram}
 
 \item{aggregationFunction}{(str) Function to use in order to aggregate intensities across mz in each scan. One of \code{sum}, \code{max}, \code{min}, \code{mean}}
 }
 \value{
-A data.frame of retention time "rt" and aggregated intensities "int"
+A data.frame of retention time 'rt' and aggregated intensities 'int'
 }
 \description{
 On the input raw data, aggregate intensites across the mz range at each retention time to generate an ion chromatogram: \code{sum} for EIC/TIC, \code{max}, \code{min} or \code{mean}. The number of data points returned correspond to the number of unique scans/retention time measurements in the input data

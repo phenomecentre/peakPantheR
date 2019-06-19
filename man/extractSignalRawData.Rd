@@ -18,7 +18,7 @@ extractSignalRawData(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE)
 \item{verbose}{(bool) If TRUE message progress and warnings}
 }
 \value{
-a list (one entry per window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns.
+a list (one entry per window) of data.frame with signal as row and retention time ('rt'), mass ('mz') and intensity ('int) as columns.
 }
 \description{
 Extract all signal from multiple defined mz rt window from raw data and returns a data.frame. If no rt-mz window is provided, all signal in the raw data file are returned
@@ -27,7 +27,7 @@ Extract all signal from multiple defined mz rt window from raw data and returns 
 ## Examples cannot be computed as the function is not exported:
 ## Use a file form the faahKO package and extract datafrom a region of interest
 library(faahKO)
-rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
                                    centroided=TRUE,
                                    mode='onDisk')
 dataPoints  <- extractSignalRawData(rawSpec,

@@ -9,7 +9,7 @@ plotEICDetectedPeakwidth(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin,
   curveFitSampleList = NULL, sampleColour = NULL, verbose = TRUE)
 }
 \arguments{
-\item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).}
+\item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row)).}
 
 \item{cpdID}{(str) Compound ID}
 

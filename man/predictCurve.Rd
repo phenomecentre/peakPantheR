@@ -21,7 +21,7 @@ Evaluate fitted curve values at \code{x} data points
 ## Examples cannot be computed as the function is not exported:
 ## Input a fitted curve
 fittedCurve <- list(amplitude=275371.1, center=3382.577, sigma=0.07904697, gamma=0.001147647,
-                    fitStatus=2, curveModel="skewedGaussian")
+                    fitStatus=2, curveModel='skewedGaussian')
 class(fittedCurve)  <- 'peakPantheR_curveFit'
 input_x     <- c(3290, 3300, 3310, 3320, 3330, 3340, 3350, 3360, 3370, 3380, 3390, 3400, 3410)
 

@@ -55,8 +55,8 @@ fitted_curve
 # [1] 2
 # 
 # $curveModel
-# [1] "skewedGaussian"
+# [1] 'skewedGaussian'
 #
-# attr(,"class")
-# [1] "peakPantheR_curveFit"
+# attr(,'class')
+# [1] 'peakPantheR_curveFit'
 }

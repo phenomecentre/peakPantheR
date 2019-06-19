@@ -47,25 +47,25 @@ Calculate the ppm error, retention time deviation, tailing factor and asymmetry 
 # fittedCurve
 cFit1           <- list(amplitude=162404.8057918259, center=3341.888,
                         sigma=0.078786133031045896, gamma=0.0018336101984172684,
-                        fitStatus=2, curveModel="skewedGaussian")
+                        fitStatus=2, curveModel='skewedGaussian')
 class(cFit1)    <- 'peakPantheR_curveFit'
 cFit2           <- list(amplitude=199249.10572753669, center=3382.577,
                         sigma=0.074904415304607966, gamma=0.0011471899372353885,
-                        fitStatus=2, curveModel="skewedGaussian")
+                        fitStatus=2, curveModel='skewedGaussian')
 class(cFit2)    <- 'peakPantheR_curveFit'
 input_fitCurves <- list(cFit1, cFit2)
 
-input_ROI       <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", 
-                     "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+input_ROI       <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID', 
+                     'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
                      stringsAsFactors=FALSE)
-input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.88, 3390., 522.19, 522.2, 522.21)
-input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.58, 3440., 496.19, 496.2, 496.21)
+input_ROI[1,] <- c('ID-1', 'testCpd 1', 3310., 3344.88, 3390., 522.19, 522.2, 522.21)
+input_ROI[2,] <- c('ID-2', 'testCpd 2', 3280., 3385.58, 3440., 496.19, 496.2, 496.21)
 input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(2))
 
 # foundPeakTable
 input_foundPeakTable      <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), 
-                               c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax",
-                               "peakArea", "maxIntMeasured", "maxIntPredicted"))),
+                               c('found', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax',
+                               'peakArea', 'maxIntMeasured', 'maxIntPredicted'))),
                                stringsAsFactors=FALSE)
 input_foundPeakTable[1,]  <- c(TRUE, 3309.758, 3346.827, 3385.410, 522.19, 522.2, 522.21, 
                                26133726, 889280, 901015)
