@@ -23,9 +23,9 @@
 #' 
 #' # 4 features
 #' input_ROI     <- data.frame(matrix(vector(), 4, 8,
-#'                                    dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt',
-#'                                                         'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                                    stringsAsFactors=FALSE)
+#'                     dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt',
+#'                                         'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                     stringsAsFactors=FALSE)
 #' input_ROI[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' input_ROI[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' input_ROI[3,] <- c('ID-3', 'Cpd 3', 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
@@ -275,7 +275,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores = 0,
             # in each round start a new cluster and store results
             for (iClust in seq(0, nClust - 1, 1)) {
                 if (verbose) {
-                  message("  starting cluster ", iClust + 1, "/", nClust)
+                    message("  starting cluster ", iClust + 1, "/", nClust)
                 }
                 # init
                 idxStart <- 1 + iClust * nFilesPerClust

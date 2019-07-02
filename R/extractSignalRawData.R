@@ -15,8 +15,8 @@
 #' ## Use a file form the faahKO package and extract datafrom a region of interest
 #' library(faahKO)
 #' rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                                    centroided=TRUE,
-#'                                    mode='onDisk')
+#'                                     centroided=TRUE,
+#'                                     mode='onDisk')
 #' dataPoints  <- extractSignalRawData(rawSpec,
 #'                                     rt = c(3290., 3410.), 
 #'                                     mz = c(522.194778, 522.205222), 
@@ -112,7 +112,8 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE) 
             stop("Check input \"rt\" must be numeric of length 2")}
         if (is(rt, "matrix") | is(rt, "data.frame")) {
             if (ncol(rt) != 2) {
-                stop("Check input \"rt\" must be a matrix or data.frame with 2 columns")
+                stop(paste0('Check input \"rt\" must be a matrix or data.frame',
+                            ' with 2 columns'))
             }
         }
     }
@@ -124,21 +125,25 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE) 
             stop("Check input \"mz\" must be numeric of length 2")}
         if (is(mz, "matrix") | is(mz, "data.frame")) {
             if (ncol(mz) != 2) {
-                stop("Check input \"mz\" must be a matrix or data.frame with 2 columns")
+                stop(paste0('Check input \"mz\" must be a matrix or data.frame',
+                            ' with 2 columns'))
             }
         }
     }
-    # both rt and mz have same number of rows (unless one of them has only 1 rowe)
+    # both rt and mz have same number of rows (unless one of them has only 1 row)
     if (!missing(rt) & !missing(mz)) {
-        if ((class(rt) %in% c("matrix", "data.frame")) & (class(mz) %in% c("matrix", 
-            "data.frame"))) {
+        if ((class(rt) %in% c("matrix", "data.frame")) &
+            (class(mz) %in% c("matrix", "data.frame"))) {
             if (nrow(rt) != nrow(mz)) {
                 if ((nrow(rt) != 1) & (nrow(mz) != 1)) {
-                  stop("Check input \"rt\" and \"mz\" matrix or data.frame must have the same number of rows")
+                    stop(paste0('Check input \"rt\" and \"mz\" matrix or ',
+                                'data.frame must have the same number of rows'))
                 } else {
-                  if (verbose) {
-                    message("\"rt\" or \"mz\" is a matrix/data.frame of 1 row, rows will be duplicated to match the other input")
-                  }
+                    if (verbose) {
+                        message(paste0('\"rt\" or \"mz\" is a ',
+                        'matrix/data.frame of 1 row, rows will be duplicated ',
+                        'to match the other input'))
+                    }
                 }
             }
         }
@@ -178,9 +183,10 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE) 
     
     ## Filter only scans falling into the rt of interest (across all windows)
     file_rt         <- MSnbase::rtime(msFilteredSpec)
-    keep_scan_idx   <- sort(unique(as.integer(unlist(apply(rt, MARGIN = 1, function(x) {
-        which((file_rt >= x[1]) & (file_rt <= x[2]))
-    }), use.names = FALSE))))
+    keep_scan_idx   <- sort(unique(as.integer(unlist(apply(rt, MARGIN = 1,
+        function(x) {
+            which((file_rt >= x[1]) & (file_rt <= x[2]))
+        }), use.names = FALSE))))
     # if no scans
     if (length(keep_scan_idx) == 0) {
         if (verbose) {message("No data exist for the rt provided")}

@@ -5,7 +5,7 @@
 \title{Search, integrate and report targeted features in a multiple spectra}
 \usage{
 peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
-  resetWorkers = 1, verbose = TRUE, ...)
+    resetWorkers = 1, verbose = TRUE, ...)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation object defining the samples to process and compounds to target. The slots \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR integrated if a feature is not found}
@@ -38,9 +38,9 @@ input_spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
 
 # 4 features
 input_ROI     <- data.frame(matrix(vector(), 4, 8,
-                                   dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt',
-                                                        'rtMax', 'mzMin', 'mz', 'mzMax'))),
-                                   stringsAsFactors=FALSE)
+                    dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt',
+                                        'rtMax', 'mzMin', 'mz', 'mzMax'))),
+                    stringsAsFactors=FALSE)
 input_ROI[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 input_ROI[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_ROI[3,] <- c('ID-3', 'Cpd 3', 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
@@ -121,10 +121,10 @@ result_parallelAnnotation$annotation
 }
 \seealso{
 Other peakPantheR: \code{\link{peakPantheRAnnotation}},
-  \code{\link{peakPantheR_singleFileSearch}}
+    \code{\link{peakPantheR_singleFileSearch}}
 
 Other parallelAnnotation: \code{\link{peakPantheRAnnotation}},
-  \code{\link{peakPantheR_singleFileSearch}}
+    \code{\link{peakPantheR_singleFileSearch}}
 }
 \concept{parallelAnnotation}
 \concept{peakPantheR}

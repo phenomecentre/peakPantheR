@@ -1911,8 +1911,8 @@ document.addEventListener("DOMContentLoaded", function() {
 <pre class="r"><code>library(faahKO)
 ## file paths
 input_spectraPaths  &lt;- c(system.file('cdf/KO/ko15.CDF', package = &quot;faahKO&quot;),
-                         system.file('cdf/KO/ko16.CDF', package = &quot;faahKO&quot;),
-                         system.file('cdf/KO/ko18.CDF', package = &quot;faahKO&quot;))
+                        system.file('cdf/KO/ko16.CDF', package = &quot;faahKO&quot;),
+                        system.file('cdf/KO/ko18.CDF', package = &quot;faahKO&quot;))
 input_spectraPaths
 #&gt; [1] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF&quot;
 #&gt; [2] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF&quot;
@@ -2009,8 +2009,8 @@ input_spectraMetadata  &lt;- data.frame(matrix(c(&quot;sample type 1&quot;, &quo
 <p>A <code>peakPantheRAnnotation</code> object is first initialised with the path to the files to process (<code>spectraPaths</code>), features to integrate (<code>targetFeatTable</code>) and additional information and parameters such as <code>spectraMetadata</code>, <code>uROI</code>, <code>FIR</code> and if they should be used (<code>useUROI=TRUE</code>, <code>useFIR=TRUE</code>):</p>
 <pre class="r"><code>library(peakPantheR)
 init_annotation &lt;- peakPantheRAnnotation(spectraPaths = input_spectraPaths,
-                                         targetFeatTable = input_targetFeatTable,
-                                         spectraMetadata = input_spectraMetadata)</code></pre>
+                                        targetFeatTable = input_targetFeatTable,
+                                        spectraMetadata = input_spectraMetadata)</code></pre>
 <p>The resulting <code>peakPantheRAnnotation</code> object is not annotated, does not contain and use <code>uROI</code> and <code>FIR</code></p>
 <pre class="r"><code>init_annotation
 #&gt; An object of class peakPantheRAnnotation
@@ -2029,34 +2029,34 @@ annotation_result &lt;- peakPantheR_parallelAnnotation(init_annotation, ncores=0
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.79 secs
+#&gt; Data read in: 0.64 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 #&gt; Found 2/2 features in 0.08 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.73 secs
+#&gt; Feature search done in: 1.41 secs
 #&gt; ----- ko16 -----
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 1.23 secs
+#&gt; Data read in: 0.95 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
-#&gt; Found 2/2 features in 0.05 secs
-#&gt; Peak statistics done in: 0.01 secs
+#&gt; Found 2/2 features in 0.12 secs
+#&gt; Peak statistics done in: 0.02 secs
 #&gt; Feature search done in: 1.89 secs
 #&gt; ----- ko18 -----
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.65 secs
+#&gt; Data read in: 0.88 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
-#&gt; Found 2/2 features in 0.04 secs
+#&gt; Found 2/2 features in 0.03 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.26 secs
+#&gt; Feature search done in: 1.69 secs
 #&gt; Annotation object cannot be reordered by sample acquisition date
 #&gt; ----------------
-#&gt; Parallel annotation done in: 6.05 secs
+#&gt; Parallel annotation done in: 6.78 secs
 #&gt;   0 failure(s)
 
 # successful fit
@@ -2265,12 +2265,12 @@ new_annotation &lt;- resetFIR(new_annotation)
 <h3><span class="header-section-number">3.4.2</span> Add new samples to process</h3>
 <p>Now that the fit parameters were set on 3 representative samples (e.g. QC), the same processing can be applied to all study samples. <code>resetAnnotation()</code> will reinitialise all the results and modify the samples or compounds targeted as required:</p>
 <pre class="r"><code>## new files
-new_spectraPaths  &lt;- c(system.file('cdf/KO/ko15.CDF', package = &quot;faahKO&quot;),
-                       system.file('cdf/WT/wt15.CDF', package = &quot;faahKO&quot;),
-                       system.file('cdf/KO/ko16.CDF', package = &quot;faahKO&quot;),
-                       system.file('cdf/WT/wt16.CDF', package = &quot;faahKO&quot;),
-                       system.file('cdf/KO/ko18.CDF', package = &quot;faahKO&quot;),
-                       system.file('cdf/WT/wt18.CDF', package = &quot;faahKO&quot;))
+new_spectraPaths   &lt;- c(system.file('cdf/KO/ko15.CDF', package = &quot;faahKO&quot;),
+                        system.file('cdf/WT/wt15.CDF', package = &quot;faahKO&quot;),
+                        system.file('cdf/KO/ko16.CDF', package = &quot;faahKO&quot;),
+                        system.file('cdf/WT/wt16.CDF', package = &quot;faahKO&quot;),
+                        system.file('cdf/KO/ko18.CDF', package = &quot;faahKO&quot;),
+                        system.file('cdf/WT/wt18.CDF', package = &quot;faahKO&quot;))
 
 new_spectraPaths
 #&gt; [1] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF&quot;

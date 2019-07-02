@@ -7,32 +7,32 @@
 \title{An S4 class to represent peakPantheR annotation results}
 \usage{
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
-  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin
-  = numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
-  numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
-  FIR = data.frame(rtMin = numeric(), rtMax = numeric(), mzMin =
-  numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
-  uROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
-  mzMin = numeric(), mz = numeric(), mzMax = numeric(), stringsAsFactors =
-  FALSE), filepath = character(), cpdMetadata = data.frame(),
-  spectraMetadata = data.frame(), acquisitionTime = character(),
-  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE,
-  TIC = numeric(), peakTables = list(), dataPoints = list(),
-  peakFit = list(), isAnnotated = FALSE)
+    cpdID = character(), cpdName = character(), ROI = data.frame(rtMin
+    = numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
+    numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
+    FIR = data.frame(rtMin = numeric(), rtMax = numeric(), mzMin =
+    numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
+    uROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
+    mzMin = numeric(), mz = numeric(), mzMax = numeric(), stringsAsFactors =
+    FALSE), filepath = character(), cpdMetadata = data.frame(),
+    spectraMetadata = data.frame(), acquisitionTime = character(),
+    uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE,
+    TIC = numeric(), peakTables = list(), dataPoints = list(),
+    peakFit = list(), isAnnotated = FALSE)
 
 peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
-  cpdID = character(), cpdName = character(), ROI = data.frame(rtMin
-  = numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
-  numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
-  FIR = data.frame(rtMin = numeric(), rtMax = numeric(), mzMin =
-  numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
-  uROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
-  mzMin = numeric(), mz = numeric(), mzMax = numeric(), stringsAsFactors =
-  FALSE), filepath = character(), cpdMetadata = data.frame(),
-  spectraMetadata = data.frame(), acquisitionTime = character(),
-  uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE,
-  TIC = numeric(), peakTables = list(), dataPoints = list(),
-  peakFit = list(), isAnnotated = FALSE)
+    cpdID = character(), cpdName = character(), ROI = data.frame(rtMin
+    = numeric(), rt = numeric(), rtMax = numeric(), mzMin = numeric(), mz =
+    numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
+    FIR = data.frame(rtMin = numeric(), rtMax = numeric(), mzMin =
+    numeric(), mzMax = numeric(), stringsAsFactors = FALSE),
+    uROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
+    mzMin = numeric(), mz = numeric(), mzMax = numeric(), stringsAsFactors =
+    FALSE), filepath = character(), cpdMetadata = data.frame(),
+    spectraMetadata = data.frame(), acquisitionTime = character(),
+    uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE,
+    TIC = numeric(), peakTables = list(), dataPoints = list(),
+    peakFit = list(), isAnnotated = FALSE)
 }
 \arguments{
 \item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
@@ -83,7 +83,7 @@ The \code{peakPantheRAnnotation} class is designed to run and store peakPantheR 
 }
 \details{
 The \code{validObject} method ensures the conformity of an object to the \code{peakPantheRAnnotation-class}. The number of compounds is based on \code{cpdID()} length, and the number of samples is based on \code{filepath()} length. Slot type is not checked as \code{setClass} enforces it. peakTables and EICs type are checked on the first list element.
-         \code{annotationTable(object, column)} where \emph{column} is a column from \emph{peakTable}, returns a data.frame of values with the samples as rows, ROI as columns.
+\code{annotationTable(object, column)} where \emph{column} is a column from \emph{peakTable}, returns a data.frame of values with the samples as rows, ROI as columns.
 }
 \section{Slots}{
 
@@ -123,26 +123,26 @@ The \code{validObject} method ensures the conformity of an object to the \code{p
 \item{\code{isAnnotated}}{A logical stating if the annotation has taken place
 
 \subsection{Details:}{
-  The \emph{peakTables} \code{data.frame} are structured as follow:
-  \tabular{ll}{
-    cpdID \tab database compound ID\cr
-    cpdName \tab compound name\cr
-    found \tab was the peak found\cr
-    rt \tab retention time of peak apex (sec)\cr
-    rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    mz \tab weighted (by intensity) mean of peak m/z across scans\cr
-    mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
-    mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
-    peakArea \tab integrated peak area\cr
-    maxIntMeasured \tab maximum peak intensity in raw data\cr
-    maxIntPredicted \tab maximum peak intensity based on curve fit\cr
-    is_filled \tab Logical indicate if the feature was integrated using FIR (Fallback Integration Region)\cr
-    ppm_error \tab difference in ppm between the expected and measured m/z\cr
-    rt_dev_sec \tab difference in seconds between the expected and measured rt\cr
-    tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
-    asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
-  }
+The \emph{peakTables} \code{data.frame} are structured as follow:
+\tabular{ll}{
+cpdID \tab database compound ID\cr
+cpdName \tab compound name\cr
+found \tab was the peak found\cr
+rt \tab retention time of peak apex (sec)\cr
+rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+mz \tab weighted (by intensity) mean of peak m/z across scans\cr
+mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
+mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
+peakArea \tab integrated peak area\cr
+maxIntMeasured \tab maximum peak intensity in raw data\cr
+maxIntPredicted \tab maximum peak intensity based on curve fit\cr
+is_filled \tab Logical indicate if the feature was integrated using FIR (Fallback Integration Region)\cr
+ppm_error \tab difference in ppm between the expected and measured m/z\cr
+rt_dev_sec \tab difference in seconds between the expected and measured rt\cr
+tailingFactor \tab the tailing factor is a measure of peak tailing.It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
+asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
+}
 }}
 }}
 
@@ -153,13 +153,13 @@ if(requireNamespace('faahKO')){
 # Paths to spectra files
 library(faahKO)
 spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-                  system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-                  system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+                    system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+                    system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 
 # targetFeatTable
-targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-                         stringsAsFactors=FALSE)
+targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
+                    'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+                    stringsAsFactors=FALSE)
 targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -241,10 +241,10 @@ isAnnotated(annotation)
 }
 \seealso{
 Other peakPantheR: \code{\link{peakPantheR_parallelAnnotation}},
-  \code{\link{peakPantheR_singleFileSearch}}
+    \code{\link{peakPantheR_singleFileSearch}}
 
 Other parallelAnnotation: \code{\link{peakPantheR_parallelAnnotation}},
-  \code{\link{peakPantheR_singleFileSearch}}
+    \code{\link{peakPantheR_singleFileSearch}}
 }
 \concept{parallelAnnotation}
 \concept{peakPantheR}

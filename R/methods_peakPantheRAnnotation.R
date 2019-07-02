@@ -75,13 +75,13 @@ setGeneric("cpdID", function(object, ...) standardGeneric("cpdID"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -110,13 +110,13 @@ setGeneric("cpdName", function(object, ...) standardGeneric("cpdName"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -145,13 +145,13 @@ setGeneric("ROI", function(object, ...) standardGeneric("ROI"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -185,13 +185,13 @@ setGeneric("uROI", function(object, ...) standardGeneric("uROI"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -226,13 +226,13 @@ setGeneric("FIR", function(object, ...) standardGeneric("FIR"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -267,13 +267,13 @@ setGeneric("filepath", function(object, ...) standardGeneric("filepath"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -303,13 +303,13 @@ setGeneric("cpdMetadata",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -340,13 +340,13 @@ setGeneric("spectraMetadata",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -377,13 +377,13 @@ setGeneric("acquisitionTime",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -413,13 +413,13 @@ setGeneric("uROIExist", function(object, ...) standardGeneric("uROIExist"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -448,13 +448,13 @@ setGeneric("useUROI", function(object, ...) standardGeneric("useUROI"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -483,13 +483,13 @@ setGeneric("useFIR", function(object, ...) standardGeneric("useFIR"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -518,13 +518,13 @@ setGeneric("TIC", function(object, ...) standardGeneric("TIC"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -554,13 +554,13 @@ setGeneric("peakTables", function(object, ...) standardGeneric("peakTables"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -605,13 +605,13 @@ setGeneric("dataPoints", function(object, ...) standardGeneric("dataPoints"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -646,13 +646,13 @@ setGeneric("peakFit", function(object, ...) standardGeneric("peakFit"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -687,13 +687,13 @@ setGeneric("isAnnotated", function(object, ...) standardGeneric("isAnnotated"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -722,13 +722,13 @@ setGeneric("nbSamples", function(object, ...) standardGeneric("nbSamples"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -757,13 +757,13 @@ setGeneric("nbCompounds", function(object, ...) standardGeneric("nbCompounds"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -795,13 +795,13 @@ setGeneric("annotationTable",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -874,13 +874,13 @@ setGeneric("EICs",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -921,13 +921,13 @@ setGeneric("filename", function(object, ...) standardGeneric("filename"))
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -1067,13 +1067,13 @@ setGeneric("annotationParamsDiagnostic",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -1300,13 +1300,13 @@ setGeneric("annotationDiagnosticPlots",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -1320,8 +1320,8 @@ setGeneric("annotationDiagnosticPlots",
 #' # [[2]]
 #' # NULL
 #' }
-setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation", function(object, 
-    sampleColour, sampling, verbose) {
+setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
+    function(object, sampleColour, sampling, verbose) {
     # Init
     nbCpd <- nbCompounds(object)
     outList <- vector("list", nbCpd)
@@ -1431,13 +1431,13 @@ setGeneric("outputAnnotationDiagnostic",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -1446,7 +1446,7 @@ setGeneric("outputAnnotationDiagnostic",
 #'
 #' # Calculate annotation
 #' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
-#'                                                   getAcquTime=FALSE, verbose=FALSE)$annotation
+#'                                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 #'
 #' # temporary location
 #' savePath1       <- tempdir()
@@ -1564,13 +1564,13 @@ setGeneric("outputAnnotationResult",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
@@ -1579,7 +1579,7 @@ setGeneric("outputAnnotationResult",
 #'
 #' # Calculate annotation
 #' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
-#'                                                   getAcquTime=FALSE, verbose=FALSE)$annotation
+#'                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 #'
 #' # temporary location
 #' savePath1       <- tempdir()
@@ -1717,18 +1717,18 @@ setGeneric("resetAnnotation",
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                   system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
 #'
 #' smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths, 
-#'                                           targetFeatTable=targetFeatTable)
+#'                                         targetFeatTable=targetFeatTable)
 #' smallAnnotation
 #' # An object of class peakPantheRAnnotation
 #' #  2 compounds in 2 samples.
@@ -1739,8 +1739,8 @@ setGeneric("resetAnnotation",
 #'
 #' # Reset and change number of spectra
 #' newSpectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                       system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                       system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #' largerAnnotation <- resetAnnotation(smallAnnotation, spectraPaths=newSpectraPaths, verbose=TRUE)
 #' largerAnnotation
 #' # An object of class peakPantheRAnnotation
@@ -2030,20 +2030,22 @@ setGeneric("resetFIR",
 #' ## Initialise a peakPantheRAnnotation object with 2 targeted compounds
 #'
 #' ## targetFeatTable
-#' input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, 
-#'                              dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax',
-#'                              'mzMin', 'mz', 'mzMax'))), stringsAsFactors=FALSE)
+#' input_targetFeatTable <- data.frame(matrix(vector(), 2, 8,
+#'                             dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin',
+#'                             'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                             stringsAsFactors=FALSE)
 #' input_targetFeatTable[1,] <- c('ID-1', 'Cpd 1',  3.,  1.,  4.,  5.,  2.,  6.)
 #' input_targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 19., 17., 20., 21., 18., 22.)
 #' input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 #' ## FIR
 #' input_FIR       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), 
-#'                    c('rtMin', 'rtMax', 'mzMin', 'mzMax'))), stringsAsFactors=FALSE)
+#'                                 c('rtMin', 'rtMax', 'mzMin', 'mzMax'))),
+#'                                 stringsAsFactors=FALSE)
 #' input_FIR[1,]   <- c(13., 14., 15., 16.)
 #' input_FIR[2,]   <- c(29., 30., 31., 32.)
 #'
 #' annotation      <- peakPantheRAnnotation(targetFeatTable = input_targetFeatTable,
-#'                                          FIR = input_FIR, uROIExist = FALSE)
+#'                                         FIR = input_FIR, uROIExist = FALSE)
 #'
 #' ## Reset FIR with ROI values as uROI are not set
 #' updatedAnnotation <- resetFIR(annotation, verbose=TRUE)

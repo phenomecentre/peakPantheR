@@ -8,10 +8,10 @@
 Reset a peakPantheRAnnotation (remove results and set \code{isAnnotated=FALSE}). If a different number of samples (\code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the object will be initialised to the new size. For input values left as NULL, the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI}, \code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI}, \code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist}, \code{useUROI} and \code{useFIR}) will be filled with values from \code{previousAnnotation}.}
 \usage{
 \S4method{resetAnnotation}{peakPantheRAnnotation}(previousAnnotation,
-  spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL,
-  FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL,
-  uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE,
-  ...)
+    spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL,
+    FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL,
+    uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE,
+    ...)
 }
 \arguments{
 \item{previousAnnotation}{(peakPantheRAnnotation) object to reset}
@@ -52,18 +52,18 @@ if(requireNamespace('faahKO')){
 # Paths to spectra files
 library(faahKO)
 spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-                  system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
+                    system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
 
 # targetFeatTable
 targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-                         stringsAsFactors=FALSE)
+                        'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+                        stringsAsFactors=FALSE)
 targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
 
 smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths, 
-                                          targetFeatTable=targetFeatTable)
+                                        targetFeatTable=targetFeatTable)
 smallAnnotation
 # An object of class peakPantheRAnnotation
 #  2 compounds in 2 samples.
@@ -74,8 +74,8 @@ smallAnnotation
 
 # Reset and change number of spectra
 newSpectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-                      system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-                      system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+                    system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+                    system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 largerAnnotation <- resetAnnotation(smallAnnotation, spectraPaths=newSpectraPaths, verbose=TRUE)
 largerAnnotation
 # An object of class peakPantheRAnnotation

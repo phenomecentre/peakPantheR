@@ -21,7 +21,7 @@ On the input raw data, aggregate intensites across the mz range at each retentio
 ## Examples cannot be computed as the function is not exported:
 ## Input data points
 in_rt   <- c(3362.102, 3362.102, 3363.667, 3363.667, 3365.232, 3365.232, 3366.797, 3366.797,
-             3368.362, 3368.362)
+            3368.362, 3368.362)
 in_mz   <- c(496.2, 497.2, 496.2, 497.2, 496.2, 497.2, 496.2, 497.2, 496.2, 497.2)
 in_int  <- c(39616, 11432, 63344, 18224, 107352, 30936, 182144, 51776, 295232, 81216)
 input_ROIDataPoints <- data.frame(rt=in_rt, mz=in_mz, int=in_int)

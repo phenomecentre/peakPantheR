@@ -3,15 +3,15 @@ title: "Real Time Annotation"
 date: "2019-06-09"
 package: peakPantheR
 output:
-  BiocStyle::html_document:
-    toc_float: true
+    BiocStyle::html_document:
+        toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Real Time Annotation}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle}
-  %\VignettePackage{peakPantheR}
-  %\VignetteKeywords{mass spectrometry, metabolomics}
+    %\VignetteIndexEntry{Real Time Annotation}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle}
+    %\VignettePackage{peakPantheR}
+    %\VignetteKeywords{mass spectrometry, metabolomics}
 ---
 
 ```{r biocstyle, echo = FALSE, results = "asis" }
@@ -19,8 +19,8 @@ BiocStyle::markdown()
 ```
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 ```
 
@@ -49,15 +49,15 @@ Using the `r Biocpkg("faahKO")` raw MS dataset as an example, this vignette will
 
 ## Abbreviations
 - **ROI**: _Regions Of Interest_ 
-  * reference _RT_ / _m/z_ windows in which to search for a feature
+    * reference _RT_ / _m/z_ windows in which to search for a feature
 - **uROI**: _updated Regions Of Interest_
-  * modifed ROI adapted to the current dataset which override the reference ROI
+    * modifed ROI adapted to the current dataset which override the reference ROI
 - **FIR**: _Fallback Integration Regions_ 
-  * _RT_ / _m/z_ window to integrate if no peak is found
+    * _RT_ / _m/z_ window to integrate if no peak is found
 - **TIC**: _Total Ion Chromatogram_ 
-  * the intensities summed across all masses for each scan 
+    * the intensities summed across all masses for each scan
 - **EIC**: _Extracted Ion Chromatogram_ 
-  * the intensities summed over a mass range, for each scan
+    * the intensities summed over a mass range, for each scan
 
 
 # Real Time Annotation Concept
@@ -128,9 +128,9 @@ pander::pandoc.table(input_targetFeatTable, digits = 9)
 ```{r}
 library(peakPantheR)
 annotation <- peakPantheR_singleFileSearch(singleSpectraDataPath = input_spectraPath,
-                                           targetFeatTable = input_targetFeatTable,
-                                           peakStatistic = TRUE,
-                                           verbose = TRUE)
+                                            targetFeatTable = input_targetFeatTable,
+                                            peakStatistic = TRUE,
+                                            verbose = TRUE)
 ```
 ```{r}
 annotation$TIC

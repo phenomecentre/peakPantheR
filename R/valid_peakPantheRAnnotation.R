@@ -40,34 +40,34 @@ valid_peakPantheRAnnotation <- function(object) {
             # ROI column type
             if (nbCpd >= 1) {
                 if (!is.numeric(object@ROI$rtMin[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("ROI$rtMin should be numeric, not ",
-                            typeof(object@ROI$rtMin[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("ROI$rtMin should be numeric, not ",
+                                        typeof(object@ROI$rtMin[1])))
                 }
                 if (!is.numeric(object@ROI$rt[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("ROI$rt should be numeric, not ",
-                            typeof(object@ROI$rt[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("ROI$rt should be numeric, not ",
+                                        typeof(object@ROI$rt[1])))
                 }
                 if (!is.numeric(object@ROI$rtMax[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("ROI$rtMax should be numeric, not ",
-                            typeof(object@ROI$rtMax[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("ROI$rtMax should be numeric, not ",
+                                        typeof(object@ROI$rtMax[1])))
                 }
                 if (!is.numeric(object@ROI$mzMin[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("ROI$mzMin should be numeric, not ",
-                            typeof(object@ROI$mzMin[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("ROI$mzMin should be numeric, not ",
+                                        typeof(object@ROI$mzMin[1])))
                 }
                 if (!is.numeric(object@ROI$mz[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("ROI$mz should be numeric, not ",
-                            typeof(object@ROI$mz[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("ROI$mz should be numeric, not ",
+                                        typeof(object@ROI$mz[1])))
                 }
                 if (!is.numeric(object@ROI$mzMax[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("ROI$mzMax should be numeric, not ",
-                            typeof(object@ROI$mzMax[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("ROI$mzMax should be numeric, not ",
+                                        typeof(object@ROI$mzMax[1])))
                 }
             }
         }
@@ -77,7 +77,7 @@ valid_peakPantheRAnnotation <- function(object) {
     if (dim(object@FIR)[1] != nbCpd) {
         valid <- FALSE
         msg <- c(msg, paste0("FIR has ", dim(object@FIR)[1],
-                " rows (compound). Should be ", nbCpd))
+                            " rows (compound). Should be ", nbCpd))
     }
     # FIR number of columns
     if (dim(object@FIR)[2] != 4) {
@@ -86,8 +86,8 @@ valid_peakPantheRAnnotation <- function(object) {
         " columns. Should be 4 (\"rtMin\", \"rtMax\", \"mzMin\", \"mzMax\")"))
     } else {
         # FIR column names
-        if (!all(colnames(object@FIR) %in% c("rtMin", "rtMax", "mzMin",
-                                            "mzMax"))) {
+        if (!all(colnames(object@FIR) %in%
+            c("rtMin", "rtMax", "mzMin", "mzMax"))) {
             valid <- FALSE
             msg <- c(msg, paste0('FIR columns should be \"rtMin\", \"rtMax\", ',
                                 '\"mzMin\", \"mzMax\", not ',
@@ -96,24 +96,24 @@ valid_peakPantheRAnnotation <- function(object) {
             # FIR column type
             if (nbCpd >= 1) {
                 if (!is.numeric(object@FIR$rtMin[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("FIR$rtMin should be numeric, not ",
-                            typeof(object@FIR$rtMin[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("FIR$rtMin should be numeric, not ",
+                                        typeof(object@FIR$rtMin[1])))
                 }
                 if (!is.numeric(object@FIR$rtMax[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("FIR$rtMax should be numeric, not ",
-                            typeof(object@FIR$rtMax[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("FIR$rtMax should be numeric, not ",
+                                        typeof(object@FIR$rtMax[1])))
                 }
                 if (!is.numeric(object@FIR$mzMin[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("FIR$mzMin should be numeric, not ",
-                            typeof(object@FIR$mzMin[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("FIR$mzMin should be numeric, not ",
+                                        typeof(object@FIR$mzMin[1])))
                 }
                 if (!is.numeric(object@FIR$mzMax[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("FIR$mzMax should be numeric, not ",
-                            typeof(object@FIR$mzMax[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("FIR$mzMax should be numeric, not ",
+                                        typeof(object@FIR$mzMax[1])))
                 }
             }
         }
@@ -123,7 +123,7 @@ valid_peakPantheRAnnotation <- function(object) {
     if (dim(object@uROI)[1] != nbCpd) {
         valid <- FALSE
         msg <- c(msg, paste0("uROI has ", dim(object@uROI)[1],
-                " rows (compound). Should be ", nbCpd))
+                            " rows (compound). Should be ", nbCpd))
     }
     # uROI number of columns
     if (dim(object@uROI)[2] != 6) {
@@ -142,34 +142,34 @@ valid_peakPantheRAnnotation <- function(object) {
             # uROI column type
             if (nbCpd >= 1) {
                 if (!is.numeric(object@uROI$rtMin[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("uROI$rtMin should be numeric, not ",
-                            typeof(object@uROI$rtMin[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("uROI$rtMin should be numeric, not ",
+                                        typeof(object@uROI$rtMin[1])))
                 }
                 if (!is.numeric(object@uROI$rt[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("uROI$rt should be numeric, not ",
-                            typeof(object@uROI$rt[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("uROI$rt should be numeric, not ",
+                                        typeof(object@uROI$rt[1])))
                 }
                 if (!is.numeric(object@uROI$rtMax[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("uROI$rtMax should be numeric, not ",
-                            typeof(object@uROI$rtMax[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("uROI$rtMax should be numeric, not ",
+                                        typeof(object@uROI$rtMax[1])))
                 }
                 if (!is.numeric(object@uROI$mzMin[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("uROI$mzMin should be numeric, not ",
-                            typeof(object@uROI$mzMin[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("uROI$mzMin should be numeric, not ",
+                                        typeof(object@uROI$mzMin[1])))
                 }
                 if (!is.numeric(object@uROI$mz[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("uROI$mz should be numeric, not ",
-                            typeof(object@uROI$mz[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("uROI$mz should be numeric, not ",
+                                        typeof(object@uROI$mz[1])))
                 }
                 if (!is.numeric(object@uROI$mzMax[1])) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("uROI$mzMax should be numeric, not ",
-                            typeof(object@uROI$mzMax[1])))
+                    valid <- FALSE
+                    msg <- c(msg, paste0("uROI$mzMax should be numeric, not ",
+                                        typeof(object@uROI$mzMax[1])))
                 }
             }
         }
@@ -186,8 +186,8 @@ valid_peakPantheRAnnotation <- function(object) {
     if (dim(object@spectraMetadata)[1] != nbSample) {
         valid <- FALSE
         msg <- c(msg, paste0("spectraMetadata has ",
-                        dim(object@spectraMetadata)[1],
-                        " rows (spectra). Should be ", nbSample))
+                            dim(object@spectraMetadata)[1],
+                            " rows (spectra). Should be ", nbSample))
     }
     
     # number of acquisitionTime
@@ -225,47 +225,48 @@ valid_peakPantheRAnnotation <- function(object) {
             if (!all(peakTables_isNULL)) {
                 # if one peakTable is nuLL but not all, raise an error
                 if (any(peakTables_isNULL)) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0('peakTables must all either be ',
+                    valid <- FALSE
+                    msg <- c(msg, paste0('peakTables must all either be ',
                                         'data.frame or NULL'))
                 } else {
-                  # individual peakTable is data.frame
-                  if (!is.data.frame(object@peakTables[[1]])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0('peakTables must be data.frame or ',
-                            'NULL not ', typeof(object@peakTables[[1]])))
-                  } else {
-                    # individual peakTable data.frame number of rows
-                    if (dim(object@peakTables[[1]])[1] != nbCpd) {
-                      valid <- FALSE
-                      msg <- c(msg, paste0("peakTables[[1]] has ",
-                                dim(object@peakTables[[1]])[1],
-                                " rows (compounds). Should be ", nbCpd))
-                    }
-                    # individual peakTable data.frame number of columns
-                    if (dim(object@peakTables[[1]])[2] != 15) {
-                      valid <- FALSE
-                      msg <- c(msg, paste0("peakTables[[1]] has ",
-                                dim(object@peakTables[[1]])[2],
-                                " columns. Should be 15"))
-                    } else {
-                      # individual peakTable data.frame column names
-                      if (!all(colnames(object@peakTables[[1]]) %in% c("found",
-                        "rt", "rtMin", "rtMax", "mz", "mzMin", "mzMax",
-                        "peakArea", "maxIntMeasured", "maxIntPredicted",
-                        "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor",
-                        "asymmetryFactor"))) {
+                    # individual peakTable is data.frame
+                    if (!is.data.frame(object@peakTables[[1]])) {
                         valid <- FALSE
-                        msg <- c(msg, paste0("peakTables[[1]] columns should be",
-                            " 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', ",
-                            "'mzMax', 'peakArea', 'maxIntMeasured', ",
-                            "'maxIntPredicted', 'is_filled', 'ppm_error', ",
-                            "'rt_dev_sec', 'tailingFactor', 'asymmetryFactor',",
-                            " not ", paste(colnames(object@peakTables[[1]]),
-                                collapse = " ")))
-                      }
+                        msg <- c(msg, paste0('peakTables must be data.frame or ',
+                                'NULL not ', typeof(object@peakTables[[1]])))
+                    } else {
+                        # individual peakTable data.frame number of rows
+                        if (dim(object@peakTables[[1]])[1] != nbCpd) {
+                            valid <- FALSE
+                            msg <- c(msg, paste0("peakTables[[1]] has ",
+                                            dim(object@peakTables[[1]])[1],
+                                        " rows (compounds). Should be ", nbCpd))
+                        }
+                        # individual peakTable data.frame number of columns
+                        if (dim(object@peakTables[[1]])[2] != 15) {
+                            valid <- FALSE
+                            msg <- c(msg, paste0("peakTables[[1]] has ",
+                                                dim(object@peakTables[[1]])[2],
+                                                " columns. Should be 15"))
+                        } else {
+                            # individual peakTable data.frame column names
+                            if (!all(colnames(object@peakTables[[1]]) %in%
+                            c("found", "rt", "rtMin", "rtMax", "mz", "mzMin",
+                            "mzMax", "peakArea", "maxIntMeasured",
+                            "maxIntPredicted", "is_filled", "ppm_error",
+                            "rt_dev_sec", "tailingFactor", "asymmetryFactor"))){
+                                valid <- FALSE
+                                msg <- c(msg, paste0("peakTables[[1]] columns ",
+                                    "should be 'found', 'rt', 'rtMin', ",
+                                    "'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea',",
+                                    " 'maxIntMeasured', 'maxIntPredicted', ",
+                                    "'is_filled', 'ppm_error', 'rt_dev_sec', ",
+                                    "'tailingFactor', 'asymmetryFactor', not ",
+                                    paste(colnames(object@peakTables[[1]]),
+                                    collapse = " ")))
+                            }
+                        }
                     }
-                  }
                 }
             }
         }
@@ -285,53 +286,59 @@ valid_peakPantheRAnnotation <- function(object) {
             if (!all(dataPoints_isNULL)) {
                 # if one dataPoints is NULL but not all, raise an error
                 if (any(dataPoints_isNULL)) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("dataPoints must all either be list of ",
-                                        "ROI data points or NULL"))
-                } else {
-                  # individual dataPoints is list
-                  if (!(is.list(object@dataPoints[[1]]))) {
                     valid <- FALSE
-                    msg <- c(msg, paste0("dataPoints[[1]] must be a list of ROI",
-                        " data points, not ",paste(class(object@dataPoints[[1]]),
-                        collapse = " ")))
-                  } else {
-                    # individual dataPoints has entry for each compound (ROI)
-                    if (length(object@dataPoints[[1]]) != nbCpd) {
-                      valid <- FALSE
-                      msg <- c(msg, paste0("dataPoints[[1]] contains, ",
-                                length(object@dataPoints[[1]]),
-                                " dataPoints (compound). Should be ", nbCpd))
+                    msg <- c(msg, paste0("dataPoints must all either be list ",
+                                        "of ROI data points or NULL"))
+                } else {
+                    # individual dataPoints is list
+                    if (!(is.list(object@dataPoints[[1]]))) {
+                        valid <- FALSE
+                        msg <- c(msg, paste0("dataPoints[[1]] must be a list ",
+                            "of ROI data points, not ",paste(class(
+                            object@dataPoints[[1]]), collapse = " ")))
                     } else {
-                      if (nbCpd >= 1) {
-                        # individual dataPoints compound entry is data.frame
-                        if (!is.data.frame(object@dataPoints[[1]][[1]])) {
-                          valid <- FALSE
-                          msg <- c(msg, paste0("dataPoints[[1]][[1]] must be a",
-                                " data.frame, not ",
-                                class(object@dataPoints[[1]][[1]])))
-                        } else {
-                          # individual peakTable data.frame number of columns
-                          if (dim(object@dataPoints[[1]][[1]])[2] != 3) {
+                        # individual dataPoints has entry for each compound (ROI)
+                        if (length(object@dataPoints[[1]]) != nbCpd) {
                             valid <- FALSE
-                            msg <- c(msg, paste0("dataPoints[[1]][[1]] has ",
-                                        dim(object@dataPoints[[1]][[1]])[2],
-                                        " columns. Should be 3"))
-                          } else {
-                            # individual peakTable data.frame column names
-                            if (!all(colnames(object@dataPoints[[1]][[1]]) %in%
-                                c("rt", "mz", "int"))) {
-                              valid <- FALSE
-                              msg <- c(msg,paste0("dataPoints[[1]][[1]] columns",
-                                    " should be 'rt', 'mz', 'int', not ",
-                                    paste(colnames(object@dataPoints[[1]][[1]]),
-                                    collapse = " ")))
+                            msg <- c(msg, paste0("dataPoints[[1]] contains, ",
+                                    length(object@dataPoints[[1]]),
+                                    " dataPoints (compound). Should be ",nbCpd))
+                        } else {
+                            if (nbCpd >= 1) {
+                                # individual dataPoints compound entry is
+                                # data.frame
+                                if (!is.data.frame(object@dataPoints[[1]][[1]])){
+                                    valid <- FALSE
+                                    msg <- c(msg, paste0("dataPoints[[1]][[1]]",
+                                                " must be a data.frame, not ",
+                                            class(object@dataPoints[[1]][[1]])))
+                                } else {
+                                    # individual peakTable data.frame number of
+                                    # columns
+                                    if (dim(object@dataPoints[[1]][[1]])[2]!=3){
+                                        valid <- FALSE
+                                        msg <- c(msg,
+                                            paste0("dataPoints[[1]][[1]] has ",
+                                            dim(object@dataPoints[[1]][[1]])[2],
+                                            " columns. Should be 3"))
+                                    } else {
+                                    # individual peakTable data.frame column names
+                                        if (!all(colnames(
+                                            object@dataPoints[[1]][[1]]) %in%
+                                            c("rt", "mz", "int"))) {
+                                            valid <- FALSE
+                                            msg <- c(msg,
+                                                paste0("dataPoints[[1]][[1]] ",
+                                                "columns should be 'rt', 'mz',",
+                                                " 'int', not ", paste(colnames(
+                                                    object@dataPoints[[1]][[1]]),
+                                                    collapse = " ")))
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      }
                     }
-                  }
                 }
             }
         }
@@ -351,37 +358,41 @@ valid_peakPantheRAnnotation <- function(object) {
             if (!all(peakFit_isNULL)) {
                 # if one peakFit is NULL but not all, raise an error
                 if (any(peakFit_isNULL)) {
-                  valid <- FALSE
-                  msg <- c(msg, paste0("peakFit must all either be list of ROI",
-                                        " curveFit or NULL"))
-                } else {
-                  # individual peakFit is list
-                  if (!(is.list(object@peakFit[[1]]))) {
                     valid <- FALSE
-                    msg <- c(msg, paste0("peakFit[[1]] must be a list of ROI ",
-                            "curveFit or NA, not ",
-                            paste(class(object@peakFit[[1]]), collapse = " ")))
-                  } else {
-                    # individual peakFit has entry for each compound (ROI)
-                    if (length(object@peakFit[[1]]) != nbCpd) {
-                      valid <- FALSE
-                      msg <- c(msg, paste0("peakFit[[1]] contains, ",
-                        length(object@peakFit[[1]]), " peakPantheR_curveFit or",
-                        " NA (compound). Should be ", nbCpd))
+                    msg <- c(msg, paste0("peakFit must all either be list of ",
+                                        "ROI curveFit or NULL"))
+                } else {
+                    # individual peakFit is list
+                    if (!(is.list(object@peakFit[[1]]))) {
+                        valid <- FALSE
+                        msg <- c(msg, paste0("peakFit[[1]] must be a list of ",
+                                            "ROI curveFit or NA, not ",
+                                            paste(class(object@peakFit[[1]]),
+                                                collapse = " ")))
                     } else {
-                      # only check peakFit if min 1 compound
-                      if (nbCpd >= 1) {
-                        # individual peakFit compound entry is peakPantheR_curveFit or NA
-                        if (!all(is.na(object@peakFit[[1]][[1]])) &
-                            !is.peakPantheR_curveFit(object@peakFit[[1]][[1]])){
-                          valid <- FALSE
-                          msg <- c(msg, paste0("peakFit[[1]][[1]] must be NA ",
-                                            "or a peakPantheR_curveFit, not ",
-                                            class(object@peakFit[[1]][[1]])))
+                        # individual peakFit has entry for each compound (ROI)
+                        if (length(object@peakFit[[1]]) != nbCpd) {
+                            valid <- FALSE
+                            msg <- c(msg, paste0("peakFit[[1]] contains, ",
+                                        length(object@peakFit[[1]]),
+                                        " peakPantheR_curveFit or",
+                                        " NA (compound). Should be ", nbCpd))
+                        } else {
+                            # only check peakFit if min 1 compound
+                            if (nbCpd >= 1) {
+                                # individual peakFit compound entry is
+                                # peakPantheR_curveFit or NA
+                                if (!all(is.na(object@peakFit[[1]][[1]])) &
+                                    !is.peakPantheR_curveFit(
+                                        object@peakFit[[1]][[1]])){
+                                    valid <- FALSE
+                                    msg <- c(msg, paste0("peakFit[[1]][[1]] ",
+                                        "must be NA or a peakPantheR_curveFit,",
+                                        " not ",class(object@peakFit[[1]][[1]])))
+                                }
+                            }
                         }
-                      }
                     }
-                  }
                 }
             }
         }

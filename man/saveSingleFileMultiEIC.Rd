@@ -5,7 +5,7 @@
 \title{Save to disk a plot of all ROI EIC and detected feature range}
 \usage{
 saveSingleFileMultiEIC(ROIsDataPoint, curveFit, foundPeakTable, savePath,
-  width = 15, height = 15, verbose = TRUE)
+    width = 15, height = 15, verbose = TRUE)
 }
 \arguments{
 \item{ROIsDataPoint}{(list) a list of \code{data.frame} of raw data points for each ROI (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row)).}

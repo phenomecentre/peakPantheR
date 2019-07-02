@@ -28,8 +28,8 @@ Extract all signal from multiple defined mz rt window from raw data and returns 
 ## Use a file form the faahKO package and extract datafrom a region of interest
 library(faahKO)
 rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-                                   centroided=TRUE,
-                                   mode='onDisk')
+                                    centroided=TRUE,
+                                    mode='onDisk')
 dataPoints  <- extractSignalRawData(rawSpec,
                                     rt = c(3290., 3410.), 
                                     mz = c(522.194778, 522.205222), 

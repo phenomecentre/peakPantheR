@@ -3,16 +3,16 @@ title: "Getting Started with the peakPantheR package"
 date: "2019-06-09"
 package: peakPantheR
 output:
-  BiocStyle::html_document:
-    toc_float: true
+    BiocStyle::html_document:
+        toc_float: true
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Getting Started with the peakPantheR package}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle}
-  %\VignettePackage{peakPantheR}
-  %\VignetteKeywords{mass spectrometry, metabolomics}
+    %\VignetteIndexEntry{Getting Started with the peakPantheR package}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle}
+    %\VignettePackage{peakPantheR}
+    %\VignetteKeywords{mass spectrometry, metabolomics}
 ---
 
 ```{r biocstyle, echo = FALSE, results = "asis" }
@@ -20,8 +20,8 @@ BiocStyle::markdown()
 ```
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 ```
 
@@ -93,8 +93,8 @@ BiocManager::install("faahKO")
 library(faahKO)
 ## file paths
 input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 input_spectraPaths
 ```
 

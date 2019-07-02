@@ -27,28 +27,27 @@
 #' 
 #' ## Plot 4 sampels with colour
 #' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
-#'                           acquTime=NULL, varName='Test variable 1',
-#'                           sampleColour=c('blue','red','green','orange'),
-#'                           rotateAxis=FALSE, verbose=FALSE)
+#'                         acquTime=NULL, varName='Test variable 1',
+#'                         sampleColour=c('blue','red','green','orange'),
+#'                         rotateAxis=FALSE, verbose=FALSE)
 #' 
 #' ## Plot 4 samples with colour by acquisition time
 #' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
-#'                           acquTime=acqTime, varName='Test variable 2',
-#'                           sampleColour=c('blue','red','green','orange'),
-#'                           rotateAxis=FALSE, verbose=FALSE)
+#'                         acquTime=acqTime, varName='Test variable 2',
+#'                         sampleColour=c('blue','red','green','orange'),
+#'                         rotateAxis=FALSE, verbose=FALSE)
 #' 
 #' ## Plot 4 samples with colour, rotate axis
 #' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
-#'                           acquTime=NULL, varName='Test variable 3', 
-#'                           sampleColour=c('blue','red','green','orange'),
-#'                           rotateAxis=TRUE, verbose=FALSE)
+#'                         acquTime=NULL, varName='Test variable 3',
+#'                         sampleColour=c('blue','red','green','orange'),
+#'                         rotateAxis=TRUE, verbose=FALSE)
 #' 
 #' ## Plot 4 samples with colour by acquisition time, rotate axis
 #' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
-#'                           acquTime=acqTime, varName='Test variable 4',
-#'                           sampleColour=c('blue','red','green','orange'),
-#'                           rotateAxis=FALSE, verbose=FALSE)
-#'                           
+#'                         acquTime=acqTime, varName='Test variable 4',
+#'                         sampleColour=c('blue','red','green','orange'),
+#'                         rotateAxis=FALSE, verbose=FALSE)
 peakPantheR_plotPeakwidth <- function(apexValue, widthMin = NULL, widthMax = NULL, 
     acquTime = NULL, varName = "variable", sampleColour = NULL, rotateAxis = FALSE, 
     verbose = TRUE) {
@@ -196,8 +195,8 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin = NULL, widthMax = NUL
                 name <- paste(a$name, b$name, sep = "-")
                 trans <- function(x) a$trans(b$trans(x))
                 inv <- function(x) b$inverse(a$inverse(x))
-                scales::trans_new(name = name, transform = trans, inverse = inv, 
-                  breaks = breaks, format = format)
+                scales::trans_new(name = name, transform = trans, inverse = inv,
+                                breaks = breaks, format = format)
             }
             rev_date <- c_trans("reverse", "time")
             

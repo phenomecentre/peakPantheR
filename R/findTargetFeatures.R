@@ -14,19 +14,19 @@
 #' @return A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as rows and peak measures as columns (see Details), \code{list()$curveFit} (\emph{list}) a list of \code{peakPantheR_curveFit} or NA for each ROI.
 #'
 #' \subsection{Details:}{
-#'   The returned \code{data.frame} is structured as follow:
-#'   \tabular{ll}{
-#'     found \tab was the peak found\cr
-#'     rt \tab retention time of peak apex (sec)\cr
-#'     rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-#'     rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-#'     mz \tab weighted (by intensity) mean of peak m/z across scans\cr
-#'     mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
-#'     mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
-#'     peakArea \tab integrated peak area\cr
-#'     maxIntMeasured \tab maximum peak intensity in raw data\cr
-#'     maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
-#'   }
+#' The returned \code{data.frame} is structured as follow:
+#' \tabular{ll}{
+#' found \tab was the peak found\cr
+#' rt \tab retention time of peak apex (sec)\cr
+#' rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+#' rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+#' mz \tab weighted (by intensity) mean of peak m/z across scans\cr
+#' mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
+#' mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
+#' peakArea \tab integrated peak area\cr
+#' maxIntMeasured \tab maximum peak intensity in raw data\cr
+#' maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
+#' }
 #' }
 #'
 #' @details
@@ -39,14 +39,14 @@
 #'
 #' ## targetFeatTable
 #' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                          'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                          stringsAsFactors=FALSE)
+#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+#'                         stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 #' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 #' targetFeatTable[,3:8] <- vapply(targetFeatTable[,3:8], as.numeric, FUN.VALUE=numeric(2))
 #'
 #' ROIsPt         <- extractSignalRawData(raw_data, rt=targetFeatTable[,c('rtMin','rtMax')],
-#'                                        mz=targetFeatTable[,c('mzMin','mzMax')], verbose=TRUE)
+#'                                         mz=targetFeatTable[,c('mzMin','mzMax')], verbose=TRUE)
 #' # Reading data from 2 windows
 #'
 #' foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, verbose=TRUE)
@@ -114,15 +114,20 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
     nROI <- nrow(ROI)
     # ROIsDataPoints match ROI
     if (length(ROIsDataPoints) != nROI) {
-        stop("Check input, number of ROIsDataPoints entries must match the number of rows of ROI")
+        stop('Check input, number of ROIsDataPoints entries must match ',
+            'the number of rows of ROI')
     }
     # Check all data points fall into the corresponding ROI
     for (r in seq_len(nROI)) {
-        if (!all((ROIsDataPoints[[r]]$rt >= ROI[r, c("rtMin")]) & (ROIsDataPoints[[r]]$rt <= ROI[r, c("rtMax")]))) {
-            stop("Check input not all datapoints for window #", r, " are into the corresponding ROI (rt)")
+        if (!all((ROIsDataPoints[[r]]$rt >= ROI[r, c("rtMin")]) &
+            (ROIsDataPoints[[r]]$rt <= ROI[r, c("rtMax")]))) {
+            stop("Check input not all datapoints for window #", r,
+                " are into the corresponding ROI (rt)")
         }
-        if (!all((ROIsDataPoints[[r]]$mz >= ROI[r, c("mzMin")]) & (ROIsDataPoints[[r]]$mz <= ROI[r, c("mzMax")]))) {
-            stop("Check input not all datapoints for window #", r, " are into the corresponding ROI (mz)")
+        if (!all((ROIsDataPoints[[r]]$mz >= ROI[r, c("mzMin")]) &
+            (ROIsDataPoints[[r]]$mz <= ROI[r, c("mzMax")]))) {
+            stop("Check input not all datapoints for window #", r,
+                " are into the corresponding ROI (mz)")
         }
     }
     # Check params input
@@ -136,7 +141,8 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
     # length if params is list
     if (is.list(params)) {
         if (length(params) != nROI) {
-            stop("Check input, number of parameters must match number of rows of ROI")}
+            stop('Check input, number of parameters must match number ',
+                'of rows of ROI')}
     }
     
     
@@ -202,8 +208,8 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
             next
         }
         # discard fit if nls.lm fit status indicates unsuccessful completion
-        if ((fittedCurve$fitStatus == 0) | (fittedCurve$fitStatus == 5) | (fittedCurve$fitStatus == 
-            -1)) {
+        if ((fittedCurve$fitStatus == 0) | (fittedCurve$fitStatus == 5) |
+            (fittedCurve$fitStatus == -1)) {
             if (verbose) {
                 message("Fit of ROI #", i, " is unsuccessful (fit status)")}
             # move to next window (empty df row was already initialised)
@@ -288,14 +294,16 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
         
         # if rtMin or rtMax cannot be determined the fit is not successful
         if (is.na(rtMin) | is.na(rtMax)) {
-            message("Fit of ROI #", i, " is unsuccessful (cannot determine rtMin/rtMax)")
+            message("Fit of ROI #", i,
+                    " is unsuccessful (cannot determine rtMin/rtMax)")
             # move to next window (empty df row was already initialised)
             next
         }
         
         
         ## maxIntMeasured (max raw data intensity; 0 in case of no scans)
-        maxIntMeasured <- max(0, tmp_EIC$int[(tmp_EIC$rt < rtMax) & (tmp_EIC$rt > rtMin)])
+        maxIntMeasured <- max(0, tmp_EIC$int[(tmp_EIC$rt < rtMax) &
+                                (tmp_EIC$rt > rtMin)])
         
         
         ## mz, mzMin, mzMax if rtMin, rtMax are outside of ROI, we cannot
@@ -311,19 +319,23 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
         if ((tmpRtMin < ROI$rtMin[i]) | (tmpRtMax > ROI$rtMax[i])) {
             isValid <- FALSE
             if (verbose) {
-                message("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #", i)
+                message('Warning: rtMin/rtMax outside of ROI; datapoints ',
+                        'cannot be used for mzMin/mzMax calculation, ',
+                        'approximate mz and returning ROI$mzMin and ROI$mzMax ',
+                        'for ROI #', i)
             }
         }
         # subset datapoints mz to rtMin/rtMax range
-        tmpPt <- tmpROIData[(tmpROIData$rt > tmpRtMin) & (tmpROIData$rt < tmpRtMax), ]
-        # rtMin rtMax range can be used for mzMin mzMax calculation (otherwise init to
-        # ROI mzMin/Max)
+        tmpPt <- tmpROIData[(tmpROIData$rt > tmpRtMin) &
+                            (tmpROIData$rt < tmpRtMax), ]
+        # rtMin rtMax range can be used for mzMin mzMax calculation
+        # (otherwise init to ROI mzMin/Max)
         if (isValid) {
             tmpMzMin <- min(tmpPt$mz)
             tmpMzMax <- max(tmpPt$mz)
         }
-        # calculate mz (might be an approx) (weighted average of total intensity across
-        # all rt for each unique mz)
+        # calculate mz (might be an approx)
+        # (weighted average of total intensity across all rt for each unique mz)
         mzRange             <- unique(tmpPt$mz)
         mzTotalIntensity    <- vapply(mzRange, function(x) {
             sum(tmpPt$int[tmpPt$mz == x])}, FUN.VALUE = numeric(1))
@@ -340,7 +352,8 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
         # (mzMin/mzMax default to ROI)
         if (is.na(mz) | is.na(mzMin) | is.na(mzMax)) {
             if (verbose) {
-                message("Fit of ROI #", i, " is unsuccessful (cannot determine mz/mzMin/mzMax)")
+                message("Fit of ROI #", i,
+                        " is unsuccessful (cannot determine mz/mzMin/mzMax)")
             }
             # move to next window (empty df row was already initialised)
             next
@@ -379,12 +392,14 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
         # residual between maximums (raw vs fit)
         max_residuals   <- abs(maxIntPredicted - IntRawApex)
         # compare residuals to max fit intensity
-        if (((apex_residuals/maxIntPredicted) > maxApexResidualRatio) | ((max_residuals/maxIntPredicted) > 
-            maxApexResidualRatio)) {
+        if (((apex_residuals/maxIntPredicted) > maxApexResidualRatio) |
+            ((max_residuals/maxIntPredicted) > maxApexResidualRatio)) {
             if (verbose) {
-                message("Fit of ROI #", i, " is unsuccessful (apex residuals is ", 
-                  round(apex_residuals/maxIntPredicted, 2), " of max fit intensity, max intensity residuals is ", 
-                  round(max_residuals/maxIntPredicted, 2), " of max fit intensity)")
+                message("Fit of ROI #", i, " is unsuccessful (apex residuals is ",
+                        round(apex_residuals/maxIntPredicted, 2),
+                        " of max fit intensity, max intensity residuals is ",
+                        round(max_residuals/maxIntPredicted, 2),
+                        " of max fit intensity)")
             }
             # move to next window (empty df row was already initialised)
             next

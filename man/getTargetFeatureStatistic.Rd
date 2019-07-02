@@ -5,7 +5,7 @@
 \title{Calculate chromatographic peak properties}
 \usage{
 getTargetFeatureStatistic(fittedCurves, targetFeatTable, foundPeakTable,
-  verbose = FALSE)
+    verbose = FALSE)
 }
 \arguments{
 \item{fittedCurves}{(list) A list (one entry per ROI window) of \code{peakPantheR_curveFit} or NA}
@@ -20,23 +20,23 @@ getTargetFeatureStatistic(fittedCurves, targetFeatTable, foundPeakTable,
 A \code{data.frame} with measured compounds as rows and measurements and properties as columns (see Details).
 
 \subsection{Details:}{
-  The returned \code{data.frame} is structured as follow:
-  \tabular{ll}{
-    found \tab was the peak found\cr
-    rt \tab retention time of peak apex (sec)\cr
-    rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    mz \tab weighted (by intensity) mean of peak m/z across scans\cr
-    mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
-    mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
-    peakArea \tab integrated peak area\cr
-    maxIntMeasured \tab maximum peak intensity in raw data\cr
-    maxIntPredicted \tab maximum peak intensity based on curve fit\cr
-    ppm_error \tab difference in ppm between the expected and measured m/z\cr
-    rt_dev_sec \tab difference in seconds between the expected and measured rt\cr
-    tailingFactor \tab the tailing factor is a measure of peak tailing. It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
-   asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
-  }
+The returned \code{data.frame} is structured as follow:
+\tabular{ll}{
+found \tab was the peak found\cr
+rt \tab retention time of peak apex (sec)\cr
+rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+mz \tab weighted (by intensity) mean of peak m/z across scans\cr
+mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
+mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
+peakArea \tab integrated peak area\cr
+maxIntMeasured \tab maximum peak intensity in raw data\cr
+maxIntPredicted \tab maximum peak intensity based on curve fit\cr
+ppm_error \tab difference in ppm between the expected and measured m/z\cr
+rt_dev_sec \tab difference in seconds between the expected and measured rt\cr
+tailingFactor \tab the tailing factor is a measure of peak tailing. It is defined as the distance from the front slope of the peak to the back slope divided by twice the distance from the center line of the peak to the front slope, with all measurements made at 5\% of the maximum peak height. The tailing factor of a peak will typically be similar to the asymmetry factor for the same peak, but the two values cannot be directly converted\cr
+asymmetryFactor \tab the asymmetry factor is a measure of peak tailing. It is defined as the distance from the center line of the peak to the back slope divided by the distance from the center line of the peak to the front slope, with all measurements made at 10\% of the maximum peak height. The asymmetry factor of a peak will typically be similar to the tailing factor for the same peak, but the two values cannot be directly converted\cr
+}
 }
 }
 \description{
@@ -56,21 +56,21 @@ class(cFit2)    <- 'peakPantheR_curveFit'
 input_fitCurves <- list(cFit1, cFit2)
 
 input_ROI       <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID', 
-                     'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-                     stringsAsFactors=FALSE)
+                    'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+                    stringsAsFactors=FALSE)
 input_ROI[1,] <- c('ID-1', 'testCpd 1', 3310., 3344.88, 3390., 522.19, 522.2, 522.21)
 input_ROI[2,] <- c('ID-2', 'testCpd 2', 3280., 3385.58, 3440., 496.19, 496.2, 496.21)
 input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(2))
 
 # foundPeakTable
 input_foundPeakTable      <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), 
-                               c('found', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax',
-                               'peakArea', 'maxIntMeasured', 'maxIntPredicted'))),
-                               stringsAsFactors=FALSE)
+                                c('found', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax',
+                                'peakArea', 'maxIntMeasured', 'maxIntPredicted'))),
+                                stringsAsFactors=FALSE)
 input_foundPeakTable[1,]  <- c(TRUE, 3309.758, 3346.827, 3385.410, 522.19, 522.2, 522.21, 
-                               26133726, 889280, 901015)
+                                26133726, 889280, 901015)
 input_foundPeakTable[2,]  <- c(TRUE, 3345.376, 3386.529, 3428.279, 496.19, 496.2, 496.21,
-                               35472141, 1128960, 1113576)
+                                35472141, 1128960, 1113576)
 input_foundPeakTable[,1]  <- vapply(input_foundPeakTable[,c(1)], as.logical, FUN.VALUE=logical(1))
 
 # Run peak statistics

@@ -3,15 +3,15 @@ title: "Parallel Annotation"
 date: "2019-06-09"
 package: peakPantheR
 output:
-  BiocStyle::html_document:
-    toc_float: true
+    BiocStyle::html_document:
+        toc_float: true
 vignette: >
-  %\VignetteIndexEntry{Parallel Annotation}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle,foreach,doParallel}
-  %\VignettePackage{peakPantheR}
-  %\VignetteKeywords{mass spectrometry, metabolomics}
+    %\VignetteIndexEntry{Parallel Annotation}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle,foreach,doParallel}
+    %\VignettePackage{peakPantheR}
+    %\VignetteKeywords{mass spectrometry, metabolomics}
 ---
 
 ```{r biocstyle, echo = FALSE, results = "asis" }
@@ -19,8 +19,8 @@ BiocStyle::markdown()
 ```
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 ```
 
@@ -50,15 +50,15 @@ Using the `r Biocpkg("faahKO")` raw MS dataset as an example, this vignette will
 
 ## Abbreviations
 - **ROI**: _Regions Of Interest_ 
-  * reference _RT_ / _m/z_ windows in which to search for a feature
+    * reference _RT_ / _m/z_ windows in which to search for a feature
 - **uROI**: _updated Regions Of Interest_
-  * modifed ROI adapted to the current dataset which override the reference ROI
+    * modifed ROI adapted to the current dataset which override the reference ROI
 - **FIR**: _Fallback Integration Regions_ 
-  * _RT_ / _m/z_ window to integrate if no peak is found
+    * _RT_ / _m/z_ window to integrate if no peak is found
 - **TIC**: _Total Ion Chromatogram_ 
-  * the intensities summed across all masses for each scan 
+    * the intensities summed across all masses for each scan
 - **EIC**: _Extracted Ion Chromatogram_ 
-  * the intensities summed over a mass range, for each scan
+    * the intensities summed over a mass range, for each scan
 
 
 # Parallel Annotation Concept
@@ -113,8 +113,8 @@ First the paths to 3 MS file from the `r Biocpkg("faahKO")` are located and used
 library(faahKO)
 ## file paths
 input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 input_spectraPaths
 ```
 
@@ -166,8 +166,8 @@ A `peakPantheRAnnotation` object is first initialised with the path to the files
 ```{r}
 library(peakPantheR)
 init_annotation <- peakPantheRAnnotation(spectraPaths = input_spectraPaths,
-                                         targetFeatTable = input_targetFeatTable,
-                                         spectraMetadata = input_spectraMetadata)
+                                        targetFeatTable = input_targetFeatTable,
+                                        spectraMetadata = input_spectraMetadata)
 ```
 
 The resulting `peakPantheRAnnotation` object is not annotated, does not contain and use `uROI` and `FIR`
@@ -272,12 +272,12 @@ Now that the fit parameters were set on 3 representative samples (e.g. QC), the 
 
 ```{r}
 ## new files
-new_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                       system.file('cdf/WT/wt15.CDF', package = "faahKO"),
-                       system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                       system.file('cdf/WT/wt16.CDF', package = "faahKO"),
-                       system.file('cdf/KO/ko18.CDF', package = "faahKO"),
-                       system.file('cdf/WT/wt18.CDF', package = "faahKO"))
+new_spectraPaths   <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+                        system.file('cdf/WT/wt15.CDF', package = "faahKO"),
+                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                        system.file('cdf/WT/wt16.CDF', package = "faahKO"),
+                        system.file('cdf/KO/ko18.CDF', package = "faahKO"),
+                        system.file('cdf/WT/wt18.CDF', package = "faahKO"))
 
 new_spectraPaths
 ```

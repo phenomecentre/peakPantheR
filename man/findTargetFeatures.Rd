@@ -5,8 +5,8 @@
 \title{Find and integrate target features in each ROI}
 \usage{
 findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
-  params = "guess", sampling = 250, maxApexResidualRatio = 0.2,
-  verbose = FALSE, ...)
+    params = "guess", sampling = 250, maxApexResidualRatio = 0.2,
+    verbose = FALSE, ...)
 }
 \arguments{
 \item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame with signal as row and retention time ('rt'), mass ('mz') and intensity ('int) as columns. Must match each row of ROI.}
@@ -29,19 +29,19 @@ findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
 A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as rows and peak measures as columns (see Details), \code{list()$curveFit} (\emph{list}) a list of \code{peakPantheR_curveFit} or NA for each ROI.
 
 \subsection{Details:}{
-  The returned \code{data.frame} is structured as follow:
-  \tabular{ll}{
-    found \tab was the peak found\cr
-    rt \tab retention time of peak apex (sec)\cr
-    rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    mz \tab weighted (by intensity) mean of peak m/z across scans\cr
-    mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
-    mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
-    peakArea \tab integrated peak area\cr
-    maxIntMeasured \tab maximum peak intensity in raw data\cr
-    maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
-  }
+The returned \code{data.frame} is structured as follow:
+\tabular{ll}{
+found \tab was the peak found\cr
+rt \tab retention time of peak apex (sec)\cr
+rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
+mz \tab weighted (by intensity) mean of peak m/z across scans\cr
+mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
+mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
+peakArea \tab integrated peak area\cr
+maxIntMeasured \tab maximum peak intensity in raw data\cr
+maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
+}
 }
 }
 \description{
@@ -57,14 +57,14 @@ raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onD
 
 ## targetFeatTable
 targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-                         stringsAsFactors=FALSE)
+                        'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+                        stringsAsFactors=FALSE)
 targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 targetFeatTable[,3:8] <- vapply(targetFeatTable[,3:8], as.numeric, FUN.VALUE=numeric(2))
 
 ROIsPt         <- extractSignalRawData(raw_data, rt=targetFeatTable[,c('rtMin','rtMax')],
-                                       mz=targetFeatTable[,c('mzMin','mzMax')], verbose=TRUE)
+                                        mz=targetFeatTable[,c('mzMin','mzMax')], verbose=TRUE)
 # Reading data from 2 windows
 
 foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, verbose=TRUE)

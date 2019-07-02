@@ -5,8 +5,8 @@
 \title{Plot samples raw data and detected feature for a single ROI}
 \usage{
 peakPantheR_plotEICFit(ROIDataPointSampleList, curveFitSampleList = NULL,
-  rtMin = NULL, rtMax = NULL, sampling = 250, sampleColour = NULL,
-  verbose = TRUE)
+    rtMin = NULL, rtMax = NULL, sampling = 250, sampleColour = NULL,
+    verbose = TRUE)
 }
 \arguments{
 \item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row)).}
@@ -57,14 +57,14 @@ class(fit2)     <- 'peakPantheR_curveFit'
 
 ## Plot features in 1 sample without colours
 peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1),
-                       curveFitSampleList=list(fit1),
-                       rtMin=995., rtMax=1005.,
-                       sampling=250, sampleColour=NULL, verbose=FALSE)
+                        curveFitSampleList=list(fit1),
+                        rtMin=995., rtMax=1005.,
+                        sampling=250, sampleColour=NULL, verbose=FALSE)
 
 ## Plot features in 2 samples with colours
 peakPantheR_plotEICFit(ROIDataPointSampleList=list(tmp_DataPoints1, tmp_DataPoints2),
-                       curveFitSampleList=list(fit1, fit2),
-                       rtMin=c(995., 997.), rtMax=c(1005.,1007.),
-                       sampling=250, sampleColour=c('blue', 'red'), verbose=FALSE)
+                        curveFitSampleList=list(fit1, fit2),
+                        rtMin=c(995., 997.), rtMax=c(1005.,1007.),
+                        sampling=250, sampleColour=c('blue', 'red'), verbose=FALSE)
 
 }

@@ -12,7 +12,8 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
     
     ## Check input
     if (dim(FIR)[1] != dim(foundPeakTable)[1]) {
-        stop("Check input, FIR must have the same number of rows as foundPeakTable")
+        stop("Check input, FIR must have the same number of rows as ",
+            "foundPeakTable")
     }
     
     ## init
@@ -51,7 +52,8 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
             # Only continue if a scan is found in the box
             if (dim(peakData)[1] != 0) {
                 
-                # scanDist is the mean distance in sec between scans (used for integral)
+                # scanDist is the mean distance in sec between scans
+                # (used for integral)
                 rtRange <- unique(peakData$rt)
                 scanDist <- diff(c(min(rtRange), max(rtRange)))/length(rtRange)
                 
@@ -67,7 +69,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
                 # total intensity across rt for each mz
                 mzRange <- unique(peakData$mz)
                 mzTotalIntensity <- vapply(mzRange, function(x) {
-                  sum(peakData$i[peakData$mz == x])}, FUN.VALUE = numeric(1))
+                    sum(peakData$i[peakData$mz == x])}, FUN.VALUE = numeric(1))
                 # mz (is weighted average)
                 tmpResult[i, "mz"] <- stats::weighted.mean(mzRange,
                                                             mzTotalIntensity)
@@ -79,7 +81,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
                 
                 # into max intensity across mz for each rt
                 rtMaxIntensity <- vapply(rtRange, function(x) {
-                  max(peakData$i[peakData$rt == x])}, FUN.VALUE = numeric(1))
+                    max(peakData$i[peakData$rt == x])}, FUN.VALUE = numeric(1))
                 # peakArea is the max intensities summed over (discrete) rt,
                 # multiplied by the mean distance in sec between scans
                 tmpResult[i, "peakArea"] <- sum(rtMaxIntensity) * scanDist
@@ -88,8 +90,10 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
             } else {
                 
                 if (verbose) {
-                  message("No scan present in the FIR # ", i,
-                    ": rt and mz are set as the middle of the FIR box; peakArea, maxIntMeasured and maxIntPredicted are set to 0")
+                    message('No scan present in the FIR # ', i,
+                            ': rt and mz are set as the middle of the FIR box;',
+                            ' peakArea, maxIntMeasured and maxIntPredicted are',
+                            ' set to 0')
                 }
                 
                 tmpResult[i, c("mzMin", "mzMax", "rtMin", "rtMax")] <- FIR[i,

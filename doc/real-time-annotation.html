@@ -1960,16 +1960,16 @@ input_targetFeatTable[,c(3:8)] &lt;- sapply(input_targetFeatTable[,c(3:8)], as.n
 <p><code>peakPantheR_singleFileSearch()</code> takes as input a <code>singleSpectraDataPath</code> pointing to the file to process and <code>targetFeatTable</code> defining the features to integrate. The resulting annotation contains all the fitting and integration properties:</p>
 <pre class="r"><code>library(peakPantheR)
 annotation &lt;- peakPantheR_singleFileSearch(singleSpectraDataPath = input_spectraPath,
-                                           targetFeatTable = input_targetFeatTable,
-                                           peakStatistic = TRUE,
-                                           verbose = TRUE)
+                                            targetFeatTable = input_targetFeatTable,
+                                            peakStatistic = TRUE,
+                                            verbose = TRUE)
 #&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.92 secs
+#&gt; Data read in: 0.69 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-#&gt; Found 2/2 features in 0.04 secs
+#&gt; Found 2/2 features in 0.03 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.52 secs</code></pre>
+#&gt; Feature search done in: 1.32 secs</code></pre>
 <pre class="r"><code>annotation$TIC
 #&gt; [1] 2410533091</code></pre>
 <pre class="r"><code>## acquisition time cannot be extracted from NetCDF files

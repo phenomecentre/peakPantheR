@@ -25,20 +25,22 @@ Reset FIR windows to uROI (or ROI if \code{uROIExist=FALSE})
 ## Initialise a peakPantheRAnnotation object with 2 targeted compounds
 
 ## targetFeatTable
-input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, 
-                             dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax',
-                             'mzMin', 'mz', 'mzMax'))), stringsAsFactors=FALSE)
+input_targetFeatTable <- data.frame(matrix(vector(), 2, 8,
+                            dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin',
+                            'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
+                            stringsAsFactors=FALSE)
 input_targetFeatTable[1,] <- c('ID-1', 'Cpd 1',  3.,  1.,  4.,  5.,  2.,  6.)
 input_targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 19., 17., 20., 21., 18., 22.)
 input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 ## FIR
 input_FIR       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), 
-                   c('rtMin', 'rtMax', 'mzMin', 'mzMax'))), stringsAsFactors=FALSE)
+                                c('rtMin', 'rtMax', 'mzMin', 'mzMax'))),
+                                stringsAsFactors=FALSE)
 input_FIR[1,]   <- c(13., 14., 15., 16.)
 input_FIR[2,]   <- c(29., 30., 31., 32.)
 
 annotation      <- peakPantheRAnnotation(targetFeatTable = input_targetFeatTable,
-                                         FIR = input_FIR, uROIExist = FALSE)
+                                        FIR = input_FIR, uROIExist = FALSE)
 
 ## Reset FIR with ROI values as uROI are not set
 updatedAnnotation <- resetFIR(annotation, verbose=TRUE)

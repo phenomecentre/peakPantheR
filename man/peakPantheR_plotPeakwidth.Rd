@@ -5,8 +5,8 @@
 \title{Plot peak value and peakwidth by acquisition time or in input order}
 \usage{
 peakPantheR_plotPeakwidth(apexValue, widthMin = NULL, widthMax = NULL,
-  acquTime = NULL, varName = "variable", sampleColour = NULL,
-  rotateAxis = FALSE, verbose = TRUE)
+    acquTime = NULL, varName = "variable", sampleColour = NULL,
+    rotateAxis = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{apexValue}{(float) vector of apex value}
@@ -41,26 +41,25 @@ acqTime <- as.POSIXct(c('2017-07-13 21:06:14', '2017-07-14 21:06:14',
 
 ## Plot 4 sampels with colour
 peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
-                          acquTime=NULL, varName='Test variable 1',
-                          sampleColour=c('blue','red','green','orange'),
-                          rotateAxis=FALSE, verbose=FALSE)
+                        acquTime=NULL, varName='Test variable 1',
+                        sampleColour=c('blue','red','green','orange'),
+                        rotateAxis=FALSE, verbose=FALSE)
 
 ## Plot 4 samples with colour by acquisition time
 peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
-                          acquTime=acqTime, varName='Test variable 2',
-                          sampleColour=c('blue','red','green','orange'),
-                          rotateAxis=FALSE, verbose=FALSE)
+                        acquTime=acqTime, varName='Test variable 2',
+                        sampleColour=c('blue','red','green','orange'),
+                        rotateAxis=FALSE, verbose=FALSE)
 
 ## Plot 4 samples with colour, rotate axis
 peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
-                          acquTime=NULL, varName='Test variable 3', 
-                          sampleColour=c('blue','red','green','orange'),
-                          rotateAxis=TRUE, verbose=FALSE)
+                        acquTime=NULL, varName='Test variable 3',
+                        sampleColour=c('blue','red','green','orange'),
+                        rotateAxis=TRUE, verbose=FALSE)
 
 ## Plot 4 samples with colour by acquisition time, rotate axis
 peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
-                          acquTime=acqTime, varName='Test variable 4',
-                          sampleColour=c('blue','red','green','orange'),
-                          rotateAxis=FALSE, verbose=FALSE)
-                          
+                        acquTime=acqTime, varName='Test variable 4',
+                        sampleColour=c('blue','red','green','orange'),
+                        rotateAxis=FALSE, verbose=FALSE)
 }
