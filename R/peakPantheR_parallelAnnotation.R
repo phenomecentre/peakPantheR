@@ -94,7 +94,7 @@
 #' 
 #' # No failures
 #' result_parallelAnnotation$failures
-# 
+#'
 #' result_parallelAnnotation$annotation
 #' # An object of class peakPantheRAnnotation
 #' #  4 compounds in 3 samples. 

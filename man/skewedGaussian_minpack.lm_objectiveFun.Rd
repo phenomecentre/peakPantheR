@@ -7,15 +7,18 @@
 skewedGaussian_minpack.lm_objectiveFun(params, observed, xx)
 }
 \arguments{
-\item{params}{(list) skewed gaussian parameters (\code{params$gamma}, \code{params$center}, \code{params$sigma}, \code{params$amplitude})}
+\item{params}{(list) skewed gaussian parameters (\code{params$gamma},
+\code{params$center}, \code{params$sigma}, \code{params$amplitude})}
 
 \item{observed}{(numeric) observed y value at xx}
 
 \item{xx}{(numeric) value at which to evalute the skewed gaussian}
 }
 \value{
-difference between observed and expected skewed gaussian value evaluated at xx
+difference between observed and expected skewed gaussian value
+evaluated at xx
 }
 \description{
-Skewed Gaussian minpack.lm objective function, calculates residuals using the skewed gaussian Peak Shape
+Skewed Gaussian minpack.lm objective function, calculates
+residuals using the skewed gaussian Peak Shape
 }
