@@ -26,7 +26,7 @@
 #' @examples
 #' if(requireNamespace('faahKO')){
 #' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
-#' compounds
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
