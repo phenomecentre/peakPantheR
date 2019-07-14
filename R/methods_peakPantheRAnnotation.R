@@ -1257,7 +1257,7 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
         # rt ROI 5% (no NA in ROI rtMin/rtMax)
         rtMargin <- (ROI(outAnnotation)$rtMax - ROI(outAnnotation)$rtMin) * 0.05
         # rtMin (min found peak -5% of ROI)
-        rtMinUROI <- unname(vapply(annotationTable(outAnnotation, "rtMin"), min, 
+        rtMinUROI <- unname(vapply(annotationTable(outAnnotation,"rtMin"), min,
             na.rm = TRUE, FUN.VALUE = numeric(1)))
         rtMinUROI <- rtMinUROI - rtMargin
         if (sum(is.infinite(rtMinUROI)) != 0) {
@@ -1269,7 +1269,7 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
                 outAnnotation@ROI[is.infinite(rtMinUROI), "rtMin"]
         }
         # rtMax (max found peak +5% of ROI)
-        rtMaxUROI <- unname(vapply(annotationTable(outAnnotation, "rtMax"), max, 
+        rtMaxUROI <- unname(vapply(annotationTable(outAnnotation,"rtMax"), max,
             na.rm = TRUE, FUN.VALUE = numeric(1)))
         rtMaxUROI <- rtMaxUROI + rtMargin
         if (sum(is.infinite(rtMaxUROI)) != 0) {
@@ -1281,7 +1281,7 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
                 outAnnotation@ROI[is.infinite(rtMaxUROI), "rtMax"]
         }
         # mzMin
-        mzMinUROI <- unname(vapply(annotationTable(outAnnotation, "mzMin"), min, 
+        mzMinUROI <- unname(vapply(annotationTable(outAnnotation,"mzMin"), min,
             na.rm = TRUE, FUN.VALUE = numeric(1)))
         if (sum(is.infinite(mzMinUROI)) != 0) {
             if (verbose) {
@@ -1291,7 +1291,7 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
                 outAnnotation@ROI[is.infinite(mzMinUROI), "mzMin"]
         }
         # mzMax
-        mzMaxUROI <- unname(vapply(annotationTable(outAnnotation, "mzMax"), max, 
+        mzMaxUROI <- unname(vapply(annotationTable(outAnnotation,"mzMax"), max,
             na.rm = TRUE, FUN.VALUE = numeric(1)))
         if (sum(is.infinite(mzMaxUROI)) != 0) {
             if (verbose) {
@@ -1638,7 +1638,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
     # @param sampleColour (str) NULL or vector colour for each sample
     # @param verbose (bool) message progress
     # @param ... Additional parameters for plotting
-    saveSingleMultiPlot <- function(cpdNb, annotation, saveFolder, sampleColour, 
+    saveSingleMultiPlot <- function(cpdNb, annotation, saveFolder, sampleColour,
         verbose, ...) {
         # subset annotation to only 1 cpd
         tmp_annotation <- annotation[, cpdNb]
