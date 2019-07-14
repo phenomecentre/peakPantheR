@@ -1,6 +1,7 @@
-#' Parse acquisition date from a mzML file
+#' @title Parse acquisition date from a mzML file
 #'
-#' Extract acquisition date (`'startTimeStamp'``) from a mzML file. In case of failure (or the file is not a \code{mzML}) returns NULL
+#' @description Extract acquisition date (`'startTimeStamp'``) from a mzML file.
+#' In case of failure (or the file is not a \code{mzML}) returns NULL
 #'
 #' @param mzMLPath (str) path to mzML raw data file
 #' @param verbose (bool) if TRUE message progress
