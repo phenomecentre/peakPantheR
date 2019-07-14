@@ -1,13 +1,22 @@
-#' Plot peak value and peakwidth by acquisition time or in input order
+#' @title Plot peak value and peakwidth by acquisition time or in input order
 #'
-#' For a single ROI, plot the peak value and peakwidth (RT, m/z, ...) of detected peaks across multiple samples, by acquisition time or in input order. If \code{rotateAxis=FALSE} x is run order / plot order, y is the \code{apexValue} / \code{widthMin} / \code{widthMax}, if \code{rotateAxis=TRUE} x is the measurement values and y the run order.
+#' @description For a single ROI, plot the peak value and peakwidth (RT, m/z,
+#' ...) of detected peaks across multiple samples, by acquisition time or in
+#' input order. If \code{rotateAxis=FALSE} x is run order / plot order, y is the
+#' \code{apexValue} / \code{widthMin} / \code{widthMax}, if
+#' \code{rotateAxis=TRUE} x is the measurement values and y the run order.
 #'
 #' @param apexValue (float) vector of apex value
-#' @param widthMin (float) vector of detected peak minimum peakwidth value or NULL (if NULL no peakwidth)
-#' @param widthMax (float) vector of detected peak maximum peakwidth value or NULL (uf NULL no peakwidth)
-#' @param acquTime (POSIXct) vector of sample acquisition time as POSIXct or NULL (if NULL points are plotted in the order values are passed as input with the first on top or left)
+#' @param widthMin (float) vector of detected peak minimum peakwidth value or
+#' NULL (if NULL no peakwidth)
+#' @param widthMax (float) vector of detected peak maximum peakwidth value or
+#' NULL (uf NULL no peakwidth)
+#' @param acquTime (POSIXct) vector of sample acquisition time as POSIXct or
+#' NULL (if NULL points are plotted in the order values are passed as input with
+#' the first on top or left)
 #' @param varName (str) Name of the variable to plot
-#' @param sampleColour (str) NULL or vector colour for each sample (same length as \code{apexValue}, \code{widthMin}, \code{widthMax}, \code{acquTime})
+#' @param sampleColour (str) NULL or vector colour for each sample (same length
+#' as \code{apexValue}, \code{widthMin}, \code{widthMax}, \code{acquTime})
 #' @param rotateAxis (bool) if TRUE x and y axis are reversed
 #' @param verbose (bool) if TRUE message when NA scans are removed
 #' 
@@ -26,30 +35,30 @@
 #'                         '2017-07-15 21:06:14', '2017-07-16 21:06:14'))
 #' 
 #' ## Plot 4 sampels with colour
-#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
+#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
 #'                         acquTime=NULL, varName='Test variable 1',
 #'                         sampleColour=c('blue','red','green','orange'),
 #'                         rotateAxis=FALSE, verbose=FALSE)
 #' 
 #' ## Plot 4 samples with colour by acquisition time
-#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
+#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
 #'                         acquTime=acqTime, varName='Test variable 2',
 #'                         sampleColour=c('blue','red','green','orange'),
 #'                         rotateAxis=FALSE, verbose=FALSE)
 #' 
 #' ## Plot 4 samples with colour, rotate axis
-#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
+#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
 #'                         acquTime=NULL, varName='Test variable 3',
 #'                         sampleColour=c('blue','red','green','orange'),
 #'                         rotateAxis=TRUE, verbose=FALSE)
 #' 
 #' ## Plot 4 samples with colour by acquisition time, rotate axis
-#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
+#' peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
 #'                         acquTime=acqTime, varName='Test variable 4',
 #'                         sampleColour=c('blue','red','green','orange'),
 #'                         rotateAxis=FALSE, verbose=FALSE)
-peakPantheR_plotPeakwidth <- function(apexValue, widthMin = NULL, widthMax = NULL, 
-    acquTime = NULL, varName = "variable", sampleColour = NULL, rotateAxis = FALSE, 
+peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
+    acquTime=NULL, varName="variable", sampleColour = NULL, rotateAxis = FALSE,
     verbose = TRUE) {
     
     ## Check input
@@ -151,7 +160,7 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin = NULL, widthMax = NUL
     if (useRunOrder) {
         p <- p + ggplot2::xlab("Acquisition Time")
                 #labels are flipped, themes are not
-        tmp_pt <- data.frame(x = acquTime, y = apexValue, colr = sampleIDColour, 
+        tmp_pt <- data.frame(x = acquTime, y = apexValue, colr = sampleIDColour,
             stringsAsFactors = FALSE)
         if (verbose) {
             message("Values plotted by run order")

@@ -8,23 +8,46 @@ peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
     resetWorkers = 1, verbose = TRUE, ...)
 }
 \arguments{
-\item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation object defining the samples to process and compounds to target. The slots \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR integrated if a feature is not found}
+\item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation
+object defining the samples to process and compounds to target. The slots
+\code{useUROI} and \code{useFIR} controls if uROI must be used and FIR
+integrated if a feature is not found}
 
-\item{ncores}{(int) Number of cores to use for parallelisation. Default 0 for no parallelisation.}
+\item{ncores}{(int) Number of cores to use for parallelisation. Default 0 for
+no parallelisation.}
 
-\item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time from the mzML metadata (the additional file access will impact run time)}
+\item{getAcquTime}{(bool) If TRUE will extract sample acquisition date-time
+from the mzML metadata (the additional file access will impact run time)}
 
-\item{resetWorkers}{(int) If 0, the parallel cluster is only initiated once. If >0 the cluster will be reset (and the memory of each worker freed) once \code{ncores * resetWorkers} files have been processed. Default value is 1, the cluster is reset once \code{ncores} files have been processed. While potentially impacting performance (need to wait until all \code{ncores * resetWorkers} files are processed before restarting the cluster), shutting down the workers processes regularly will ensure the OS can reallocate memory more efficiently. For values >1, ensure sufficient system memory is available}
+\item{resetWorkers}{(int) If 0, the parallel cluster is only initiated once.
+If >0 the cluster will be reset (and the memory of each worker freed) once
+\code{ncores * resetWorkers} files have been processed. Default value is 1,
+the cluster is reset once \code{ncores} files have been processed. While
+potentially impacting performance (need to wait until all \code{ncores *
+resetWorkers} files are processed before restarting the cluster), shutting
+down the workers processes regularly will ensure the OS can reallocate memory
+more efficiently. For values >1, ensure sufficient system memory is available}
 
-\item{verbose}{(bool) If TRUE message calculation progress, time taken, number of features found (total and matched to targets) and failures}
+\item{verbose}{(bool) If TRUE message calculation progress, time taken,
+number of features found (total and matched to targets) and failures}
 
-\item{...}{Passes arguments to \code{findTargetFeatures} to alter peak-picking parameters}
+\item{...}{Passes arguments to \code{findTargetFeatures} to alter
+peak-picking parameters}
 }
 \value{
-a list: \code{list()$result} \emph{(peakPantheRAnnotation)} fully annotated object, \code{list()$failures} \emph{(list)} list of failed samples and error message
+a list: \code{list()$result} \emph{(peakPantheRAnnotation)} fully
+annotated object, \code{list()$failures} \emph{(list)} list of failed samples
+and error message
 }
 \description{
-Integrate all target features in all files defined in the initialised input object and store results. The use of updated ROI and the integration of FIR are controled by the input object slots \code{useUROI} and \code{useFIR}. Files are processed in parallel using \link{peakPantheR_singleFileSearch}; \code{ncores} controls the number of cores used for parallelisation, with \code{ncores=0} corresponding to serial processing. If the processing of a file fails (file does not exist or error during execution) the sample is removed from the outputed object.
+Integrate all target features in all files defined in the
+initialised input object and store results. The use of updated ROI and the
+integration of FIR are controled by the input object slots \code{useUROI} and
+\code{useFIR}. Files are processed in parallel using
+\link{peakPantheR_singleFileSearch}; \code{ncores} controls the number of
+cores used for parallelisation, with \code{ncores=0} corresponding to serial
+processing. If the processing of a file fails (file does not exist or error
+during execution) the sample is removed from the outputed object.
 }
 \examples{
 if(requireNamespace('faahKO')){
@@ -41,11 +64,16 @@ input_ROI     <- data.frame(matrix(vector(), 4, 8,
                     dimnames=list(c(), c('cpdID', 'cpdName', 'rtMin', 'rt',
                                         'rtMax', 'mzMin', 'mz', 'mzMax'))),
                     stringsAsFactors=FALSE)
-input_ROI[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_ROI[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_ROI[3,] <- c('ID-3', 'Cpd 3', 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
-input_ROI[4,] <- c('ID-4', 'Cpd 4', 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-input_ROI[,c(3:8)] <- vapply(input_ROI[,c(3:8)], as.numeric, FUN.VALUE=numeric(4))
+input_ROI[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+                    522.2, 522.205222)
+input_ROI[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+                    496.2, 496.204962)
+input_ROI[3,] <- c('ID-3', 'Cpd 3', 3420., 3454.435, 3495., 464.195358,
+                    464.2, 464.204642)
+input_ROI[4,] <- c('ID-4', 'Cpd 4', 3670., 3701.697, 3745., 536.194638,
+                    536.2, 536.205362)
+input_ROI[,c(3:8)] <- vapply(input_ROI[,c(3:8)], as.numeric,
+                            FUN.VALUE=numeric(4))
 
 # Initialise object
 initAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths,
@@ -56,51 +84,61 @@ initAnnotation <- peakPantheRAnnotation(spectraPaths=input_spectraPaths,
 # useFIR=TRUE, FIR=input_FIR
 
 # Run serially
-result_parallelAnnotation <- peakPantheR_parallelAnnotation(initAnnotation, ncores=0,
-                                                            getAcquTime=FALSE,
-                                                            verbose=TRUE)
+result_parallelAnnotation <- peakPantheR_parallelAnnotation(initAnnotation,
+                                                        ncores=0,
+                                                        getAcquTime=FALSE,
+                                                        verbose=TRUE)
 # Processing 4 compounds in 3 samples:
 #  uROI:\\tFALSE
 #  FIR:\\tFALSE
 # ----- ko15 -----
-# Polarity can not be extracted from netCDF files, please set manually the polarity
-#  with the 'polarity' method.
+# Polarity can not be extracted from netCDF files, please set manually the
+#  polarity with the 'polarity' method.
 # Reading data from 4 windows
 # Data read in: 0.24 secs
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #3
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #1
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #3
 # Found 4/4 features in 0.06 secs
 # Peak statistics done in: 0.02 secs
 # Feature search done in: 0.76 secs
 # ----- ko16 -----
-# Polarity can not be extracted from netCDF files, please set manually the polarity
-#  with the 'polarity' method.
+# Polarity can not be extracted from netCDF files, please set manually the
+#  polarity with the 'polarity' method.
 # Reading data from 4 windows
 # Data read in: 0.24 secs
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #3
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #1
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #2
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #3
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #4
 # Found 4/4 features in 0.08 secs
 # Peak statistics done in: 0 secs
 # Feature search done in: 0.71 secs
 # ----- ko18 -----
-# Polarity can not be extracted from netCDF files, please set manually the polarity 
-#  with the 'polarity' method.
+# Polarity can not be extracted from netCDF files, please set manually the
+#  polarity with the 'polarity' method.
 # Reading data from 4 windows
 # Data read in: 0.25 secs
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax 
-#  calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #1
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #2
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+#  mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and
+#  ROI$mzMax for ROI #4
 # Found 4/4 features in 0.06 secs
 # Peak statistics done in: 0 secs
 # Feature search done in: 0.71 secs

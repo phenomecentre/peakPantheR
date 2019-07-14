@@ -11,15 +11,20 @@ peakPantheR_plotPeakwidth(apexValue, widthMin = NULL, widthMax = NULL,
 \arguments{
 \item{apexValue}{(float) vector of apex value}
 
-\item{widthMin}{(float) vector of detected peak minimum peakwidth value or NULL (if NULL no peakwidth)}
+\item{widthMin}{(float) vector of detected peak minimum peakwidth value or
+NULL (if NULL no peakwidth)}
 
-\item{widthMax}{(float) vector of detected peak maximum peakwidth value or NULL (uf NULL no peakwidth)}
+\item{widthMax}{(float) vector of detected peak maximum peakwidth value or
+NULL (uf NULL no peakwidth)}
 
-\item{acquTime}{(POSIXct) vector of sample acquisition time as POSIXct or NULL (if NULL points are plotted in the order values are passed as input with the first on top or left)}
+\item{acquTime}{(POSIXct) vector of sample acquisition time as POSIXct or
+NULL (if NULL points are plotted in the order values are passed as input with
+the first on top or left)}
 
 \item{varName}{(str) Name of the variable to plot}
 
-\item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{apexValue}, \code{widthMin}, \code{widthMax}, \code{acquTime})}
+\item{sampleColour}{(str) NULL or vector colour for each sample (same length
+as \code{apexValue}, \code{widthMin}, \code{widthMax}, \code{acquTime})}
 
 \item{rotateAxis}{(bool) if TRUE x and y axis are reversed}
 
@@ -29,7 +34,11 @@ peakPantheR_plotPeakwidth(apexValue, widthMin = NULL, widthMax = NULL,
 Grob (ggplot object)
 }
 \description{
-For a single ROI, plot the peak value and peakwidth (RT, m/z, ...) of detected peaks across multiple samples, by acquisition time or in input order. If \code{rotateAxis=FALSE} x is run order / plot order, y is the \code{apexValue} / \code{widthMin} / \code{widthMax}, if \code{rotateAxis=TRUE} x is the measurement values and y the run order.
+For a single ROI, plot the peak value and peakwidth (RT, m/z,
+...) of detected peaks across multiple samples, by acquisition time or in
+input order. If \code{rotateAxis=FALSE} x is run order / plot order, y is the
+\code{apexValue} / \code{widthMin} / \code{widthMax}, if
+\code{rotateAxis=TRUE} x is the measurement values and y the run order.
 }
 \examples{
 ## Input data
@@ -40,25 +49,25 @@ acqTime <- as.POSIXct(c('2017-07-13 21:06:14', '2017-07-14 21:06:14',
                         '2017-07-15 21:06:14', '2017-07-16 21:06:14'))
 
 ## Plot 4 sampels with colour
-peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
+peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
                         acquTime=NULL, varName='Test variable 1',
                         sampleColour=c('blue','red','green','orange'),
                         rotateAxis=FALSE, verbose=FALSE)
 
 ## Plot 4 samples with colour by acquisition time
-peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
+peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
                         acquTime=acqTime, varName='Test variable 2',
                         sampleColour=c('blue','red','green','orange'),
                         rotateAxis=FALSE, verbose=FALSE)
 
 ## Plot 4 samples with colour, rotate axis
-peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal, 
+peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
                         acquTime=NULL, varName='Test variable 3',
                         sampleColour=c('blue','red','green','orange'),
                         rotateAxis=TRUE, verbose=FALSE)
 
 ## Plot 4 samples with colour by acquisition time, rotate axis
-peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal, widthMax=maxVal,
+peakPantheR_plotPeakwidth(apexValue=apexVal, widthMin=minVal,widthMax=maxVal,
                         acquTime=acqTime, varName='Test variable 4',
                         sampleColour=c('blue','red','green','orange'),
                         rotateAxis=FALSE, verbose=FALSE)

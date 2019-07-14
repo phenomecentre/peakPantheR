@@ -79,7 +79,7 @@ peakPantheR_loadAnnotationParamsCSV <- function(CSVParamPath, verbose = TRUE) {
         "rtMax", "mzMin", "mz", "mzMax")
     tmp_targetFeatTable[, c(3:8)] <- vapply(tmp_targetFeatTable[, c(3:8)],
         as.numeric, FUN.VALUE = numeric(nrow(tmp_targetFeatTable)))
-    tmp_uROI <- tmp_csv[, c("uROI_rtMin", "uROI_rt", "uROI_rtMax", "uROI_mzMin", 
+    tmp_uROI <- tmp_csv[, c("uROI_rtMin", "uROI_rt", "uROI_rtMax", "uROI_mzMin",
         "uROI_mz", "uROI_mzMax")]
     colnames(tmp_uROI) <- c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")
     tmp_uROI[, seq(1, 6)] <- vapply(tmp_uROI[, seq(1, 6)], as.numeric,
