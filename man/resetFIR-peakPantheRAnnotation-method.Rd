@@ -31,7 +31,8 @@ input_targetFeatTable <- data.frame(matrix(vector(), 2, 8,
                             stringsAsFactors=FALSE)
 input_targetFeatTable[1,] <- c('ID-1', 'Cpd 1',  3.,  1.,  4.,  5.,  2.,  6.)
 input_targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 19., 17., 20., 21., 18., 22.)
-input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)],
+                                        as.numeric)
 ## FIR
 input_FIR       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), 
                                 c('rtMin', 'rtMax', 'mzMin', 'mzMax'))),
@@ -39,8 +40,8 @@ input_FIR       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(),
 input_FIR[1,]   <- c(13., 14., 15., 16.)
 input_FIR[2,]   <- c(29., 30., 31., 32.)
 
-annotation      <- peakPantheRAnnotation(targetFeatTable = input_targetFeatTable,
-                                        FIR = input_FIR, uROIExist = FALSE)
+annotation <- peakPantheRAnnotation(targetFeatTable = input_targetFeatTable,
+                                    FIR = input_FIR, uROIExist = FALSE)
 
 ## Reset FIR with ROI values as uROI are not set
 updatedAnnotation <- resetFIR(annotation, verbose=TRUE)

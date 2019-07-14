@@ -4,8 +4,7 @@
 \name{outputAnnotationParamsCSV,peakPantheRAnnotation-method}
 \alias{outputAnnotationParamsCSV,peakPantheRAnnotation-method}
 \alias{outputAnnotationParamsCSV}
-\title{Save annotation parameters as CSV
-Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing}
+\title{Save annotation parameters as CSV}
 \usage{
 \S4method{outputAnnotationParamsCSV}{peakPantheRAnnotation}(object,
     saveFolder, verbose)
@@ -13,7 +12,8 @@ Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}
 
-\item{saveFolder}{(str) Path of folder where annotationParameters_summary.csv will be saved}
+\item{saveFolder}{(str) Path of folder where annotationParameters_summary.csv
+will be saved}
 
 \item{verbose}{(bool) If TRUE message progress}
 }
@@ -21,6 +21,6 @@ Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing
 None
 }
 \description{
-Save annotation parameters as CSV
-Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing
+Save annotation parameters (ROI, uROI and FIR) to disk as a CSV
+file for editing
 }

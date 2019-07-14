@@ -9,7 +9,8 @@
 \S4method{[}{peakPantheRAnnotation,ANY,ANY,ANY}(x, i, j, drop = "missing")
 }
 \arguments{
-\item{x}{object from which to extract element(s) or in which to replace element(s).}
+\item{x}{object from which to extract element(s) or in which to replace
+element(s).}
 
 \item{i}{(sample) indices specifying elements to extract or replace}
 

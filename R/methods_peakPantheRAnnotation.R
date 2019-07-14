@@ -64,13 +64,15 @@ setValidity("peakPantheRAnnotation",
 setGeneric("cpdID", function(object, ...) standardGeneric("cpdID"))
 #' cpdID accessor
 #' @param object peakPantheRAnnotation
-#' @return (str) A character vector of compound IDs, of length number of compounds
+#' @return (str) A character vector of compound IDs, of length number of
+#' compounds
 #' @docType methods
 #' @aliases cpdID
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -79,14 +81,18 @@ setGeneric("cpdID", function(object, ...) standardGeneric("cpdID"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                         c('cpdID','cpdName','rtMin','rt','rtMax','mzMin',
+#'                         'mz', 'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' cpdID(annotation)
 #' # [1] 'ID-1' 'ID-2'
@@ -99,13 +105,15 @@ setMethod("cpdID", "peakPantheRAnnotation", function(object) {
 setGeneric("cpdName", function(object, ...) standardGeneric("cpdName"))
 #' cpdName accessor
 #' @param object peakPantheRAnnotation
-#' @return (str) A character vector of compound names, of length number of compounds
+#' @return (str) A character vector of compound names, of length number of
+#' compounds
 #' @docType methods
 #' @aliases cpdName
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -114,14 +122,18 @@ setGeneric("cpdName", function(object, ...) standardGeneric("cpdName"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                 c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz',
+#'                 'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' cpdName(annotation)
 #' # [1] 'Cpd 1' 'Cpd 2'
@@ -134,13 +146,15 @@ setMethod("cpdName", "peakPantheRAnnotation", function(object) {
 setGeneric("ROI", function(object, ...) standardGeneric("ROI"))
 #' ROI accessor returns targetFeatTable with cpdID, cpdName added
 #' @param object peakPantheRAnnotation
-#' @return (data.frame) target feature table with compounds as row and ROI parameters as columns
+#' @return (data.frame) target feature table with compounds as row and ROI
+#' parameters as columns
 #' @docType methods
 #' @aliases ROI
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -149,14 +163,18 @@ setGeneric("ROI", function(object, ...) standardGeneric("ROI"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                 c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz',
+#'                 'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ROI(annotation)
 #' #   rtMin       rt rtMax    mzMin    mz    mzMax cpdID cpdName
@@ -174,13 +192,15 @@ setMethod("ROI", "peakPantheRAnnotation", function(object) {
 setGeneric("uROI", function(object, ...) standardGeneric("uROI"))
 #' uROI accessor returns targetFeatTable with cpdID, cpdName added
 #' @param object peakPantheRAnnotation
-#' @return (data.frame) target feature table with compounds as row and uROI parameters as columns
+#' @return (data.frame) target feature table with compounds as row and uROI
+#' parameters as columns
 #' @docType methods
 #' @aliases uROI
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -189,14 +209,18 @@ setGeneric("uROI", function(object, ...) standardGeneric("uROI"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                 c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz',
+#'                 'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' uROI(annotation)
@@ -215,13 +239,15 @@ setMethod("uROI", "peakPantheRAnnotation", function(object) {
 setGeneric("FIR", function(object, ...) standardGeneric("FIR"))
 #' FIR accessor returns targetFeatTable with cpdID, cpdName added
 #' @param object peakPantheRAnnotation
-#' @return (data.frame) target feature table with compounds as row and FIR parameters as columns
+#' @return (data.frame) target feature table with compounds as row and FIR
+#' parameters as columns
 #' @docType methods
 #' @aliases FIR
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -230,14 +256,18 @@ setGeneric("FIR", function(object, ...) standardGeneric("FIR"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                 c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz',
+#'                 'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' FIR(annotation)
@@ -256,13 +286,15 @@ setMethod("FIR", "peakPantheRAnnotation", function(object) {
 setGeneric("filepath", function(object, ...) standardGeneric("filepath"))
 #' filepath accessor
 #' @param object peakPantheRAnnotation
-#' @return (str) A character vector of file paths, of length number of spectra files
+#' @return (str) A character vector of file paths, of length number of spectra
+#' files
 #' @docType methods
 #' @aliases filepath
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -271,17 +303,22 @@ setGeneric("filepath", function(object, ...) standardGeneric("filepath"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                 c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz',
+#'                 'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #' filepath(annotation)
-#' # [1] 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF' 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF'
-#' # [2] 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF'
+#' # [1] 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF'
+#' # [2] 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF'
+#' # [3] 'C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF'
 #' }
 setMethod("filepath", "peakPantheRAnnotation", function(object) {
     object@filepath
@@ -292,13 +329,15 @@ setGeneric("cpdMetadata",
             function(object, ...) standardGeneric("cpdMetadata"))
 #' cpdMetadata accessor
 #' @param object peakPantheRAnnotation
-#' @return (data.frame) A data.frame of compound metadata, with compounds as row and metadata as columns
+#' @return (data.frame) A data.frame of compound metadata, with compounds as row
+#' and metadata as columns
 #' @docType methods
 #' @aliases cpdMetadata
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -307,14 +346,18 @@ setGeneric("cpdMetadata",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values not initialised
 #' cpdMetadata(annotation)
@@ -329,13 +372,15 @@ setGeneric("spectraMetadata",
             function(object, ...) standardGeneric("spectraMetadata"))
 #' spectraMetadata accessor
 #' @param object peakPantheRAnnotation
-#' @return (data.frame) A data.frame of sample metadata, with samples as row and metadata as columns
+#' @return (data.frame) A data.frame of sample metadata, with samples as row and
+#' metadata as columns
 #' @docType methods
 #' @aliases spectraMetadata
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -344,14 +389,18 @@ setGeneric("spectraMetadata",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values not initialised
 #' spectraMetadata(annotation)
@@ -366,13 +415,15 @@ setGeneric("acquisitionTime",
             function(object, ...) standardGeneric("acquisitionTime"))
 #' acquisitionTime accessor returns value as.POSIXct
 #' @param object peakPantheRAnnotation
-#' @return (POSIXct) A character vector of acquisition date-time (converted from POSIXct) or NA
+#' @return (POSIXct) A character vector of acquisition date-time (converted from
+#' POSIXct) or NA
 #' @docType methods
 #' @aliases acquisitionTime
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -381,14 +432,18 @@ setGeneric("acquisitionTime",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                 c('cpdID', 'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz',
+#'                 'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## acquisitionTime can only be extracted from NetCDF files
 #' acquisitionTime(annotation)
@@ -408,7 +463,8 @@ setGeneric("uROIExist", function(object, ...) standardGeneric("uROIExist"))
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -417,14 +473,18 @@ setGeneric("uROIExist", function(object, ...) standardGeneric("uROIExist"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' uROIExist(annotation)
 #' # [1] FALSE
@@ -443,7 +503,8 @@ setGeneric("useUROI", function(object, ...) standardGeneric("useUROI"))
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -452,14 +513,18 @@ setGeneric("useUROI", function(object, ...) standardGeneric("useUROI"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' useUROI(annotation)
 #' # [1] FALSE
@@ -478,7 +543,8 @@ setGeneric("useFIR", function(object, ...) standardGeneric("useFIR"))
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -487,14 +553,18 @@ setGeneric("useFIR", function(object, ...) standardGeneric("useFIR"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' useFIR(annotation)
 #' # [1] FALSE
@@ -507,13 +577,15 @@ setMethod("useFIR", "peakPantheRAnnotation", function(object) {
 setGeneric("TIC", function(object, ...) standardGeneric("TIC"))
 #' TIC accessor
 #' @param object peakPantheRAnnotation
-#' @return (float) A numeric vector of Total Ion Chromatogram or NA, of length number of spectra files
+#' @return (float) A numeric vector of Total Ion Chromatogram or NA, of length
+#' number of spectra files
 #' @docType methods
 #' @aliases TIC
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -522,14 +594,18 @@ setGeneric("TIC", function(object, ...) standardGeneric("TIC"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' TIC(annotation)
@@ -543,13 +619,16 @@ setMethod("TIC", "peakPantheRAnnotation", function(object) {
 setGeneric("peakTables", function(object, ...) standardGeneric("peakTables"))
 #' peakTables accessor with cpdID and cpdName added back
 #' @param object peakPantheRAnnotation
-#' @return (data.frame) A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns, with added compound ID and name.
+#' @return (data.frame) A list of peakTable data.frame, of length number of
+#' spectra files. Each peakTable data.frame has compounds as rows and peak
+#' annotation results as columns, with added compound ID and name.
 #' @docType methods
 #' @aliases peakTables
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -558,14 +637,18 @@ setGeneric("peakTables", function(object, ...) standardGeneric("peakTables"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' peakTables(annotation)
@@ -594,13 +677,17 @@ setMethod("peakTables", "peakPantheRAnnotation", function(object) {
 setGeneric("dataPoints", function(object, ...) standardGeneric("dataPoints"))
 #' dataPoints accessor
 #' @param object peakPantheRAnnotation
-#' @return A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row))
+#' @return A list of length number of spectra files. Each list element is a
+#' \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each
+#' ROI/uROI (retention time 'rt', mass 'mz' and intensity 'int' (as column) of
+#' each raw data points (as row))
 #' @docType methods
 #' @aliases dataPoints
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -609,14 +696,18 @@ setGeneric("dataPoints", function(object, ...) standardGeneric("dataPoints"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' dataPoints(annotation)
@@ -635,13 +726,15 @@ setMethod("dataPoints", "peakPantheRAnnotation", function(object) {
 setGeneric("peakFit", function(object, ...) standardGeneric("peakFit"))
 #' peakFit accessor
 #' @param object peakPantheRAnnotation
-#' @return A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI
+#' @return A list of length number of spectra files. Each list element is a
+#' \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI
 #' @docType methods
 #' @aliases peakFit
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -650,14 +743,18 @@ setGeneric("peakFit", function(object, ...) standardGeneric("peakFit"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' peakFit(annotation)
@@ -682,7 +779,8 @@ setGeneric("isAnnotated", function(object, ...) standardGeneric("isAnnotated"))
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -691,14 +789,18 @@ setGeneric("isAnnotated", function(object, ...) standardGeneric("isAnnotated"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' isAnnotated(annotation)
 #' # [1] FALSE
@@ -717,7 +819,8 @@ setGeneric("nbSamples", function(object, ...) standardGeneric("nbSamples"))
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -726,14 +829,18 @@ setGeneric("nbSamples", function(object, ...) standardGeneric("nbSamples"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' nbSamples(annotation)
 #' # [1] 3
@@ -752,7 +859,8 @@ setGeneric("nbCompounds", function(object, ...) standardGeneric("nbCompounds"))
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ##  compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -761,14 +869,18 @@ setGeneric("nbCompounds", function(object, ...) standardGeneric("nbCompounds"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' nbCompounds(annotation)
 #' # [1] 2
@@ -780,17 +892,20 @@ setMethod("nbCompounds", "peakPantheRAnnotation", function(object) {
 # annotationTable
 setGeneric("annotationTable",
             function(object, column) standardGeneric("annotationTable"))
-#' annotationTable accessor
-#' annotationTable returns a dataframe (row samples, col compounds) filled with a specific peakTable column
+#' @title annotationTable accessor
+#' @description annotationTable returns a dataframe (row samples, col compounds)
+#' filled with a specific peakTable column
 #' @param object peakPantheRAnnotation
 #' @param column a peakTable columns
-#' @return (data.frame) (row samples, col compounds) filled with a specific peakTable column
+#' @return (data.frame) (row samples, col compounds) filled with a specific
+#' peakTable column
 #' @docType methods
 #' @aliases annotationTable
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -799,14 +914,18 @@ setGeneric("annotationTable",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' annotationTable(annotation)
@@ -862,14 +981,17 @@ setGeneric("EICs",
             standardGeneric("EICs"))
 #' EICs accessor
 #' @param object peakPantheRAnnotation
-#' @param aggregationFunction (str) Function to use in order to aggregate intensities across mz in each scan. One of \code{sum}, \code{max}, \code{min}, \code{mean}
+#' @param aggregationFunction (str) Function to use in order to aggregate
+#' intensities across mz in each scan. One of \code{sum}, \code{max},
+#' \code{min}, \code{mean}
 #' @return (float) Extracted Ion Chromatogram aggregated across mz in each scan
 #' @docType methods
 #' @aliases EICs
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -878,14 +1000,18 @@ setGeneric("EICs",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' ## default values without annotation
 #' EICs(annotation)
@@ -916,7 +1042,8 @@ setGeneric("filename", function(object, ...) standardGeneric("filename"))
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -925,14 +1052,18 @@ setGeneric("filename", function(object, ...) standardGeneric("filename"))
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' annotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                     targetFeatTable=targetFeatTable)
 #'
 #' filename(annotation)
 #' # [1] 'ko15' 'ko16' 'ko18'
@@ -948,7 +1079,8 @@ setMethod("filename", "peakPantheRAnnotation", function(object) {
 # Sub-setting object
 #####################################################################
 #' extract parts of peakPantheRAnnotation class
-#' @param x object from which to extract element(s) or in which to replace element(s).
+#' @param x object from which to extract element(s) or in which to replace
+#' element(s).
 #' @param i (sample) indices specifying elements to extract or replace
 #' @param j (compound) indices specifying elements to extract or replace
 #' @param drop not applicable
@@ -1052,17 +1184,25 @@ setMethod("[", "peakPantheRAnnotation", function(x, i, j, drop = "missing") {
 setGeneric("annotationParamsDiagnostic",
             function(object, verbose = TRUE, ...)
             standardGeneric("annotationParamsDiagnostic"))
-#' Set uROI and FIR based on annotation results
-#' Set updated ROI (uROI) and Fallback Integration Regions (FIR) based on the annotation results. If the object is not annotated, it is returned untouched. ROI is not modified. If uROI exist they are left untouched, otherwise they are set as the minimum and maximum found peaks limits (+/-5\% of ROI in retention time). If FIR are used they are left untouched, otherwise they are set as the median of the found limits (rtMin, rtMax, mzMin, mzMax).
+#' @title Set uROI and FIR based on annotation results
+#' @description Set updated ROI (uROI) and Fallback Integration Regions (FIR)
+#' based on the annotation results. If the object is not annotated, it is
+#' returned untouched. ROI is not modified. If uROI exist they are left
+#' untouched, otherwise they are set as the minimum and maximum found peaks
+#' limits (+/-5\% of ROI in retention time). If FIR are used they are left
+#' untouched, otherwise they are set as the median of the found limits (rtMin,
+#' rtMax, mzMin, mzMax).
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
 #' @param verbose (bool) If TRUE message progress of uROI and FIR calculation
-#' @return (peakPantheRAnnotation) object with updated ROI and FIR set from annotation results
+#' @return (peakPantheRAnnotation) object with updated ROI and FIR set from
+#' annotation results
 #' @docType methods
 #' @aliases annotationParamsDiagnostic
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -1071,14 +1211,18 @@ setGeneric("annotationParamsDiagnostic",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
 #'
 #' annotationParamsDiagnostic(emptyAnnotation, verbose=TRUE)
 #' # Warning: the object has not been annotated, return the object untouched
@@ -1107,8 +1251,8 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
     ## use ROI value)
     if (!outAnnotation@uROIExist) {
         if (verbose) {
-            message(paste0('uROI will be set as mimimum/maximum of found peaks ',
-                            '(+/-5% of ROI in retention time)'))
+            message(paste0('uROI will be set as mimimum/maximum of found peaks',
+                            ' (+/-5% of ROI in retention time)'))
         }
         # rt ROI 5% (no NA in ROI rtMin/rtMax)
         rtMargin <- (ROI(outAnnotation)$rtMax - ROI(outAnnotation)$rtMin) * 0.05
@@ -1171,7 +1315,8 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
         }
     }
     
-    ## FIR FIR not used, recalculate (if NA, use uROI value that was set previously)
+    ## FIR FIR not used, recalculate (if NA, use uROI value that was set
+    ## previously)
     if (!outAnnotation@useFIR) {
         if (verbose) {
             message(paste0('FIR will be calculated as the median of found ',
@@ -1239,11 +1384,13 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
 setGeneric("outputAnnotationParamsCSV",
             function(object, saveFolder, verbose = TRUE, ...)
             standardGeneric("outputAnnotationParamsCSV"))
-#' Save annotation parameters as CSV
-#' Save annotation parameters (ROI, uROI and FIR) to disk as a CSV file for editing
+#' @title Save annotation parameters as CSV
+#' @description Save annotation parameters (ROI, uROI and FIR) to disk as a CSV
+#' file for editing
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
 #' @param verbose (bool) If TRUE message progress
-#' @param saveFolder (str) Path of folder where annotationParameters_summary.csv will be saved
+#' @param saveFolder (str) Path of folder where annotationParameters_summary.csv
+#' will be saved
 #' @return None
 #' @docType methods
 #' @aliases outputAnnotationParamsCSV
@@ -1258,7 +1405,7 @@ setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
                             "ROI_mzMin", "ROI_mzMax")
     outTable <- cbind(outTable, X = rep("|", nbCompounds(object)), tmp_ROI)
     # uROI
-    tmp_uROI <- uROI(object)[, c("rtMin", "rtMax", "mzMin", "mzMax", "rt", "mz")]
+    tmp_uROI <- uROI(object)[,c("rtMin", "rtMax", "mzMin", "mzMax", "rt", "mz")]
     colnames(tmp_uROI) <- c("uROI_rtMin", "uROI_rtMax", "uROI_mzMin",
         "uROI_mzMax", "uROI_rt", "uROI_mz")
     outTable <- cbind(outTable, X = rep("|", nbCompounds(object)), tmp_uROI)
@@ -1283,19 +1430,33 @@ setGeneric("annotationDiagnosticPlots",
             function(object, sampleColour = NULL, sampling = 250,
                     verbose = TRUE, ...)
             standardGeneric("annotationDiagnosticPlots"))
-#' Generate fit diagnostic plots
-#' Generate fit diagnostic plots for each ROI: \code{EICFit} the raw data and detected feature fit, \code{rtPeakwidthVert} detected peaks retention time apex and peakwidth (vertical and no run order), \code{rtPeakwidthHorzRunOrder} detected peaks retention time apex and peakwidth by run order, \code{mzPeakwidthHorzRunOrder} detected peaks m/z apex and peakwidth by run order, \code{areaRunOrder} detected peaks area by run order, \code{rtHistogram} histogram of detected peaks retention time, \code{mzHistogram} histogram of detected peaks m/z, \code{areaHistogram} histogram of detected peaks area.
+#' @title Generate fit diagnostic plots
+#' @description Generate fit diagnostic plots for each ROI: \code{EICFit} the
+#' raw data and detected feature fit, \code{rtPeakwidthVert} detected peaks
+#' retention time apex and peakwidth (vertical and no run order),
+#' \code{rtPeakwidthHorzRunOrder} detected peaks retention time apex and
+#' peakwidth by run order, \code{mzPeakwidthHorzRunOrder} detected peaks m/z
+#' apex and peakwidth by run order, \code{areaRunOrder} detected peaks area by
+#' run order, \code{rtHistogram} histogram of detected peaks retention time,
+#' \code{mzHistogram} histogram of detected peaks m/z, \code{areaHistogram}
+#' histogram of detected peaks area.
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param sampling (int) Number of points to employ when plotting fittedCurve
 #' @param verbose (bool) if TRUE message the plot generation progress
-#' @return A list (one list per compound) of diagnostic plots: \code{result[[i]]$EICFit}, \code{result[[i]]$rtPeakwidthVert}, \code{result[[i]]$rtPeakwidthHorzRunOrder}, \code{result[[i]]$mzPeakwidthHorzRunOrder}, \code{result[[i]]$areaRunOrder}, \code{result[[i]]$rtHistogram}, \code{result[[i]]$mzHistogram}, \code{result[[i]]$areaHistogram}, \code{result[[i]]$title}
+#' @return A list (one list per compound) of diagnostic plots:
+#' \code{result[[i]]$EICFit}, \code{result[[i]]$rtPeakwidthVert},
+#' \code{result[[i]]$rtPeakwidthHorzRunOrder},
+#' \code{result[[i]]$mzPeakwidthHorzRunOrder}, \code{result[[i]]$areaRunOrder},
+#' \code{result[[i]]$rtHistogram}, \code{result[[i]]$mzHistogram},
+#' \code{result[[i]]$areaHistogram}, \code{result[[i]]$title}
 #' @docType methods
 #' @aliases annotationDiagnosticPlots
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -1304,17 +1465,22 @@ setGeneric("annotationDiagnosticPlots",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
 #'
 #' annotationDiagnosticPlots(emptyAnnotation)
-#' # Warning: the object has not been annotated, return an empty diagnostic plot list
+#' # Warning: the object has not been annotated, return an empty diagnostic plot
+#' # list
 #' # [[1]]
 #' # NULL
 #' # [[2]]
@@ -1338,8 +1504,8 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
         tmp_annotation <- object[, cpd]
         tmp_plotList <- vector("list", 9)
         names(tmp_plotList) <- c("EICFit", "rtPeakwidthVert",
-            "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder",
-            "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram", "title")
+            "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder","areaRunOrder",
+            "rtHistogram", "mzHistogram", "areaHistogram", "title")
         
         # title
         tmp_plotList$title <- paste(cpdID(tmp_annotation), "-",
@@ -1405,28 +1571,35 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
 })
 
 
-## Save to disk the annotation parameters as CSV and a diagnostic plot per fitted
-## compound
+## Save to disk the annotation parameters as CSV and a diagnostic plot per
+## fitted compound
 setGeneric("outputAnnotationDiagnostic",
     function(object, saveFolder, savePlots = TRUE, sampleColour = NULL,
             verbose = TRUE, ncores = 0, ...)
     standardGeneric("outputAnnotationDiagnostic"))
-#' Save to disk the annotation parameters as CSV and a diagnostic plot per fitted compound
-#' Save to disk the annotation parameters as CSV (as generated by \code{outputAnnotationParamsCSV()}) and a diagnostic plot per fitted compound (as generated by \code{annotationDiagnosticMultiplot()}) if \code{savePlots} is TRUE
+#' @title Save to disk the annotation parameters as CSV and a diagnostic plot
+#' per fitted compound
+#' @description Save to disk the annotation parameters as CSV (as generated by
+#' \code{outputAnnotationParamsCSV()}) and a diagnostic plot per fitted compound
+#' (as generated by \code{annotationDiagnosticMultiplot()}) if \code{savePlots}
+#' is TRUE
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
-#' @param saveFolder (str) Path of folder where annotationParameters_summary.csv and plots will be saved
+#' @param saveFolder (str) Path of folder where annotationParameters_summary.csv
+#' and plots will be saved
 #' @param savePlots (bool) If TRUE save a diagnostic plot for each compound
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param verbose (bool) If TRUE message progress
 #' @param ncores (int) Number of cores to use to save plots in parallel
-#' @param ... Additional parameters for plotting i.e. \code{sampling} for the number of points to employ when plotting fittedCurve
+#' @param ... Additional parameters for plotting i.e. \code{sampling} for the
+#' number of points to employ when plotting fittedCurve
 #' @return None
 #' @docType methods
 #' @aliases outputAnnotationDiagnostic
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -1435,27 +1608,30 @@ setGeneric("outputAnnotationDiagnostic",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
 #'
 #' # Calculate annotation
-#' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
-#'                                                 getAcquTime=FALSE, verbose=FALSE)$annotation
+#' annotation <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
+#'                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 #'
 #' # temporary location
 #' savePath1       <- tempdir()
-#' outputAnnotationDiagnostic(annotation, saveFolder=savePath1, savePlots=FALSE, verbose=TRUE)
+#' outputAnnotationDiagnostic(annotation, saveFolder=savePath1, savePlots=FALSE,
+#'                             verbose=TRUE)
 #' }
 setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
-    function(object, saveFolder, savePlots, sampleColour, verbose, ncores,
-            ...) {
-    
+    function(object, saveFolder, savePlots, sampleColour, verbose, ncores,...) {
     # @param cpdNb (int) cpd number betweem 1 and nbCompounds()
     # @param annotation (peakPantheRAnnotation) Annotation object
     # @param saveFolder (str) Path where plots will be saved
@@ -1547,10 +1723,18 @@ setGeneric("outputAnnotationResult",
     function(object, saveFolder, annotationName = "annotationResult",
             verbose = TRUE)
     standardGeneric("outputAnnotationResult"))
-#' Save to disk all annotation results as csv files
-#' Save to disk all annotation results as \code{annotationName_ ... .csv} files: compound metadata (\code{cpdMetadata}, \code{cpdID}, \code{cpdName}) and spectra metadata (\code{spectraMetadata}, \code{acquisitionTime}, \code{TIC}), summary of fit (ratio of peaks found: \code{ratio_peaks_found}, ratio of peaks filled: \code{ratio_peaks_filled}, mean ppm_error: \code{ppm_error}, mean rt_dev_sec: \code{rt_dev_sec}), and a file for each column of \code{peakTables} (with samples as rows and compounds as columns)
+#' @title Save to disk all annotation results as csv files
+#' @description Save to disk all annotation results as
+#' \code{annotationName_ ... .csv} files: compound metadata (\code{cpdMetadata},
+#' \code{cpdID}, \code{cpdName}) and spectra metadata (\code{spectraMetadata},
+#' \code{acquisitionTime}, \code{TIC}), summary of fit (ratio of peaks found:
+#' \code{ratio_peaks_found}, ratio of peaks filled: \code{ratio_peaks_filled},
+#' mean ppm_error: \code{ppm_error}, mean rt_dev_sec: \code{rt_dev_sec}), and a
+#' file for each column of \code{peakTables} (with samples as rows and compounds
+#' as columns)
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
-#' @param saveFolder (str) Path of folder where the annotation result csv will be saved
+#' @param saveFolder (str) Path of folder where the annotation result csv will
+#' be saved
 #' @param annotationName (str) name of annotation to use in the saved csv
 #' @param verbose (bool) If TRUE message progress
 #' @return None
@@ -1559,7 +1743,8 @@ setGeneric("outputAnnotationResult",
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -1568,14 +1753,18 @@ setGeneric("outputAnnotationResult",
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
-#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths, targetFeatTable=targetFeatTable)
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
 #'
 #' # Calculate annotation
 #' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
@@ -1583,7 +1772,8 @@ setGeneric("outputAnnotationResult",
 #'
 #' # temporary location
 #' savePath1       <- tempdir()
-#' outputAnnotationResult(annotation, saveFolder=savePath1, annotationName='testProject', verbose=TRUE)
+#' outputAnnotationResult(annotation, saveFolder=savePath1,
+#'                         annotationName='testProject', verbose=TRUE)
 #' }
 setMethod("outputAnnotationResult", "peakPantheRAnnotation",
     function(object, saveFolder, annotationName, verbose) {
@@ -1692,27 +1882,54 @@ setGeneric("resetAnnotation",
         uROI = NULL, FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL,
         uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE, ...)
     standardGeneric("resetAnnotation"))
-#' Reset a peakPantheRAnnotation and alter samples and compounds information
-#' Reset a peakPantheRAnnotation (remove results and set \code{isAnnotated=FALSE}). If a different number of samples (\code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the object will be initialised to the new size. For input values left as NULL, the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI}, \code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI}, \code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist}, \code{useUROI} and \code{useFIR}) will be filled with values from \code{previousAnnotation}.
+#' @title Reset a peakPantheRAnnotation and alter samples and compounds
+#' information
+#' @description Reset a peakPantheRAnnotation (remove results and set
+#' \code{isAnnotated=FALSE}). If a different number of samples (
+#' \code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the
+#' object will be initialised to the new size. For input values left as NULL,
+#' the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI},
+#' \code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI},
+#' \code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist},
+#' \code{useUROI} and \code{useFIR}) will be filled with values from
+#' \code{previousAnnotation}.
 #' @param previousAnnotation (peakPantheRAnnotation) object to reset
-#' @param spectraPaths NULL or a character vector of spectra file paths, to set samples to process
-#' @param targetFeatTable NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.
-#' @param uROI NULL or a data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
-#' @param FIR NULL or a data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
-#' @param cpdMetadata NULL or a data.frame of compound metadata, with compounds as row and metadata as columns
-#' @param spectraMetadata NULL or a data.frame of sample metadata, with samples as row and metadata as columns
+#' @param spectraPaths NULL or a character vector of spectra file paths, to set
+#' samples to process
+#' @param targetFeatTable NULL or a \code{\link{data.frame}} of compounds to
+#' target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName}
+#' (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or
+#' \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz}
+#' (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.
+#' @param uROI NULL or a data.frame of updated Regions Of Interest (uROI) with
+#' compounds as row and uROI parameters as columns: \code{rtMin} (float in
+#' seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in
+#' seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax}
+#' (float).
+#' @param FIR NULL or a data.frame of Fallback Integration Regions (FIR) with
+#' compounds as row and FIR parameters as columns: \code{rtMin} (float in
+#' seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax}
+#' (float).
+#' @param cpdMetadata NULL or a data.frame of compound metadata, with compounds
+#' as row and metadata as columns
+#' @param spectraMetadata NULL or a data.frame of sample metadata, with samples
+#' as row and metadata as columns
 #' @param uROIExist NULL or a logical stating if uROI have been set
 #' @param useUROI NULL or a logical stating if uROI are to be used
 #' @param useFIR NULL or a logical stating if FIR are to be used
 #' @param verbose (bool) If TRUE message progress
-#' @param ... Additional slots and values to set when resetting the object (\code{cpdID}, \code{cpdName}, \code{ROI}, \code{filepath}, \code{TIC}, \code{acquisitionTime}, \code{peakTables}, \code{dataPoints}, \code{peakFit})
-#' @return (peakPantheRAnnotation) object reset with previous results removed and slots updated
+#' @param ... Additional slots and values to set when resetting the object
+#' (\code{cpdID}, \code{cpdName}, \code{ROI}, \code{filepath}, \code{TIC},
+#' \code{acquisitionTime}, \code{peakTables}, \code{dataPoints}, \code{peakFit})
+#' @return (peakPantheRAnnotation) object reset with previous results removed
+#' and slots updated
 #' @docType methods
 #' @aliases resetAnnotation
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -1720,12 +1937,15 @@ setGeneric("resetAnnotation",
 #'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
 #' smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths, 
 #'                                         targetFeatTable=targetFeatTable)
@@ -1741,7 +1961,9 @@ setGeneric("resetAnnotation",
 #' newSpectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
 #'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
-#' largerAnnotation <- resetAnnotation(smallAnnotation, spectraPaths=newSpectraPaths, verbose=TRUE)
+#' largerAnnotation <- resetAnnotation(smallAnnotation,
+#'                                     spectraPaths=newSpectraPaths,
+#'                                     verbose=TRUE)
 #' largerAnnotation
 #' # An object of class peakPantheRAnnotation
 #' #  2 compounds in 3 samples.
@@ -2036,7 +2258,8 @@ setGeneric("resetFIR",
 #'                             stringsAsFactors=FALSE)
 #' input_targetFeatTable[1,] <- c('ID-1', 'Cpd 1',  3.,  1.,  4.,  5.,  2.,  6.)
 #' input_targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 19., 17., 20., 21., 18., 22.)
-#' input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
+#' input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)],
+#'                                         as.numeric)
 #' ## FIR
 #' input_FIR       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), 
 #'                                 c('rtMin', 'rtMax', 'mzMin', 'mzMax'))),
@@ -2044,8 +2267,8 @@ setGeneric("resetFIR",
 #' input_FIR[1,]   <- c(13., 14., 15., 16.)
 #' input_FIR[2,]   <- c(29., 30., 31., 32.)
 #'
-#' annotation      <- peakPantheRAnnotation(targetFeatTable = input_targetFeatTable,
-#'                                         FIR = input_FIR, uROIExist = FALSE)
+#' annotation <- peakPantheRAnnotation(targetFeatTable = input_targetFeatTable,
+#'                                     FIR = input_FIR, uROIExist = FALSE)
 #'
 #' ## Reset FIR with ROI values as uROI are not set
 #' updatedAnnotation <- resetFIR(annotation, verbose=TRUE)
