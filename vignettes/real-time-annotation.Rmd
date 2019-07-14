@@ -37,21 +37,29 @@ library(pander)
 
 # Introduction
 
-The `peakPantheR` package is designed for the detection, integration and reporting of pre-defined features in MS files (_e.g. compounds, fragments, adducts, ..._).
+The `peakPantheR` package is designed for the detection, integration and 
+reporting of pre-defined features in MS files (_e.g. compounds, fragments, 
+adducts, ..._).
 
-The **Real Time Annotation** is set to detect and integrate **multiple** compounds in **one** file at a time. 
-It therefore can be deployed on a LC-MS instrument to integrate a set of pre-defined features (_e.g. spiked standards_) as soon as the acquisition of a sample is completed.
+The **Real Time Annotation** is set to detect and integrate **multiple** 
+compounds in **one** file at a time. 
+It therefore can be deployed on a LC-MS instrument to integrate a set of 
+pre-defined features (_e.g. spiked standards_) as soon as the acquisition of a 
+sample is completed.
 
-Using the `r Biocpkg("faahKO")` raw MS dataset as an example, this vignette will:
+Using the `r Biocpkg("faahKO")` raw MS dataset as an example, this vignette 
+will:
 
 * Detail the **Real Time Annotation** concept
-* Apply the **Real Time Annotation** to a subset of pre-defined features in the `r Biocpkg("faahKO")` dataset
+* Apply the **Real Time Annotation** to a subset of pre-defined features in the 
+`r Biocpkg("faahKO")` dataset
 
 ## Abbreviations
 - **ROI**: _Regions Of Interest_ 
     * reference _RT_ / _m/z_ windows in which to search for a feature
 - **uROI**: _updated Regions Of Interest_
-    * modifed ROI adapted to the current dataset which override the reference ROI
+    * modifed ROI adapted to the current dataset which override the reference 
+    ROI
 - **FIR**: _Fallback Integration Regions_ 
     * _RT_ / _m/z_ window to integrate if no peak is found
 - **TIC**: _Total Ion Chromatogram_ 
@@ -62,7 +70,8 @@ Using the `r Biocpkg("faahKO")` raw MS dataset as an example, this vignette will
 
 # Real Time Annotation Concept
 
-Real time compound integration is set to process **multiple** compounds in **one** file at a time.
+Real time compound integration is set to process **multiple** compounds in 
+**one** file at a time.
 
 To acheive this, `peakPantheR` will:
 
@@ -71,7 +80,8 @@ To acheive this, `peakPantheR` will:
 * determine peak statistics for each feature
 * return:
     + TIC
-    + a table with all detected compounds for that file (_row: compound, col: statistic_)
+    + a table with all detected compounds for that file (_row: compound, col: 
+    statistic_)
     + EIC for each ROI
     + sample acquisition date-time from the mzML metadata (_if available_)
     + save EIC plots to disk
@@ -79,12 +89,16 @@ To acheive this, `peakPantheR` will:
 
 # Real Time Annotation Example
 
-In the following example we will target two pre-defined features in a single raw MS spectra file from the `r Biocpkg("faahKO")` package. For more details on the installation and input data employed, please consult the [Getting Started with peakPantheR](getting-started.html) vignette.
+In the following example we will target two pre-defined features in a single raw
+MS spectra file from the `r Biocpkg("faahKO")` package. For more details on the 
+installation and input data employed, please consult the 
+[Getting Started with peakPantheR](getting-started.html) vignette.
 
 
 ## Input Data
 
-The path to a MS file from the `r Biocpkg("faahKO")` is located and used as input spectra:
+The path to a MS file from the `r Biocpkg("faahKO")` is located and used as 
+input spectra:
 ```{r}
 library(faahKO)
 ## file paths
@@ -93,7 +107,8 @@ input_spectraPath
 ```
 
 
-Two targeted features (_e.g. compounds, fragments, adducts, ..._) are defined and stored in a table with as columns:
+Two targeted features (_e.g. compounds, fragments, adducts, ..._) are defined 
+and stored in a table with as columns:
 
 * `cpdID` (numeric)
 * `cpdName` (character)
@@ -106,17 +121,27 @@ Two targeted features (_e.g. compounds, fragments, adducts, ..._) are defined an
 
 ```{r, eval = FALSE}
 # targetFeatTable
-input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
-input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
+input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
+                        c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
+                        "mz", "mzMax"))), stringsAsFactors=FALSE)
+input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 
+                                522.194778, 522.2, 522.205222)
+input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 
+                                496.195038, 496.2, 496.204962)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], 
+                                            as.numeric)
 ```
 ```{r, results = "asis", echo = FALSE}
 # use pandoc for improved readability
-input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
-input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
+input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
+                        c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
+                        "mz", "mzMax"))), stringsAsFactors=FALSE)
+input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 
+                                522.194778, 522.2, 522.205222)
+input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 
+                                496.195038, 496.2, 496.204962)
+input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], 
+                                            as.numeric)
 rownames(input_targetFeatTable) <- NULL
 pander::pandoc.table(input_targetFeatTable, digits = 9)
 ```
@@ -124,13 +149,17 @@ pander::pandoc.table(input_targetFeatTable, digits = 9)
 
 ## Run Single File Annotation
 
-`peakPantheR_singleFileSearch()` takes as input a `singleSpectraDataPath` pointing to the file to process and `targetFeatTable` defining the features to integrate. The resulting annotation contains all the fitting and integration properties:
+`peakPantheR_singleFileSearch()` takes as input a `singleSpectraDataPath` 
+pointing to the file to process and `targetFeatTable` defining the features to 
+integrate. The resulting annotation contains all the fitting and integration 
+properties:
 ```{r}
 library(peakPantheR)
-annotation <- peakPantheR_singleFileSearch(singleSpectraDataPath = input_spectraPath,
-                                            targetFeatTable = input_targetFeatTable,
-                                            peakStatistic = TRUE,
-                                            verbose = TRUE)
+annotation <- peakPantheR_singleFileSearch(
+                                    singleSpectraDataPath = input_spectraPath,
+                                    targetFeatTable = input_targetFeatTable,
+                                    peakStatistic = TRUE,
+                                    verbose = TRUE)
 ```
 ```{r}
 annotation$TIC
@@ -154,23 +183,35 @@ annotation$ROIsDataPoint
 ```
 
 
-`peakPantheR_singleFileSearch()` takes multiple parameters that can alter the file annotation:
+`peakPantheR_singleFileSearch()` takes multiple parameters that can alter the 
+file annotation:
 
-* `peakStatistic` if `TRUE` calculates additional peak statistics: _'ppm_error'_, _'rt_dev_sec'_, _'tailing factor'_ and _'asymmetry factor'_
-* `plotEICsPath` if not `NA` will save a `.png` of all ROI EICs at the path provided (expects `'filepath/filename.png'` for example). If `NA` no plot is saved
-* `getAcquTime` if `TRUE` the sample acquisition date-time is extracted from the `mzML` metadata. Acquisition time cannot be extracted from other file formats. The additional file access will impact run time
-* `FIR` if not `NULL`, defines the Fallback Integration Regions (**FIR**) to integrate when a feature is not found.
-* `verbose` if `TRUE` messages calculation progress, time taken and number of features found (_total and matched to targets_)
-* `...` passes arguments to `findTargetFeatures` to alter peak-picking parameters (e.g. the curveModel, the sampling or fitting parameters)
+* `peakStatistic` if `TRUE` calculates additional peak statistics: 
+_'ppm_error'_, _'rt_dev_sec'_, _'tailing factor'_ and _'asymmetry factor'_
+* `plotEICsPath` if not `NA` will save a `.png` of all ROI EICs at the path 
+provided (expects `'filepath/filename.png'` for example). If `NA` no plot is 
+saved
+* `getAcquTime` if `TRUE` the sample acquisition date-time is extracted from the
+`mzML` metadata. Acquisition time cannot be extracted from other file formats. 
+The additional file access will impact run time
+* `FIR` if not `NULL`, defines the Fallback Integration Regions (**FIR**) to 
+integrate when a feature is not found.
+* `verbose` if `TRUE` messages calculation progress, time taken and number of 
+features found (_total and matched to targets_)
+* `...` passes arguments to `findTargetFeatures` to alter peak-picking 
+parameters (e.g. the curveModel, the sampling or fitting parameters)
 
 
 
-The summary plot generated by `plotEICsPath`, corresponding to the EICs of each integrated regions of interest is as follow:
+The summary plot generated by `plotEICsPath`, corresponding to the EICs of each 
+integrated regions of interest is as follow:
 ```{r, out.width = "700px", echo = FALSE}
 knitr::include_graphics("../man/figures/singleFileSearch_EICsPlot.png")
 ```
 
-> EICs plot: Each panel correspond to a targeted feature, with the EIC extracted on the `mzMin`, `mzMax` range found. The red dot marks the RT peak apex, and the red line highlights the RT peakwidth range found (`rtMin`, `rtMax`)
+> EICs plot: Each panel correspond to a targeted feature, with the EIC extracted
+on the `mzMin`, `mzMax` range found. The red dot marks the RT peak apex, and the
+red line highlights the RT peakwidth range found (`rtMin`, `rtMax`)
 
 
 

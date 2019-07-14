@@ -1827,22 +1827,29 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 <p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.10/peakPantheR">peakPantheR</a></em><br />
 <strong>Authors</strong>: Arnaud Wolfer<br /></p>
-<p>Package for <em>Peak Picking and ANnoTation of High resolution Experiments in R</em>, implemented in <code>R</code> and <code>Shiny</code></p>
+<p>Package for <em>Peak Picking and ANnoTation of High resolution Experiments in R</em>,
+implemented in <code>R</code> and <code>Shiny</code></p>
 <div id="overview" class="section level1">
 <h1><span class="header-section-number">1</span> Overview</h1>
-<p><code>peakPantheR</code> implements functions to detect, integrate and report pre-defined features in MS files (<em>e.g. compounds, fragments, adducts, …</em>).</p>
+<p><code>peakPantheR</code> implements functions to detect, integrate and report pre-defined
+features in MS files (<em>e.g. compounds, fragments, adducts, …</em>).</p>
 <p>It is designed for:</p>
 <ul>
-<li><strong>Real time</strong> feature detection and integration (see <a href="real-time-annotation.html">Real Time Annotation</a>)
+<li><strong>Real time</strong> feature detection and integration (see
+<a href="real-time-annotation.html">Real Time Annotation</a>)
 <ul>
 <li>process <code>multiple</code> compounds in <code>one</code> file at a time</li>
 </ul></li>
-<li><strong>Post-acquisition</strong> feature detection, integration and reporting (see <a href="parallel-annotation.html">Parallel Annotation</a>)
+<li><strong>Post-acquisition</strong> feature detection, integration and reporting (see
+<a href="parallel-annotation.html">Parallel Annotation</a>)
 <ul>
-<li>process <code>multiple</code> compounds in <code>multiple</code> files in <code>parallel</code>, store results in a <code>single</code> object</li>
+<li>process <code>multiple</code> compounds in <code>multiple</code> files in <code>parallel</code>, store
+results in a <code>single</code> object</li>
 </ul></li>
 </ul>
-<p><code>peakPantheR</code> can process LC/MS data files in <em>NetCDF</em>, <em>mzML</em>/<em>mzXML</em> and <em>mzData</em> format as data import is achieved using Bioconductor’s <em><a href="https://bioconductor.org/packages/3.10/mzR">mzR</a></em> package.</p>
+<p><code>peakPantheR</code> can process LC/MS data files in <em>NetCDF</em>, <em>mzML</em>/<em>mzXML</em> and
+<em>mzData</em> format as data import is achieved using Bioconductor’s
+<em><a href="https://bioconductor.org/packages/3.10/mzR">mzR</a></em> package.</p>
 </div>
 <div id="installation" class="section level1">
 <h1><span class="header-section-number">2</span> Installation</h1>
@@ -1858,15 +1865,23 @@ devtools::install_github(&quot;phenomecentre/peakPantheR&quot;)</code></pre>
 </div>
 <div id="input-data" class="section level1">
 <h1><span class="header-section-number">3</span> Input Data</h1>
-<p>Both real time and parallel compound integration require a common set of information:</p>
+<p>Both real time and parallel compound integration require a common set of
+information:</p>
 <ul>
 <li>Path(s) to <code>netCDF</code> / <code>mzML</code> MS file(s)</li>
 <li>An expected region of interest (<code>RT</code> / <code>m/z</code> window) for each compound.</li>
 </ul>
 <div id="ms-files" class="section level2">
 <h2><span class="header-section-number">3.1</span> MS files</h2>
-<p>For demonstration purpose we can annotate a set a set of raw MS spectra (in <em>NetCDF</em> format) provided by the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package. Briefly, this subset of the data from <span class="citation">(Saghatelian et al. 2004)</span> invesigate the metabolic consequences of knocking out the fatty acid amide hydrolase (FAAH) gene in mice. The dataset consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. Each file contains data in centroid mode acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds.</p>
-<p>Below we install the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package and locate raw CDF files of interest:</p>
+<p>For demonstration purpose we can annotate a set a set of raw MS spectra (in
+<em>NetCDF</em> format) provided by the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package. Briefly, this
+subset of the data from <span class="citation">(Saghatelian et al. 2004)</span> invesigate the metabolic consequences
+of knocking out the fatty acid amide hydrolase (FAAH) gene in mice. The dataset
+consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice.
+Each file contains data in centroid mode acquired in positive ion mode form
+200-600 m/z and 2500-4500 seconds.</p>
+<p>Below we install the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package and locate raw CDF files of
+interest:</p>
 <pre class="r"><code>if (!requireNamespace(&quot;BiocManager&quot;, quietly = TRUE))
     install.packages(&quot;BiocManager&quot;)
 
@@ -1883,7 +1898,8 @@ input_spectraPaths
 </div>
 <div id="expected-regions-of-interest" class="section level2">
 <h2><span class="header-section-number">3.2</span> Expected regions of interest</h2>
-<p>Expected regions of interest (targeted features) are specified using the following information:</p>
+<p>Expected regions of interest (targeted features) are specified using the
+following information:</p>
 <ul>
 <li><code>cpdID</code> (numeric)</li>
 <li><code>cpdName</code> (character)</li>
@@ -1894,12 +1910,18 @@ input_spectraPaths
 <li><code>mzMax</code> (m/z)</li>
 <li><code>mz</code> (m/z, optional / <code>NA</code>)</li>
 </ul>
-<p>Below we define 2 features of interest that are present in the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> dataset and can be employed in subsequent vignettes:</p>
+<p>Below we define 2 features of interest that are present in the
+<em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> dataset and can be employed in subsequent vignettes:</p>
 <pre class="r"><code># targetFeatTable
-input_targetFeatTable     &lt;- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c(&quot;cpdID&quot;, &quot;cpdName&quot;, &quot;rtMin&quot;, &quot;rt&quot;, &quot;rtMax&quot;, &quot;mzMin&quot;, &quot;mz&quot;, &quot;mzMax&quot;))), stringsAsFactors=FALSE)
-input_targetFeatTable[1,] &lt;- c(1, &quot;Cpd 1&quot;, 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] &lt;- c(2, &quot;Cpd 2&quot;, 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] &lt;- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)</code></pre>
+input_targetFeatTable &lt;- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
+                        c(&quot;cpdID&quot;, &quot;cpdName&quot;, &quot;rtMin&quot;, &quot;rt&quot;, &quot;rtMax&quot;, &quot;mzMin&quot;, 
+                        &quot;mz&quot;, &quot;mzMax&quot;))), stringsAsFactors=FALSE)
+input_targetFeatTable[1,] &lt;- c(1, &quot;Cpd 1&quot;, 3310., 3344.888, 3390., 522.194778, 
+                                522.2, 522.205222)
+input_targetFeatTable[2,] &lt;- c(2, &quot;Cpd 2&quot;, 3280., 3385.577, 3440., 496.195038,
+                                496.2, 496.204962)
+input_targetFeatTable[,c(1,3:8)] &lt;- sapply(input_targetFeatTable[,c(1,3:8)], 
+                                            as.numeric)</code></pre>
 <table style="width:100%;">
 <colgroup>
 <col width="10%"></col>
