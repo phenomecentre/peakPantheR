@@ -1,22 +1,34 @@
-#' Extract signal in a multiple defined mz rt window from a raw data file
+#' @title Extract signal in a multiple defined mz rt window from a raw data file
 #'
-#' Extract all signal from multiple defined mz rt window from raw data and returns a data.frame. If no rt-mz window is provided, all signal in the raw data file are returned
+#' @description Extract all signal from multiple defined mz rt window from raw
+#' data and returns a data.frame. If no rt-mz window is provided, all signal in
+#' the raw data file are returned
 #'
 #' @param rawSpec an \code{\link[MSnbase]{OnDiskMSnExp-class}}
-#' @param rt (numeric(2) or two-column matrix) the lower and upper retention time range from which the data should be extracted. If a matrix is passed, each row corresponds to a different window. If not provided, the full retention time range will be extracted.
-#' @param mz (numeric(2) or two-column matrix) the lower and upper mass range from which the data should be extracted. If a matrix is passed, each row corresponds to a different window. If not provided, the full mass range will be extracted.
-#' @param msLevel (int) the MS level at which the data should be extracted (default to MS level 1)
+#' @param rt (numeric(2) or two-column matrix) the lower and upper retention
+#' time range from which the data should be extracted. If a matrix is passed,
+#' each row corresponds to a different window. If not provided, the full
+#' retention time range will be extracted.
+#' @param mz (numeric(2) or two-column matrix) the lower and upper mass range
+#' from which the data should be extracted. If a matrix is passed, each row
+#' corresponds to a different window. If not provided, the full mass range will
+#' be extracted.
+#' @param msLevel (int) the MS level at which the data should be extracted
+#' (default to MS level 1)
 #' @param verbose (bool) If TRUE message progress and warnings
 #'
-#' @return a list (one entry per window) of data.frame with signal as row and retention time ('rt'), mass ('mz') and intensity ('int) as columns.
+#' @return a list (one entry per window) of data.frame with signal as row and
+#' retention time ('rt'), mass ('mz') and intensity ('int) as columns.
 #' 
 #' @details
 #' ## Examples cannot be computed as the function is not exported:
-#' ## Use a file form the faahKO package and extract datafrom a region of interest
+#' ## Use a file form the faahKO package and extract data from a region of
+#' ## interest
 #' library(faahKO)
-#' rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                                     centroided=TRUE,
-#'                                     mode='onDisk')
+#' rawSpec <- MSnbase::readMSData(
+#'                             system.file('cdf/KO/ko15.CDF',package='faahKO'),
+#'                             centroided=TRUE,
+#'                             mode='onDisk')
 #' dataPoints  <- extractSignalRawData(rawSpec,
 #'                                     rt = c(3290., 3410.), 
 #'                                     mz = c(522.194778, 522.205222), 
@@ -97,7 +109,7 @@
 #' # 69 3405.921 522.2 598912
 #' # 70 3407.486 522.2 595008
 #' # 71 3409.051 522.2 588416
-extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE) {
+extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
     stime <- Sys.time()
     
     ## Check input check type and dimensions msLevel
@@ -130,7 +142,7 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE) 
             }
         }
     }
-    # both rt and mz have same number of rows (unless one of them has only 1 row)
+    # both rt and mz have same number of rows (unless one of them has only 1row)
     if (!missing(rt) & !missing(mz)) {
         if ((class(rt) %in% c("matrix", "data.frame")) &
             (class(mz) %in% c("matrix", "data.frame"))) {
@@ -149,8 +161,8 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE) 
         }
     }
     
-    ## Express rt and mz as matrix/data.frame of identical number of rows replace
-    ## missing by whole range
+    ## Express rt and mz as matrix/data.frame of identical number of rows
+    ## replace missing by whole range
     if (missing(rt)) {
         rt <- matrix(c(-Inf, Inf), ncol = 2, byrow = TRUE)}
     if (missing(mz)) {
