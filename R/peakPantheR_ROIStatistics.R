@@ -25,31 +25,28 @@
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
-#' ## compounds
+#' ## Initialise a peakPantheRAnnotation object with 2 samples and 1 targeted
+#' ## compound
 #'
 #' # Paths to spectra files
 #' library(faahKO)
 #' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#' targetFeatTable <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(),
 #'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
 #'                     'mzMax'))), stringsAsFactors=FALSE)
 #' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
 #'                         522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
-#'                         496.2, 496.204962)
 #' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
-#'                                     FUN.VALUE=numeric(2))
+#'                                     FUN.VALUE=numeric(1))
 #'
 #' # input
 #' refSpecFiles  <- spectraPaths
 #' input_ROI     <- targetFeatTable
 #' input_IS_ROI  <- targetFeatTable
-#' sampleColour  <- c('blue', 'red', 'green')
+#' sampleColour  <- c('blue', 'red')
 #'
 #' # temporary saveFolder
 #' saveFolder1   <- tempdir()
