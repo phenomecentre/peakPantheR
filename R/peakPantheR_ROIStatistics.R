@@ -1,18 +1,32 @@
-#' Save to disk each ROI EIC and mean IS RT
-#' Using reference samples (\code{referenceSpectraFiles}), save (to \code{saveFolder}) each ROI EIC (\code{ROI}) and reports the mean apex RT for all IS (\code{IS_ROI}) across samples
-#' @param referenceSpectraFiles (str) A character vector of paths to the reference spectra files
-#' @param saveFolder (str) Path to the folder where EICs and IS mean RT (\code{IS_mean_RT.csv}) will be saved
-#' @param ROI (data.frame) NULL or a data.frame of Regions Of Interest (ROI) with compounds as row and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float) (if NULL, ROI EICs are not saved)
-#' @param IS_ROI (data.frame) NULL or a data.frame of IS ROI with IS as row and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float)  (if NULL IS mean RT is not calculated and saved in \code{IS_mean_RT.csv})
+#' @title Save to disk each ROI EIC and mean IS RT
+#' @description Using reference samples (\code{referenceSpectraFiles}), save
+#' (to \code{saveFolder}) each ROI EIC (\code{ROI}) and reports the mean apex RT
+#' for all IS (\code{IS_ROI}) across samples
+#' @param referenceSpectraFiles (str) A character vector of paths to the
+#' reference spectra files
+#' @param saveFolder (str) Path to the folder where EICs and IS mean RT
+#' (\code{IS_mean_RT.csv}) will be saved
+#' @param ROI (data.frame) NULL or a data.frame of Regions Of Interest (ROI)
+#' with compounds as row and ROI parameters as columns: \code{rtMin} (float in
+#' seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in
+#' seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax}
+#' (float) (if NULL, ROI EICs are not saved)
+#' @param IS_ROI (data.frame) NULL or a data.frame of IS ROI with IS as row and
+#' ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float
+#' in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin}
+#' (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float)  (if NULL IS
+#' mean RT is not calculated and saved in \code{IS_mean_RT.csv})
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param ncores (int) Number of cores to use to integrate IS in parallel
-#' @param saveISPlots (bool) If TRUE save a diagnostic plot for each IS to \code{saveFolder/IS_search} compound
+#' @param saveISPlots (bool) If TRUE save a diagnostic plot for each IS to
+#' \code{saveFolder/IS_search} compound
 #' @param verbose (bool) If TRUE message progress
 #' @return None
 #' @export
 #' @examples
 #' if(requireNamespace('faahKO')){
-#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted compounds
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' compounds
 #'
 #' # Paths to spectra files
 #' library(faahKO)
@@ -21,12 +35,15 @@
 #'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
 #'
 #' # targetFeatTable
-#' targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c('cpdID',
-#'                         'cpdName', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax'))),
-#'                         stringsAsFactors=FALSE)
-#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
 #'
 #' # input
 #' refSpecFiles  <- spectraPaths
@@ -82,7 +99,7 @@ peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
         # ROI is a data.frame
         if (is.data.frame(ROI)) {
             # ROI data.frame columns
-            if (all(c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", 
+            if (all(c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz",
                 "mzMax") %in% colnames(ROI))) {
                 saveEICsROI <- TRUE
             } else {
@@ -111,7 +128,7 @@ peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
         # ROI is a data.frame
         if (is.data.frame(IS_ROI)) {
             # ROI data.frame columns
-            if (all(c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", 
+            if (all(c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz",
                 "mzMax") %in% colnames(IS_ROI))) {
                 calculateMeanISRT <- TRUE
             } else {
@@ -209,8 +226,8 @@ peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
             
             # save
             saveFileName <- paste(ROI[i, "cpdID"], ".png", sep = "")
-            ggplot2::ggsave(file = saveFileName, plot = tmp_EIC_plot, device = "png", 
-                path = saveFolder, dpi = 100, width = 25, height = 25, units = "cm", 
+            ggplot2::ggsave(file=saveFileName, plot=tmp_EIC_plot, device="png",
+                path = saveFolder, dpi=100, width=25, height=25, units="cm",
                 limitsize = FALSE)
         }
         if (verbose) {
@@ -235,13 +252,13 @@ peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
         if (saveISPlots) {
             outputAnnotationDiagnostic(IS_annotation,
                 saveFolder = file.path(saveFolder, "IS_search"),
-                savePlots = TRUE, sampleColour = sampleColour, verbose = verbose,
+                savePlots = TRUE, sampleColour=sampleColour, verbose = verbose,
                 ncores = ncores)
         }
         
         # calculate statistics
         mean_IS_rt <- data.frame(
-            colMeans(annotationTable(IS_annotation, column = "rt"), na.rm = TRUE))
+            colMeans(annotationTable(IS_annotation, column = "rt"), na.rm=TRUE))
         colnames(mean_IS_rt) <- "mean_rt"
         # save to disk
         path_meanRT <- file.path(saveFolder, "IS_mean_RT.csv")
