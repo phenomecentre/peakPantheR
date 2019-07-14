@@ -16,15 +16,17 @@
 #' compounds
 #' @param cpdName A character vector of compound names, of length number of
 #' compounds
-#' @param ROI A data.frame of Regions Of Interest (ROI) with compounds as row
-#' and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt}
+#' @param ROI A data.frame of Regions Of Interest (ROI) with compounds as
+#' row and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt}
 #' (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds),
 #' \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
-#' @param FIR A data.frame of Fallback Integration Regions (FIR) with compounds
-#' as row and FIR parameters as columns: \code{rtMin} (float in seconds),
+#' @param FIR A data.frame of Fallback Integration Regions (FIR) with
+#' compounds as row and FIR parameters as columns: \code{rtMin} (float in
+#' seconds),
 #' \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
-#' @param uROI A data.frame of updated Regions Of Interest (uROI) with compounds
-#' as row and uROI parameters as columns: \code{rtMin} (float in seconds),
+#' @param uROI A data.frame of updated Regions Of Interest (uROI) with
+#' compounds as row and uROI parameters as columns: \code{rtMin} (float in
+#' seconds),
 #' \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds),
 #' \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
 #' @param filepath A character vector of file paths, of length number of spectra
