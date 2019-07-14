@@ -30,8 +30,8 @@ valid_peakPantheRAnnotation <- function(object) {
         " be 6 (\"rtMin\", \"rt\", \"rtMax\", \"mzMin\", \"mz\", \"mzMax\")"))
     } else {
         # ROI column names
-        if (!all(colnames(object@ROI) %in% c("rtMin", "rt", "rtMax", "mzMin", "mz", 
-            "mzMax"))) {
+        if (!all(colnames(object@ROI) %in% c("rtMin", "rt", "rtMax", "mzMin",
+            "mz", "mzMax"))) {
             valid <- FALSE
             msg <- c(msg, paste0('ROI columns should be \"rtMin\", \"rt\", ',
                 '\"rtMax\", \"mzMin\", \"mz\", \"mzMax\", not ',
@@ -232,8 +232,8 @@ valid_peakPantheRAnnotation <- function(object) {
                     # individual peakTable is data.frame
                     if (!is.data.frame(object@peakTables[[1]])) {
                         valid <- FALSE
-                        msg <- c(msg, paste0('peakTables must be data.frame or ',
-                                'NULL not ', typeof(object@peakTables[[1]])))
+                        msg <- c(msg, paste0('peakTables must be data.frame or',
+                                ' NULL not ', typeof(object@peakTables[[1]])))
                     } else {
                         # individual peakTable data.frame number of rows
                         if (dim(object@peakTables[[1]])[1] != nbCpd) {
@@ -258,9 +258,10 @@ valid_peakPantheRAnnotation <- function(object) {
                                 valid <- FALSE
                                 msg <- c(msg, paste0("peakTables[[1]] columns ",
                                     "should be 'found', 'rt', 'rtMin', ",
-                                    "'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea',",
-                                    " 'maxIntMeasured', 'maxIntPredicted', ",
-                                    "'is_filled', 'ppm_error', 'rt_dev_sec', ",
+                                    "'rtMax', 'mz', 'mzMin', 'mzMax', ",
+                                    "'peakArea', 'maxIntMeasured', ",
+                                    "'maxIntPredicted', 'is_filled', ",
+                                    "'ppm_error', 'rt_dev_sec', ",
                                     "'tailingFactor', 'asymmetryFactor', not ",
                                     paste(colnames(object@peakTables[[1]]),
                                     collapse = " ")))
@@ -297,7 +298,7 @@ valid_peakPantheRAnnotation <- function(object) {
                             "of ROI data points, not ",paste(class(
                             object@dataPoints[[1]]), collapse = " ")))
                     } else {
-                        # individual dataPoints has entry for each compound (ROI)
+                        # individual dataPoints has entry for each compound(ROI)
                         if (length(object@dataPoints[[1]]) != nbCpd) {
                             valid <- FALSE
                             msg <- c(msg, paste0("dataPoints[[1]] contains, ",
@@ -307,7 +308,8 @@ valid_peakPantheRAnnotation <- function(object) {
                             if (nbCpd >= 1) {
                                 # individual dataPoints compound entry is
                                 # data.frame
-                                if (!is.data.frame(object@dataPoints[[1]][[1]])){
+                                if (!is.data.frame(object@dataPoints[[1]][[1]]))
+                                {
                                     valid <- FALSE
                                     msg <- c(msg, paste0("dataPoints[[1]][[1]]",
                                                 " must be a data.frame, not ",
@@ -322,7 +324,7 @@ valid_peakPantheRAnnotation <- function(object) {
                                             dim(object@dataPoints[[1]][[1]])[2],
                                             " columns. Should be 3"))
                                     } else {
-                                    # individual peakTable data.frame column names
+                                    # individual peakTable dt.frame column names
                                         if (!all(colnames(
                                             object@dataPoints[[1]][[1]]) %in%
                                             c("rt", "mz", "int"))) {
@@ -331,8 +333,8 @@ valid_peakPantheRAnnotation <- function(object) {
                                                 paste0("dataPoints[[1]][[1]] ",
                                                 "columns should be 'rt', 'mz',",
                                                 " 'int', not ", paste(colnames(
-                                                    object@dataPoints[[1]][[1]]),
-                                                    collapse = " ")))
+                                                object@dataPoints[[1]][[1]]),
+                                                collapse = " ")))
                                         }
                                     }
                                 }
@@ -388,7 +390,8 @@ valid_peakPantheRAnnotation <- function(object) {
                                     valid <- FALSE
                                     msg <- c(msg, paste0("peakFit[[1]][[1]] ",
                                         "must be NA or a peakPantheR_curveFit,",
-                                        " not ",class(object@peakFit[[1]][[1]])))
+                                        " not ",
+                                        class(object@peakFit[[1]][[1]])))
                                 }
                             }
                         }

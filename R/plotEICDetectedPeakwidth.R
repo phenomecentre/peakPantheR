@@ -1,8 +1,14 @@
-#' Plot samples raw data and detected feature for a single ROI
+#' @title Plot samples raw data and detected feature for a single ROI
 #'
-#' plot a ROI across multiple samples (x axis is RT, y axis is intensity) with the matching detected peak rt and peakwidth under it. If curveFit is provided, the fitted curve for each compound is added. RT and peakwidth are plotted in the order spectra are passed, with the first spectra on top.
+#' @description Plot a ROI across multiple samples (x axis is RT, y axis is
+#' intensity) with the matching detected peak rt and peakwidth under it. If
+#' curveFit is provided, the fitted curve for each compound is added. RT and
+#' peakwidth are plotted in the order spectra are passed, with the first spectra
+#' on top.
 #'
-#' @param ROIDataPointSampleList (list) list of \code{data.frame} of raw data points for each sample (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row)).
+#' @param ROIDataPointSampleList (list) list of \code{data.frame} of raw data
+#' points for each sample (retention time 'rt', mass 'mz' and intensity 'int'
+#' (as column) of each raw data points (as row)).
 #' @param cpdID (str) Compound ID
 #' @param cpdName (str) Compound Name
 #' @param rt (float) vector of detected peak apex retention time (in sec)
@@ -10,14 +16,17 @@
 #' @param rtMax (float) vector ofdetected peak maximum retention time (in sec)
 #' @param mzMin (float) ROI minimum m/z (matching EIC)
 #' @param mzMax (float) ROI maximum m/z (matching EIC)
-#' @param ratio (float) value between 0 and 1 defining the vertical percentage taken by the EICs subplot
+#' @param ratio (float) value between 0 and 1 defining the vertical percentage
+#' taken by the EICs subplot
 #' @param sampling (int) Number of points to employ when plotting fittedCurve
-#' @param curveFitSampleList (list) NULL or a list of \code{peakPantheR_curveFit} (or NA) for each sample
-#' @param sampleColour (str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtMin}, \code{rtMax})
+#' @param curveFitSampleList (list) NULL or a list of
+#' \code{peakPantheR_curveFit} (or NA) for each sample
+#' @param sampleColour (str) NULL or vector colour for each sample (same length
+#' as \code{EICs}, \code{rt}, \code{rtMin}, \code{rtMax})
 #' @param verbose (bool) if TRUE message when NA scans are removed
 #' 
 #' @return Grob (ggplot object)
-plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt, 
+plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
     rtMin, rtMax, mzMin, mzMax, ratio = 0.85, sampling = 250,
     curveFitSampleList = NULL, sampleColour = NULL, verbose = TRUE) {
     
@@ -26,13 +35,15 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
     # peakPantheR_plotEICFit and peakPantheR_plotPeakwidth)
     nbSpl <- length(ROIDataPointSampleList)
     if (nbSpl != length(rt)) {
-        stop("\"ROIDataPointSampleList\", \"rt\", \"rtMin\" and \"rtMax\" must be the same length")
+        stop("\"ROIDataPointSampleList\", \"rt\", \"rtMin\" and \"rtMax\" must",
+            " be the same length")
     }
     
     # ratio must be between 0 and 1
     if ((ratio < 0) | (ratio > 1)) {
         if (verbose) {
-            message("Error: ratio must be between 0 and 1, replaced by default value")
+            message("Error: ratio must be between 0 and 1, replaced by default",
+                    " value")
         }
         ratio <- 0.85
     }
@@ -57,8 +68,8 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
         widthMax = rtMax, varName = "Retention Time (sec)", acquTime = NULL,
         sampleColour = sampleColour, rotateAxis = TRUE, verbose = FALSE)
     
-    ## Set common x lim (due to the rotation, x on p_peakwidth is originally y and
-    ## accessed as such)
+    ## Set common x lim (due to the rotation, x on p_peakwidth is originally y
+    ## and accessed as such)
     minX <- min(ggplot2::layer_scales(p_spec)$x$range$range[1],
         ggplot2::layer_scales(p_peakwidth)$y$range$range[1])
     maxX <- max(ggplot2::layer_scales(p_spec)$x$range$range[2],

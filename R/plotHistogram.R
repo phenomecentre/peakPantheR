@@ -1,11 +1,12 @@
-#' Plot variable histogram and density
+#' @title Plot variable histogram and density
 #'
-#' Plot the histogram and density of the variable
+#' @description Plot the histogram and density of the variable
 #'
 #' @param var (float) vector of values to plot
 #' @param varName (str) Name of the variable to plot
 #' @param density (bool) If TRUE plot overlay the density on the variable
-#' @param ... Passes arguments to ggplot2::geom_histogram, e.g. \code{bins=20}, \code{binwidth=1}
+#' @param ... Passes arguments to ggplot2::geom_histogram, e.g. \code{bins=20},
+#' \code{binwidth=1}
 #' 
 #' @return Grob (ggplot object)
 plotHistogram <- function(var, varName = "Variable", density = TRUE, ...) {
