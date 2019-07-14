@@ -35,27 +35,46 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
     peakFit = list(), isAnnotated = FALSE)
 }
 \arguments{
-\item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
+\item{spectraPaths}{NULL or a character vector of spectra file paths, to set
+samples to process}
 
-\item{targetFeatTable}{NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.}
+\item{targetFeatTable}{NULL or a \code{\link{data.frame}} of compounds to
+target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName}
+(str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or
+\emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz}
+(float or \emph{NA}), \code{mzMax} (float). Set compounds to target.}
 
-\item{cpdID}{A character vector of compound IDs, of length number of compounds}
+\item{cpdID}{A character vector of compound IDs, of length number of
+compounds}
 
-\item{cpdName}{A character vector of compound names, of length number of compounds}
+\item{cpdName}{A character vector of compound names, of length number of
+compounds}
 
-\item{ROI}{A data.frame of Regions Of Interest (ROI) with compounds as row and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
+\item{ROI}{A data.frame of Regions Of Interest (ROI) with compounds as row
+and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt}
+(float in seconds, or \emph{NA}), \code{rtMax} (float in seconds),
+\code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
-\item{FIR}{A data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
+\item{FIR}{A data.frame of Fallback Integration Regions (FIR) with compounds
+as row and FIR parameters as columns: \code{rtMin} (float in seconds),
+\code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
 
-\item{uROI}{A data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
+\item{uROI}{A data.frame of updated Regions Of Interest (uROI) with compounds
+as row and uROI parameters as columns: \code{rtMin} (float in seconds),
+\code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds),
+\code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
-\item{filepath}{A character vector of file paths, of length number of spectra files}
+\item{filepath}{A character vector of file paths, of length number of spectra
+files}
 
-\item{cpdMetadata}{A data.frame of compound metadata, with compounds as row and metadata as columns}
+\item{cpdMetadata}{A data.frame of compound metadata, with compounds as row
+and metadata as columns}
 
-\item{spectraMetadata}{A data.frame of sample metadata, with samples as row and metadata as columns}
+\item{spectraMetadata}{A data.frame of sample metadata, with samples as row
+and metadata as columns}
 
-\item{acquisitionTime}{A character vector of acquisition date-time (converted from POSIXct) or NA}
+\item{acquisitionTime}{A character vector of acquisition date-time (converted
+from POSIXct) or NA}
 
 \item{uROIExist}{A logical stating if uROI have been set}
 
@@ -65,11 +84,17 @@ peakPantheRAnnotation(spectraPaths = NULL, targetFeatTable = NULL,
 
 \item{TIC}{A numeric vector of TIC or NA, of length number of spectra files}
 
-\item{peakTables}{A list of peakTable data.frame, of length number of spectra files. Each peakTable data.frame has compounds as rows and peak annotation results as columns.}
+\item{peakTables}{A list of peakTable data.frame, of length number of spectra
+files. Each peakTable data.frame has compounds as rows and peak annotation
+results as columns.}
 
-\item{dataPoints}{A list of length number of spectra files. Each list element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for each ROI/uROI (retention time 'rt', mass 'mz' and intensity 'int' (as column) of each raw data points (as row))}
+\item{dataPoints}{A list of length number of spectra files. Each list element
+is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points for
+each ROI/uROI (retention time 'rt', mass 'mz' and intensity 'int' (as column)
+of each raw data points (as row))}
 
-\item{peakFit}{A list of length number of spectra files. Each list element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI}
+\item{peakFit}{A list of length number of spectra files. Each list element is
+a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI}
 
 \item{isAnnotated}{A logical stating in the annotation took place}
 }
@@ -89,7 +114,8 @@ as rows and parameters as columns: \code{cpdID} (int), \code{cpdName} (str),
 \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or
 \emph{NA}), \code{mzMax} (float).
 
-\code{peakPantheRAnnotation()}: create an instance of the \code{peakPantherAnnotation} class.
+\code{peakPantheRAnnotation()}: create an instance of the
+\code{peakPantherAnnotation} class.
 }
 \details{
 The \code{validObject} method ensures the conformity of an object to
