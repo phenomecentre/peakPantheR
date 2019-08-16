@@ -153,8 +153,58 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
                                 sampling = 250, maxApexResidualRatio = 0.2,
                                 verbose = FALSE,...) {
     stime <- Sys.time()
+    nROI <- nrow(ROI)
+
+    # Check inputs (ROIsDataPoints match ROI, inputs, length)
+    findTargetFeatures_checkInput(ROIsDataPoints, ROI, params)
     
-    ## Check inputs
+    # Init output
+    opt <- findTargetFeatures_initOutput(ROI, params, verbose)
+    outTable <- opt$outTable; outCurveFit <- opt$outCurveFit
+    useParams <- opt$useParams
+    
+    # Fit each ROI
+    for (i in seq_len(nROI)) {
+        fitRes <- findTargetFeatures_fitFeature(i,ROI,ROIsDataPoints,curveModel,
+                                                useParams, params, sampling,
+                                                maxApexResidualRatio, verbose,
+                                                ...)
+        # NULL if no fit, pass to next ROI
+        if (is.null(fitRes)) {
+            next
+        } else {
+            # Set all values: curveFit
+            outCurveFit[[i]]            <- fitRes$fittedCurve
+            # peaktable
+            outTable$found[i]           <- TRUE
+            outTable$rt[i]              <- fitRes$rt
+            outTable$rtMin[i]           <- fitRes$rtMin
+            outTable$rtMax[i]           <- fitRes$rtMax
+            outTable$mz[i]              <- fitRes$mz
+            outTable$mzMin[i]           <- fitRes$mzMin
+            outTable$mzMax[i]           <- fitRes$mzMax
+            outTable$peakArea[i]        <- fitRes$peakArea
+            outTable$maxIntMeasured[i]  <- fitRes$maxIntMeasured
+            outTable$maxIntPredicted[i] <- fitRes$maxIntPredicted
+        }
+    }
+
+    # Output
+    etime <- Sys.time()
+    if (verbose) {
+        message("Found ", sum(outTable$found), "/", nROI, " features in ",
+                round(as.double(difftime(etime, stime)), 2), " ",
+                units(difftime(etime, stime)))
+    }
+    return(list(peakTable = outTable, curveFit = outCurveFit))
+}
+
+
+# -----------------------------------------------------------------------------
+# findTargetFeatures helper functions
+
+## Check inputs (ROIsDataPoints match ROI, inputs, length)
+findTargetFeatures_checkInput <- function(ROIsDataPoints, ROI, params) {
     nROI <- nrow(ROI)
     # ROIsDataPoints match ROI
     if (length(ROIsDataPoints) != nROI) {
@@ -188,14 +238,19 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
             stop('Check input, number of parameters must match number ',
                 'of rows of ROI')}
     }
-    
-    
-    ## Init output
+}
+
+
+## Init output
+findTargetFeatures_initOutput <- function(ROI, params, verbose) {
+    nROI <- nrow(ROI)
+
     outTable <- data.frame(matrix(vector(), nROI, 10, dimnames = list(c(),
         c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea",
         "maxIntMeasured", "maxIntPredicted"))), stringsAsFactors = FALSE)
     outTable$found  <- rep(FALSE, nROI)  # set found to FALSE
     outCurveFit     <- rep(list(NA), nROI)
+
     # use input params or guess
     if (any(params != "guess")) {
         useParams <- TRUE
@@ -204,306 +259,354 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
     } else {
         useParams <- FALSE
     }
-    
-    
-    ## Iterate over ROIs
-    for (i in seq_len(nROI)) {
-        # set params for fitting
-        new_params <- "guess"
-        if (useParams) {
-            new_params <- params[[i]]
-        }
-        
-        
-        ## EIC to fit
-        tmp_EIC <- generateIonChromatogram(ROIDataPoint = ROIsDataPoints[[i]],
-                                            aggregationFunction = "sum")
-        ## resample to a standardised grid of size the maximum between
-        ## 2*sampling and raw number of data points (double sampling used for
-        ## integration)
-        ## rawData_EIC <- generateIonChromatogram(ROIDataPoint=
-        ## ROIsDataPoints[[i]], aggregationFunction='sum')
-        ## tmp_gridMin <- min(rawData_EIC$rt)
-        ## tmp_gridMax <- max(rawData_EIC$rt)
-        ## tmp_gridSampling <- max(2*sampling, dim(rawData_EIC)[1])
-        ## grid_rt_EIC <- seq(from=tmp_gridMin, to=tmp_gridMax,
-        ## by=((tmp_gridMax-tmp_gridMin)/(tmp_gridSampling-1)))
-        ## raw_approx_fun <- stats::approxfun(x=rawData_EIC$rt,
-        ##                                      y=rawData_EIC$int)
-        ## tmp_EIC <- data.frame(rt=grid_rt_EIC,
-        ##                          int=raw_approx_fun(grid_rt_EIC))
-        
-        
-        ## fit curve to EIC (store output). If failure move to next window
-        fittedCurve <- tryCatch({
-            ## try
-            fittedCurve <- fitCurve(x = tmp_EIC$rt, y = tmp_EIC$int,
-                                    curveModel = curveModel,params = new_params,
-                                    ...)
-        }, error = function(cond) {
-            ## catch
-            return(NA)
-        })
-        # catch fit failure
-        if (all(is.na(fittedCurve))) {
-            if (verbose) {
-                message("Fit of ROI #", i, " is unsuccessful (try error)")}
-            # move to next window (empty df row was already initialised)
-            next
-        }
-        # discard fit if nls.lm fit status indicates unsuccessful completion
-        if ((fittedCurve$fitStatus == 0) | (fittedCurve$fitStatus == 5) |
-            (fittedCurve$fitStatus == -1)) {
-            if (verbose) {
-                message("Fit of ROI #", i, " is unsuccessful (fit status)")}
-            # move to next window (empty df row was already initialised)
-            next
-        }
-        
-        
-        ## rt (search on same bounds as peak fit +/-3s)
-        rt_EICmax   <- tmp_EIC$rt[which.max(tmp_EIC$int)]
-        grid_rt     <- seq(from = rt_EICmax - 3, to = rt_EICmax + 3,
-                            by = (6/(sampling - 1)))
-        close_apex_int  <- predictCurve(fittedCurve, x = grid_rt)
-        rt              <- grid_rt[which.max(close_apex_int)]
-        
-        ## maxIntPredicted (fit apex intensity)
-        maxIntPredicted <- predictCurve(fittedCurve = fittedCurve, x = rt)
-        
-        
-        ## rtMin, rtMax (look for 0.5% from max int, by rolling away from apex
-        ## until match or too many iterations)
-        peakLim_int <- 0.005 * maxIntPredicted
-        deltaRt     <- ROI$rtMax[i] - ROI$rtMin[i]
-
-        ## Up slope init
-        rtMin   <- as.numeric(NA)
-        boxMin  <- rt
-        cntr    <- 0
-
-        # search rtMin
-        while (is.na(rtMin) & cntr <= 8) {
-            # box moves earlier in rt each time
-            boxMax  <- boxMin
-            boxMin  <- boxMax - deltaRt
-            cntr    <- cntr + 1
-            grid_rt <- seq(from = boxMax, to = boxMin,
-                            by = ((boxMin - boxMax)/(sampling - 1)))
-                # reverse order for up slope
-            slope_int <- predictCurve(fittedCurve, x = grid_rt)
-            cutoff_pt <- match(-1, sign(slope_int - peakLim_int))
-                # pos of 1st point past cutoff
-            if (is.na(cutoff_pt)) {
-                rtMin <- as.numeric(NA)
-                next
-            }
-            key_pt  <- c(cutoff_pt - 1, cutoff_pt)
-                # points left and right from rtMin
-            rtMin   <- stats::approx(x = slope_int[key_pt], y = grid_rt[key_pt],
-                                    xout = peakLim_int)$y
-                # linear interpolation of exact rt
-        }
-        if (is.na(rtMin) & verbose) {
-            message("Warning: rtMin cannot be determined for ROI #", i)}
-
-        ## Down slope init
-        rtMax   <- as.numeric(NA)
-        boxMax  <- rt
-        cntr    <- 0
-
-        # search rtMax
-        while (is.na(rtMax) & cntr <= 8) {
-            # box moves later in rt each time
-            boxMin  <- boxMax
-            boxMax  <- boxMin + deltaRt
-            cntr    <- cntr + 1
-            grid_rt <- seq(from = boxMin, to = boxMax,
-                            by = ((boxMax - boxMin)/(sampling - 1)))
-            slope_int <- predictCurve(fittedCurve, x = grid_rt)
-            cutoff_pt <- match(-1, sign(slope_int - peakLim_int))
-                # pos of 1st point past cutoff
-            if (is.na(cutoff_pt)) {
-                rtMax <- as.numeric(NA)
-                next
-            }
-            key_pt  <- c(cutoff_pt - 1, cutoff_pt)
-                # points left and right from rtMax
-            rtMax   <- stats::approx(x = slope_int[key_pt], y = grid_rt[key_pt],
-                                    xout = peakLim_int)$y
-                # linear interpolation of exact rt
-        }
-        if (is.na(rtMax) & verbose) {
-            message("Warning: rtMax cannot be determined for ROI #", i)}
-        
-        # if rtMin or rtMax cannot be determined the fit is not successful
-        if (is.na(rtMin) | is.na(rtMax)) {
-            message("Fit of ROI #", i,
-                    " is unsuccessful (cannot determine rtMin/rtMax)")
-            # move to next window (empty df row was already initialised)
-            next
-        }
-        
-        
-        ## maxIntMeasured (max raw data intensity; 0 in case of no scans)
-        maxIntMeasured <- max(0, tmp_EIC$int[(tmp_EIC$rt < rtMax) &
-                                (tmp_EIC$rt > rtMin)])
-        
-        
-        ## mz, mzMin, mzMax if rtMin, rtMax are outside of ROI, we cannot
-        ## calculate mzMin, mzMax and mz precisely: default to ROI$mzMIn,
-        ## ROI$mzMax as a safe choice, and approximate mz
-        tmpRtMin    <- rtMin
-        tmpRtMax    <- rtMax
-        tmpMzMin    <- ROI$mzMin[i]
-        tmpMzMax    <- ROI$mzMax[i]
-        tmpROIData  <- ROIsDataPoints[[i]]
-        isValid     <- TRUE
-        # deal with rtMin rtMax outside of ROI (warning and no)
-        if ((tmpRtMin < ROI$rtMin[i]) | (tmpRtMax > ROI$rtMax[i])) {
-            isValid <- FALSE
-            if (verbose) {
-                message('Warning: rtMin/rtMax outside of ROI; datapoints ',
-                        'cannot be used for mzMin/mzMax calculation, ',
-                        'approximate mz and returning ROI$mzMin and ROI$mzMax ',
-                        'for ROI #', i)
-            }
-        }
-        # subset datapoints mz to rtMin/rtMax range
-        tmpPt <- tmpROIData[(tmpROIData$rt > tmpRtMin) &
-                            (tmpROIData$rt < tmpRtMax), ]
-        # rtMin rtMax range can be used for mzMin mzMax calculation
-        # (otherwise init to ROI mzMin/Max)
-        if (isValid) {
-            tmpMzMin <- min(tmpPt$mz)
-            tmpMzMax <- max(tmpPt$mz)
-        }
-        # calculate mz (might be an approx)
-        # (weighted average of total intensity across all rt for each unique mz)
-        mzRange             <- unique(tmpPt$mz)
-        mzTotalIntensity    <- vapply(mzRange, function(x) {
-            sum(tmpPt$int[tmpPt$mz == x])}, FUN.VALUE = numeric(1))
-        if (length(mzTotalIntensity) > 0) {
-            # make sure weighted.mean doesn't crash if no scan match
-            mz <- stats::weighted.mean(mzRange, mzTotalIntensity)
-        } else {
-            mz <- NA
-        }
-        # tidy
-        mzMin <- tmpMzMin
-        mzMax <- tmpMzMax
-        # if mz, mzMin or mzMax cannot be determined the fit is not successful
-        # (mzMin/mzMax default to ROI)
-        if (is.na(mz) | is.na(mzMin) | is.na(mzMax)) {
-            if (verbose) {
-                message("Fit of ROI #", i,
-                        " is unsuccessful (cannot determine mz/mzMin/mzMax)")
-            }
-            # move to next window (empty df row was already initialised)
-            next
-        }
-        
-        
-        ## integrate curve
-        tmpRtMin <- rtMin
-        tmpRtMax <- rtMax
-        #       __a__
-        #      /|     \
-        #    /  h      \
-        #  /____|__b____\
-        # \     |      /
-        #  \    h     /
-        #   \___|__c_/
-        # Area  = (a+b)/2 * h + (b+c)/2 * h
-        #       = (a+2b+c)/2 * h
-        h           <- (tmpRtMax - tmpRtMin)/(sampling - 1)
-        grid_rt     <- seq(from = tmpRtMin, to = tmpRtMax, by = h)
-        val_int     <- predictCurve(fittedCurve, x = grid_rt)
-        dist        <- sum(c(val_int, val_int[2:(sampling - 1)]))/2
-        peakArea    <- dist * h
-        
-        
-        ## Check quality of fit (residuals at apex, and max predicted to
-        ## max measured)
-        ## maxIntMeasured: peak max value in raw data maxIntPredicted: fit
-        ## apex value
-        ## IntRawApex: raw data apex value
-        raw_approx_fun  <- stats::approxfun(x = tmp_EIC$rt, y = tmp_EIC$int)
-        IntRawApex      <- raw_approx_fun(rt)
-        if (is.na(IntRawApex)) {IntRawApex <- 0}
-        # residual at apex
-        apex_residuals  <- abs(maxIntPredicted - maxIntMeasured)
-        # residual between maximums (raw vs fit)
-        max_residuals   <- abs(maxIntPredicted - IntRawApex)
-        # compare residuals to max fit intensity
-        if (((apex_residuals/maxIntPredicted) > maxApexResidualRatio) |
-            ((max_residuals/maxIntPredicted) > maxApexResidualRatio)) {
-            if (verbose) {
-                message("Fit of ROI #",i," is unsuccessful (apex residuals is ",
-                        round(apex_residuals/maxIntPredicted, 2),
-                        " of max fit intensity, max intensity residuals is ",
-                        round(max_residuals/maxIntPredicted, 2),
-                        " of max fit intensity)")
-            }
-            # move to next window (empty df row was already initialised)
-            next
-        }
-        
-        
-        ## ! Unused filtering based on residuals !
-        # @param maxResidualRatio (float) Ratio of maximum allowed residual
-        # area compared to the fit area. (e.g. 0.20 for a maximum residual area
-        # of 20% of fit area)
-        ## Check quality of fit (residual area compared to peakArea) use the
-        ## common range of ROI(raw data) and curve fit
-        # tmpRtMin <- max(rtMin, min(tmpROIData$rt))
-        # tmpRtMax <- min(rtMax, max(tmpROIData$rt))
-        # h_res <- (tmpRtMax-tmpRtMin)/(sampling-1)
-        # grid_rt_res <- seq(from=tmpRtMin, to=tmpRtMax, by=h_res)
-        ## project raw data approx and curve fit on common grid
-        # raw_approx_fun <- stats::approxfun(x=tmp_EIC$rt, y=tmp_EIC$int)
-        # raw_proj <- raw_approx_fun(grid_rt_res)
-        # fit_proj <- predictCurve(fittedCurve, x=grid_rt_res)
-        ## calculate residuals area on section considered
-        # fit_residuals <- abs(raw_proj - fit_proj)
-        # dist_residuals <- sum( c(fit_residuals,
-        #                       fit_residuals[2:(sampling-1)]) )/2
-        # area_residuals <- dist_residuals * h_res
-        ## calculate peak area on section considered
-        # dist_subfit <- sum( c(fit_proj, fit_proj[2:(sampling-1)]) )/2
-        # area_subfit <- dist_subfit * h_res
-        ## compare residual area to fit area
-        # if (area_residuals > (area_subfit * maxResidualRatio)) {
-        #   if (verbose) {message('Fit of ROI #', i,
-        #                           ' is unsuccessful (fit residuals is ',
-        #                           round(area_residuals / area_subfit, 2),
-        #                           ' of peak area)')}
-        # # move to next window (empty df row was already initialised) next
-        # }
-        
-        
-        ## Set all values curveFit
-        outCurveFit[[i]]            <- fittedCurve
-        # peaktable
-        outTable$found[i]           <- TRUE
-        outTable$rt[i]              <- rt
-        outTable$rtMin[i]           <- as.numeric(rtMin)
-        outTable$rtMax[i]           <- as.numeric(rtMax)
-        outTable$mz[i]              <- mz
-        outTable$mzMin[i]           <- mzMin
-        outTable$mzMax[i]           <- mzMax
-        outTable$peakArea[i]        <- peakArea
-        outTable$maxIntMeasured[i]  <- maxIntMeasured
-        outTable$maxIntPredicted[i] <- maxIntPredicted
-    }
-    
-    ## output
-    etime <- Sys.time()
-    if (verbose) {
-        message("Found ", sum(outTable$found), "/", nROI, " features in ",
-                round(as.double(difftime(etime, stime)), 2), " ",
-                units(difftime(etime, stime)))
-    }
-    
-    return(list(peakTable = outTable, curveFit = outCurveFit))
+    return(list(outTable=outTable, outCurveFit=outCurveFit,
+                useParams=useParams))
 }
+
+
+## Fit single feature
+# fit feature i, returns NULL to pass to the next feature (empty df row
+# already initialised)
+findTargetFeatures_fitFeature <- function(i, ROI, ROIsDataPoints, curveModel,
+                                            useParams, params, sampling,
+                                            maxApexResidualRatio, verbose, ...){
+    # set params for fitting
+    new_params <- "guess"
+    if (useParams) { new_params <- params[[i]] }
+
+    # extract EIC to fit
+    tmp_EIC <- generateIonChromatogram(ROIDataPoint = ROIsDataPoints[[i]],
+                                        aggregationFunction = "sum")
+
+    # fit curve to EIC, in case of failure move to next window
+    fittedCurve <- findTargetFeatures_fitcurve(i, tmp_EIC, curveModel,
+                                                new_params, verbose, ...)
+    if (is.null(fittedCurve)){ # move to next window
+        return(NULL) }
+
+    # find rt, rtMin, rtMax and maxIntPredicted for a fitted curve
+    rtRes <- findTargetFeatures_findRTproperties(i, ROI, tmp_EIC, fittedCurve,
+                                                sampling, verbose)
+    if (is.null(rtRes)){ # move to next window
+        return(NULL) }
+    rt <- rtRes$rt; rtMin <- rtRes$rtMin; rtMax <- rtRes$rtMax
+    maxIntPredicted <- rtRes$maxIntPredicted
+
+    # maxIntMeasured (max raw data intensity; 0 in case of no scans)
+    maxIntMeasured <- max(0, tmp_EIC$int[(tmp_EIC$rt < rtMax) &
+                            (tmp_EIC$rt > rtMin)])
+
+    # find mz, mzMin and mzMax
+    mzRes <- findTargetFeatures_findMZ(i,ROI,rtMin,rtMax,ROIsDataPoints,verbose)
+    if (is.null(mzRes)){ # move to next window
+        return(NULL) }
+    mz <- mzRes$mz; mzMin <- mzRes$mzMin; mzMax <- mzRes$mzMax
+
+    # integrate curve
+    peakArea <- findTargetFeatures_integCurve(fittedCurve,rtMin,rtMax,sampling)
+
+    # Check quality of fit (residuals at apex,and max predicted to max measured)
+    qcRes <- findTargetFeatures_fitQuality(i, tmp_EIC, rt, maxIntPredicted,
+                                maxIntMeasured, maxApexResidualRatio, verbose)
+    if (!qcRes) { # move to next window (empty df row was already initialised)
+        return(NULL) }
+
+    return(list(fittedCurve=fittedCurve,
+                rt=rt, rtMin=as.numeric(rtMin), rtMax=as.numeric(rtMax),
+                mz=mz, mzMin=mzMin, mzMax=mzMax, peakArea=peakArea,
+                maxIntMeasured=maxIntMeasured, maxIntPredicted=maxIntPredicted))
+}
+## Other EIC extraction ----
+# resample to a standardised grid of size the maximum between
+# 2*sampling and raw number of data points (double sampling used for
+# integration)
+# rawData_EIC <- generateIonChromatogram(ROIDataPoint=
+# ROIsDataPoints[[i]], aggregationFunction='sum')
+# tmp_gridMin <- min(rawData_EIC$rt)
+# tmp_gridMax <- max(rawData_EIC$rt)
+# tmp_gridSampling <- max(2*sampling, dim(rawData_EIC)[1])
+# grid_rt_EIC <- seq(from=tmp_gridMin, to=tmp_gridMax,
+# by=((tmp_gridMax-tmp_gridMin)/(tmp_gridSampling-1)))
+# raw_approx_fun <- stats::approxfun(x=rawData_EIC$rt,
+#                                      y=rawData_EIC$int)
+# tmp_EIC <- data.frame(rt=grid_rt_EIC,
+#                          int=raw_approx_fun(grid_rt_EIC))
+
+
+## fit curve to EIC
+findTargetFeatures_fitcurve <- function(i, tmp_EIC, curveModel,
+                                            new_params, verbose, ...){
+    # fit curve to EIC
+    # return fittedCurve. If failure return NULL to move to next window
+    fittedCurve <- tryCatch({
+        ## try
+        fittedCurve <- fitCurve(x = tmp_EIC$rt, y = tmp_EIC$int,
+                                curveModel = curveModel, params = new_params,
+                                ...)
+    }, error = function(cond) {
+        ## catch
+        return(NA)
+    })
+    # catch fit failure
+    if (all(is.na(fittedCurve))) {
+        if (verbose) {
+            message("Fit of ROI #", i, " is unsuccessful (try error)")}
+        # indicate failure
+        return(NULL)
+    }
+    # discard fit if nls.lm fit status indicates unsuccessful completion
+    if ((fittedCurve$fitStatus == 0) | (fittedCurve$fitStatus == 5) |
+        (fittedCurve$fitStatus == -1)) {
+        if (verbose) {
+            message("Fit of ROI #", i, " is unsuccessful (fit status)")}
+        # indicate failure
+        return(NULL)
+    }
+    return(fittedCurve)
+}
+
+
+## find rt, rtMin, rtMax and maxIntPredicted for a fitted curve
+findTargetFeatures_findRTproperties <- function(i, ROI, tmp_EIC, fittedCurve,
+                                                sampling, verbose){
+    # If failure return NULL to move to next window
+
+    # rt (search on same bounds as peak fit +/-3s)
+    rt_EICmax   <- tmp_EIC$rt[which.max(tmp_EIC$int)]
+    grid_rt     <- seq(from = rt_EICmax - 3, to = rt_EICmax + 3,
+                        by = (6/(sampling - 1)))
+    close_apex_int  <- predictCurve(fittedCurve, x = grid_rt)
+    rt              <- grid_rt[which.max(close_apex_int)]
+
+    # maxIntPredicted (fit apex intensity)
+    maxIntPredicted <- predictCurve(fittedCurve = fittedCurve, x = rt)
+
+    # rtMin, rtMax (look for 0.5% from max int, by rolling away from apex
+    # until match or too many iterations)
+    rtMin <- findTargetFeatures_findRTMin(i, ROI, fittedCurve, rt,
+                                            maxIntPredicted, sampling, verbose)
+    rtMax <- findTargetFeatures_findRTMax(i, ROI, fittedCurve, rt,
+                                            maxIntPredicted, sampling, verbose)
+
+    # if rtMin or rtMax cannot be determined the fit is not successful
+    if (is.na(rtMin) | is.na(rtMax)) {
+        message("Fit of ROI #", i,
+                " is unsuccessful (cannot determine rtMin/rtMax)")
+        # indicate failure
+        return(NULL)
+    }
+    return(list(rt = rt, rtMin = rtMin, rtMax = rtMax,
+                maxIntPredicted = maxIntPredicted))
+}
+
+## find rtMin for a fitted curve
+findTargetFeatures_findRTMin <- function(i, ROI, fittedCurve, rt,
+                                        maxIntPredicted, sampling, verbose) {
+    # rtMin (look for 0.5% from max int, by rolling away from apex
+    # until match or too many iterations)
+    peakLim_int <- 0.005 * maxIntPredicted
+    deltaRt     <- ROI$rtMax[i] - ROI$rtMin[i]
+
+    # Up slope init
+    rtMin   <- as.numeric(NA)
+    boxMin  <- rt
+    cntr    <- 0
+
+    # search rtMin
+    while (is.na(rtMin) & cntr <= 8) {
+        # box moves earlier in rt each time
+        boxMax  <- boxMin
+        boxMin  <- boxMax - deltaRt
+        cntr    <- cntr + 1
+        grid_rt <- seq(from = boxMax, to = boxMin,
+                        by = ((boxMin - boxMax)/(sampling - 1)))
+            # reverse order for up slope
+        slope_int <- predictCurve(fittedCurve, x = grid_rt)
+        cutoff_pt <- match(-1, sign(slope_int - peakLim_int))
+            # pos of 1st point past cutoff
+        if (is.na(cutoff_pt)) {
+            rtMin <- as.numeric(NA)
+            next
+        }
+        key_pt  <- c(cutoff_pt - 1, cutoff_pt)
+            # points left and right from rtMin
+        rtMin   <- stats::approx(x = slope_int[key_pt], y = grid_rt[key_pt],
+                                xout = peakLim_int)$y
+            # linear interpolation of exact rt
+    }
+    if (is.na(rtMin) & verbose) {
+        message("Warning: rtMin cannot be determined for ROI #", i)}
+
+    return(rtMin)
+}
+
+## find rtMax for a fitted curve
+findTargetFeatures_findRTMax <- function(i, ROI, fittedCurve, rt,
+                                        maxIntPredicted, sampling, verbose) {
+    # rtMax (look for 0.5% from max int, by rolling away from apex
+    # until match or too many iterations)
+    peakLim_int <- 0.005 * maxIntPredicted
+    deltaRt     <- ROI$rtMax[i] - ROI$rtMin[i]
+
+    # Down slope init
+    rtMax   <- as.numeric(NA)
+    boxMax  <- rt
+    cntr    <- 0
+
+    # search rtMax
+    while (is.na(rtMax) & cntr <= 8) {
+        # box moves later in rt each time
+        boxMin  <- boxMax
+        boxMax  <- boxMin + deltaRt
+        cntr    <- cntr + 1
+        grid_rt <- seq(from = boxMin, to = boxMax,
+                        by = ((boxMax - boxMin)/(sampling - 1)))
+        slope_int <- predictCurve(fittedCurve, x = grid_rt)
+        cutoff_pt <- match(-1, sign(slope_int - peakLim_int))
+            # pos of 1st point past cutoff
+        if (is.na(cutoff_pt)) {
+            rtMax <- as.numeric(NA)
+            next
+        }
+        key_pt  <- c(cutoff_pt - 1, cutoff_pt)
+            # points left and right from rtMax
+        rtMax   <- stats::approx(x = slope_int[key_pt], y = grid_rt[key_pt],
+                                xout = peakLim_int)$y
+            # linear interpolation of exact rt
+    }
+    if (is.na(rtMax) & verbose) {
+        message("Warning: rtMax cannot be determined for ROI #", i)}
+
+    return(rtMax)
+}
+
+## find mz, mzMin and mzMax at a given rtMin rtMax
+# If failure return NULL to move to next window
+findTargetFeatures_findMZ <- function(i, ROI, rtMin, rtMax, ROIsDataPoints,
+                                        verbose){
+    # mz, mzMin, mzMax: if rtMin, rtMax are outside of ROI, we cannot calculate
+    # mzMin, mzMax and mz precisely: default to ROI$mzMIn, ROI$mzMax as a safe
+    # choice, and approximate mz
+    mzMin <- ROI$mzMin[i]; mzMax <- ROI$mzMax[i]; ROIData <- ROIsDataPoints[[i]]
+    isValid <- TRUE
+
+    # deal with rtMin rtMax outside of ROI (warning)
+    if ((rtMin < ROI$rtMin[i]) | (rtMax > ROI$rtMax[i])) {
+        isValid <- FALSE
+        if (verbose) {
+            message('Warning: rtMin/rtMax outside of ROI; datapoints ',
+                    'cannot be used for mzMin/mzMax calculation, ',
+                    'approximate mz and returning ROI$mzMin and ROI$mzMax ',
+                    'for ROI #', i)
+    }}
+
+    # subset datapoints mz to rtMin/rtMax range
+    tmpPt <- ROIData[(ROIData$rt > rtMin) & (ROIData$rt < rtMax), ]
+
+    # rtMin rtMax range can be used for mzMin mzMax calculation
+    # (else init to ROI mzMin/Max)
+    if (isValid) {
+        mzMin <- min(tmpPt$mz); mzMax <- max(tmpPt$mz)
+    }
+
+    # calculate mz (might be an approx)
+    # (weighted average of total intensity across all rt for each unique mz)
+    mzRange             <- unique(tmpPt$mz)
+    mzTotalIntensity    <- vapply(mzRange, function(x) {
+        sum(tmpPt$int[tmpPt$mz == x])}, FUN.VALUE = numeric(1))
+    if (length(mzTotalIntensity) > 0) {
+        # make sure weighted.mean doesn't crash if no scan match
+        mz <- stats::weighted.mean(mzRange, mzTotalIntensity)
+    } else {
+        mz <- NA }
+
+    # if mz, mzMin or mzMax cannot be determined the fit is not successful
+    # (mzMin/mzMax default to ROI)
+    if (is.na(mz) | is.na(mzMin) | is.na(mzMax)) {
+        if (verbose) {
+            message("Fit of ROI #", i,
+                    " is unsuccessful (cannot determine mz/mzMin/mzMax)")
+        }
+        # indicate failure
+        return(NULL) }
+    return(list(mz=mz, mzMin=mzMin, mzMax=mzMax))
+}
+
+
+## integrate a fittedCurve on the rtMin rtMax range
+findTargetFeatures_integCurve <- function(fittedCurve, rtMin, rtMax, sampling){
+    ## integrate curve
+    #       __a__
+    #      /|     \
+    #    /  h      \
+    #  /____|__b____\
+    # \     |      /
+    #  \    h     /
+    #   \___|__c_/
+    # Area  = (a+b)/2 * h + (b+c)/2 * h
+    #       = (a+2b+c)/2 * h
+    h           <- (rtMax - rtMin)/(sampling - 1)
+    grid_rt     <- seq(from = rtMin, to = rtMax, by = h)
+    val_int     <- predictCurve(fittedCurve, x = grid_rt)
+    dist        <- sum(c(val_int, val_int[2:(sampling - 1)]))/2
+    peakArea    <- dist * h
+}
+
+
+## Quality of fit QC check, TRUE if pass QC check
+findTargetFeatures_fitQuality <- function(i, tmp_EIC, rt, maxIntPredicted,
+                                maxIntMeasured, maxApexResidualRatio, verbose) {
+    # Check quality of fit (residuals at apex,and max predicted to max measured)
+    # maxIntMeasured: peak max value in raw data maxIntPredicted: fit apex value
+    # IntRawApex: raw data apex value
+    raw_approx_fun  <- stats::approxfun(x = tmp_EIC$rt, y = tmp_EIC$int)
+    IntRawApex      <- raw_approx_fun(rt)
+    if (is.na(IntRawApex)) {IntRawApex <- 0}
+    # residual at apex
+    apex_residuals  <- abs(maxIntPredicted - maxIntMeasured)
+    # residual between maximums (raw vs fit)
+    max_residuals   <- abs(maxIntPredicted - IntRawApex)
+    # compare residuals to max fit intensity
+    if (((apex_residuals/maxIntPredicted) > maxApexResidualRatio) |
+        ((max_residuals/maxIntPredicted) > maxApexResidualRatio)) {
+        if (verbose) {
+            message("Fit of ROI #",i," is unsuccessful (apex residuals is ",
+                    round(apex_residuals/maxIntPredicted, 2),
+                    " of max fit intensity, max intensity residuals is ",
+                    round(max_residuals/maxIntPredicted, 2),
+                    " of max fit intensity)")
+        }
+        return(FALSE)
+    }
+    return(TRUE)
+}
+## ! Unused filtering based on residuals ! ----
+# @param maxResidualRatio (float) Ratio of maximum allowed residual
+# area compared to the fit area. (e.g. 0.20 for a maximum residual area
+# of 20% of fit area)
+## Check quality of fit (residual area compared to peakArea) use the
+## common range of ROI(raw data) and curve fit
+# tmpRtMin <- max(rtMin, min(tmpROIData$rt))
+# tmpRtMax <- min(rtMax, max(tmpROIData$rt))
+# h_res <- (tmpRtMax-tmpRtMin)/(sampling-1)
+# grid_rt_res <- seq(from=tmpRtMin, to=tmpRtMax, by=h_res)
+## project raw data approx and curve fit on common grid
+# raw_approx_fun <- stats::approxfun(x=tmp_EIC$rt, y=tmp_EIC$int)
+# raw_proj <- raw_approx_fun(grid_rt_res)
+# fit_proj <- predictCurve(fittedCurve, x=grid_rt_res)
+## calculate residuals area on section considered
+# fit_residuals <- abs(raw_proj - fit_proj)
+# dist_residuals <- sum( c(fit_residuals,
+#                       fit_residuals[2:(sampling-1)]) )/2
+# area_residuals <- dist_residuals * h_res
+## calculate peak area on section considered
+# dist_subfit <- sum( c(fit_proj, fit_proj[2:(sampling-1)]) )/2
+# area_subfit <- dist_subfit * h_res
+## compare residual area to fit area
+# if (area_residuals > (area_subfit * maxResidualRatio)) {
+#   if (verbose) {message('Fit of ROI #', i,
+#                           ' is unsuccessful (fit residuals is ',
+#                           round(area_residuals / area_subfit, 2),
+#                           ' of peak area)')}
+# # move to next window (empty df row was already initialised) next
+# }
