@@ -1979,133 +1979,165 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
     # If input is NULL, use previousAnnotation value, else use the passed value
     # If number of compounds or spectra is changed, the previous values
     # (metadata, uROI, FIR) cannot be reused (risk a mismatch of the metadata)
-    if (verbose) {
-        message("peakPantheRAnnotation object being reset:")
-    }
+    if (verbose) { message("peakPantheRAnnotation object being reset:") }
     
-    ## targetFeatTable (cpdID, cpdName, ROI), uROI, FIR, cpdMetadata
+    # targetFeatTable (cpdID, cpdName, ROI), uROI, FIR, cpdMetadata
+    resetTarg <- resetAnnot_targetFeatTable_uROI_FIR_cpdMeta(previousAnnotation,
+                            targetFeatTable, uROI, FIR, cpdMetadata, verbose)
+    .targetFeatTable <- resetTarg$target
+    .uROI <- resetTarg$uROI
+    .FIR <- resetTarg$FIR
+    .cpdMetadata <- resetTarg$cpd
+
+    # spectraPaths, spectraMetadata
+    resSpectra <- resetAnnot_spectraPathMetadata(previousAnnotation,
+                                        spectraPaths, spectraMetadata, verbose)
+    .spectraPaths <- resSpectra$spectraPaths
+    .spectraMetadata <- resSpectra$spectraMetadata
+
+    # uROIExist
+    .uROIExist <- resetAnnot_uROIExist(uROIExist, targetFeatTable,
+                                        previousAnnotation, verbose)
+
+    # useUROI, useFIR
+    resUSE <- resetAnnot_useUROIuseFIR(useUROI, useFIR, targetFeatTable,
+                                        previousAnnotation, verbose)
+    .useUROI <- resUSE$useUROI
+    .useFIR <- resUSE$useFIR
+
+    # is annotated
+    .isAnnotated <- FALSE
+
+    # Create new object In all case (old or new value) spectraPaths and
+    # targetFeatTable will trigger the resetting of all results
+    peakPantheRAnnotation(spectraPaths = .spectraPaths,
+        targetFeatTable = .targetFeatTable, uROI = .uROI, FIR = .FIR,
+        cpdMetadata = .cpdMetadata, spectraMetadata = .spectraMetadata,
+        uROIExist = .uROIExist, useUROI = .useUROI, useFIR = .useFIR,
+        isAnnotated = .isAnnotated, ...)
+})
+# resetAnnotation targetFeatTable (cpdID, cpdName, ROI), uROI, FIR, cpdMetadata
+resetAnnot_targetFeatTable_uROI_FIR_cpdMeta <- function(previousAnnotation,
+                            targetFeatTable, uROI, FIR, cpdMetadata, verbose) {
+    # reuse previous values
     if (all(is.null(targetFeatTable))) {
-        # previous values
-        .targetFeatTable <- ROI(previousAnnotation)
-        if (verbose) {
-            message("  Previous \"ROI\", \"cpdID\" and \"cpdName\" value kept")
-        }
-        
-        # uROI
-        if (all(is.null(uROI))) {
-            # previous values
-            .uROI <- uROI(previousAnnotation)[, c("rtMin", "rt", "rtMax",
-                                                    "mzMin", "mz", "mzMax")]
-            if (verbose) {
-                message("  Previous \"uROI\" value kept")
-            }
-        } else {
-            # new value
-            .uROI <- uROI
-            if (verbose) {
-                message("  New \"uROI\" value set")
-            }
-        }
-        
-        # FIR
-        if (all(is.null(FIR))) {
-            # previous values
-            .FIR <- FIR(previousAnnotation)[, c("rtMin", "rtMax", "mzMin",
-                                                "mzMax")]
-            if (verbose) {
-                message("  Previous \"FIR\" value kept")
-            }
-        } else {
-            # new value
-            .FIR <- FIR
-            if (verbose) {
-                message("  New \"FIR\" value set")
-            }
-        }
-        
-        # cpdMetadata
-        if (all(is.null(cpdMetadata))) {
-            # previous values
-            .cpdMetadata <- cpdMetadata(previousAnnotation)
-            if (verbose) {
-                message("  Previous \"cpdMetadata\" value kept")
-            }
-        } else {
-            # new value
-            .cpdMetadata <- cpdMetadata
-            if (verbose) {
-                message("  New \"cpdMetadata\" value set")
-            }
-        }
-        
-        # new values
+        reset = resetAnnot_prevTargetFeatTable(previousAnnotation, uROI, FIR,
+                                                cpdMetadata, verbose)
     } else {
-        .targetFeatTable <- targetFeatTable
+        # reset to default
+        reset = resetAnnot_newTargetFeatTable(targetFeatTable, uROI, FIR,
+                                                cpdMetadata, verbose)
+    }
+    return(reset)
+}
+# resetAnnotation reuse previous targetFeatTable
+resetAnnot_prevTargetFeatTable <- function(previousAnnotation, uROI, FIR,
+                                            cpdMetadata, verbose) {
+    # previous values
+    .targetFeatTable <- ROI(previousAnnotation)
+    if (verbose) {
+        message("  Previous \"ROI\", \"cpdID\" and \"cpdName\" value kept")
+    }
+    # uROI
+    if (all(is.null(uROI))) { # previous values
+        .uROI <- uROI(previousAnnotation)[, c("rtMin", "rt", "rtMax",
+                                                "mzMin", "mz", "mzMax")]
         if (verbose) {
-            message(paste0('  New \"targetFeatTable\" value set (\"ROI\", ',
-                            '\"cpdID\", \"cpdName\"')) }
-        
-        # uROI
-        if (all(is.null(uROI))) {
-            # Do not reuse old values if we change the compounds targeted
-            .uROI <- data.frame(rtMin = numeric(), rt = numeric(),
-                rtMax = numeric(), mzMin = numeric(), mz = numeric(),
-                mzMax = numeric(), stringsAsFactors = FALSE)
-            if (verbose) {
-                message(paste0('  Targeted compounds changed, previous ',
-                                '\"uROI\" cannot be kept and set to default'))
-            }
-        } else {
-            # new value
-            .uROI <- uROI
-            if (verbose) {
-                message("  New \"uROI\" value set")
-            }
+            message("  Previous \"uROI\" value kept")
         }
-        
-        # FIR
-        if (all(is.null(FIR))) {
-            # Do not reuse old values if we change the compounds targeted
-            .FIR <- data.frame(rtMin = numeric(), rtMax = numeric(),
-                mzMin = numeric(), mzMax = numeric(), stringsAsFactors = FALSE)
-            if (verbose) {
-                message(paste0('  Targeted compounds changed, previous \"FIR\"',
-                                ' cannot be kept and set to default'))
-            }
-        } else {
-            # new value
-            .FIR <- FIR
-            if (verbose) {
-                message("  New \"FIR\" value set")
-            }
-        }
-        
-        # cpdMetadata
-        if (all(is.null(cpdMetadata))) {
-            # Do not reuse old values if we change the compounds targeted
-            .cpdMetadata <- data.frame()
-            if (verbose) {
-                message(paste0('  Targeted compounds changed, previous ',
-                        '\"cpdMetadata\" cannot be kept and set to default'))
-            }
-        } else {
-            # new value
-            .cpdMetadata <- cpdMetadata
-            if (verbose) {
-                message("  New \"cpdMetadata\" value set")
-            }
+    } else { # new value
+        .uROI <- uROI
+        if (verbose) {
+            message("  New \"uROI\" value set")
         }
     }
-    
-    
-    ## spectraPaths (filepath), spectraMetadata
+    # FIR
+    if (all(is.null(FIR))) { # previous values
+        .FIR <- FIR(previousAnnotation)[, c("rtMin", "rtMax", "mzMin",
+                                            "mzMax")]
+        if (verbose) {
+            message("  Previous \"FIR\" value kept")
+        }
+    } else { # new value
+        .FIR <- FIR
+        if (verbose) {
+            message("  New \"FIR\" value set")
+        }
+    }
+    # cpdMetadata
+    if (all(is.null(cpdMetadata))) { # previous values
+        .cpdMetadata <- cpdMetadata(previousAnnotation)
+        if (verbose) {
+            message("  Previous \"cpdMetadata\" value kept")
+        }
+    } else { # new value
+        .cpdMetadata <- cpdMetadata
+        if (verbose) {
+            message("  New \"cpdMetadata\" value set")
+        }
+    }
+    return(list(target=.targetFeatTable, uROI=.uROI, FIR=.FIR,
+                cpd=.cpdMetadata))
+}
+# resetAnnotation new targetFeatTable
+resetAnnot_newTargetFeatTable <- function(targetFeatTable, uROI, FIR,
+                                            cpdMetadata, verbose) {
+    # reset to default
+    .targetFeatTable <- targetFeatTable
+    if (verbose) {
+        message(paste0('  New \"targetFeatTable\" value set (\"ROI\", ',
+                        '\"cpdID\", \"cpdName\"')) }
+    # uROI
+    if (all(is.null(uROI))) {
+        # Do not reuse old values if we change the compounds targeted
+        .uROI <- data.frame(rtMin = numeric(), rt = numeric(),
+            rtMax = numeric(), mzMin = numeric(), mz = numeric(),
+            mzMax = numeric(), stringsAsFactors = FALSE)
+        if (verbose) {
+            message(paste0('  Targeted compounds changed, previous ',
+                            '\"uROI\" cannot be kept and set to default')) }
+    } else { # new value
+        .uROI <- uROI
+        if (verbose) { message("  New \"uROI\" value set") }
+    }
+    # FIR
+    if (all(is.null(FIR))) {
+        # Do not reuse old values if we change the compounds targeted
+        .FIR <- data.frame(rtMin = numeric(), rtMax = numeric(),
+            mzMin = numeric(), mzMax = numeric(), stringsAsFactors = FALSE)
+        if (verbose) {
+            message(paste0('  Targeted compounds changed, previous \"FIR\"',
+                            ' cannot be kept and set to default'))
+        }
+    } else { # new value
+        .FIR <- FIR
+        if (verbose) { message("  New \"FIR\" value set") }
+    }
+    # cpdMetadata
+    if (all(is.null(cpdMetadata))) {
+        # Do not reuse old values if we change the compounds targeted
+        .cpdMetadata <- data.frame()
+        if (verbose) {
+            message(paste0('  Targeted compounds changed, previous ',
+                    '\"cpdMetadata\" cannot be kept and set to default'))
+        }
+    } else { # new value
+        .cpdMetadata <- cpdMetadata
+        if (verbose) { message("  New \"cpdMetadata\" value set") }
+    }
+    return(list(target=.targetFeatTable, uROI=.uROI, FIR=.FIR,
+                cpd=.cpdMetadata))
+}
+# resetAnnotation spectraPaths, spectraMetadata
+resetAnnot_spectraPathMetadata <- function(previousAnnotation, spectraPaths,
+                                            spectraMetadata, verbose) {
+    # reuse previous values
     if (all(is.null(spectraPaths))) {
-        # previous values
         .spectraPaths <- filepath(previousAnnotation)
         if (verbose) {
             message("  Previous \"filepath\" value kept")
         }
-        
+
         # spectraMetadata
         if (all(is.null(spectraMetadata))) {
             # previous values
@@ -2120,14 +2152,14 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
                 message("  New \"spectraMetadata\" value set")
             }
         }
-        
+
         # new values
     } else {
         .spectraPaths <- spectraPaths
         if (verbose) {
             message("  New \"spectraPaths\" value set")
         }
-        
+
         # spectraMetadata
         if (all(is.null(spectraMetadata))) {
             # Do not reuse old values if we change the spectra
@@ -2144,9 +2176,12 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
             }
         }
     }
-    
-    
-    ## uROIExist
+    return(list(spectraPaths = .spectraPaths,
+                spectraMetadata = .spectraMetadata))
+}
+# resetAnnotation uROIExist
+resetAnnot_uROIExist <- function(uROIExist, targetFeatTable, previousAnnotation,
+                                verbose) {
     if (all(is.null(uROIExist))) {
         # previous values cannot be used if targetFeatTable is changed
         if (all(is.null(targetFeatTable))) {
@@ -2170,8 +2205,12 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
             message("  New \"uROIExist\" value set")
         }
     }
-    
-    ## useUROI
+    return(.uROIExist)
+}
+# resetAnnotation useUROI, useFIR
+resetAnnot_useUROIuseFIR <- function(useUROI, useFIR, targetFeatTable,
+                                    previousAnnotation, verbose){
+    # useUROI
     if (all(is.null(useUROI))) {
         # previous values cannot be used if targetFeatTable is changed
         if (all(is.null(targetFeatTable))) {
@@ -2188,15 +2227,12 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
                             '\"useUROI\" cannot be kept and set to default'))
             }
         }
-    } else {
-        # new value
+    } else { # new value
         .useUROI <- useUROI
-        if (verbose) {
-            message("  New \"useUROI\" value set")
-        }
+        if (verbose) { message("  New \"useUROI\" value set") }
     }
-    
-    ## useFIR
+
+    # useFIR
     if (all(is.null(useFIR))) {
         # previous values cannot be used if targetFeatTable is changed
         if (all(is.null(targetFeatTable))) {
@@ -2205,35 +2241,19 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
             if (verbose) {
                 message("  Previous \"useFIR\" value kept")
             }
-        } else {
-            # Do not reuse old values if we change the compound
+        } else { # Do not reuse old values if we change the compound
             .useFIR <- FALSE
             if (verbose) {
                 message(paste0('  Targeted compounds changed, previous ',
                                 '\"useFIR\" cannot be kept and set to default'))
             }
         }
-    } else {
-        # new value
+    } else { # new value
         .useFIR <- useFIR
-        if (verbose) {
-            message("  New \"useFIR\" value set")
-        }
+        if (verbose) { message("  New \"useFIR\" value set") }
     }
-    
-    ## is annotated
-    .isAnnotated <- FALSE
-    
-    
-    ## Create new object In all case (old or new value) spectraPaths and
-    ## targetFeatTable will trigger the resetting of all results
-    peakPantheRAnnotation(spectraPaths = .spectraPaths,
-        targetFeatTable = .targetFeatTable, uROI = .uROI, FIR = .FIR,
-        cpdMetadata = .cpdMetadata, spectraMetadata = .spectraMetadata,
-        uROIExist = .uROIExist, useUROI = .useUROI, useFIR = .useFIR,
-        isAnnotated = .isAnnotated, ...)
-})
-
+    return(list(useUROI = .useUROI, useFIR = .useFIR))
+}
 
 
 ## Reset FIR windows to uROI or ROI values
