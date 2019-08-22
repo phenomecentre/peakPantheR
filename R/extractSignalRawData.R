@@ -112,7 +112,46 @@
 extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
     stime <- Sys.time()
     
-    ## Check input check type and dimensions msLevel
+    # Check input check type and dimensions msLevel
+    extractSignalRawData_checkInput(rt, mz, msLevel, verbose)
+
+    # Init output
+    outParam <- extractSignalRawData_init(rt, mz, verbose)
+    rt <- outParam$rt
+    mz <- outParam$mz
+    empty_res <- outParam$empty_res
+
+    # Read scan in file
+    scanRead <- extractSignalRawData_extractScans(rawSpec, rt, msLevel, verbose)
+    if (is.null(scanRead)) { return(empty_res) } # no scans were found
+    spectraData <- scanRead$spectraData
+    spec_rt <- scanRead$spec_rt
+
+
+    # Get data points from each window (subset rt and check mz)
+    res <- extractSignalRawData_extractFromWindows(empty_res, rt, mz, spec_rt,
+                                                    spectraData, verbose)
+    
+    # clear variables
+    rm(spectraData, spec_rt)
+    gc(verbose = FALSE)
+    
+    # Out
+    etime <- Sys.time()
+    if (verbose) {
+        message("Data read in: ",
+                round(as.double(difftime(etime, stime)), 2),
+                " ", units(difftime(etime, stime)))
+    }
+    return(res)
+}
+
+# -----------------------------------------------------------------------------
+# extractSignalRawData helper functions
+
+# Check input type and dimensions of msLevel
+extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
+    # Check input check type and dimensions msLevel
     if (!is.integer(msLevel)) {
         stop("Check input \"msLevel\" must be integer")
     }
@@ -160,9 +199,11 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
             }
         }
     }
-    
-    ## Express rt and mz as matrix/data.frame of identical number of rows
-    ## replace missing by whole range
+}
+# Init outputs
+extractSignalRawData_init <- function(rt, mz, verbose) {
+    # Express rt and mz as matrix/data.frame of identical number of rows
+    # replace missing by whole range
     if (missing(rt)) {
         rt <- matrix(c(-Inf, Inf), ncol = 2, byrow = TRUE)}
     if (missing(mz)) {
@@ -177,23 +218,25 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
         rt <- matrix(rep(as.numeric(rt), nrow(mz)), ncol = 2, byrow = TRUE)}
     if (nrow(mz) == 1) {
         mz <- matrix(rep(as.numeric(mz), nrow(rt)), ncol = 2, byrow = TRUE)}
-    
-    ## now both rt and mz are either a matrix/data.frame of matching size
+    # now both rt and mz are either a matrix/data.frame of matching size
     if (verbose) {message("Reading data from ", nrow(rt), " windows")}
     # empty output
     empty_res <- lapply(vector("list", nrow(rt)), function(x) {
         data.frame(rt = numeric(), mz = numeric(), int = integer())
     })
-    
-    ## Filter msLevel
+    return(list(rt=rt, mz=mz, empty_res=empty_res))
+}
+# Extract scans for all windows in a single file access
+extractSignalRawData_extractScans <- function(rawSpec, rt, msLevel, verbose) {
+    # Filter msLevel
     msFilteredSpec <- MSnbase::filterMsLevel(rawSpec, msLevel = msLevel)
     # if msLevel doesn't exist, exit
     if (length(msFilteredSpec) == 0) {
         if (verbose) {message("No data exist for MS level ", msLevel)}
-        return(empty_res)
+        return(NULL)
     }
-    
-    ## Filter only scans falling into the rt of interest (across all windows)
+
+    # Filter only scans falling into the rt of interest (across all windows)
     file_rt         <- MSnbase::rtime(msFilteredSpec)
     keep_scan_idx   <- sort(unique(as.integer(unlist(apply(rt, MARGIN = 1,
         function(x) {
@@ -202,20 +245,29 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
     # if no scans
     if (length(keep_scan_idx) == 0) {
         if (verbose) {message("No data exist for the rt provided")}
-        return(empty_res)
+        return(NULL)
     }
     # file with only the needed scans
     rtFilteredSpec <- msFilteredSpec[keep_scan_idx]
-    
+
     # Extract only scans we need (only file access)
     spectraData <- MSnbase::spectra(rtFilteredSpec)
     spec_rt     <- MSnbase::rtime(rtFilteredSpec)
-    
-    ## Get data points from each window (subset rt and check mz)
+
+    # clear variables
+    rm(msFilteredSpec, file_rt, keep_scan_idx, rtFilteredSpec)
+    gc(verbose = FALSE)
+
+    return(list(spectraData=spectraData, spec_rt=spec_rt))
+}
+# Get data points from each window (subset rt and check mz)
+extractSignalRawData_extractFromWindows <- function(empty_res, rt, mz, spec_rt,
+                                                    spectraData, verbose) {
     res <- empty_res
+
     # iterage over windows
     for (i in seq_len(nrow(rt))) {
-        
+
         # subset the scans we need from the ones we have extracted
         scans_to_keep <- (spec_rt >= rt[i, 1]) & (spec_rt <= rt[i, 2])
         if (!any(scans_to_keep)) {
@@ -223,10 +275,10 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
             # move to next window (empty df was already initialised)
             next
         }
-        
+
         # only keep scans matching the window
         scanSubset <- spectraData[scans_to_keep]
-        
+
         # subset each scan based on mz and extract datapoints
         scanDatapoint <- lapply(scanSubset, function(scan, mzScan) {
             # filter mz
@@ -240,27 +292,18 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
                             mz = filtScan@mz, int = filtScan@intensity)
             }
         }, mzScan = mz[i, ])
-        
+
         # concatenate all scans data.frame
         scanTable           <- do.call(rbind, scanDatapoint)
         rownames(scanTable) <- NULL
-        
+
         # store results
         res[[i]] <- scanTable
     }
-    
+
     # clear variables
-    rm(msFilteredSpec, file_rt, keep_scan_idx, rtFilteredSpec, spectraData,
-        spec_rt, scanDatapoint, scanTable)
+    rm(scanDatapoint, scanTable)
     gc(verbose = FALSE)
-    
-    # Out
-    etime <- Sys.time()
-    if (verbose) {
-        message("Data read in: ",
-                round(as.double(difftime(etime, stime)), 2),
-                " ", units(difftime(etime, stime)))
-    }
+
     return(res)
 }
-
