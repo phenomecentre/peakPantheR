@@ -52,8 +52,7 @@
 #' a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each ROI
 #' @param isAnnotated A logical stating in the annotation took place
 peakPantheRAnnotation <- function(spectraPaths = NULL,
-    targetFeatTable = NULL,
-    cpdID = character(),
+    targetFeatTable = NULL, cpdID = character(),
     cpdName = character(),
     ROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
         mzMin = numeric(), mz = numeric(), mzMax = numeric(),
@@ -63,125 +62,172 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
     uROI = data.frame(rtMin = numeric(), rt = numeric(), rtMax = numeric(),
         mzMin = numeric(), mz = numeric(), mzMax = numeric(),
         stringsAsFactors = FALSE),
-    filepath = character(),
-    cpdMetadata = data.frame(),
-    spectraMetadata = data.frame(),
-    acquisitionTime = character(),
-    uROIExist = FALSE,
-    useUROI = FALSE,
-    useFIR = FALSE,
-    TIC = numeric(),
-    peakTables = list(),
-    dataPoints = list(),
-    peakFit = list(),
+    filepath = character(), cpdMetadata = data.frame(),
+    spectraMetadata = data.frame(), acquisitionTime = character(),
+    uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE, TIC = numeric(),
+    peakTables = list(), dataPoints = list(), peakFit = list(),
     isAnnotated = FALSE) {
     
-    ## set spectra if spectraPaths is provided
+    # set spectra if spectraPaths is provided
     if (!is.null(spectraPaths)) {
-        # check input is a vector of character
-        if (!is.vector(spectraPaths) | is.list(spectraPaths) |
-            !is.character(spectraPaths)) {
-            stop("specified spectraPaths is not a vector of character") }
-        # no duplicated spectraPaths
-        if (length(spectraPaths) != length(unique(spectraPaths))) {
-            stop("duplicated spectraPaths passed as input") }
-        # load values and allocate size
-        nbSpectra   <- length(spectraPaths)
-        filepath    <- spectraPaths
-        # set acquisitionTime default if no acquisitionTime passed in
-        if (length(acquisitionTime) == 0) {
-            acquisitionTime <- as.character(rep(NA, nbSpectra)) }
-        # set TIC default if no TIC passed in
-        if (length(TIC) == 0) {
-            TIC <- as.numeric(rep(NA, nbSpectra)) }
-        # set peakTables default if no peakTables passed in
-        if (length(peakTables) == 0) {
-            peakTables <- vector("list", nbSpectra) }
-        # set dataPoints default if no dataPoints passed in
-        if (length(dataPoints) == 0) {
-            dataPoints <- vector("list", nbSpectra) }
-        # set peakFit default if no peakFit passed in
-        if (length(peakFit) == 0) {
-            peakFit <- vector("list", nbSpectra) }
-        # set spectraMetadata to the correct size if no spectraMetadata passed
-        # in (at the correct size)
-        if (dim(spectraMetadata)[1] != nbSpectra) {
-            spectraMetadata <- data.frame(matrix(, nrow = nbSpectra, ncol = 0))}
-    }
+        initSpec <- initialize_spectraPaths(spectraPaths, acquisitionTime, TIC,
+                            peakTables, dataPoints, peakFit, spectraMetadata)
+        filepath <- initSpec$filepath
+        acquisitionTime <- initSpec$acqTime
+        TIC <- initSpec$TIC
+        peakTables <- initSpec$pkTab
+        dataPoints <- initSpec$dataPt
+        peakFit <- initSpec$pkFit
+        spectraMetadata <- initSpec$specMeta }
     
-    ## set compounds if targetFeatTable is provided
+    # set compounds if targetFeatTable is provided
     if (!is.null(targetFeatTable)) {
-        # check input is data.frame
-        if (!is(targetFeatTable, "data.frame")) {
-            stop("specified targetFeatTable is not a data.frame")}
-        # required columns are present
-        if (!all(c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz",
-                    "mzMax") %in% colnames(targetFeatTable))) {
-            stop("expected columns in targetFeatTable are \"cpdID\", ",
-                "\"cpdName\", \"rtMin\", \"rt\", \"rtMax\", \"mzMin\", \"mz\" ",
-                "and \"mzMax\"")
-        }
-        # column type
-        if (dim(targetFeatTable)[1] != 0) {
-            if (!is.character(targetFeatTable$cpdID[1])) {
-                stop("targetFeatTable$cpdID must be character") }
-            if (!is.character(targetFeatTable$cpdName[1])) {
-                stop("targetFeatTable$cpdName must be character") }
-            if (!is.numeric(targetFeatTable$rtMin[1])) {
-                stop("targetFeatTable$rtMin must be numeric") }
-            if (!(is.numeric(targetFeatTable$rt[1]) |
-                is.na(targetFeatTable$rt[1]))) {
-                stop("targetFeatTable$rt must be numeric or NA") }
-            if (!is.numeric(targetFeatTable$rtMax[1])) {
-                stop("targetFeatTable$rtMax must be numeric") }
-            if (!is.numeric(targetFeatTable$mzMin[1])) {
-                stop("targetFeatTable$mzMin must be numeric") }
-            if (!(is.numeric(targetFeatTable$mz[1]) |
-                is.na(targetFeatTable$mz[1]))) {
-                stop("targetFeatTable$mz must be numeric or NA") }
-            if (!is.numeric(targetFeatTable$mzMax[1])) {
-                stop("targetFeatTable$mzMax must be numeric") }
-        }
-        # load values and allocate size
-        nbCompound  <- dim(targetFeatTable)[1]
-        cpdID       <- targetFeatTable$cpdID
-        cpdName     <- targetFeatTable$cpdName
-        ROI         <- targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin",
-                                            "mz", "mzMax")]
-        # set cpdMetadata to the correct size if no cpdMetadata passed in
-        # (at the correct size)
-        if (dim(cpdMetadata)[1] != nbCompound) {
-            cpdMetadata <- data.frame(matrix(, nrow = nbCompound, ncol = 0))
-        }
-        # only set FIR and uROI to the correct size if not provided in input
-        # (at the correct size)
-        if (dim(FIR)[1] != nbCompound) {
-            FIR <- data.frame(rtMin = as.numeric(rep(NA, nbCompound)),
-                                rtMax = as.numeric(rep(NA, nbCompound)),
-                                mzMin = as.numeric(rep(NA, nbCompound)),
-                                mzMax = as.numeric(rep(NA, nbCompound)),
-                                stringsAsFactors = FALSE)
-        }
-        if (dim(uROI)[1] != nbCompound) {
-            uROI <- data.frame(rtMin = as.numeric(rep(NA, nbCompound)),
-                                rt = as.numeric(rep(NA, nbCompound)),
-                                rtMax = as.numeric(rep(NA, nbCompound)),
-                                mzMin = as.numeric(rep(NA, nbCompound)),
-                                mz = as.numeric(rep(NA, nbCompound)),
-                                mzMax = as.numeric(rep(NA, nbCompound)),
-                                stringsAsFactors = FALSE)
-            # if we reset, it doesn't exist
-            uROIExist <- FALSE
-            # if we reset, it can't be used
-            useUROI <- FALSE
-        }
-    }
+        initTarg <- initialize_targetFeatTable(targetFeatTable, cpdMetadata,
+                                                FIR, uROI, uROIExist, useUROI)
+        cpdID <- initTarg$cpdID
+        cpdName <- initTarg$cpdName
+        cpdMetadata <- initTarg$cpdMeta
+        ROI <- initTarg$ROI
+        FIR <- initTarg$FIR
+        uROI <- initTarg$uROI
+        uROIExist <- initTarg$uROIExist
+        useUROI <- initTarg$useUROI }
     
-    ## set the final values
+    # set the final values
     new("peakPantheRAnnotation", cpdID = cpdID, cpdName = cpdName, ROI = ROI,
         FIR = FIR, uROI = uROI, filepath = filepath, cpdMetadata = cpdMetadata,
         spectraMetadata = spectraMetadata, acquisitionTime = acquisitionTime,
         uROIExist = uROIExist, useUROI = useUROI, useFIR = useFIR, TIC = TIC,
         peakTables = peakTables, dataPoints = dataPoints, peakFit = peakFit,
         isAnnotated = isAnnotated)
+}
+
+
+# -----------------------------------------------------------------------------
+# initialize_peakPantheRAnnotation helper functions
+
+# Set using spectraPaths
+initialize_spectraPaths <- function(spectraPaths, acquisitionTime, TIC,
+                            peakTables, dataPoints, peakFit, spectraMetadata) {
+    # check input is a vector of character
+    if (!is.vector(spectraPaths) | is.list(spectraPaths) |
+        !is.character(spectraPaths)) {
+        stop("specified spectraPaths is not a vector of character") }
+
+    # no duplicated spectraPaths
+    if (length(spectraPaths) != length(unique(spectraPaths))) {
+        stop("duplicated spectraPaths passed as input") }
+
+    # load values and allocate size
+    nbSpectra   <- length(spectraPaths)
+    filepath    <- spectraPaths
+
+    # set acquisitionTime default if no acquisitionTime passed in
+    if (length(acquisitionTime) == 0) {
+        acquisitionTime <- as.character(rep(NA, nbSpectra)) }
+
+    # set TIC default if no TIC passed in
+    if (length(TIC) == 0) {
+        TIC <- as.numeric(rep(NA, nbSpectra)) }
+
+    # set peakTables default if no peakTables passed in
+    if (length(peakTables) == 0) {
+        peakTables <- vector("list", nbSpectra) }
+
+    # set dataPoints default if no dataPoints passed in
+    if (length(dataPoints) == 0) {
+        dataPoints <- vector("list", nbSpectra) }
+
+    # set peakFit default if no peakFit passed in
+    if (length(peakFit) == 0) {
+        peakFit <- vector("list", nbSpectra) }
+
+    # set spectraMetadata to the correct size if no spectraMetadata passed
+    # in (at the correct size)
+    if (dim(spectraMetadata)[1] != nbSpectra) {
+        spectraMetadata <- data.frame(matrix(, nrow = nbSpectra, ncol = 0))}
+
+    return(list(filepath=filepath, acqTime=acquisitionTime, TIC=TIC,
+                pkTab=peakTables, dataPt=dataPoints, pkFit=peakFit,
+                specMeta=spectraMetadata))
+}
+# Set using targetFeatTable
+initialize_targetFeatTable <- function(targetFeatTable, cpdMetadata, FIR, uROI,
+                                        uROIExist, useUROI){
+    # check targetFeatTable
+    initialize_checkTargetFeatTable(targetFeatTable)
+
+    # load values and allocate size
+    nbCompound  <- dim(targetFeatTable)[1]
+    cpdID       <- targetFeatTable$cpdID
+    cpdName     <- targetFeatTable$cpdName
+    ROI         <- targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz",
+                                        "mzMax")]
+    # set cpdMetadata to the correct size if no cpdMetadata passed in (at the
+    # correct size)
+    if (dim(cpdMetadata)[1] != nbCompound) {
+        cpdMetadata <- data.frame(matrix(, nrow = nbCompound, ncol = 0))
+    }
+    # only set FIR and uROI to the correct size if not provided in input (at the
+    # correct size)
+    if (dim(FIR)[1] != nbCompound) {
+        FIR <- data.frame(rtMin = as.numeric(rep(NA, nbCompound)),
+                            rtMax = as.numeric(rep(NA, nbCompound)),
+                            mzMin = as.numeric(rep(NA, nbCompound)),
+                            mzMax = as.numeric(rep(NA, nbCompound)),
+                            stringsAsFactors = FALSE)
+    }
+    if (dim(uROI)[1] != nbCompound) {
+        uROI <- data.frame(rtMin = as.numeric(rep(NA, nbCompound)),
+                            rt = as.numeric(rep(NA, nbCompound)),
+                            rtMax = as.numeric(rep(NA, nbCompound)),
+                            mzMin = as.numeric(rep(NA, nbCompound)),
+                            mz = as.numeric(rep(NA, nbCompound)),
+                            mzMax = as.numeric(rep(NA, nbCompound)),
+                            stringsAsFactors = FALSE)
+        # if we reset, it doesn't exist
+        uROIExist <- FALSE
+        # if we reset, it can't be used
+        useUROI <- FALSE
+    }
+
+    return(list(cpdID=cpdID, cpdName=cpdName, cpdMeta=cpdMetadata, ROI=ROI,
+                FIR=FIR, uROI=uROI, uROIExist=uROIExist, useUROI=useUROI))
+}
+# Check targetFeatTable input
+initialize_checkTargetFeatTable <- function(targetFeatTable) {
+
+    # check input is data.frame
+    if (!is(targetFeatTable, "data.frame")) {
+        stop("specified targetFeatTable is not a data.frame")}
+
+    # required columns are present
+    if (!all(c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz",
+                "mzMax") %in% colnames(targetFeatTable))) {
+        stop("expected columns in targetFeatTable are \"cpdID\", ",
+            "\"cpdName\", \"rtMin\", \"rt\", \"rtMax\", \"mzMin\", \"mz\" ",
+            "and \"mzMax\"")
+    }
+
+    # column type
+    if (dim(targetFeatTable)[1] != 0) {
+        if (!is.character(targetFeatTable$cpdID[1])) {
+            stop("targetFeatTable$cpdID must be character") }
+        if (!is.character(targetFeatTable$cpdName[1])) {
+            stop("targetFeatTable$cpdName must be character") }
+        if (!is.numeric(targetFeatTable$rtMin[1])) {
+            stop("targetFeatTable$rtMin must be numeric") }
+        if (!(is.numeric(targetFeatTable$rt[1]) |
+            is.na(targetFeatTable$rt[1]))) {
+            stop("targetFeatTable$rt must be numeric or NA") }
+        if (!is.numeric(targetFeatTable$rtMax[1])) {
+            stop("targetFeatTable$rtMax must be numeric") }
+        if (!is.numeric(targetFeatTable$mzMin[1])) {
+            stop("targetFeatTable$mzMin must be numeric") }
+        if (!(is.numeric(targetFeatTable$mz[1]) |
+            is.na(targetFeatTable$mz[1]))) {
+            stop("targetFeatTable$mz must be numeric or NA") }
+        if (!is.numeric(targetFeatTable$mzMax[1])) {
+            stop("targetFeatTable$mzMax must be numeric") }
+    }
 }
