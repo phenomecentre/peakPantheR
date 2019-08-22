@@ -1235,149 +1235,136 @@ setGeneric("annotationParamsDiagnostic",
 #' }
 setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
     function(object, verbose) {
-    ## init
+    # init
     outAnnotation <- object
-    
-    ## not annotated, pass
+
+    # not annotated, pass
     if (!outAnnotation@isAnnotated) {
         if (verbose) {
             message(paste0('Warning: the object has not been annotated, return',
-                            ' the object untouched'))
-        }
-        return(outAnnotation)
-    }
+                            ' the object untouched')) }
+        return(outAnnotation) }
     
-    ## uROI uROI doesn't exist, set uROI with min/max of found peaks (if NA,
-    ## use ROI value)
+    # uROI uROI doesn't exist, set uROI with min/max of found peaks (if NA, use
+    # ROI value)
     if (!outAnnotation@uROIExist) {
-        if (verbose) {
-            message(paste0('uROI will be set as mimimum/maximum of found peaks',
-                            ' (+/-5% of ROI in retention time)'))
-        }
-        # rt ROI 5% (no NA in ROI rtMin/rtMax)
-        rtMargin <- (ROI(outAnnotation)$rtMax - ROI(outAnnotation)$rtMin) * 0.05
-        # rtMin (min found peak -5% of ROI)
-        rtMinUROI <- unname(vapply(annotationTable(outAnnotation,"rtMin"), min,
-            na.rm = TRUE, FUN.VALUE = numeric(1)))
-        rtMinUROI <- rtMinUROI - rtMargin
-        if (sum(is.infinite(rtMinUROI)) != 0) {
-            if (verbose) {
-                message(paste0('uROI min rtMin which are NA are replaced with',
-                                ' ROI rtMin'))
-            }
-            rtMinUROI[is.infinite(rtMinUROI)] <-
-                outAnnotation@ROI[is.infinite(rtMinUROI), "rtMin"]
-        }
-        # rtMax (max found peak +5% of ROI)
-        rtMaxUROI <- unname(vapply(annotationTable(outAnnotation,"rtMax"), max,
-            na.rm = TRUE, FUN.VALUE = numeric(1)))
-        rtMaxUROI <- rtMaxUROI + rtMargin
-        if (sum(is.infinite(rtMaxUROI)) != 0) {
-            if (verbose) {
-                message(paste0('uROI max rtMax which are NA are replaced with',
-                                ' ROI rtMax'))
-            }
-            rtMaxUROI[is.infinite(rtMaxUROI)] <-
-                outAnnotation@ROI[is.infinite(rtMaxUROI), "rtMax"]
-        }
-        # mzMin
-        mzMinUROI <- unname(vapply(annotationTable(outAnnotation,"mzMin"), min,
-            na.rm = TRUE, FUN.VALUE = numeric(1)))
-        if (sum(is.infinite(mzMinUROI)) != 0) {
-            if (verbose) {
-                message("uROI min mzMin which are NA are replaced ROI mzMin")
-            }
-            mzMinUROI[is.infinite(mzMinUROI)] <-
-                outAnnotation@ROI[is.infinite(mzMinUROI), "mzMin"]
-        }
-        # mzMax
-        mzMaxUROI <- unname(vapply(annotationTable(outAnnotation,"mzMax"), max,
-            na.rm = TRUE, FUN.VALUE = numeric(1)))
-        if (sum(is.infinite(mzMaxUROI)) != 0) {
-            if (verbose) {
-                message("uROI max mzMax which are NA are replaced ROI mzMax")
-            }
-            mzMaxUROI[is.infinite(mzMaxUROI)] <-
-                outAnnotation@ROI[is.infinite(mzMaxUROI), "mzMax"]
-        }
-        # store new uROI values
-        outAnnotation@uROI[, "rtMin"] <- rtMinUROI
-        outAnnotation@uROI[, "rtMax"] <- rtMaxUROI
-        outAnnotation@uROI[, "mzMin"] <- mzMinUROI
-        outAnnotation@uROI[, "mzMax"] <- mzMaxUROI
-        outAnnotation@uROI[, c("rt", "mz")] <- outAnnotation@ROI[,c("rt", "mz")]
-        # set uROIExist
-        outAnnotation@uROIExist <- TRUE
-        # uROI exist (even not used), no replacement
-    } else {
-        if (verbose) {
-            message("uROI already exist, will not be changed")
-        }
+        outAnnotation <- annotationParamsDiagnostic_uROI(outAnnotation, verbose)
+    } else { # uROI exist (even not used), no replacement
+        if (verbose) { message("uROI already exist, will not be changed") }
     }
     
-    ## FIR FIR not used, recalculate (if NA, use uROI value that was set
-    ## previously)
+    # FIR FIR not used, recalculate (if NA, use uROI value that was set
+    # previously)
     if (!outAnnotation@useFIR) {
-        if (verbose) {
-            message(paste0('FIR will be calculated as the median of found ',
-                            '\"rtMin\",\"rtMax\",\"mzMin\",\"mzMax\"'))
-        }
-        # rtMin
-        rtMinFIR <- unname(vapply(annotationTable(outAnnotation, "rtMin"),
-            stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
-        if (sum(is.na(rtMinFIR)) != 0) {
-            if (verbose) {
-                message(paste0('FIR median rtMin which are NA are replaced ',
-                                'with uROI rtMin'))
-            }
-            rtMinFIR[is.na(rtMinFIR)] <-
-                outAnnotation@uROI[is.na(rtMinFIR), "rtMin"]
-        }
-        # rtMax
-        rtMaxFIR <- unname(vapply(annotationTable(outAnnotation, "rtMax"),
-            stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
-        if (sum(is.na(rtMaxFIR)) != 0) {
-            if (verbose) {
-                message(paste0('FIR median rtMax which are NA are replaced ',
-                                'with uROI rtMax'))
-            }
-            rtMaxFIR[is.na(rtMaxFIR)] <-
-                outAnnotation@uROI[is.na(rtMaxFIR), "rtMax"]
-        }
-        # mzMin
-        mzMinFIR <- unname(vapply(annotationTable(outAnnotation, "mzMin"),
-            stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
-        if (sum(is.na(mzMinFIR)) != 0) {
-            if (verbose) {
-                message("FIR median mzMin which are NA are replaced uROI mzMin")
-            }
-            mzMinFIR[is.na(mzMinFIR)] <-
-                outAnnotation@uROI[is.na(mzMinFIR), "mzMin"]
-        }
-        # mzMax
-        mzMaxFIR <- unname(vapply(annotationTable(outAnnotation, "mzMax"),
-            stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
-        if (sum(is.na(mzMaxFIR)) != 0) {
-            if (verbose) {
-                message("FIR median mzMax which are NA are replaced uROI mzMax")
-            }
-            mzMaxFIR[is.na(mzMaxFIR)] <-
-                outAnnotation@uROI[is.na(mzMaxFIR), "mzMax"]
-        }
-        # store new FIR values
-        outAnnotation@FIR[, "rtMin"] <- rtMinFIR
-        outAnnotation@FIR[, "rtMax"] <- rtMaxFIR
-        outAnnotation@FIR[, "mzMin"] <- mzMinFIR
-        outAnnotation@FIR[, "mzMax"] <- mzMaxFIR
-        # FIR used, do not recalculate
-    } else {
-        if (verbose) {
-            message("FIR in use, will not be changed")
-        }
+        outAnnotation <- annotationParamsDiagnostic_FIR(outAnnotation, verbose)
+    } else { # FIR used, do not recalculate
+        if (verbose) { message("FIR in use, will not be changed") }
     }
-    
+
     return(outAnnotation)
 })
+# annotationParamsDiagnostic for uROI
+annotationParamsDiagnostic_uROI <- function(outAnnotation, verbose) {
+    if (verbose) { message(paste0('uROI will be set as mimimum/maximum of',
+                        ' found peaks (+/-5% of ROI in retention time)')) }
+    # rt ROI 5% (no NA in ROI rtMin/rtMax)
+    rtMargin <- (ROI(outAnnotation)$rtMax - ROI(outAnnotation)$rtMin) * 0.05
+    # rtMin (min found peak -5% of ROI)
+    rtMinUROI <- unname(vapply(annotationTable(outAnnotation,"rtMin"), min,
+        na.rm = TRUE, FUN.VALUE = numeric(1)))
+    rtMinUROI <- rtMinUROI - rtMargin
+    if (sum(is.infinite(rtMinUROI)) != 0) {
+        if (verbose) { message(paste0('uROI min rtMin which are NA are',
+                            ' replaced with ROI rtMin')) }
+        rtMinUROI[is.infinite(rtMinUROI)] <-
+            outAnnotation@ROI[is.infinite(rtMinUROI), "rtMin"] }
+    # rtMax (max found peak +5% of ROI)
+    rtMaxUROI <- unname(vapply(annotationTable(outAnnotation,"rtMax"), max,
+        na.rm = TRUE, FUN.VALUE = numeric(1)))
+    rtMaxUROI <- rtMaxUROI + rtMargin
+    if (sum(is.infinite(rtMaxUROI)) != 0) {
+        if (verbose) { message(paste0('uROI max rtMax which are NA are',
+                            ' replaced with ROI rtMax')) }
+        rtMaxUROI[is.infinite(rtMaxUROI)] <-
+            outAnnotation@ROI[is.infinite(rtMaxUROI), "rtMax"] }
+    # mzMin
+    mzMinUROI <- unname(vapply(annotationTable(outAnnotation,"mzMin"), min,
+        na.rm = TRUE, FUN.VALUE = numeric(1)))
+    if (sum(is.infinite(mzMinUROI)) != 0) {
+        if (verbose) {
+            message("uROI min mzMin which are NA are replaced ROI mzMin") }
+        mzMinUROI[is.infinite(mzMinUROI)] <-
+            outAnnotation@ROI[is.infinite(mzMinUROI), "mzMin"] }
+    # mzMax
+    mzMaxUROI <- unname(vapply(annotationTable(outAnnotation,"mzMax"), max,
+        na.rm = TRUE, FUN.VALUE = numeric(1)))
+    if (sum(is.infinite(mzMaxUROI)) != 0) {
+        if (verbose) {
+            message("uROI max mzMax which are NA are replaced ROI mzMax") }
+        mzMaxUROI[is.infinite(mzMaxUROI)] <-
+            outAnnotation@ROI[is.infinite(mzMaxUROI), "mzMax"] }
+    # store new uROI values
+    outAnnotation@uROI[, "rtMin"] <- rtMinUROI
+    outAnnotation@uROI[, "rtMax"] <- rtMaxUROI
+    outAnnotation@uROI[, "mzMin"] <- mzMinUROI
+    outAnnotation@uROI[, "mzMax"] <- mzMaxUROI
+    outAnnotation@uROI[, c("rt", "mz")] <- outAnnotation@ROI[,c("rt", "mz")]
+    # set uROIExist
+    outAnnotation@uROIExist <- TRUE
+
+    return(outAnnotation)
+}
+# annotationParamsDiagnostic for FIR
+annotationParamsDiagnostic_FIR <- function(outAnnotation, verbose) {
+    if (verbose) { message(paste0('FIR will be calculated as the median of',
+                        ' found \"rtMin\",\"rtMax\",\"mzMin\",\"mzMax\"')) }
+
+    # rtMin
+    rtMinFIR <- unname(vapply(annotationTable(outAnnotation, "rtMin"),
+        stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
+    if (sum(is.na(rtMinFIR)) != 0) {
+        if (verbose) {
+            message(paste0('FIR median rtMin which are NA are replaced ',
+                            'with uROI rtMin')) }
+        rtMinFIR[is.na(rtMinFIR)] <-
+            outAnnotation@uROI[is.na(rtMinFIR), "rtMin"] }
+
+    # rtMax
+    rtMaxFIR <- unname(vapply(annotationTable(outAnnotation, "rtMax"),
+        stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
+    if (sum(is.na(rtMaxFIR)) != 0) {
+        if (verbose) {
+            message(paste0('FIR median rtMax which are NA are replaced ',
+                            'with uROI rtMax')) }
+        rtMaxFIR[is.na(rtMaxFIR)] <-
+            outAnnotation@uROI[is.na(rtMaxFIR), "rtMax"] }
+
+    # mzMin
+    mzMinFIR <- unname(vapply(annotationTable(outAnnotation, "mzMin"),
+        stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
+    if (sum(is.na(mzMinFIR)) != 0) {
+        if (verbose) {
+            message("FIR median mzMin which are NA are replaced uROI mzMin") }
+        mzMinFIR[is.na(mzMinFIR)] <-
+            outAnnotation@uROI[is.na(mzMinFIR), "mzMin"] }
+
+    # mzMax
+    mzMaxFIR <- unname(vapply(annotationTable(outAnnotation, "mzMax"),
+        stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
+    if (sum(is.na(mzMaxFIR)) != 0) {
+        if (verbose) {
+            message("FIR median mzMax which are NA are replaced uROI mzMax") }
+        mzMaxFIR[is.na(mzMaxFIR)] <-
+            outAnnotation@uROI[is.na(mzMaxFIR), "mzMax"] }
+
+    # store new FIR values
+    outAnnotation@FIR[, "rtMin"] <- rtMinFIR
+    outAnnotation@FIR[, "rtMax"] <- rtMaxFIR
+    outAnnotation@FIR[, "mzMin"] <- mzMinFIR
+    outAnnotation@FIR[, "mzMax"] <- mzMaxFIR
+
+    return(outAnnotation)
+}
 
 
 ## Save annotation parameters as CSV
