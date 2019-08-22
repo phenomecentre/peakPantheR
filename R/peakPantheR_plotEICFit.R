@@ -68,84 +68,21 @@ peakPantheR_plotEICFit  <- function(ROIDataPointSampleList,
                                     sampling = 250,
                                     sampleColour = NULL,
                                     verbose = TRUE) {
+    # Check input
+    resInp <- plotEICFit_checkInput(ROIDataPointSampleList, curveFitSampleList,
+                                            rtMin, rtMax, sampleColour, verbose)
+    nbSpl <- resInp$nbSpl
+    plotFit <- resInp$plotFit
+    colourSpl <- resInp$colourSpl
     
-    ## Check input in case ROIDataPointSampleList is not a list
-    if (!is(ROIDataPointSampleList, "list")) {
-        stop("Error: \"ROIDataPointSampleList\" must be a list of data.frame")
-    }
-    nbSpl <- length(ROIDataPointSampleList)
-    
-    # check curveFitSampleList, rtMin and rtMax
-    plotFit <- FALSE
-    if (!is.null(curveFitSampleList) & !is.null(rtMin) & !is.null(rtMax)) {
-        if ((nbSpl == length(curveFitSampleList)) & (nbSpl == length(rtMin)) &
-            (nbSpl == length(rtMax))) {
-            plotFit <- TRUE
-        } else {
-            stop(paste0('"\"curveFitSampleList\", \"rtMin\", \"rtMax\" and ',
-                        '\"ROIDataPointSampleList\" must be the same length'))
-        }
-    } else {
-        if (verbose) {
-            message(paste0('\"curveFitSampleList\", \"rtMin\" or \"rtMax\" no',
-                            ' provided, curveFit will not be plotted'))
-        }
-    }
-    
-    # set default colour (add a sample color ID that will be match in the plot)
-    colourSpl <- rep("black", nbSpl)
-    if (!is.null(sampleColour)) {
-        if (nbSpl == length(sampleColour)) {
-            colourSpl <- sampleColour
-        } else {
-            if (verbose) {
-                message(paste0('Warning: sampleColour length must match the ',
-                                'number of samples; default colour used'))
-            }
-        }
-    }
-    sampleIDColour <- paste("spl", seq(1, nbSpl), sep = "")
-    names(colourSpl) <- sampleIDColour
-    
-    
-    ## Prepare data
-    # raw spectra EICs
-    all_EIC <- lapply(seq_along(ROIDataPointSampleList), function(x) {
-        # generate ion chromatogram and add sampleIDColour
-        tmp_EIC <- generateIonChromatogram(ROIDataPointSampleList[[x]],
-                                            aggregationFunction = "sum")
-        tmp_EIC <- cbind(tmp_EIC, specID = rep(paste("spl", x, sep = ""),
-                                                    nrow(tmp_EIC)),
-                        stringsAsFactors = FALSE)
-    })
-    input_EIC <- do.call(rbind, all_EIC)
-    
-    # curve fit
-    if (plotFit) {
-        all_fit <- lapply(seq_along(ROIDataPointSampleList), function(x) {
-            # check rtMin, rtMax and curveFit exist, project curveFit and add
-            # sampleIDColour
-            if (!(is.na(rtMin[x])) & !(is.na(rtMax[x])) &
-                all(!is.na(curveFitSampleList[[x]]))) {
-                grid_rt <- seq(from = rtMin[x], to = rtMax[x],
-                                by = ((rtMax[x] - rtMin[x])/(sampling - 1)))
-                tmp_fit <- data.frame(rt = grid_rt,
-                    int = predictCurve(curveFitSampleList[[x]], x = grid_rt))
-                tmp_fit <- cbind(tmp_fit, specID = rep(paste("spl", x, sep=""),
-                                                        nrow(tmp_fit)),
-                            stringsAsFactors = FALSE)
-            }
-        })
-        input_fit <- do.call(rbind, all_fit)
-        # catch no curve fit left to plot
-        if (is.null(input_fit)) {
-            input_fit <- data.frame(matrix(, ncol = 3, nrow = 0,
-                            dimnames = list(c(), c("rt", "int", "specID"))))
-        }
-    }
-    
-    
-    ## Plot raw spectra and curve fit
+    # Prepare data
+    resPrep <- plotEICFit_prepData(ROIDataPointSampleList, curveFitSampleList,
+                                    rtMin, rtMax, sampling, plotFit)
+    input_EIC <- resPrep$input_EIC
+    input_fit <- resPrep$input_fit
+
+
+    # Plot raw spectra and curve fit
     # init plot
     p_spec <- ggplot2::ggplot(NULL, ggplot2::aes(x),
                             environment = environment()) +
@@ -168,4 +105,91 @@ peakPantheR_plotEICFit  <- function(ROIDataPointSampleList,
     }
     
     return(p_spec)
+}
+
+
+# -----------------------------------------------------------------------------
+# peakPantheR_plotEICFit helper functions
+
+# Check input
+plotEICFit_checkInput <- function(ROIDataPointSampleList, curveFitSampleList,
+                                    rtMin, rtMax, sampleColour, verbose) {
+    # Check input in case ROIDataPointSampleList is not a list
+    if (!is(ROIDataPointSampleList, "list")) {
+        stop("Error: \"ROIDataPointSampleList\" must be a list of data.frame")
+    }
+    nbSpl <- length(ROIDataPointSampleList)
+
+    # check curveFitSampleList, rtMin and rtMax
+    plotFit <- FALSE
+    if (!is.null(curveFitSampleList) & !is.null(rtMin) & !is.null(rtMax)) {
+        if ((nbSpl == length(curveFitSampleList)) & (nbSpl == length(rtMin)) &
+            (nbSpl == length(rtMax))) {
+            plotFit <- TRUE
+        } else {
+            stop(paste0('"\"curveFitSampleList\", \"rtMin\", \"rtMax\" and ',
+                        '\"ROIDataPointSampleList\" must be the same length'))
+        }
+    } else {
+        if (verbose) {
+            message(paste0('\"curveFitSampleList\", \"rtMin\" or \"rtMax\" no',
+                            ' provided, curveFit will not be plotted'))
+        }
+    }
+
+    # set default colour (add a sample color ID that will be match in the plot)
+    colourSpl <- rep("black", nbSpl)
+    if (!is.null(sampleColour)) {
+        if (nbSpl == length(sampleColour)) {
+            colourSpl <- sampleColour
+        } else {
+            if (verbose) {
+                message(paste0('Warning: sampleColour length must match the ',
+                                'number of samples; default colour used'))
+            }
+        }
+    }
+    sampleIDColour <- paste("spl", seq(1, nbSpl), sep = "")
+    names(colourSpl) <- sampleIDColour
+
+    return(list(nbSpl=nbSpl, plotFit=plotFit, colourSpl=colourSpl))
+}
+# Prepare data
+plotEICFit_prepData <- function(ROIDataPointSampleList, curveFitSampleList,
+                                rtMin, rtMax, sampling, plotFit) {
+    # raw spectra EICs
+    all_EIC <- lapply(seq_along(ROIDataPointSampleList), function(x) {
+        # generate ion chromatogram and add sampleIDColour
+        tmp_EIC <- generateIonChromatogram(ROIDataPointSampleList[[x]],
+                                            aggregationFunction = "sum")
+        tmp_EIC <- cbind(tmp_EIC, specID = rep(paste("spl", x, sep = ""),
+                                                    nrow(tmp_EIC)),
+                        stringsAsFactors = FALSE)
+    })
+    input_EIC <- do.call(rbind, all_EIC)
+
+    # curve fit
+    if (plotFit) {
+        all_fit <- lapply(seq_along(ROIDataPointSampleList), function(x) {
+            # check rtMin, rtMax and curveFit exist, project curveFit
+            if (!(is.na(rtMin[x])) & !(is.na(rtMax[x])) &
+                all(!is.na(curveFitSampleList[[x]]))) {
+                grid_rt <- seq(from = rtMin[x], to = rtMax[x],
+                                by = ((rtMax[x] - rtMin[x])/(sampling - 1)))
+                tmp_fit <- data.frame(rt = grid_rt,
+                    int = predictCurve(curveFitSampleList[[x]], x = grid_rt))
+                tmp_fit <- cbind(tmp_fit, specID = rep(paste("spl", x, sep=""),
+                                                        nrow(tmp_fit)),
+                            stringsAsFactors = FALSE)
+            }
+        })
+        input_fit <- do.call(rbind, all_fit)
+        # catch no curve fit left to plot
+        if (is.null(input_fit)) {
+            input_fit <- data.frame(matrix(, ncol = 3, nrow = 0,
+                            dimnames = list(c(), c("rt", "int", "specID"))))
+        }
+    } else { input_fit <- NULL }
+
+    return(list(input_EIC=input_EIC, input_fit=input_fit))
 }
