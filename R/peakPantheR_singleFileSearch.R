@@ -215,124 +215,137 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL,
     verbose = TRUE, ...) {
     stime <- Sys.time()
+    # Check input
+    resInp <- singleFileSearch_checkInput(singleSpectraDataPath,targetFeatTable,
+                                            plotEICsPath, FIR)
+    singleSpectraDataPath <- resInp$specPath
+    plotEICsPath <- resInp$plotPath
+    useFIR <- resInp$useFIR
     
-    ## Check input
+    # Read file
+    raw_data <- MSnbase::readMSData(singleSpectraDataPath,
+                                    centroided = TRUE, mode = "onDisk")
+    
+    # Get TIC
+    TICvalue <- sum(MSnbase::tic(raw_data))
+        #, initial=FALSE to calculate from raw and not header
+    
+    # Get AcquTime
+    AcquTime <- NA
+    if (getAcquTime) {
+        AcquTime <- getAcquisitionDatemzML(mzMLPath = singleSpectraDataPath,
+                                            verbose = verbose) }
+    
+    # Get ROIsDataPoint (return empty list if no windows)
+    ROIsDataPoint <- extractSignalRawData(raw_data,
+                                    rt = targetFeatTable[, c("rtMin", "rtMax")],
+                                    mz = targetFeatTable[, c("mzMin", "mzMax")],
+                                    verbose = verbose)
+
+    # Integrate
+    resInt <- singleFileSearch_integrate(raw_data, targetFeatTable,
+            ROIsDataPoint, peakStatistic, useFIR, FIR, plotEICsPath,verbose,...)
+    finalOutput <- resInt$finalOutput
+    curveFit <- resInt$curveFit
+
+    etime <- Sys.time()
+    if (verbose) { message("Feature search done in: ",
+                            round(as.double(difftime(etime, stime)), 2), " ",
+                            units(difftime(etime, stime))) }
+    
+    # clear variables
+    rm(raw_data)
+    gc(verbose = FALSE)
+    
+    return(list(TIC = TICvalue, peakTable = finalOutput, acquTime = AcquTime,
+                curveFit = curveFit, ROIsDataPoint = ROIsDataPoint))
+}
+
+
+# -----------------------------------------------------------------------------
+# peakPantheR_singleFileSearch helper functions
+
+# Check inputs
+singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
+                                        plotEICsPath, FIR) {
     singleSpectraDataPath <- normalizePath(singleSpectraDataPath,
                                             mustWork = FALSE)
-    
     if (!file.exists(singleSpectraDataPath)) {
         stop("Check input, file \"", singleSpectraDataPath, "\" does not exist")
     }
-    
+
     if (dim(targetFeatTable)[1] != 0) {
         # rtMin < rtMax and mzMin < mzMax
         if (!all(targetFeatTable[, "rtMax"] >= targetFeatTable[, "rtMin"])) {
-            stop("Check input, \"rtMin\" must be <= to \"rtMax\"")
-        }
+            stop("Check input, \"rtMin\" must be <= to \"rtMax\"") }
         if (!all(targetFeatTable[, "mzMax"] >= targetFeatTable[, "mzMin"])) {
-            stop("Check input, \"mzMin\" must be <= to \"mzMax\"")
-        }
+            stop("Check input, \"mzMin\" must be <= to \"mzMax\"") }
     }
-    
+
     if (!is.na(plotEICsPath)) {
         plotEICsPath <- normalizePath(plotEICsPath, mustWork = FALSE)
         # folder exist
         if (!file.exists(dirname(plotEICsPath))) {
             stop("Check input, plotEICsPath folder \"", dirname(plotEICsPath),
-                "\" does not exist")
-        }
+                "\" does not exist") }
         # png extension
         if (stringr::str_sub(basename(plotEICsPath), start = -4) != ".png") {
             stop("Check input, plotEICsPath file name \"",
-                basename(plotEICsPath), "\" lacks a \".png\" extension")
-        }
+                basename(plotEICsPath), "\" lacks a \".png\" extension") }
     }
-    
+
     useFIR <- FALSE
     if (!is.null(FIR)) {
         # FIR is Data.frame
         if (!is.data.frame(FIR)) {
-            stop("Check input, FIR must be a data.frame not ", class(FIR))
-        }
+            stop("Check input, FIR must be a data.frame not ", class(FIR)) }
         # FIR number of rows
         if (dim(FIR)[1] != dim(targetFeatTable)[1]) {
             stop(paste0('Check input, FIR must have the same number of rows as',
-                        ' targetFeatTable'))
-        }
+                        ' targetFeatTable')) }
         # FIR columns
         if (!all(c("mzMin", "mzMax", "rtMin", "rtMax") %in% colnames(FIR))) {
             stop(paste0('Check input, FIR must have \"mzMin\", \"mzMax\", ',
-                        '\"rtMin\" and \"rtMax\" as columns'))
-        }
+                        '\"rtMin\" and \"rtMax\" as columns')) }
         useFIR <- TRUE
     }
-    
-    
-    ## Read file
-    raw_data <- MSnbase::readMSData(singleSpectraDataPath,
-                                    centroided = TRUE, mode = "onDisk")
-    
-    ## Get TIC
-    TICvalue <- sum(MSnbase::tic(raw_data))
-        #, initial=FALSE to calculate from raw and not header
-    
-    ## Get AcquTime
-    AcquTime <- NA
-    if (getAcquTime) {
-        AcquTime <- getAcquisitionDatemzML(mzMLPath = singleSpectraDataPath,
-                                            verbose = verbose)
-    }
-    
-    ## Get ROIsDataPoint (return empty list if no windows)
-    ROIsDataPoint <- extractSignalRawData(raw_data,
-                                    rt = targetFeatTable[, c("rtMin", "rtMax")],
-                                    mz = targetFeatTable[, c("mzMin", "mzMax")],
-                                    verbose = verbose)
-    
-    
-    ## Only integrate if there is at minimum 1 target feature.
-    if (dim(targetFeatTable)[1] != 0) {
-        
-        ## Integrate features using ROI
+    return(list(specPath=singleSpectraDataPath, plotPath=plotEICsPath,
+                useFIR=useFIR))
+}
+# Integrate if there is at minimum 1 target feature
+singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
+                        peakStatistic, useFIR, FIR, plotEICsPath, verbose, ...){
+    if (dim(targetFeatTable)[1] != 0) { #Only integrate if there is min 1 target
+        # Integrate features using ROI
         foundPeaks <- findTargetFeatures(ROIsDataPoint,
                                         targetFeatTable,
                                         verbose = verbose,
                                         ...)
         foundPeakTable <- foundPeaks$peakTable
         curveFit <- foundPeaks$curveFit
-        
-        ## Add compound information
+        # Add compound information
         finalOutput <- foundPeakTable
         finalOutput$cpdID <- targetFeatTable$cpdID
         finalOutput$cpdName <- targetFeatTable$cpdName
         finalOutput$is_filled <- as.logical(FALSE)
-        
-        
-        ## Add deviation, Tailing factor, Asymmetry factor
+        # Add deviation, Tailing factor, Asymmetry factor
         if (peakStatistic) {
             finalOutput <- getTargetFeatureStatistic(curveFit, targetFeatTable,
-                                                finalOutput, verbose = verbose)
-        }
-        
-        ## Fill features not found based on FIR
+                                                finalOutput, verbose = verbose)}
+        # Fill features not found based on FIR
         if (useFIR) {
             finalOutput <- integrateFIR(raw_data, FIR, finalOutput,
-                                        verbose = verbose)
-        }
-        
-        ## Save all EICs plot
+                                        verbose = verbose) }
+        # Save all EICs plot
         if (!is.na(plotEICsPath)) {
             saveSingleFileMultiEIC(ROIsDataPoint, curveFit, finalOutput,
                                     plotEICsPath, width = 15, height = 15,
-                                    verbose = verbose)
-        }
-        
-        ## No targeted features, initialise empty integration results and EICs
-    } else {
+                                    verbose = verbose) }
+
+    } else { #No targeted features, initialise empty integration res and EICs
         if (verbose) {
             message(paste0("- No target features passed in 'targetFeatTable', ",
-                            "no integration, only TIC will be reported -"))
-        }
+                            "no integration, only TIC will be reported -")) }
         if (peakStatistic) {
             finalOutput <- data.frame(matrix(vector(), 0, 17,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
@@ -345,22 +358,8 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
                 "rtMin", "rtMax", "mz",  "mzMin",  "mzMax", "peakArea",
                 "maxIntMeasured", "maxIntPredicted", "is_filled"))),
-                stringsAsFactors = FALSE)
-        }
+                stringsAsFactors = FALSE) }
         curveFit <- list()
     }
-    
-    etime <- Sys.time()
-    if (verbose) {
-        message("Feature search done in: ",
-                round(as.double(difftime(etime, stime)), 2), " ",
-                units(difftime(etime, stime)))
-    }
-    
-    # clear variables
-    rm(raw_data)
-    gc(verbose = FALSE)
-    
-    return(list(TIC = TICvalue, peakTable = finalOutput, acquTime = AcquTime,
-                curveFit = curveFit, ROIsDataPoint = ROIsDataPoint))
+    return(list(finalOutput=finalOutput, curveFit=curveFit))
 }
