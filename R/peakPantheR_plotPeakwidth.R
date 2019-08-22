@@ -61,64 +61,14 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
     acquTime=NULL, varName="variable", sampleColour = NULL, rotateAxis = FALSE,
     verbose = TRUE) {
     
-    ## Check input
-    nbSpl <- length(apexValue)
-    
-    # check acquTime
-    useRunOrder <- FALSE
-    if (!is.null(acquTime)) {
-        # acquTime is not a POSIXct
-        if (!is(acquTime, "POSIXct")) {
-            stop("Error: \"acquTime\" must be a vector of POSIXct")
-        }
-        # NA in acquTime
-        if (any(is.na(acquTime))) {
-            if (verbose) {
-                message(paste0('Warning: \"acquTime\" contains NA, run order ',
-                                'will not be plotted'))
-            }
-            acquTime <- NULL  # helps with unittesting as dates in $plot_env
-                                # introduce OS differences
-        } else {
-            # check acquTime length
-            if (nbSpl != length(acquTime)) {
-                stop(paste0('Error: \"apexValue\" and \"acquTime\" must be the',
-                            ' same length'))
-            } else {
-                useRunOrder <- TRUE
-            }
-        }
-    }
-    
-    # check widthMin & widthMax
-    useWidth <- FALSE
-    if (!is.null(widthMin) & !is.null(widthMax)) {
-        # check length
-        if ((nbSpl != length(widthMin)) | (nbSpl != length(widthMax))) {
-            stop(paste0('\"apexValue\", \"widthMin\" and \"widthMax\" must be ',
-                        'the same length'))
-        } else {
-            useWidth <- TRUE
-        }
-    }
-    
-    # set default colour (add a sample color ID that will be match in the plot)
-    colourSpl <- rep("black", nbSpl)
-    if (!is.null(sampleColour)) {
-        if (nbSpl == length(sampleColour)) {
-            colourSpl <- sampleColour
-        } else {
-            if (verbose) {
-                message(paste0('Warning: sampleColour length must match the ',
-                                'number of samples; default colour used'))
-            }
-        }
-    }
-    sampleIDColour <- paste("spl", seq(1, nbSpl), sep = "")
-    names(colourSpl) <- sampleIDColour
-    
-    
-    ## Init plot draw default x/y with y the variable, rotate later if required
+    # Check input
+    resInp <- plotPeakwidth_checkInput(apexValue, widthMin, widthMax, acquTime,
+                                        sampleColour, verbose)
+    nbSpl <- resInp$nbSpl; useRunOrder <- resInp$useRunOrder
+    useWidth <- resInp$useWidth; colourSpl <- resInp$colourSpl
+    sampleIDColour <- resInp$sampleIDColour
+
+    # Init plot draw default x/y with y the variable, rotate later if required
     p <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) +
         ggplot2::theme_bw() +
         ggplot2::ylab(varName)
@@ -126,9 +76,8 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
     # set fill and colour scale, with one color per sample ID
     p <- p + ggplot2::scale_colour_manual(values = colourSpl, guide = FALSE)
     p <- p + ggplot2::scale_fill_manual(values = colourSpl, guide = FALSE)
-    
-    
-    ## tmp x axis
+
+    # tmp x axis
     if (useRunOrder) {
         x_axis <- acquTime
     } else {
@@ -139,8 +88,75 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
         }
     }
     
+    # Plot peakwidth, apex values and apex points
+    p <- plotPeakwidth_plotWidthApex(p, useWidth, useRunOrder, x_axis, widthMin,
+                        widthMax, sampleIDColour, apexValue, acquTime, verbose)
+
+    # Rotate axis
+    p <- plotPeakwidth_rotateAxis(p, rotateAxis, useRunOrder, verbose)
     
-    ## peak width (must go first to be the bottom most layer)
+    return(p)
+}
+
+
+# -----------------------------------------------------------------------------
+# peakPantheR_plotPeakwidth helper functions
+
+# Check the input
+plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
+                                    sampleColour, verbose){
+    nbSpl <- length(apexValue)
+    # check acquTime
+    useRunOrder <- FALSE
+    if (!is.null(acquTime)) {
+        # acquTime is not a POSIXct
+        if (!is(acquTime, "POSIXct")) {
+            stop("Error: \"acquTime\" must be a vector of POSIXct") }
+        # NA in acquTime
+        if (any(is.na(acquTime))) {
+            if (verbose) {
+                message(paste0('Warning: \"acquTime\" contains NA, run order ',
+                                'will not be plotted')) }
+            acquTime <- NULL  # helps with unittesting as dates in $plot_env
+                                # introduce OS differences
+        } else {
+            # check acquTime length
+            if (nbSpl != length(acquTime)) {
+                stop(paste0('Error: \"apexValue\" and \"acquTime\" must be the',
+                            ' same length'))
+            } else { useRunOrder <- TRUE }
+        }
+    }
+    # check widthMin & widthMax
+    useWidth <- FALSE
+    if (!is.null(widthMin) & !is.null(widthMax)) {
+        # check length
+        if ((nbSpl != length(widthMin)) | (nbSpl != length(widthMax))) {
+            stop(paste0('\"apexValue\", \"widthMin\" and \"widthMax\" must be ',
+                        'the same length'))
+        } else { useWidth <- TRUE }
+    }
+    # set default colour (add a sample color ID that will be match in the plot)
+    colourSpl <- rep("black", nbSpl)
+    if (!is.null(sampleColour)) {
+        if (nbSpl == length(sampleColour)) {
+            colourSpl <- sampleColour
+        } else {
+            if (verbose) {
+                message(paste0('Warning: sampleColour length must match the ',
+                                'number of samples; default colour used')) }
+        }
+    }
+    sampleIDColour <- paste("spl", seq(1, nbSpl), sep = "")
+    names(colourSpl) <- sampleIDColour
+
+    return(list(nbSpl=nbSpl, useRunOrder=useRunOrder, useWidth=useWidth,
+                colourSpl=colourSpl, sampleIDColour=sampleIDColour))
+}
+# Plot peakwidth, apex values and apex points
+plotPeakwidth_plotWidthApex <- function(p, useWidth, useRunOrder, x_axis,
+            widthMin, widthMax, sampleIDColour, apexValue, acquTime, verbose) {
+    # peak width (must go first to be the bottom most layer)
     if (useWidth) {
         # value peakwidth (add color ID to each point)
         tmp_pwidth <- data.frame(x = c(x_axis, x_axis),
@@ -150,30 +166,24 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
         tmp_pwidth <- tmp_pwidth[!is.na(tmp_pwidth$y), ]
         p <- p + ggplot2::geom_line(data = tmp_pwidth,
                     ggplot2::aes(x = x, y = y, group = x, colour=colr), size=1)
-        if (verbose) {
-            message("Peakwidth values plotted")
-        }
+        if (verbose) { message("Peakwidth values plotted") }
     }
-    
-    
-    ## apex value
+
+
+    # apex value
     if (useRunOrder) {
         p <- p + ggplot2::xlab("Acquisition Time")
                 #labels are flipped, themes are not
         tmp_pt <- data.frame(x = acquTime, y = apexValue, colr = sampleIDColour,
             stringsAsFactors = FALSE)
-        if (verbose) {
-            message("Values plotted by run order")
-        }
+        if (verbose) { message("Values plotted by run order") }
     } else {
         # labels are flipped, themes are not
         # add apex point (add the color ID to each point, and an ID pointing to
         # the black stroke)
         tmp_pt <- data.frame(x = x_axis, y = apexValue, colr = sampleIDColour,
                             stringsAsFactors = FALSE)
-        if (verbose) {
-            message("Values plotted by input order")
-        }
+        if (verbose) { message("Values plotted by input order") }
     }
     # add apex points
     tmp_pt <- tmp_pt[!is.na(tmp_pt$y), ]
@@ -187,15 +197,17 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
         p <- p + ggplot2::geom_point(data = tmp_pt,
                     ggplot2::aes(x = x, y = y, colour = colr))
     }
-    
-    
-    ## rotate axis (labels are carried with the flip, but themes are applied
-    ## after the fact)
+
+    return(p)
+}
+# Rotate axis
+plotPeakwidth_rotateAxis <- function(p, rotateAxis, useRunOrder, verbose) {
+    # rotate axis (labels are carried with the flip, but themes are applied
+    # afterwards)
     if (rotateAxis) {
         p <- p + ggplot2::coord_flip()
-        
-        if (useRunOrder) {
-            # Run order
+
+        if (useRunOrder) { # Run order
             # if date axis vertical, put dates in order from top to bottom
             # function to reverse date axis
             c_trans <- function(a, b, breaks = b$breaks, format = b$format) {
@@ -208,25 +220,21 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
                                 breaks = breaks, format = format)
             }
             rev_date <- c_trans("reverse", "time")
-            
+
             p <- p + ggplot2::theme(
                 axis.text.y = ggplot2::element_text(angle = 45, hjust = 1)) +
                 ggplot2::scale_x_continuous(trans = rev_date,
                                             expand = c(0.007, 0.007))
-        } else {
-            # no run order
+        } else { # no run order
             p <- p + ggplot2::theme(axis.title.y = ggplot2::element_blank(),
                                     axis.text.y = ggplot2::element_blank(),
                                     axis.ticks.x = ggplot2::element_blank()) +
                 ggplot2::scale_x_continuous(breaks = NULL,
                                             expand = c(0.007, 0.007))
         }
-        if (verbose) {
-            message("x and y axis rotated")
-        }
-        
-        # no rotation
-    } else {
+        if (verbose) { message("x and y axis rotated") }
+
+    } else { # no rotation
         if (useRunOrder) {
             p <- p + ggplot2::theme(
                 axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
@@ -239,6 +247,5 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
                                             expand = c(0.007, 0.007))
         }
     }
-    
     return(p)
 }
