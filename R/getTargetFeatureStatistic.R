@@ -101,117 +101,34 @@
 #' # 2         1.009304
 getTargetFeatureStatistic <- function(fittedCurves, targetFeatTable,
                                         foundPeakTable, verbose = FALSE) {
-    
-    ## Define the peak_shape_stat() -----------------------
-    #
-    # Calculate tailing factor and asymmetry factor
-    #
-    # Tailing Factor and Asymmetry Factor following the equations from
-    # http://www.chromforum.org/viewtopic.php?t=20079
-    #
-    # @param fittedCurve A \code{peakPantheR_curveFit} for the feature of
-    #   interest or NA
-    # @param apexRT (float) retention time in seconds of the measured peak apex
-    # @param rtMin (float) leading edge retention time in seconds (at 0.5%)
-    # @param rtMax (float) tailing edge retention time in seconds (at 0.5%)
-    # @param statistic (str) either \code{tailingFactor} or
-    #   \code{asymmetryFactor}
-    # @param sampling (int) Number of points to employ when subsampling the
-    #   fittedCurve between rtMin and rtMax @return Tailing factor or Asymmetry
-    #   factor value
-    peak_shape_stat <- function(fittedCurve, apexRT, rtMin, rtMax,
-                                statistic = "tailingFactor", sampling = 250) {
-        
-        # Check input
-        if (is.na(apexRT)) { return(as.numeric(NA)) }
-        if (is.na(rtMin)) { return(as.numeric(NA)) }
-        if (is.na(rtMax)) { return(as.numeric(NA)) }
-        if (all(is.na(fittedCurve))) { return(as.numeric(NA)) }
-        
-        # A B and C are retention time in seconds. C is RT of the apex, A is
-        # left side at x%, B is right side at x%.
-        # x% (cutoff) depends of the statistic employed.
-        
-        ## Find position of A and B
-        cutoff <- switch(statistic, tailingFactor = 0.05, asymmetryFactor = 0.1)
-        cutoff_int <- cutoff * predictCurve(fittedCurve, x = apexRT)
-            # intensity at cutoff pt of interest
-        
-        ## A side
-        # reverse order for up slope
-        A_grid_rt   <- seq(from = apexRT, to = rtMin,
-                            by = ((rtMin - apexRT)/(sampling - 1)))
-        A_slope_int <- predictCurve(fittedCurve, x = A_grid_rt)
-        # pos of 1st point past cutoff
-        A_cutoff_pt <- match(-1, sign(A_slope_int - cutoff_int))
-        # should not be NA as rtMin Max is at 0.5% while cutoff is 5 or 10%
-        if (is.na(A_cutoff_pt)) { return(NA) }
-        # points left and right from pt of interest
-        A_key_pt    <- c(A_cutoff_pt - 1, A_cutoff_pt)
-        # linear interpolation of exact rt
-        A           <- stats::approx(x = A_slope_int[A_key_pt],
-                                    y = A_grid_rt[A_key_pt],
-                                    xout = cutoff_int)$y
-        
-        ## B side
-        B_grid_rt   <- seq(from = apexRT, to = rtMax,
-                            by = ((rtMax - apexRT)/(sampling - 1)))
-        B_slope_int <- predictCurve(fittedCurve, x = B_grid_rt)
-        # pos of 1st point past cutoff
-        B_cutoff_pt <- match(-1, sign(B_slope_int - cutoff_int))
-        # should not be NA as rtMin Max is at 0.5% while cutoff is 5 or 10%
-        if (is.na(B_cutoff_pt)) { return(NA) }
-        # points left and right from pt of interest
-        B_key_pt    <- c(B_cutoff_pt - 1, B_cutoff_pt)
-        # linear interpolation of exact rt
-        B           <- stats::approx(x = B_slope_int[B_key_pt],
-                                    y = B_grid_rt[B_key_pt],
-                                    xout = cutoff_int)$y
-        
-        ## C is apexRT
-        C <- apexRT
-        
-        ## Peak statistic
-        if (statistic == "tailingFactor") { return((B - A)/(2 * (C - A))) }
-        if (statistic == "asymmetryFactor") { return((B - C)/(C - A)) }
-    }
-    ## ----------------------------------------------------
-    
     stime <- Sys.time()
-    
-    ## Check input
+    # Check input
     if (dim(targetFeatTable)[1] != dim(foundPeakTable)[1]) {
         stop("Number of features in \"targetFeatTable\" (",
             dim(targetFeatTable)[1], ") and \"foundPeakTable\" (",
-            dim(foundPeakTable)[1], ") do not match!")
-    }
+            dim(foundPeakTable)[1], ") do not match!") }
     if (length(fittedCurves) != dim(foundPeakTable)[1]) {
         stop("Number of fitted curves in \"fittedCurves\" (",
             length(fittedCurves),
             ") and number of features in \"foundPeakTable\" (",
-            dim(foundPeakTable)[1], ") do not match!")
-    }
-    
-    ## Calculate the statistics
+            dim(foundPeakTable)[1], ") do not match!") }
+    # Calculate the statistics
     peakStat <- data.frame(matrix(vector(), dim(targetFeatTable)[1], 4,
                             dimnames = list(c(), c("ppm_error", "rt_dev_sec",
                                                     "tailingFactor",
                                                     "asymmetryFactor"))),
                             stringsAsFactors = FALSE)
-    
+    # only work with found features
     for (i in seq_len(dim(targetFeatTable)[1])) {
-        # If the feature wasn't found we cannot work with it
         if (foundPeakTable$found[i]) {
             # ppm_error
             if (!is.na(targetFeatTable$mz[i])) {
                 peakStat$ppm_error[i] <- (abs(foundPeakTable$mz[i] -
-                        targetFeatTable$mz[i])/targetFeatTable$mz[i]) * 1e+06
-            }
+                        targetFeatTable$mz[i])/targetFeatTable$mz[i]) * 1e+06 }
             # rt_dev_sec
             if (!is.na(targetFeatTable$rt[i])) {
                 peakStat$rt_dev_sec[i] <- foundPeakTable$rt[i] -
-                        targetFeatTable$rt[i]
-            }
+                        targetFeatTable$rt[i] }
             # Tailing Factor
             peakStat$tailingFactor[i] <- peak_shape_stat(fittedCurves[[i]],
                                                     foundPeakTable$rt[i],
@@ -223,19 +140,84 @@ getTargetFeatureStatistic <- function(fittedCurves, targetFeatTable,
                                                 foundPeakTable$rt[i],
                                                 foundPeakTable$rtMin[i],
                                                 foundPeakTable$rtMax[i],
-                                                statistic = "asymmetryFactor")
-        }
-    }
-    
-    ## group the results and return
+                                                statistic = "asymmetryFactor")}}
+    # group the results and return
     finalTable <- cbind.data.frame(foundPeakTable, peakStat)
-    
     etime <- Sys.time()
-    if (verbose) {
-        message("Peak statistics done in: ",
-                round(as.double(difftime(etime, stime)), 2),
-                " ", units(difftime(etime, stime)))
-    }
-    
+    if (verbose) { message("Peak statistics done in: ",
+                            round(as.double(difftime(etime, stime)), 2),
+                            " ", units(difftime(etime, stime))) }
     return(finalTable)
+}
+
+
+# -----------------------------------------------------------------------------
+# getTargetFeatureStatistic helper functions
+
+## Define the peak_shape_stat()
+#
+# Calculate tailing factor and asymmetry factor
+#
+# Tailing Factor and Asymmetry Factor following the equations from
+# http://www.chromforum.org/viewtopic.php?t=20079
+#
+# @param fittedCurve A \code{peakPantheR_curveFit} for the feature of
+#   interest or NA
+# @param apexRT (float) retention time in seconds of the measured peak apex
+# @param rtMin (float) leading edge retention time in seconds (at 0.5%)
+# @param rtMax (float) tailing edge retention time in seconds (at 0.5%)
+# @param statistic (str) either \code{tailingFactor} or
+#   \code{asymmetryFactor}
+# @param sampling (int) Number of points to employ when subsampling the
+#   fittedCurve between rtMin and rtMax @return Tailing factor or Asymmetry
+#   factor value
+peak_shape_stat <- function(fittedCurve, apexRT, rtMin, rtMax,
+                            statistic = "tailingFactor", sampling = 250) {
+    # Check input
+    if (is.na(apexRT)) { return(as.numeric(NA)) }
+    if (is.na(rtMin)) { return(as.numeric(NA)) }
+    if (is.na(rtMax)) { return(as.numeric(NA)) }
+    if (all(is.na(fittedCurve))) { return(as.numeric(NA)) }
+
+    # A B and C are retention time in seconds. C is RT of the apex, A is
+    # left side at x%, B is right side at x%.
+    # x% (cutoff) depends of the statistic employed.
+    ## Find position of A and B
+    cutoff <- switch(statistic, tailingFactor = 0.05, asymmetryFactor = 0.1)
+    cutoff_int <- cutoff * predictCurve(fittedCurve, x = apexRT)
+        # intensity at cutoff pt of interest
+    ## A side
+    # reverse order for up slope
+    A_grid_rt   <- seq(from = apexRT, to = rtMin,
+                        by = ((rtMin - apexRT)/(sampling - 1)))
+    A_slope_int <- predictCurve(fittedCurve, x = A_grid_rt)
+    # pos of 1st point past cutoff
+    A_cutoff_pt <- match(-1, sign(A_slope_int - cutoff_int))
+    # should not be NA as rtMin Max is at 0.5% while cutoff is 5 or 10%
+    if (is.na(A_cutoff_pt)) { return(NA) }
+    # points left and right from pt of interest
+    A_key_pt    <- c(A_cutoff_pt - 1, A_cutoff_pt)
+    # linear interpolation of exact rt
+    A           <- stats::approx(x = A_slope_int[A_key_pt],
+                                y = A_grid_rt[A_key_pt],
+                                xout = cutoff_int)$y
+    ## B side
+    B_grid_rt   <- seq(from = apexRT, to = rtMax,
+                        by = ((rtMax - apexRT)/(sampling - 1)))
+    B_slope_int <- predictCurve(fittedCurve, x = B_grid_rt)
+    # pos of 1st point past cutoff
+    B_cutoff_pt <- match(-1, sign(B_slope_int - cutoff_int))
+    # should not be NA as rtMin Max is at 0.5% while cutoff is 5 or 10%
+    if (is.na(B_cutoff_pt)) { return(NA) }
+    # points left and right from pt of interest
+    B_key_pt    <- c(B_cutoff_pt - 1, B_cutoff_pt)
+    # linear interpolation of exact rt
+    B           <- stats::approx(x = B_slope_int[B_key_pt],
+                                y = B_grid_rt[B_key_pt],
+                                xout = cutoff_int)$y
+    ## C is apexRT
+    C <- apexRT
+    ## Peak statistic
+    if (statistic == "tailingFactor") { return((B - A)/(2 * (C - A))) }
+    if (statistic == "asymmetryFactor") { return((B - C)/(C - A)) }
 }
