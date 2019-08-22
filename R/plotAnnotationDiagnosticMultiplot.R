@@ -8,155 +8,207 @@
 #' 
 #' @return A list of multiplots (one per compound)
 annotationDiagnosticMultiplot <- function(annotationDiagnosticPlotList) {
-    
     # Init
     nbCpd <- length(annotationDiagnosticPlotList)
     outList <- vector("list", nbCpd)
     
     # Iterate over compounds
     for (cpd in seq_len(nbCpd)) {
-        
-        ## Check input
-        if (!all(c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder",
-                    "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram",
-                    "mzHistogram", "areaHistogram", "title") %in%
-            names(annotationDiagnosticPlotList[[cpd]]))) {
-            # cannot generate multiplot, pass to next compound
-            message("Required plots missing for compound #", cpd)
+
+        res <- annotDiagMultiplot_singleCpd(annotationDiagnosticPlotList, cpd)
+
+        if (is.null(res)) { # pass to next compound in case of failure
             outList[[cpd]] <- NULL
             next
+        } else {
+            outList[[cpd]] <- res
         }
-        
-        ## Init plot
-        tmp_EIC <- annotationDiagnosticPlotList[[cpd]]$EICFit +
-                    ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-                                    axis.text.x = ggplot2::element_blank())
-        tmp_rtPeakwidthVert <-
-            annotationDiagnosticPlotList[[cpd]]$rtPeakwidthVert
-        tmp_rtPeakwidthHorz <-
-            annotationDiagnosticPlotList[[cpd]]$rtPeakwidthHorzRunOrder +
-            ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-                            axis.text.x = ggplot2::element_blank())
-        tmp_mzPeakwidthHorz <-
-            annotationDiagnosticPlotList[[cpd]]$mzPeakwidthHorzRunOrder +
-            ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-                            axis.text.x = ggplot2::element_blank())
-        tmp_peakAreaHorz <- annotationDiagnosticPlotList[[cpd]]$areaRunOrder
-        tmp_rtHisto <- annotationDiagnosticPlotList[[cpd]]$rtHistogram +
-            ggplot2::coord_flip() +
-            ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-                            axis.text.x = ggplot2::element_blank(),
-                            axis.title.y = ggplot2::element_blank(),
-                            axis.text.y = ggplot2::element_blank())
-        tmp_mzHisto <- annotationDiagnosticPlotList[[cpd]]$mzHistogram +
-            ggplot2::coord_flip() +
-            ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-                            axis.text.x = ggplot2::element_blank(),
-                            axis.title.y = ggplot2::element_blank(),
-                            axis.text.y = ggplot2::element_blank())
-        tmp_areaHisto <- annotationDiagnosticPlotList[[cpd]]$areaHistogram +
-            ggplot2::coord_flip() +
-            ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-                            axis.text.x = ggplot2::element_blank(),
-                            axis.title.y = ggplot2::element_blank(),
-                            axis.text.y = ggplot2::element_blank())
-        
-        ## link axis (same lim)
-        # EIC + rt peakwidth (is rotated, use y in histogram)
-        minXEIC <- min(ggplot2::layer_scales(tmp_EIC)$x$range$range[1],
-                    ggplot2::layer_scales(tmp_rtPeakwidthVert)$y$range$range[1])
-        maxXEIC <- max(ggplot2::layer_scales(tmp_EIC)$x$range$range[2],
-                    ggplot2::layer_scales(tmp_rtPeakwidthVert)$y$range$range[2])
-        tmp_EIC <- tmp_EIC + ggplot2::xlim(minXEIC, maxXEIC)
-        tmp_rtPeakwidthVert <- tmp_rtPeakwidthVert +
-                                ggplot2::ylim(minXEIC, maxXEIC)
-        # rt peakwidth runOrder + histo (is rotated, use x in histo)
-        minYRT <- min(
-            ggplot2::layer_scales(tmp_rtPeakwidthHorz)$y$range$range[1],
-            ggplot2::layer_scales(tmp_rtHisto)$x$range$range[1])
-        maxYRT <- max(
-            ggplot2::layer_scales(tmp_rtPeakwidthHorz)$y$range$range[2],
-            ggplot2::layer_scales(tmp_rtHisto)$x$range$range[2])
-        tmp_rtPeakwidthHorz <- tmp_rtPeakwidthHorz +
-                                ggplot2::ylim(minYRT, maxYRT)
-        tmp_rtHisto <- tmp_rtHisto +
-                        ggplot2::xlim(minYRT, maxYRT)
-        # mz peakwidth runOrder + histo (is rotated, use x in histo)
-        minYMZ <- min(
-            ggplot2::layer_scales(tmp_mzPeakwidthHorz)$y$range$range[1],
-            ggplot2::layer_scales(tmp_mzHisto)$x$range$range[1])
-        maxYMZ <- max(
-            ggplot2::layer_scales(tmp_mzPeakwidthHorz)$y$range$range[2],
-            ggplot2::layer_scales(tmp_mzHisto)$x$range$range[2])
-        tmp_mzPeakwidthHorz <- tmp_mzPeakwidthHorz +
-                                ggplot2::ylim(minYMZ, maxYMZ)
-        tmp_mzHisto <- tmp_mzHisto +
-                        ggplot2::xlim(minYMZ, maxYMZ)
-        # Area runOrder + histo (is rotated, use x in histo)
-        minYArea <- min(
-            ggplot2::layer_scales(tmp_peakAreaHorz)$y$range$range[1],
-            ggplot2::layer_scales(tmp_areaHisto)$x$range$range[1])
-        maxYArea <- max(
-            ggplot2::layer_scales(tmp_peakAreaHorz)$y$range$range[2],
-            ggplot2::layer_scales(tmp_areaHisto)$x$range$range[2])
-        tmp_peakAreaHorz <- tmp_peakAreaHorz +
-                            ggplot2::ylim(minYArea, maxYArea)
-        tmp_areaHisto <- tmp_areaHisto +
-                            ggplot2::xlim(minYArea, maxYArea)
-        
-        ## Convert to gtables + match plotted width
-        p_EIC <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_EIC))
-        p_rtPeakwidthVert <- ggplot2::ggplot_gtable(
-                                ggplot2::ggplot_build(tmp_rtPeakwidthVert))
-        p_rtPeakwidthHorz <- ggplot2::ggplot_gtable(
-                                ggplot2::ggplot_build(tmp_rtPeakwidthHorz))
-        p_mzPeakwidthHorz <- ggplot2::ggplot_gtable(
-                                ggplot2::ggplot_build(tmp_mzPeakwidthHorz))
-        p_peakAreaHorz <- ggplot2::ggplot_gtable(
-                                ggplot2::ggplot_build(tmp_peakAreaHorz))
-        p_rtHisto <- ggplot2::ggplot_gtable(
-                                ggplot2::ggplot_build(tmp_rtHisto))
-        p_mzHisto <- ggplot2::ggplot_gtable(
-                                ggplot2::ggplot_build(tmp_mzHisto))
-        p_areaHisto <- ggplot2::ggplot_gtable(
-                                ggplot2::ggplot_build(tmp_areaHisto))
-        # find the widths of each of the plots, calculate the maximum and then
-        # apply it to each of them individually. This effectively applies a
-        # uniform layout to each of the plots.
-        # EIC + rt peakwidth
-        maxWidthEIC <- grid::unit.pmax(p_EIC$widths[2:5],
-                                        p_rtPeakwidthVert$widths[2:5])
-        p_EIC$widths[2:5] <- maxWidthEIC
-        p_rtPeakwidthVert$widths[2:5] <- maxWidthEIC
-        # rt peakwidth + mz peakwidth + peak area (x axis)
-        maxWidthRtMzArea <- grid::unit.pmax(p_rtPeakwidthHorz$widths[2:5],
-                                            p_mzPeakwidthHorz$widths[2:5],
-                                            p_peakAreaHorz$widths[2:5])
-        p_rtPeakwidthHorz$widths[2:5] <- maxWidthRtMzArea
-        p_mzPeakwidthHorz$widths[2:5] <- maxWidthRtMzArea
-        p_peakAreaHorz$widths[2:5] <- maxWidthRtMzArea
-        # rt + mz + area peakwidth and histo (y axis)
-        maxHeight <- grid::unit.pmin(p_rtPeakwidthHorz$heights[2:3],
-                                    p_mzPeakwidthHorz$heights[2:3],
-                                    p_peakAreaHorz$heights[2:3],
-                                    p_rtHisto$widths[2:5],
-                                    p_mzHisto$widths[2:3],
-                                    p_areaHisto$widths[2:3])
-        p_rtPeakwidthHorz$heights[2:3] <- maxHeight
-        p_mzPeakwidthHorz$heights[2:3] <- maxHeight
-        p_peakAreaHorz$heights[2:3] <- maxHeight
-        p_rtHisto$widths[2:3] <- maxHeight
-        p_mzHisto$widths[2:3] <- maxHeight
-        p_areaHisto$widths[2:3] <- maxHeight
-        
-        ## Generate and store multiplot
-        outList[[cpd]] <- gridExtra::grid.arrange(p_EIC, p_rtPeakwidthVert,
-            p_rtPeakwidthHorz, p_rtHisto, p_mzPeakwidthHorz, p_mzHisto,
-            p_peakAreaHorz, p_areaHisto, widths = c(6, 1),
-            heights = c(100, 45, 30, 30, 30, 14),
-            layout_matrix = rbind(c(1, 1), c(2, 2), c(3, 4), c(5, 6), c(7, 8),
-                                    c(7, 9)),
-            top = annotationDiagnosticPlotList[[cpd]]$title)
     }
+
     return(outList)
+}
+
+
+# -----------------------------------------------------------------------------
+# annotationDiagnosticMultiplot helper functions
+
+# prepare data for a single compound
+annotDiagMultiplot_singleCpd <- function(annotationDiagnosticPlotList, cpd) {
+    # Check input
+    if (!all(c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder",
+                "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram",
+                "mzHistogram", "areaHistogram", "title") %in%
+        names(annotationDiagnosticPlotList[[cpd]]))) {
+        # cannot generate multiplot, pass to next compound
+        message("Required plots missing for compound #", cpd)
+        return(NULL) } # pass to next compound
+
+    # Init plot
+    resInit <- annotDiagMultiplot_initPlot(annotationDiagnosticPlotList, cpd)
+    tmp_EIC <- resInit$EIC
+    tmp_rtPeakwidthVert <- resInit$rtPeakwidthVert
+    tmp_rtPeakwidthHorz <- resInit$rtPeakwidthHorz
+    tmp_mzPeakwidthHorz <- resInit$mzPeakwidthHorz
+    tmp_peakAreaHorz <- resInit$peakAreaHorz
+    tmp_rtHisto <- resInit$rtHisto
+    tmp_mzHisto <- resInit$mzHisto
+    tmp_areaHisto <- resInit$areaHisto
+
+    # link axis (same lim)
+    resLink <- annotDiagMultiplot_linkAxes(tmp_EIC, tmp_rtPeakwidthVert,
+        tmp_rtPeakwidthHorz, tmp_rtHisto, tmp_mzPeakwidthHorz, tmp_mzHisto,
+        tmp_peakAreaHorz, tmp_areaHisto)
+    tmp_EIC <- resLink$EIC
+    tmp_rtPeakwidthVert <- resLink$rtPeakwidthVert
+    tmp_rtPeakwidthHorz <- resLink$rtPeakwidthHorz
+    tmp_mzPeakwidthHorz <- resLink$mzPeakwidthHorz
+    tmp_peakAreaHorz <- resLink$peakAreaHorz
+    tmp_rtHisto <- resLink$rtHisto
+    tmp_mzHisto <- resLink$mzHisto
+    tmp_areaHisto <- resLink$areaHisto
+
+    # generate multiplot
+    result <- annotDiagMultiplot_generateMulti(annotationDiagnosticPlotList,cpd,
+        tmp_EIC, tmp_rtPeakwidthVert, tmp_rtPeakwidthHorz, tmp_rtHisto,
+        tmp_mzPeakwidthHorz, tmp_mzHisto, tmp_peakAreaHorz, tmp_areaHisto)
+
+    return(result)
+}
+# Initialise the subplots
+annotDiagMultiplot_initPlot <- function(annotationDiagnosticPlotList, cpd) {
+
+    tmp_EIC <- annotationDiagnosticPlotList[[cpd]]$EICFit +
+                ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                                axis.text.x = ggplot2::element_blank())
+    tmp_rtPeakwidthVert <- annotationDiagnosticPlotList[[cpd]]$rtPeakwidthVert
+    tmp_rtPeakwidthHorz <-
+        annotationDiagnosticPlotList[[cpd]]$rtPeakwidthHorzRunOrder +
+        ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                        axis.text.x = ggplot2::element_blank())
+    tmp_mzPeakwidthHorz <-
+        annotationDiagnosticPlotList[[cpd]]$mzPeakwidthHorzRunOrder +
+        ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                        axis.text.x = ggplot2::element_blank())
+    tmp_peakAreaHorz <- annotationDiagnosticPlotList[[cpd]]$areaRunOrder
+    tmp_rtHisto <- annotationDiagnosticPlotList[[cpd]]$rtHistogram +
+        ggplot2::coord_flip() +
+        ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                        axis.text.x = ggplot2::element_blank(),
+                        axis.title.y = ggplot2::element_blank(),
+                        axis.text.y = ggplot2::element_blank())
+    tmp_mzHisto <- annotationDiagnosticPlotList[[cpd]]$mzHistogram +
+        ggplot2::coord_flip() +
+        ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                        axis.text.x = ggplot2::element_blank(),
+                        axis.title.y = ggplot2::element_blank(),
+                        axis.text.y = ggplot2::element_blank())
+    tmp_areaHisto <- annotationDiagnosticPlotList[[cpd]]$areaHistogram +
+        ggplot2::coord_flip() +
+        ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                        axis.text.x = ggplot2::element_blank(),
+                        axis.title.y = ggplot2::element_blank(),
+                        axis.text.y = ggplot2::element_blank())
+
+    return(list(EIC=tmp_EIC, rtPeakwidthVert=tmp_rtPeakwidthVert,
+                rtPeakwidthHorz=tmp_rtPeakwidthHorz,
+                mzPeakwidthHorz=tmp_mzPeakwidthHorz,
+                peakAreaHorz=tmp_peakAreaHorz,
+                rtHisto=tmp_rtHisto, mzHisto=tmp_mzHisto,
+                areaHisto=tmp_areaHisto))
+}
+# Link subplots axes
+annotDiagMultiplot_linkAxes <- function(tmp_EIC, tmp_rtPeakwidthVert,
+        tmp_rtPeakwidthHorz, tmp_rtHisto, tmp_mzPeakwidthHorz, tmp_mzHisto,
+        tmp_peakAreaHorz, tmp_areaHisto) {
+
+    # link axis (same lim)
+    # EIC + rt peakwidth (is rotated, use y in histogram)
+    minXEIC <- min(ggplot2::layer_scales(tmp_EIC)$x$range$range[1],
+                ggplot2::layer_scales(tmp_rtPeakwidthVert)$y$range$range[1])
+    maxXEIC <- max(ggplot2::layer_scales(tmp_EIC)$x$range$range[2],
+                ggplot2::layer_scales(tmp_rtPeakwidthVert)$y$range$range[2])
+    tmp_EIC <- tmp_EIC + ggplot2::xlim(minXEIC, maxXEIC)
+    tmp_rtPeakwidthVert <- tmp_rtPeakwidthVert + ggplot2::ylim(minXEIC, maxXEIC)
+
+    # rt peakwidth runOrder + histo (is rotated, use x in histo)
+    minYRT <- min(ggplot2::layer_scales(tmp_rtPeakwidthHorz)$y$range$range[1],
+                    ggplot2::layer_scales(tmp_rtHisto)$x$range$range[1])
+    maxYRT <- max(ggplot2::layer_scales(tmp_rtPeakwidthHorz)$y$range$range[2],
+                    ggplot2::layer_scales(tmp_rtHisto)$x$range$range[2])
+    tmp_rtPeakwidthHorz <- tmp_rtPeakwidthHorz + ggplot2::ylim(minYRT, maxYRT)
+    tmp_rtHisto <- tmp_rtHisto + ggplot2::xlim(minYRT, maxYRT)
+
+    # mz peakwidth runOrder + histo (is rotated, use x in histo)
+    minYMZ <- min(ggplot2::layer_scales(tmp_mzPeakwidthHorz)$y$range$range[1],
+                    ggplot2::layer_scales(tmp_mzHisto)$x$range$range[1])
+    maxYMZ <- max(ggplot2::layer_scales(tmp_mzPeakwidthHorz)$y$range$range[2],
+                    ggplot2::layer_scales(tmp_mzHisto)$x$range$range[2])
+    tmp_mzPeakwidthHorz <- tmp_mzPeakwidthHorz + ggplot2::ylim(minYMZ, maxYMZ)
+    tmp_mzHisto <- tmp_mzHisto + ggplot2::xlim(minYMZ, maxYMZ)
+
+    # Area runOrder + histo (is rotated, use x in histo)
+    minYArea <- min(ggplot2::layer_scales(tmp_peakAreaHorz)$y$range$range[1],
+                    ggplot2::layer_scales(tmp_areaHisto)$x$range$range[1])
+    maxYArea <- max(ggplot2::layer_scales(tmp_peakAreaHorz)$y$range$range[2],
+                    ggplot2::layer_scales(tmp_areaHisto)$x$range$range[2])
+    tmp_peakAreaHorz <- tmp_peakAreaHorz + ggplot2::ylim(minYArea, maxYArea)
+    tmp_areaHisto <- tmp_areaHisto + ggplot2::xlim(minYArea, maxYArea)
+
+    return(list(EIC=tmp_EIC, rtPeakwidthVert=tmp_rtPeakwidthVert,
+                rtPeakwidthHorz=tmp_rtPeakwidthHorz,
+                mzPeakwidthHorz=tmp_mzPeakwidthHorz,
+                peakAreaHorz=tmp_peakAreaHorz,
+                rtHisto=tmp_rtHisto, mzHisto=tmp_mzHisto,
+                areaHisto=tmp_areaHisto))
+}
+# Generate multiplot
+annotDiagMultiplot_generateMulti <- function(annotationDiagnosticPlotList, cpd,
+    tmp_EIC, tmp_rtPeakwidthVert, tmp_rtPeakwidthHorz, tmp_rtHisto,
+    tmp_mzPeakwidthHorz, tmp_mzHisto, tmp_peakAreaHorz, tmp_areaHisto) {
+    ## Convert to gtables + match plotted width
+    p_EIC <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_EIC))
+    p_rtPeakwidthVert <- ggplot2::ggplot_gtable(
+                            ggplot2::ggplot_build(tmp_rtPeakwidthVert))
+    p_rtPeakwidthHorz <- ggplot2::ggplot_gtable(
+                            ggplot2::ggplot_build(tmp_rtPeakwidthHorz))
+    p_mzPeakwidthHorz <- ggplot2::ggplot_gtable(
+                            ggplot2::ggplot_build(tmp_mzPeakwidthHorz))
+    p_peakAreaHorz <- ggplot2::ggplot_gtable(
+                            ggplot2::ggplot_build(tmp_peakAreaHorz))
+    p_rtHisto <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_rtHisto))
+    p_mzHisto <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_mzHisto))
+    p_areaHisto <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_areaHisto))
+    # find the widths of each of the plots, calculate the maximum and then apply
+    # it to each of them individually. This effectively applies a uniform layout
+    # to each of the plots ## EIC + rt peakwidth
+    maxWidthEIC <- grid::unit.pmax(p_EIC$widths[2:5],
+                                    p_rtPeakwidthVert$widths[2:5])
+    p_EIC$widths[2:5] <- maxWidthEIC
+    p_rtPeakwidthVert$widths[2:5] <- maxWidthEIC
+    # rt peakwidth + mz peakwidth + peak area (x axis)
+    maxWidthRtMzArea <- grid::unit.pmax(p_rtPeakwidthHorz$widths[2:5],
+                                        p_mzPeakwidthHorz$widths[2:5],
+                                        p_peakAreaHorz$widths[2:5])
+    p_rtPeakwidthHorz$widths[2:5] <- maxWidthRtMzArea
+    p_mzPeakwidthHorz$widths[2:5] <- maxWidthRtMzArea
+    p_peakAreaHorz$widths[2:5] <- maxWidthRtMzArea
+    # rt + mz + area peakwidth and histo (y axis)
+    maxHeight <- grid::unit.pmin(p_rtPeakwidthHorz$heights[2:3],
+                                p_mzPeakwidthHorz$heights[2:3],
+                                p_peakAreaHorz$heights[2:3],
+                                p_rtHisto$widths[2:5], p_mzHisto$widths[2:3],
+                                p_areaHisto$widths[2:3])
+    p_rtPeakwidthHorz$heights[2:3] <- maxHeight
+    p_mzPeakwidthHorz$heights[2:3] <- maxHeight
+    p_peakAreaHorz$heights[2:3] <- maxHeight
+    p_rtHisto$widths[2:3] <- maxHeight
+    p_mzHisto$widths[2:3] <- maxHeight
+    p_areaHisto$widths[2:3] <- maxHeight
+    ## Generate
+    return(gridExtra::grid.arrange(p_EIC, p_rtPeakwidthVert,
+        p_rtPeakwidthHorz, p_rtHisto, p_mzPeakwidthHorz, p_mzHisto,
+        p_peakAreaHorz, p_areaHisto, widths = c(6, 1),
+        heights = c(100, 45, 30, 30, 30, 14),
+        layout_matrix = rbind(c(1, 1),c(2, 2),c(3, 4),c(5, 6),c(7, 8),c(7, 9)),
+        top = annotationDiagnosticPlotList[[cpd]]$title) )
 }
