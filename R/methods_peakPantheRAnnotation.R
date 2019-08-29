@@ -1477,11 +1477,12 @@ setGeneric("annotationDiagnosticPlots",
 #' }
 setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
     function(object, sampleColour, sampling, verbose) {
+
     # Init
     nbCpd <- nbCompounds(object)
     outList <- vector("list", nbCpd)
-    
-    ## Check object was annotated
+
+    # Check object was annotated
     if (!object@isAnnotated) {
         message(paste0('Warning: the object has not been annotated, return an',
                         ' empty diagnostic plot list'))
@@ -1491,73 +1492,68 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
     # Iterate over compounds
     for (cpd in seq_len(nbCpd)) {
         tmp_annotation <- object[, cpd]
-        tmp_plotList <- vector("list", 9)
-        names(tmp_plotList) <- c("EICFit", "rtPeakwidthVert",
-            "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder","areaRunOrder",
-            "rtHistogram", "mzHistogram", "areaHistogram", "title")
-        
-        # title
-        tmp_plotList$title <- paste(cpdID(tmp_annotation), "-",
-                                    cpdName(tmp_annotation))
-        # plotEICFit
-        tmp_plotList$EICFit <- peakPantheR_plotEICFit(
-            ROIDataPointSampleList = unlist(dataPoints(tmp_annotation),
-                                            recursive = FALSE),
-            curveFitSampleList = unlist(peakFit(tmp_annotation),
-                                            recursive = FALSE),
-            rtMin = annotationTable(tmp_annotation, "rtMin")[, 1],
-            rtMax = annotationTable(tmp_annotation, "rtMax")[, 1],
-            sampling = sampling, sampleColour = sampleColour, verbose = verbose)
-        # RT plotPeakwidth vertical
-        tmp_plotList$rtPeakwidthVert <- peakPantheR_plotPeakwidth(
-            apexValue = annotationTable(tmp_annotation, "rt")[, 1],
-            widthMin = annotationTable(tmp_annotation, "rtMin")[, 1],
-            widthMax = annotationTable(tmp_annotation, "rtMax")[, 1],
-            acquTime = NULL, sampleColour = sampleColour,
-            varName = "Retention Time (sec)", rotateAxis=TRUE, verbose=verbose)
-        # RT plotPeakwidth horizontal run order
-        tmp_plotList$rtPeakwidthHorzRunOrder <- peakPantheR_plotPeakwidth(
-            apexValue = annotationTable(tmp_annotation, "rt")[, 1],
-            widthMin = annotationTable(tmp_annotation, "rtMin")[, 1],
-            widthMax = annotationTable(tmp_annotation, "rtMax")[, 1],
-            acquTime = acquisitionTime(tmp_annotation),
-            sampleColour = sampleColour, varName = "Retention Time (sec)",
-            rotateAxis = FALSE, verbose = verbose)
-        # mz plotPeakwidth horizontal run order
-        tmp_plotList$mzPeakwidthHorzRunOrder <- peakPantheR_plotPeakwidth(
-            apexValue = annotationTable(tmp_annotation, "mz")[, 1],
-            widthMin = annotationTable(tmp_annotation, "mzMin")[, 1],
-            widthMax = annotationTable(tmp_annotation, "mzMax")[, 1],
-            acquTime = acquisitionTime(tmp_annotation),
-            sampleColour = sampleColour, varName = "m/z", rotateAxis = FALSE,
-            verbose = verbose)
-        # peakarea horizontal run order
-        tmp_plotList$areaRunOrder <- peakPantheR_plotPeakwidth(
-            apexValue = annotationTable(tmp_annotation, "peakArea")[, 1],
-            widthMin = NULL, widthMax = NULL,
-            acquTime = acquisitionTime(tmp_annotation),
-            sampleColour = sampleColour, varName = "Peak Area",
-            rotateAxis = FALSE, verbose = verbose)
-        # RT plotHistogram
-        tmp_plotList$rtHistogram <- plotHistogram(
-            var = annotationTable(tmp_annotation, "rt")[, 1],
-            varName = "Retention Time (sec)", density = TRUE)
-        # mz plotHistogram
-        tmp_plotList$mzHistogram <- plotHistogram(
-            var = annotationTable(tmp_annotation, "mz")[, 1],
-            varName = "m/z", density = TRUE)
-        # peak area plotHistogram
-        tmp_plotList$areaHistogram <- plotHistogram(
-            var = annotationTable(tmp_annotation, "peakArea")[, 1],
-            varName = "Peak Area", density = TRUE)
+        tmp_plotList <- singleDiagnosticPlots(tmp_annotation, sampleColour,
+                                                sampling, verbose)
         # store results
         outList[[cpd]] <- tmp_plotList
+
         if (verbose) {
             message("Compound ", cpd, "/", nbCpd, " done")
         }
     }
     return(outList)
 })
+# diagnostic plots for 1 cpd
+singleDiagnosticPlots <- function(tmp_annotation,sampleColour,sampling,verbose){
+    tmp_plotList <- vector("list", 9)
+    names(tmp_plotList) <- c("EICFit", "rtPeakwidthVert",
+        "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder","areaRunOrder",
+        "rtHistogram", "mzHistogram", "areaHistogram", "title")
+    tmp_plotList$title <- paste(cpdID(tmp_annotation), "-",              # title
+                                cpdName(tmp_annotation))
+    tmp_plotList$EICFit <- peakPantheR_plotEICFit(                  # plotEICFit
+        ROIDataPointSampleList = unlist(dataPoints(tmp_annotation),
+                                        recursive = FALSE),
+        curveFitSampleList = unlist(peakFit(tmp_annotation),
+                                        recursive = FALSE),
+        rtMin = annotationTable(tmp_annotation, "rtMin")[, 1],
+        rtMax = annotationTable(tmp_annotation, "rtMax")[, 1],
+        sampling = sampling, sampleColour = sampleColour, verbose = verbose)
+    tmp_plotList$rtPeakwidthVert <- peakPantheR_plotPeakwidth( # RT Pkwidth vert
+        apexValue = annotationTable(tmp_annotation, "rt")[, 1],
+        widthMin = annotationTable(tmp_annotation, "rtMin")[, 1],
+        widthMax = annotationTable(tmp_annotation, "rtMax")[, 1],
+        acquTime = NULL, sampleColour = sampleColour,
+        varName = "Retention Time (sec)", rotateAxis=TRUE, verbose=verbose)
+    tmp_plotList$rtPeakwidthHorzRunOrder <- peakPantheR_plotPeakwidth(#RTPkw hor
+        apexValue = annotationTable(tmp_annotation, "rt")[, 1],
+        widthMin = annotationTable(tmp_annotation, "rtMin")[, 1],
+        widthMax = annotationTable(tmp_annotation, "rtMax")[, 1],
+        acquTime = acquisitionTime(tmp_annotation),
+        sampleColour = sampleColour, varName = "Retention Time (sec)",
+        rotateAxis = FALSE, verbose = verbose)
+    tmp_plotList$mzPeakwidthHorzRunOrder <- peakPantheR_plotPeakwidth(#MZpkw hor
+        apexValue = annotationTable(tmp_annotation, "mz")[, 1],
+        widthMin = annotationTable(tmp_annotation, "mzMin")[, 1],
+        widthMax = annotationTable(tmp_annotation, "mzMax")[, 1],
+        acquTime = acquisitionTime(tmp_annotation), sampleColour = sampleColour,
+        varName = "m/z", rotateAxis = FALSE, verbose = verbose)
+    tmp_plotList$areaRunOrder <- peakPantheR_plotPeakwidth(# peakarea hor runord
+        apexValue = annotationTable(tmp_annotation, "peakArea")[, 1],
+        widthMin = NULL, widthMax = NULL,
+        acquTime = acquisitionTime(tmp_annotation),
+        sampleColour = sampleColour, varName = "Peak Area",
+        rotateAxis = FALSE, verbose = verbose)
+    tmp_plotList$rtHistogram <- plotHistogram(                # RT plotHistogram
+        var = annotationTable(tmp_annotation, "rt")[, 1],
+        varName = "Retention Time (sec)", density = TRUE)
+    tmp_plotList$mzHistogram <- plotHistogram(                # mz plotHistogram
+        var = annotationTable(tmp_annotation, "mz")[, 1],
+        varName = "m/z", density = TRUE)
+    tmp_plotList$areaHistogram <- plotHistogram(       # peak area plotHistogram
+        var = annotationTable(tmp_annotation, "peakArea")[, 1],
+        varName = "Peak Area", density = TRUE)
+    return(tmp_plotList) }
 
 
 ## Save to disk the annotation parameters as CSV and a diagnostic plot per
