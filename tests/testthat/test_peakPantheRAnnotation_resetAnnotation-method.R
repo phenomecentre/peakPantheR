@@ -1,4 +1,4 @@
-context('resetAnnotation()')
+context('peakPantheRAnnotation_resetAnnotation()')
 
 ## Test the annotation reset and setting of new parameters
 

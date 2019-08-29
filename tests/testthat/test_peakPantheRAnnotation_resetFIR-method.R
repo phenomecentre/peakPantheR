@@ -1,4 +1,4 @@
-context('resetFIR()')
+context('peakPantheRAnnotation_resetFIR()')
 
 ## Test the resetting of FIR
 

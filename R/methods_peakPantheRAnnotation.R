@@ -1765,18 +1765,37 @@ setGeneric("outputAnnotationResult",
 setMethod("outputAnnotationResult", "peakPantheRAnnotation",
     function(object, saveFolder, annotationName, verbose) {
     
-    ## Check object was annotated
+    # Check object was annotated
     if (!object@isAnnotated) {
         stop("Object has not been annotated, no annotation results to save")
     }
     
-    ## Init folder
+    # Init folder
     dir.create(saveFolder, recursive = TRUE, showWarnings = FALSE)
     
-    ## Save compound metadata
+    # Save compound metadata
+    outputAnnotationResult_saveCpdMetadata(object, saveFolder, annotationName,
+                                            verbose)
+    
+    # Save spectra metadata
+    outputAnnotationResult_saveSpectraMetadata(object, saveFolder,
+                                                annotationName, verbose)
+
+    # Save peakTables columns
+    outputAnnotationResult_savePeaktable(object, saveFolder, annotationName,
+                                            verbose)
+    
+    # Save summary table
+    outputAnnotationResult_saveSummary(object, saveFolder, annotationName,
+                                        verbose)
+})
+# save compound metadata
+outputAnnotationResult_saveCpdMetadata <- function(object, saveFolder,
+                                                    annotationName, verbose) {
     tmp_cpdID <- cpdID(object)
     tmp_cpdName <- cpdName(object)
     tmp_cpdMetadata <- cpdMetadata(object)
+
     # tmp_rt, tmp_mz
     nbCpd <- nbCompounds(object)
     tmp_rt <- rep(as.numeric(NA), nbCpd)
@@ -1785,23 +1804,27 @@ setMethod("outputAnnotationResult", "peakPantheRAnnotation",
     all_mz <- annotationTable(object, column = "mz")
     to_keep <- annotationTable(object, column = "found") &
         !annotationTable(object, column = "is_filled")
+
     for (i in seq_len(nbCpd)) {
         tmp_rt[i] <- mean(all_rt[to_keep[, i], i])
         tmp_mz[i] <- mean(all_mz[to_keep[, i], i])
     }
+
     tmp_outCpdMeta <- data.frame(cpdID = tmp_cpdID, cpdName = tmp_cpdName,
         rt = tmp_rt, mz = tmp_mz)
     colnames(tmp_outCpdMeta) <- c("cpdID", "cpdName", "Retention Time", "m/z")
     tmp_outCpdMeta <- cbind(tmp_outCpdMeta, tmp_cpdMetadata)
+
     path_cpdMeta <- paste(saveFolder, "/", annotationName,
                         "_cpdMetadata.csv", sep = "")
     utils::write.csv(tmp_outCpdMeta, file = path_cpdMeta, row.names = FALSE,
                     fileEncoding = "UTF-8")
-    if (verbose) {
-        message("Compound metadata saved at ", path_cpdMeta)
-    }
-    
-    ## Save spectra metadata
+
+    if (verbose) { message("Compound metadata saved at ", path_cpdMeta) }
+}
+# save spectra Metadata
+outputAnnotationResult_saveSpectraMetadata <- function(object, saveFolder,
+                                                    annotationName, verbose) {
     tmp_filepath <- filepath(object)
     tmp_acqTime <- acquisitionTime(object)
     tmp_TIC <- TIC(object)
@@ -1809,42 +1832,50 @@ setMethod("outputAnnotationResult", "peakPantheRAnnotation",
     tmp_outSpecMeta <- data.frame(filepath = tmp_filepath,
                             acquisitionTime = tmp_acqTime, TIC = tmp_TIC)
     tmp_outSpecMeta <- cbind(tmp_outSpecMeta, tmp_spectraMetadata)
+
     path_specMeta <- paste(saveFolder, "/", annotationName,
         "_spectraMetadata.csv", sep = "")
     utils::write.csv(tmp_outSpecMeta, file = path_specMeta, row.names = FALSE,
                     fileEncoding = "UTF-8")
-    if (verbose) {
-        message("Spectra metadata saved at ", path_specMeta)
-    }
-    
-    ## Save peakTables columns
-    for (i in colnames(object@peakTables[[1]])) {
+
+    if (verbose) { message("Spectra metadata saved at ", path_specMeta) }
+}
+# save peakTables
+outputAnnotationResult_savePeaktable <- function(object, saveFolder,
+                                                annotationName, verbose) {
+   for (i in colnames(object@peakTables[[1]])) {
         tmp_var <- annotationTable(object = object, column = i)
         path_var <- paste(saveFolder, "/", annotationName, "_", i, ".csv",
                         sep = "")
         utils::write.csv(tmp_var, file = path_var, row.names = TRUE,
                         fileEncoding = "UTF-8")
+
         if (verbose) {
             message("Peak measurement \"", i, "\" saved at ", path_var)
         }
     }
-    
-    ## Save summary table
+}
+# save summary table
+outputAnnotationResult_saveSummary <- function(object, saveFolder,
+                                                annotationName, verbose) {
     tmp_summary <- data.frame(matrix(ncol = 0, nrow = nbCompounds(object)),
                             stringsAsFactors = FALSE)
     rownames(tmp_summary) <- paste(cpdID(object), "-", cpdName(object))
+
     # used FIR (found = not filled, filled from is_filled)
     if (object@useFIR) {
         tmp_summary$ratio_peaks_found <- 1 - (colSums(
             annotationTable(object, column = "is_filled"))/nbSamples(object))
         tmp_summary$ratio_peaks_filled <- (colSums(
             annotationTable(object, column = "is_filled"))/nbSamples(object))
-        # didn't use FIR (found from found, None are filled)
+
+    # didn't use FIR (found from found, None are filled)
     } else {
         tmp_summary$ratio_peaks_found <- colSums(
             annotationTable(object, column = "found"))/nbSamples(object)
         tmp_summary$ratio_peaks_filled <- 0
     }
+
     tmp_summary$ppm_error <-
         colMeans(annotationTable(object, column = "ppm_error"), na.rm = TRUE)
     tmp_summary$rt_dev_sec <-
@@ -1853,12 +1884,9 @@ setMethod("outputAnnotationResult", "peakPantheRAnnotation",
                             sep = "")
     utils::write.csv(tmp_summary, file = path_summary, row.names = TRUE,
                     fileEncoding = "UTF-8")
-    if (verbose) {
-        message("Summary saved at ", path_specMeta)
-    }
-})
 
-
+    if (verbose) { message("Summary saved at ", path_summary) }
+}
 
 
 #####################################################################

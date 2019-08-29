@@ -1,4 +1,4 @@
-context('outputAnnotationResult()')
+context('peakPantheRAnnotation_outputAnnotationResult()')
 
 ## Test the CSV output of all annotation results
 
