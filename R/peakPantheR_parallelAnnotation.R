@@ -365,8 +365,7 @@ target_peak_table,input_FIR,ncores,getAcquTime,resetWorkersMulti,verbose,...) {
             function(x) parallelAnnotation_parallelHelper(x, target_peak_table,
                 inFIR=input_FIR, inGetAcquTime=getAcquTime, inVerbose=verbose,
                 ...)) }
-    return(allFilesRes)
-}
+    return(allFilesRes) }
 
 
 ## Collect, process and reorder results
@@ -419,5 +418,4 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
             message(paste0('Annotation object cannot be reordered by sample ',
                             'acquisition date')) }
     }
-    return(list(outObject=outObject, fail_table=fail_table))
-}
+    return(list(outObject=outObject, fail_table=fail_table)) }
