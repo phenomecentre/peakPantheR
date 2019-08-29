@@ -76,7 +76,7 @@ is.peakPantheR_curveFit <- function(x) {
 #' # [1] 'peakPantheR_curveFit'
 fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
     
-    ## Check inputs x and y length
+    # Check inputs x and y length
     if (length(x) != length(y)) {
         stop("Error: length of \"x\" and \"y\" must match!")
     }
@@ -89,6 +89,7 @@ fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
     if (!(typeof(params) %in% c("list", "character"))) {
         stop("Error: \"params\" must be a list or \"guess\"")
     }
+
     useGuess = TRUE
     if (any(params != "guess")) {
         useGuess = FALSE
@@ -96,65 +97,69 @@ fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
         if (!all(c("init_params", "lower_bounds", "upper_bounds") %in%
             names(params))) {
             stop("Error: \"params must be a list of \"init_params\", ",
-                "\"lower_bounds\" and \"upper_bounds\"")
-        }
+                "\"lower_bounds\" and \"upper_bounds\"") }
         # init_params is list
         if (typeof(params$init_params) != "list") {
-            stop("Error: \"params$init_params\" must be a list of parameters")
-        }
+            stop("Error: \"params$init_params\" must be a list of parameters") }
         # lower_bounds is list
         if (typeof(params$lower_bounds) != "list") {
-            stop("Error: \"params$lower_bounds\" must be a list of parameters")
-        }
+            stop("Error: \"params$lower_bounds\" must be a list of parameters")}
         # upper_bounds is list
         if (typeof(params$upper_bounds) != "list") {
-            stop("Error: \"params$upper_bounds\" must be a list of parameters")
-        }
+            stop("Error: \"params$upper_bounds\" must be a list of parameters")}
     }
     
-    ## Init
+    # Init
     fittedCurve <- list()
     
-    ## Run fitting skewed gaussian
+    # Run fitting skewed gaussian
     if (curveModel == "skewedGaussian") {
-        
-        # Guess parameters and bounds
-        if (useGuess) {
-            new_params <- skewedGaussian_guess(x, y)
-        } else {
-            new_params <- params
-        }
-        
-        # ensure order of init params and bounds (init is a list, lower and
-        # upper are ordered numeric vectors)
-        init    <- list(amplitude = new_params$init_params$amplitude,
-                        center = new_params$init_params$center,
-                        sigma = new_params$init_params$sigma,
-                        gamma = new_params$init_params$gamma)
-        lower   <- unlist(c(new_params$lower_bounds["amplitude"],
-                            new_params$lower_bounds["center"],
-                            new_params$lower_bounds["sigma"],
-                            new_params$lower_bounds["gamma"]))
-        upper   <- unlist(c(new_params$upper_bounds["amplitude"],
-                            new_params$upper_bounds["center"],
-                            new_params$upper_bounds["sigma"],
-                            new_params$upper_bounds["gamma"]))
-        
-        # perform fit
-        resultFit <- minpack.lm::nls.lm(par = init,
-                                    lower = lower,
-                                    upper = upper,
-                                    fn = skewedGaussian_minpack.lm_objectiveFun,
-                                    observed = y, xx = x)
-        
-        # prepare output
-        fittedCurve <- resultFit$par
-        fittedCurve$fitStatus <- resultFit$info
-        fittedCurve$curveModel <- curveModel
-        class(fittedCurve) <- "peakPantheR_curveFit"
+        fittedCurve <- fitCurve_skewedGaussian(x, y, useGuess, params,
+                                                curveModel)
     }
     # for future curve shapes } else if () { }
     
+    return(fittedCurve)
+}
+# fit skewedGaussian
+fitCurve_skewedGaussian <- function(x, y, useGuess, params, curveModel) {
+    fittedCurve <- list()
+
+    # Guess parameters and bounds
+    if (useGuess) {
+        new_params <- skewedGaussian_guess(x, y)
+    } else {
+        new_params <- params
+    }
+
+    # ensure order of init params and bounds (init is a list, lower and
+    # upper are ordered numeric vectors)
+    init    <- list(amplitude = new_params$init_params$amplitude,
+                    center = new_params$init_params$center,
+                    sigma = new_params$init_params$sigma,
+                    gamma = new_params$init_params$gamma)
+    lower   <- unlist(c(new_params$lower_bounds["amplitude"],
+                        new_params$lower_bounds["center"],
+                        new_params$lower_bounds["sigma"],
+                        new_params$lower_bounds["gamma"]))
+    upper   <- unlist(c(new_params$upper_bounds["amplitude"],
+                        new_params$upper_bounds["center"],
+                        new_params$upper_bounds["sigma"],
+                        new_params$upper_bounds["gamma"]))
+
+    # perform fit
+    resultFit <- minpack.lm::nls.lm(par = init,
+                                lower = lower,
+                                upper = upper,
+                                fn = skewedGaussian_minpack.lm_objectiveFun,
+                                observed = y, xx = x)
+
+    # prepare output
+    fittedCurve <- resultFit$par
+    fittedCurve$fitStatus <- resultFit$info
+    fittedCurve$curveModel <- curveModel
+    class(fittedCurve) <- "peakPantheR_curveFit"
+
     return(fittedCurve)
 }
 
