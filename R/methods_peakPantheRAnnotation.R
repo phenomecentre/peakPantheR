@@ -1093,25 +1093,16 @@ setMethod("[", "peakPantheRAnnotation", function(x, i, j, drop = "missing") {
     ## i is row, samples j is col, compounds
     
     # check inputs and fallback
-    if (missing(i) & missing(j)) {
-        return(x)
-    }
-    if (missing(i)) {
-        i <- seq_len(nbSamples(x))
-    }
-    if (missing(j)) {
-        j <- seq_len(nbCompounds(x))
-    }
-    
+    if (missing(i) & missing(j)) { return(x) }
+    if (missing(i)) { i <- seq_len(nbSamples(x)) }
+    if (missing(j)) { j <- seq_len(nbCompounds(x)) }
     # check dim size
     if (max(i) > nbSamples(x)) {
-        stop(paste("i index out of bound: maximum", nbSamples(x)))
-    }
+        stop(paste("i index out of bound: maximum", nbSamples(x))) }
     if (max(j) > nbCompounds(x)) {
-        stop(paste("j index out of bound: maximum", nbCompounds(x)))
-    }
+        stop(paste("j index out of bound: maximum", nbCompounds(x))) }
     
-    ## sub-setting
+    # sub-setting
     .cpdID <- x@cpdID[j]
     .cpdName <- x@cpdName[j]
     .ROI <- x@ROI[j, , drop = FALSE]
@@ -1127,7 +1118,25 @@ setMethod("[", "peakPantheRAnnotation", function(x, i, j, drop = "missing") {
     .TIC <- x@TIC[i]
     .isAnnotated <- x@isAnnotated
     
-    ## peakTables, filter samples first, then compounds in each table
+    # peakTables, dataPoints & peakFit
+    subRes <- subsetting_peakTables_dataPoints_peakFit(x, i, j)
+    .peakTables <- subRes$tmp_peakTables
+    .dataPoints <- subRes$tmp_dataPoints
+    .peakFit <- subRes$tmp_peakFit
+
+    # load value in new object that will need to pass validObject()
+    peakPantheRAnnotation(cpdID = .cpdID, cpdName = .cpdName, ROI = .ROI,
+        FIR = .FIR, uROI = .uROI, filepath = .filepath,
+        cpdMetadata = .cpdMetadata, spectraMetadata = .spectraMetadata,
+        acquisitionTime = .acquisitionTime, uROIExist = .uROIExist,
+        useUROI = .useUROI, useFIR = .useFIR, TIC = .TIC,
+        peakTables = .peakTables, dataPoints = .dataPoints, peakFit = .peakFit,
+        isAnnotated = .isAnnotated)
+})
+# sub-setting peakTables, dataPoints and peakFit
+subsetting_peakTables_dataPoints_peakFit <- function(x, i, j) {
+
+    # peakTables, filter samples first, then compounds in each table
     tmp_peakTables <- x@peakTables[i]
     if (all(vapply(tmp_peakTables, is.null, FUN.VALUE = logical(1)))) {
         # no cpd filter if all NULL
@@ -1138,8 +1147,8 @@ setMethod("[", "peakPantheRAnnotation", function(x, i, j, drop = "missing") {
             x[y, ]
         }, y = j)
     }
-    
-    ## dataPoints, filter samples first, then compounds in each ROIsDataPoint
+
+    # dataPoints, filter samples first, then compounds in each ROIsDataPoint
     tmp_dataPoints <- x@dataPoints[i]
     if (all(vapply(tmp_dataPoints, is.null, FUN.VALUE = logical(1)))) {
         # no cpd filter if all NULL
@@ -1150,8 +1159,8 @@ setMethod("[", "peakPantheRAnnotation", function(x, i, j, drop = "missing") {
             x[y]
         }, y = j)
     }
-    
-    ## peakFit, filter samples first, then compounds in each curveFit list
+
+    # peakFit, filter samples first, then compounds in each curveFit list
     tmp_peakFit <- x@peakFit[i]
     if (all(vapply(tmp_peakFit, is.null, FUN.VALUE = logical(1)))) {
         # no cpd filter if all NULL
@@ -1162,17 +1171,10 @@ setMethod("[", "peakPantheRAnnotation", function(x, i, j, drop = "missing") {
             x[y]
         }, y = j)
     }
-    
-    ## load value in new object that will need to pass validObject()
-    peakPantheRAnnotation(cpdID = .cpdID, cpdName = .cpdName, ROI = .ROI,
-        FIR = .FIR, uROI = .uROI, filepath = .filepath,
-        cpdMetadata = .cpdMetadata, spectraMetadata = .spectraMetadata,
-        acquisitionTime = .acquisitionTime, uROIExist = .uROIExist,
-        useUROI = .useUROI, useFIR = .useFIR, TIC = .TIC,
-        peakTables = .peakTables, dataPoints = .dataPoints, peakFit = .peakFit,
-        isAnnotated = .isAnnotated)
-})
 
+    return(list(tmp_peakTables = .peakTables, tmp_dataPoints = .dataPoints,
+                tmp_peakFit = .peakFit))
+}
 
 
 
@@ -1619,50 +1621,10 @@ setGeneric("outputAnnotationDiagnostic",
 #' }
 setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
     function(object, saveFolder, savePlots, sampleColour, verbose, ncores,...) {
-    # @param cpdNb (int) cpd number betweem 1 and nbCompounds()
-    # @param annotation (peakPantheRAnnotation) Annotation object
-    # @param saveFolder (str) Path where plots will be saved
-    # @param sampleColour (str) NULL or vector colour for each sample
-    # @param verbose (bool) message progress
-    # @param ... Additional parameters for plotting
-    saveSingleMultiPlot <- function(cpdNb, annotation, saveFolder, sampleColour,
-        verbose, ...) {
-        # subset annotation to only 1 cpd
-        tmp_annotation <- annotation[, cpdNb]
-        # diagnostic plots
-        tmp_diagPlotList <- annotationDiagnosticPlots(tmp_annotation,
-            sampleColour = sampleColour, verbose = FALSE, ...)
-        # multiplot
-        suppressMessages(suppressWarnings(
-            tmp_multiPlot <- annotationDiagnosticMultiplot(tmp_diagPlotList)))
-        # save
-        if (length(tmp_multiPlot) != 0) {
-            # A4 page size
-            tmp_targetFile <- paste("cpd_", cpdNb, ".png", sep = "")
-            ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
-                device = "png", path = saveFolder, dpi = 100, width = 21,
-                height = 29.7, units = "cm", limitsize = FALSE)
-            # output path
-            if (verbose) {
-                message("  Compound ", cpdNb, "/", nbCpd,
-                        " diagnostic plot saved at ",
-                        paste(saveFolder, "/", tmp_targetFile, sep = ""))
-            }
-            # no plot to save
-        } else {
-            if (verbose) {
-                message("  No plot to save for compound ", cpdNb, "/", nbCpd)
-            }
-        }
-        return(NA)
-    }
+    # Save standardised csv
+    outputAnnotationParamsCSV(object, saveFolder = saveFolder,verbose = verbose)
     
-    
-    ## Save standardised csv
-    outputAnnotationParamsCSV(object, saveFolder = saveFolder,
-                                verbose = verbose)
-    
-    ## Save all fit diagnostic
+    # Save all fit diagnostic
     if (savePlots) {
         # iterate over compound (more progressive plot generation and save than
         # generating all plots at once)
@@ -1671,8 +1633,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         # run in parallel
         if (ncores > 0) {
             if (verbose) {
-                message("Saving ", nbCpd, " diagnostic plots in ", saveFolder)
-            }
+                message("Saving ", nbCpd, " diagnostic plots in ", saveFolder) }
             
             # Open parallel interface
             cl <- parallel::makeCluster(ncores)
@@ -1680,28 +1641,67 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
             # Run
             savedPlots <- foreach::foreach(x = seq_len(nbCpd),
                                             .inorder = TRUE) %dopar%
-                saveSingleMultiPlot(cpdNb = x, annotation = object,
-                    saveFolder = saveFolder, sampleColour = sampleColour,
+                outputAnnotationDiagnostic_saveSingleMultiPlot(cpdNb = x,
+                    annotation = object, saveFolder = saveFolder,
+                    sampleColour = sampleColour, nbCpd = nbCpd,
                     verbose = verbose, ...)
             # Close
             parallel::stopCluster(cl)
-            if (verbose) {
-                message("All plots saved")
-            }
-            
-            # run serial
+            if (verbose) { message("All plots saved") }
+
+        # run serial
         } else {
-            if (verbose) {
-                message("Saving diagnostic plots:")
-            }
+            if (verbose) { message("Saving diagnostic plots:") }
             for (cpd in seq_len(nbCpd)) {
-                saveSingleMultiPlot(cpdNb = cpd, annotation = object,
-                    saveFolder = saveFolder, sampleColour = sampleColour,
+                outputAnnotationDiagnostic_saveSingleMultiPlot(cpdNb = cpd,
+                    annotation = object, saveFolder = saveFolder,
+                    sampleColour = sampleColour, nbCpd = nbCpd,
                     verbose = verbose, ...)
             }
         }
     }
 })
+# outputAnnotationDiagnostic
+outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
+                                saveFolder, sampleColour, nbCpd, verbose, ...) {
+    # @param cpdNb (int) cpd number betweem 1 and nbCompounds()
+    # @param annotation (peakPantheRAnnotation) Annotation object
+    # @param saveFolder (str) Path where plots will be saved
+    # @param sampleColour (str) NULL or vector colour for each sample
+    # @param verbose (bool) message progress
+    # @param ... Additional parameters for plotting
+
+    # subset annotation to only 1 cpd
+    tmp_annotation <- annotation[, cpdNb]
+
+    # diagnostic plots
+    tmp_diagPlotList <- annotationDiagnosticPlots(tmp_annotation,
+        sampleColour = sampleColour, verbose = FALSE, ...)
+
+    # multiplot
+    suppressMessages(suppressWarnings(
+        tmp_multiPlot <- annotationDiagnosticMultiplot(tmp_diagPlotList)))
+
+    # save
+    if (length(tmp_multiPlot) != 0) {
+        # A4 page size
+        tmp_targetFile <- paste("cpd_", cpdNb, ".png", sep = "")
+        ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
+            device = "png", path = saveFolder, dpi = 100, width = 21,
+            height = 29.7, units = "cm", limitsize = FALSE)
+        # output path
+        if (verbose) {
+            message("  Compound ", cpdNb, "/", nbCpd,
+                    " diagnostic plot saved at ",
+                    paste(saveFolder, "/", tmp_targetFile, sep = "")) }
+
+    # no plot to save
+    } else {
+        if (verbose) {
+            message("  No plot to save for compound ", cpdNb, "/", nbCpd) }
+    }
+    return(NA)
+}
 
 
 
