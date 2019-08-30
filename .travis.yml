@@ -1,7 +1,7 @@
 language: r
 cache: 
-  packages
-  timeout: 1000
+  - packages
+  - timeout: 1000
 
 os:
   - linux
