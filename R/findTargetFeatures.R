@@ -552,34 +552,6 @@ findTargetFeatures_integCurve <- function(fittedCurve, rtMin, rtMax, sampling){
     peakArea    <- dist * h
 }
 
-
-## Quality of fit QC check, TRUE if pass QC check
-findTargetFeatures_fitQuality <- function(i, tmp_EIC, rt, maxIntPredicted,
-                                maxIntMeasured, maxApexResidualRatio, verbose) {
-    # Check quality of fit (residuals at apex,and max predicted to max measured)
-    # maxIntMeasured: peak max value in raw data maxIntPredicted: fit apex value
-    # IntRawApex: raw data apex value
-    raw_approx_fun  <- stats::approxfun(x = tmp_EIC$rt, y = tmp_EIC$int)
-    IntRawApex      <- raw_approx_fun(rt)
-    if (is.na(IntRawApex)) {IntRawApex <- 0}
-    # residual at apex
-    apex_residuals  <- abs(maxIntPredicted - maxIntMeasured)
-    # residual between maximums (raw vs fit)
-    max_residuals   <- abs(maxIntPredicted - IntRawApex)
-    # compare residuals to max fit intensity
-    if (((apex_residuals/maxIntPredicted) > maxApexResidualRatio) |
-        ((max_residuals/maxIntPredicted) > maxApexResidualRatio)) {
-        if (verbose) {
-            message("Fit of ROI #",i," is unsuccessful (apex residuals is ",
-                    round(apex_residuals/maxIntPredicted, 2),
-                    " of max fit intensity, max intensity residuals is ",
-                    round(max_residuals/maxIntPredicted, 2),
-                    " of max fit intensity)")
-        }
-        return(FALSE)
-    }
-    return(TRUE)
-}
 ## ! Unused filtering based on residuals ! ----
 # @param maxResidualRatio (float) Ratio of maximum allowed residual
 # area compared to the fit area. (e.g. 0.20 for a maximum residual area
@@ -610,3 +582,31 @@ findTargetFeatures_fitQuality <- function(i, tmp_EIC, rt, maxIntPredicted,
 #                           ' of peak area)')}
 # # move to next window (empty df row was already initialised) next
 # }
+
+## Quality of fit QC check, TRUE if pass QC check
+findTargetFeatures_fitQuality <- function(i, tmp_EIC, rt, maxIntPredicted,
+                                maxIntMeasured, maxApexResidualRatio, verbose) {
+    # Check quality of fit (residuals at apex,and max predicted to max measured)
+    # maxIntMeasured: peak max value in raw data maxIntPredicted: fit apex value
+    # IntRawApex: raw data apex value
+    raw_approx_fun  <- stats::approxfun(x = tmp_EIC$rt, y = tmp_EIC$int)
+    IntRawApex      <- raw_approx_fun(rt)
+    if (is.na(IntRawApex)) {IntRawApex <- 0}
+    # residual at apex
+    apex_residuals  <- abs(maxIntPredicted - maxIntMeasured)
+    # residual between maximums (raw vs fit)
+    max_residuals   <- abs(maxIntPredicted - IntRawApex)
+    # compare residuals to max fit intensity
+    if (((apex_residuals/maxIntPredicted) > maxApexResidualRatio) |
+        ((max_residuals/maxIntPredicted) > maxApexResidualRatio)) {
+        if (verbose) {
+            message("Fit of ROI #",i," is unsuccessful (apex residuals is ",
+                    round(apex_residuals/maxIntPredicted, 2),
+                    " of max fit intensity, max intensity residuals is ",
+                    round(max_residuals/maxIntPredicted, 2),
+                    " of max fit intensity)")
+        }
+        return(FALSE)
+    }
+    return(TRUE)
+}

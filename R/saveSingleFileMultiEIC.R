@@ -22,8 +22,8 @@
 #' @return None
 saveSingleFileMultiEIC <- function(ROIsDataPoint, curveFit, foundPeakTable,
     savePath, width = 15, height = 15, verbose = TRUE) {
-    
-    ## check input
+
+    # check input
     nbROI <- length(ROIsDataPoint)
     if (nbROI != dim(foundPeakTable)[1]) {
         stop("Number of ROI datapoints in \"ROIsDataPoint\" (", nbROI,
@@ -35,8 +35,7 @@ saveSingleFileMultiEIC <- function(ROIsDataPoint, curveFit, foundPeakTable,
             ") and fitted curves in \"curveFit\" (",
             length(curveFit), ") do not match!")
     }
-    
-    ## Generate each ROI plot
+    # Generate each ROI plot
     p_all <- vector("list", nbROI)
     for (i in seq_len(nbROI)) {
         p_all[[i]] <- plotEICDetectedPeakwidth(
@@ -52,12 +51,10 @@ saveSingleFileMultiEIC <- function(ROIsDataPoint, curveFit, foundPeakTable,
             sampleColour = "black",
             verbose = verbose)
     }
-    
-    ## Set save parameters
+    # Set save parameters
     targetFolder <- dirname(savePath)
     targetFile <- basename(savePath)
     nSubplot <- length(p_all)
-    
     if (nSubplot == 1) {
         ncol <- 1
     } else {
@@ -66,14 +63,10 @@ saveSingleFileMultiEIC <- function(ROIsDataPoint, curveFit, foundPeakTable,
         width <- width * ncol
         height <- height * nrow
     }
-    
-    ## Save
+    # Save
     ggplot2::ggsave(file = targetFile,
         plot = gridExtra::arrangeGrob(grobs = p_all, ncol = ncol),
         device = "png", path = targetFolder, dpi = 100, width = width,
         height = height, units = "cm", limitsize = FALSE)
-    
-    if (verbose) {
-        message("Summary EIC plot saved at: ", savePath)
-    }
+    if (verbose) { message("Summary EIC plot saved at: ", savePath) }
 }
