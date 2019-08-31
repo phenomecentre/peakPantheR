@@ -9,31 +9,43 @@ extractSignalRawData(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE)
 \arguments{
 \item{rawSpec}{an \code{\link[MSnbase]{OnDiskMSnExp-class}}}
 
-\item{rt}{(numeric(2) or two-column matrix) the lower and upper retention time range from which the data should be extracted. If a matrix is passed, each row corresponds to a different window. If not provided, the full retention time range will be extracted.}
+\item{rt}{(numeric(2) or two-column matrix) the lower and upper retention
+time range from which the data should be extracted. If a matrix is passed,
+each row corresponds to a different window. If not provided, the full
+retention time range will be extracted.}
 
-\item{mz}{(numeric(2) or two-column matrix) the lower and upper mass range from which the data should be extracted. If a matrix is passed, each row corresponds to a different window. If not provided, the full mass range will be extracted.}
+\item{mz}{(numeric(2) or two-column matrix) the lower and upper mass range
+from which the data should be extracted. If a matrix is passed, each row
+corresponds to a different window. If not provided, the full mass range will
+be extracted.}
 
-\item{msLevel}{(int) the MS level at which the data should be extracted (default to MS level 1)}
+\item{msLevel}{(int) the MS level at which the data should be extracted
+(default to MS level 1)}
 
 \item{verbose}{(bool) If TRUE message progress and warnings}
 }
 \value{
-a list (one entry per window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns.
+a list (one entry per window) of data.frame with signal as row and
+retention time ('rt'), mass ('mz') and intensity ('int) as columns.
 }
 \description{
-Extract all signal from multiple defined mz rt window from raw data and returns a data.frame. If no rt-mz window is provided, all signal in the raw data file are returned
+Extract all signal from multiple defined mz rt window from raw
+data and returns a data.frame. If no rt-mz window is provided, all signal in
+the raw data file are returned
 }
-\examples{
-\dontrun{
-## Use a file form the faahKO package and extract datafrom a region of interest
+\details{
+## Examples cannot be computed as the function is not exported:
+## Use a file form the faahKO package and extract data from a region of
+## interest
 library(faahKO)
-rawSpec     <- MSnbase::readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                                   centroided=TRUE,
-                                   mode='onDisk')
+rawSpec <- MSnbase::readMSData(
+                            system.file('cdf/KO/ko15.CDF',package='faahKO'),
+                            centroided=TRUE,
+                            mode='onDisk')
 dataPoints  <- extractSignalRawData(rawSpec,
                                     rt = c(3290., 3410.), 
                                     mz = c(522.194778, 522.205222), 
-                                    verbose=T)
+                                    verbose=TRUE)
 # Reading data from 1 windows
 
 dataPoints
@@ -110,5 +122,4 @@ dataPoints
 # 69 3405.921 522.2 598912
 # 70 3407.486 522.2 595008
 # 71 3409.051 522.2 588416
-}
 }
