@@ -29,31 +29,14 @@
 plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
     rtMin, rtMax, mzMin, mzMax, ratio = 0.85, sampling = 250,
     curveFitSampleList = NULL, sampleColour = NULL, verbose = TRUE) {
-    
-    ## Check input
-    # check length of input across subplots, (others are checked inside
-    # peakPantheR_plotEICFit and peakPantheR_plotPeakwidth)
-    nbSpl <- length(ROIDataPointSampleList)
-    if (nbSpl != length(rt)) {
-        stop("\"ROIDataPointSampleList\", \"rt\", \"rtMin\" and \"rtMax\" must",
-            " be the same length")
-    }
-    
-    # ratio must be between 0 and 1
-    if ((ratio < 0) | (ratio > 1)) {
-        if (verbose) {
-            message("Error: ratio must be between 0 and 1, replaced by default",
-                    " value")
-        }
-        ratio <- 0.85
-    }
-    
-    
-    ## Init
+
+    # Check input, init
+    ratio <- plotEICDetectedPeakwidth_checkInp(ROIDataPointSampleList, rt,
+                                                ratio, verbose)
     title <- paste("CpdID: ", cpdID, " - ", cpdName, " ", round(mzMin, 4), "-",
                     round(mzMax, 4))
     
-    ## Plot raw spectra and curve fit
+    # Plot raw spectra and curve fit
     p_spec <- peakPantheR_plotEICFit(
         ROIDataPointSampleList = ROIDataPointSampleList,
         curveFitSampleList = curveFitSampleList, rtMin = rtMin, rtMax = rtMax,
@@ -62,14 +45,13 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
             ggplot2::theme(axis.title.x = ggplot2::element_blank(),
                 axis.text.x = ggplot2::element_blank(),
                 plot.title = ggplot2::element_text(size = ggplot2::rel(1)))
-    
-    ## Plot peakwidth
+    # Plot peakwidth
     p_peakwidth <- peakPantheR_plotPeakwidth(apexValue = rt, widthMin = rtMin,
         widthMax = rtMax, varName = "Retention Time (sec)", acquTime = NULL,
         sampleColour = sampleColour, rotateAxis = TRUE, verbose = FALSE)
     
-    ## Set common x lim (due to the rotation, x on p_peakwidth is originally y
-    ## and accessed as such)
+    # Set common x lim (due to the rotation, x on p_peakwidth is originally y
+    # and accessed as such)
     minX <- min(ggplot2::layer_scales(p_spec)$x$range$range[1],
         ggplot2::layer_scales(p_peakwidth)$y$range$range[1])
     maxX <- max(ggplot2::layer_scales(p_spec)$x$range$range[2],
@@ -93,4 +75,26 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
         heights = c(topSize, bottomSize))
     
     return(p)
+}
+# prepare and check input
+plotEICDetectedPeakwidth_checkInp <- function(ROIDataPointSampleList, rt, ratio,
+                                                verbose) {
+    # check length of input across subplots, (others are checked inside
+    # peakPantheR_plotEICFit and peakPantheR_plotPeakwidth)
+    nbSpl <- length(ROIDataPointSampleList)
+    if (nbSpl != length(rt)) {
+        stop("\"ROIDataPointSampleList\", \"rt\", \"rtMin\" and \"rtMax\" must",
+            " be the same length")
+    }
+
+    # ratio must be between 0 and 1
+    if ((ratio < 0) | (ratio > 1)) {
+        if (verbose) {
+            message("Error: ratio must be between 0 and 1, replaced by default",
+                    " value")
+        }
+        ratio <- 0.85
+    }
+
+    return(ratio)
 }
