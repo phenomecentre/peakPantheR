@@ -2,12 +2,14 @@
 % Please edit documentation in R/curveFit_utils.R
 \name{skewedGaussian_minpack.lm}
 \alias{skewedGaussian_minpack.lm}
-\title{Implementation of the Skewed Gaussian peak shape for use with minpack.lm}
+\title{Implementation of the Skewed Gaussian peak shape for use with
+minpack.lm}
 \usage{
 skewedGaussian_minpack.lm(params, xx)
 }
 \arguments{
-\item{params}{(list) skewed gaussian parameters (\code{params$gamma}, \code{params$center}, \code{params$sigma}, \code{params$amplitude})}
+\item{params}{(list) skewed gaussian parameters (\code{params$gamma},
+\code{params$center}, \code{params$sigma}, \code{params$amplitude})}
 
 \item{xx}{(numeric) values at which to evalute the skewed gaussian}
 }
@@ -15,5 +17,6 @@ skewedGaussian_minpack.lm(params, xx)
 value of the skewed gaussian evaluated at xx
 }
 \description{
-Implementation of the Skewed Gaussian peak shape for use with minpack.lm
+Implementation of the Skewed Gaussian peak shape for use with
+minpack.lm
 }

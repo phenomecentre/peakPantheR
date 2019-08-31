@@ -13,7 +13,8 @@ plotHistogram(var, varName = "Variable", density = TRUE, ...)
 
 \item{density}{(bool) If TRUE plot overlay the density on the variable}
 
-\item{...}{Passes arguments to ggplot2::geom_histogram, e.g. \code{bins=20}, \code{binwidth=1}}
+\item{...}{Passes arguments to ggplot2::geom_histogram, e.g. \code{bins=20},
+\code{binwidth=1}}
 }
 \value{
 Grob (ggplot object)

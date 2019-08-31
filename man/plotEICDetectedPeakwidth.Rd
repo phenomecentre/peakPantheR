@@ -5,11 +5,13 @@
 \title{Plot samples raw data and detected feature for a single ROI}
 \usage{
 plotEICDetectedPeakwidth(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin,
-  rtMax, mzMin, mzMax, ratio = 0.85, sampling = 250,
-  curveFitSampleList = NULL, sampleColour = NULL, verbose = TRUE)
+    rtMax, mzMin, mzMax, ratio = 0.85, sampling = 250,
+    curveFitSampleList = NULL, sampleColour = NULL, verbose = TRUE)
 }
 \arguments{
-\item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data points for each sample (retention time "rt", mass "mz" and intensity "int" (as column) of each raw data points (as row)).}
+\item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data
+points for each sample (retention time 'rt', mass 'mz' and intensity 'int'
+(as column) of each raw data points (as row)).}
 
 \item{cpdID}{(str) Compound ID}
 
@@ -25,13 +27,16 @@ plotEICDetectedPeakwidth(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin,
 
 \item{mzMax}{(float) ROI maximum m/z (matching EIC)}
 
-\item{ratio}{(float) value between 0 and 1 defining the vertical percentage taken by the EICs subplot}
+\item{ratio}{(float) value between 0 and 1 defining the vertical percentage
+taken by the EICs subplot}
 
 \item{sampling}{(int) Number of points to employ when plotting fittedCurve}
 
-\item{curveFitSampleList}{(list) NULL or a list of \code{peakPantheR_curveFit} (or NA) for each sample}
+\item{curveFitSampleList}{(list) NULL or a list of
+\code{peakPantheR_curveFit} (or NA) for each sample}
 
-\item{sampleColour}{(str) NULL or vector colour for each sample (same length as \code{EICs}, \code{rt}, \code{rtMin}, \code{rtMax})}
+\item{sampleColour}{(str) NULL or vector colour for each sample (same length
+as \code{EICs}, \code{rt}, \code{rtMin}, \code{rtMax})}
 
 \item{verbose}{(bool) if TRUE message when NA scans are removed}
 }
@@ -39,5 +44,9 @@ plotEICDetectedPeakwidth(ROIDataPointSampleList, cpdID, cpdName, rt, rtMin,
 Grob (ggplot object)
 }
 \description{
-plot a ROI across multiple samples (x axis is RT, y axis is intensity) with the matching detected peak rt and peakwidth under it. If curveFit is provided, the fitted curve for each compound is added. RT and peakwidth are plotted in the order spectra are passed, with the first spectra on top.
+Plot a ROI across multiple samples (x axis is RT, y axis is
+intensity) with the matching detected peak rt and peakwidth under it. If
+curveFit is provided, the fitted curve for each compound is added. RT and
+peakwidth are plotted in the order spectra are passed, with the first spectra
+on top.
 }

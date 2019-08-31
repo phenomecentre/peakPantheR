@@ -10,21 +10,21 @@ singleSpectraDataPath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 tmp_raw_data  				<- MSnbase::readMSData(singleSpectraDataPath, centroided=TRUE, mode='onDisk')
 
 # targeted features in faahKO
-input_ROI     	<- data.frame(matrix(vector(), 4, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+input_ROI     	<- data.frame(matrix(vector(), 4, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=FALSE)
 input_ROI[1,] 	<- c("ID-1", "testCpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
 input_ROI[2,] 	<- c("ID-2", "testCpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_ROI[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464.2, 464.204642)
 input_ROI[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
-input_ROI[,3:8] <- sapply(input_ROI[,3:8], as.numeric)
+input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(4))
 
 # found peakTable
-found_peakTable     <- data.frame(matrix(vector(), 4, 17, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=F)
+found_peakTable     <- data.frame(matrix(vector(), 4, 17, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
 found_peakTable[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, 'ID-1', 'testCpd 1', FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
 found_peakTable[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, 'ID-2', 'testCpd 2', FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
 found_peakTable[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412, 'ID-3', 'testCpd 3', FALSE, 0.026296922148575364, -2.92771084337346110, 207.6939219686769036, 380.5019028782010082)
 found_peakTable[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 330176, 326763.87246511364, 'ID-4', 'testCpd 4', FALSE, 0.022765817240815486, 2.44578313253032320, 1.0305289730128095, 1.0536948855480386)
-found_peakTable[,c(1,13)]       <- sapply(found_peakTable[,c(1,13)], as.logical)
-found_peakTable[,c(2:10,14:17)] <- sapply(found_peakTable[,c(2:10,14:17)], as.numeric)
+found_peakTable[,c(1,13)]       <- vapply(found_peakTable[,c(1,13)], as.logical, FUN.VALUE=logical(4))
+found_peakTable[,c(2:10,14:17)] <- vapply(found_peakTable[,c(2:10,14:17)], as.numeric, FUN.VALUE=numeric(4))
 
 # found curveFit
 cFit1           <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
@@ -38,7 +38,7 @@ class(cFit4)    <- 'peakPantheR_curveFit'
 found_curveFit  <- list(cFit1, cFit2, cFit3, cFit4)
 
 # found ROIsDataPoint
-found_ROIsDataPoints <- extractSignalRawData(tmp_raw_data, rt=input_ROI[,c('rtMin','rtMax')], mz=input_ROI[,c('mzMin','mzMax')], verbose=F)
+found_ROIsDataPoints <- extractSignalRawData(tmp_raw_data, rt=input_ROI[,c('rtMin','rtMax')], mz=input_ROI[,c('mzMin','mzMax')], verbose=FALSE)
 
 
 test_that('no peakStatistic, no plotEICsPath, no getAcquTime, no FIR, no verbose', {
@@ -241,12 +241,12 @@ test_that('change peak fitting params with ..., no peakStatistic, no plotEICsPat
 
 test_that('no targetFeatures on import, no peakStatistic', {
   # Empty targetFeatures
-  empty_ROI   <- data.frame(matrix(vector(), 0, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+  empty_ROI   <- data.frame(matrix(vector(), 0, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=FALSE)
   
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- data.frame(matrix(vector(), 0, 13, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled'))), stringsAsFactors=F)
+  expected_peakTable      <- data.frame(matrix(vector(), 0, 13, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled'))), stringsAsFactors=FALSE)
   # Expected curveFit
   expected_curveFit       <- list()
   # Expected ROIsDataPoint
@@ -273,12 +273,12 @@ test_that('no targetFeatures on import, no peakStatistic', {
 
 test_that('no targetFeatures on import, peakStatistic', {
   # Empty targetFeatures
-  empty_ROI   <- data.frame(matrix(vector(), 0, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=F)
+  empty_ROI   <- data.frame(matrix(vector(), 0, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=FALSE)
   
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- data.frame(matrix(vector(), 0, 17, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=F)
+  expected_peakTable      <- data.frame(matrix(vector(), 0, 17, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=FALSE)
   # Expected curveFit
   expected_curveFit       <- list()
   # Expected ROIsDataPoint
@@ -311,7 +311,7 @@ test_that('no features found, no FIR', {
   # Expected TIC
   expected_TIC                  <- 2410533091
   # Expected peakTable
-  expected_peakTable            <- data.frame(matrix(vector(), 1, 13, dimnames=list(c(), c('found', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'cpdID', 'cpdName', 'is_filled'))), stringsAsFactors=F)
+  expected_peakTable            <- data.frame(matrix(vector(), 1, 13, dimnames=list(c(), c('found', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'cpdID', 'cpdName', 'is_filled'))), stringsAsFactors=FALSE)
   expected_peakTable$cpdID      <- "ID-1"
   expected_peakTable$cpdName    <- "testCpd 1"
   expected_peakTable$found      <- FALSE
@@ -319,7 +319,7 @@ test_that('no features found, no FIR', {
   # Expected curveFit
   expected_curveFit             <- list(NA)
   # Expected ROIsDataPoint
-  expected_ROIsDataPoint        <- list(data.frame(rt=numeric(), mz=numeric(), int=numeric(), stringsAsFactors=F))
+  expected_ROIsDataPoint        <- list(data.frame(rt=numeric(), mz=numeric(), int=numeric(), stringsAsFactors=FALSE))
   # Expected acquTime
   expected_acquTime             <- NA
   # Expected messages
@@ -361,7 +361,7 @@ test_that('one feature not found (#3), use FIR', {
   expected_curveFit[[3]]  <- NA
   # Expected ROIsDataPoint
   expected_ROIsDataPoint      <- found_ROIsDataPoints
-  expected_ROIsDataPoint[[3]] <- data.frame(rt=numeric(), mz=numeric(), int=numeric(), stringsAsFactors=F)
+  expected_ROIsDataPoint[[3]] <- data.frame(rt=numeric(), mz=numeric(), int=numeric(), stringsAsFactors=FALSE)
   # Expected acquTime
   expected_acquTime       <- NA
   # Expected messages
@@ -390,8 +390,8 @@ test_that('raise errors', {
   wrongOutputFormat <- './notAPNG.txt'
   # FIR to trigger errors
   notADataFrame     <- 'not at dataframe'
-  wrongNbrows       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("mzMin", "mzMax", "rtMin", "rtMax"))), stringsAsFactors=F)
-  wrongCols         <- data.frame(matrix(vector(), 4, 4, dimnames=list(c(), c("wrongCol name", "mzMax", "rtMin", "rtMax"))), stringsAsFactors=F)
+  wrongNbrows       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("mzMin", "mzMax", "rtMin", "rtMax"))), stringsAsFactors=FALSE)
+  wrongCols         <- data.frame(matrix(vector(), 4, 4, dimnames=list(c(), c("wrongCol name", "mzMax", "rtMin", "rtMax"))), stringsAsFactors=FALSE)
 
   # singleSpectraDataPath doesnt exist
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath=fakeInputPath, input_ROI), "Check input, file*")

@@ -15,5 +15,6 @@ getAcquisitionDatemzML(mzMLPath, verbose = TRUE)
 POSIXct or NA
 }
 \description{
-Extract acquisition date (`'startTimeStamp'``) from a mzML file. In case of failure (or the file is not a \code{mzML}) returns NULL
+Extract acquisition date (`'startTimeStamp'``) from a mzML file.
+In case of failure (or the file is not a \code{mzML}) returns NULL
 }

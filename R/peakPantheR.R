@@ -1,14 +1,15 @@
-######################################################################################
-#                                                                                    #
-#                                                                                    #
-# -- peakPantheR: Peak Picking and ANnoTation of High resolution Experiments in R -- #
-#                                                                                    #
-# Arnaud M. Wolfer                                                                   #
-# National Phenome Centre                                                            #
-# Licensed under GPLv3                                                               #
-######################################################################################
+################################################################################
+#                                                                              #
+#                                                                              #
+#       -- peakPantheR: Peak Picking and ANnoTation of High resolution         #
+#                              Experiments in R --                             #
+#                                                                              #
+# Arnaud M. Wolfer                                                             #
+# National Phenome Centre                                                      #
+# Licensed under GPLv3                                                         #
+################################################################################
 #
-# Copyright (C) {2018}  {Arnaud M. Wolfer}
+# Copyright (C) {2019}  {Arnaud M. Wolfer}
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,17 +26,21 @@
 
 
 
-#' peakPantheR: A package for Peak Picking and ANnoTation of High resolution Experiments
+#' peakPantheR: A package for Peak Picking and ANnoTation of High resolution
+#' Experiments
 #'
-#' \pkg{peakPantheR} detects, integrates and reports pre-defined features in mass spectrometry data files.
-#' It enables the real time annotation of multiple compounds in a single file, or
-#' the parallel annotation of multiple compounds in multiple files.
+#' \pkg{peakPantheR} detects, integrates and reports pre-defined features in
+#' mass spectrometry data files. It enables the real time annotation of multiple
+#' compounds in a single file, or the parallel annotation of multiple compounds
+#' in multiple files.
 #'
-#' The main functions of \pkg{peakPantheR} are \code{\link{peakPantheR_singleFileSearch}} for
-#' realtime annotation, and \code{\link{peakPantheR_parallelAnnotation}} for parallel annotation.
-#' The \code{peakPantheRAnnotation} object stores parallel annotation results, while reporting
-#' functions help assess and the quality of annotation and update fitting parameters.
-#' Refer to the vignettes for graphical user interface and command line tutorials.
+#' The main functions of \pkg{peakPantheR} are
+#' \code{\link{peakPantheR_singleFileSearch}} for realtime annotation, and
+#' \code{\link{peakPantheR_parallelAnnotation}} for parallel annotation. The
+#' \code{peakPantheRAnnotation} object stores parallel annotation results, while
+#' reporting functions help assess and the quality of annotation and update
+#' fitting parameters. Refer to the vignettes for graphical user interface and
+#' command line tutorials.
 #'
 #' @aliases peakpanther
 #'

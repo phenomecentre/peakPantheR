@@ -4,29 +4,43 @@
 \name{resetAnnotation,peakPantheRAnnotation-method}
 \alias{resetAnnotation,peakPantheRAnnotation-method}
 \alias{resetAnnotation}
-\title{Reset a peakPantheRAnnotation and alter samples and compounds information
-Reset a peakPantheRAnnotation (remove results and set \code{isAnnotated=FALSE}). If a different number of samples (\code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the object will be initialised to the new size. For input values left as NULL, the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI}, \code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI}, \code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist}, \code{useUROI} and \code{useFIR}) will be filled with values from \code{previousAnnotation}.}
+\title{Reset a peakPantheRAnnotation and alter samples and compounds
+information}
 \usage{
 \S4method{resetAnnotation}{peakPantheRAnnotation}(previousAnnotation,
-  spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL,
-  FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL,
-  uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE,
-  ...)
+    spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL,
+    FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL,
+    uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE,
+    ...)
 }
 \arguments{
 \item{previousAnnotation}{(peakPantheRAnnotation) object to reset}
 
-\item{spectraPaths}{NULL or a character vector of spectra file paths, to set samples to process}
+\item{spectraPaths}{NULL or a character vector of spectra file paths, to set
+samples to process}
 
-\item{targetFeatTable}{NULL or a \code{\link{data.frame}} of compounds to target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). Set compounds to target.}
+\item{targetFeatTable}{NULL or a \code{\link{data.frame}} of compounds to
+target as rows and parameters as columns: \code{cpdID} (str), \code{cpdName}
+(str), \code{rtMin} (float in seconds), \code{rt} (float in seconds, or
+\emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz}
+(float or \emph{NA}), \code{mzMax} (float). Set compounds to target.}
 
-\item{uROI}{NULL or a data.frame of updated Regions Of Interest (uROI) with compounds as row and uROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
+\item{uROI}{NULL or a data.frame of updated Regions Of Interest (uROI) with
+compounds as row and uROI parameters as columns: \code{rtMin} (float in
+seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in
+seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax}
+(float).}
 
-\item{FIR}{NULL or a data.frame of Fallback Integration Regions (FIR) with compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
+\item{FIR}{NULL or a data.frame of Fallback Integration Regions (FIR) with
+compounds as row and FIR parameters as columns: \code{rtMin} (float in
+seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax}
+(float).}
 
-\item{cpdMetadata}{NULL or a data.frame of compound metadata, with compounds as row and metadata as columns}
+\item{cpdMetadata}{NULL or a data.frame of compound metadata, with compounds
+as row and metadata as columns}
 
-\item{spectraMetadata}{NULL or a data.frame of sample metadata, with samples as row and metadata as columns}
+\item{spectraMetadata}{NULL or a data.frame of sample metadata, with samples
+as row and metadata as columns}
 
 \item{uROIExist}{NULL or a logical stating if uROI have been set}
 
@@ -36,12 +50,69 @@ Reset a peakPantheRAnnotation (remove results and set \code{isAnnotated=FALSE}).
 
 \item{verbose}{(bool) If TRUE message progress}
 
-\item{...}{Additional slots and values to set when resetting the object (\code{cpdID}, \code{cpdName}, \code{ROI}, \code{filepath}, \code{TIC}, \code{acquisitionTime}, \code{peakTables}, \code{dataPoints}, \code{peakFit})}
+\item{...}{Additional slots and values to set when resetting the object
+(\code{cpdID}, \code{cpdName}, \code{ROI}, \code{filepath}, \code{TIC},
+\code{acquisitionTime}, \code{peakTables}, \code{dataPoints}, \code{peakFit})}
 }
 \value{
-(peakPantheRAnnotation) object reset with previous results removed and slots updated
+(peakPantheRAnnotation) object reset with previous results removed
+and slots updated
 }
 \description{
-Reset a peakPantheRAnnotation and alter samples and compounds information
-Reset a peakPantheRAnnotation (remove results and set \code{isAnnotated=FALSE}). If a different number of samples (\code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the object will be initialised to the new size. For input values left as NULL, the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI}, \code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI}, \code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist}, \code{useUROI} and \code{useFIR}) will be filled with values from \code{previousAnnotation}.
+Reset a peakPantheRAnnotation (remove results and set
+\code{isAnnotated=FALSE}). If a different number of samples (
+\code{spectraPaths}) or compounds (\code{targetFeatTable}) are passed, the
+object will be initialised to the new size. For input values left as NULL,
+the slots (\code{filepath} (from \code{spectraPaths}), \code{ROI},
+\code{cpdID}, \code{cpdName} (from \code{targetFeatTable}), \code{uROI},
+\code{FIR}, \code{cpdMetadata}, \code{spectraMetadata}, \code{uROIExist},
+\code{useUROI} and \code{useFIR}) will be filled with values from
+\code{previousAnnotation}.
+}
+\examples{
+if(requireNamespace('faahKO')){
+## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+## compounds
+
+# Paths to spectra files
+library(faahKO)
+spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
+                    system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
+
+# targetFeatTable
+targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+                    c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+                    'mzMax'))), stringsAsFactors=FALSE)
+targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+                        522.2, 522.205222)
+targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+                        496.2, 496.204962)
+targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+                                    FUN.VALUE=numeric(2))
+
+smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths, 
+                                        targetFeatTable=targetFeatTable)
+smallAnnotation
+# An object of class peakPantheRAnnotation
+#  2 compounds in 2 samples.
+#  updated ROI do not exist (uROI)
+#  does not use updated ROI (uROI)
+#  does not use fallback integration regions (FIR)
+#  is not annotated
+
+# Reset and change number of spectra
+newSpectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
+                    system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+                    system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+largerAnnotation <- resetAnnotation(smallAnnotation,
+                                    spectraPaths=newSpectraPaths,
+                                    verbose=TRUE)
+largerAnnotation
+# An object of class peakPantheRAnnotation
+#  2 compounds in 3 samples.
+#  updated ROI do not exist (uROI)
+#  does not use updated ROI (uROI)
+#  does not use fallback integration regions (FIR)
+#  is not annotated
+}
 }
