@@ -50,28 +50,9 @@
 #' #   does not use fallback integration regions (FIR)
 #' #   is not annotated
 peakPantheR_loadAnnotationParamsCSV <- function(CSVParamPath, verbose = TRUE) {
-    
-    # Check file exist
-    if (!file.exists(CSVParamPath)) {
-        stop("specified \"CSVParamPath\" does not exist")
-    }
-    
-    # Read file
-    tmp_csv <- read.csv(CSVParamPath, header = TRUE, sep = ",", quote = "\"",
-                        stringsAsFactors = FALSE)
-    # Check columns
-    expected_col <- c("cpdID", "cpdName", "ROI_rt", "ROI_mz", "ROI_rtMin",
-        "ROI_rtMax", "ROI_mzMin", "ROI_mzMax", "uROI_rtMin", "uROI_rtMax",
-        "uROI_mzMin", "uROI_mzMax", "uROI_rt", "uROI_mz", "FIR_rtMin",
-        "FIR_rtMax", "FIR_mzMin", "FIR_mzMax")
-    if (!(all(expected_col %in% colnames(tmp_csv)))) {
-        stop(paste0('Columns in \"CSVParamPath\" must be: \"cpdID\", ',
-    '\"cpdName\", \"ROI_rt\", \"ROI_mz\", \"ROI_rtMin\", \"ROI_rtMax\", ',
-    '\"ROI_mzMin\", \"ROI_mzMax\", \"uROI_rtMin\", \"uROI_rtMax\", ',
-    '\"uROI_mzMin\", \"uROI_mzMax\", \"uROI_rt\", \"uROI_mz\", \"FIR_rtMin\", ',
-    '\"FIR_rtMax\", \"FIR_mzMin\", \"FIR_mzMax\"'))
-    }
-    
+    # Check and load csv
+    tmp_csv <- loadAnnotationParamsCSV_readCSV(CSVParamPath)
+
     # Prepare ROI, uROI and FIR
     tmp_targetFeatTable <- tmp_csv[, c("cpdID", "cpdName", "ROI_rtMin",
         "ROI_rt", "ROI_rtMax", "ROI_mzMin", "ROI_mz", "ROI_mzMax")]
@@ -88,41 +69,59 @@ peakPantheR_loadAnnotationParamsCSV <- function(CSVParamPath, verbose = TRUE) {
     colnames(tmp_FIR) <- c("rtMin", "rtMax", "mzMin", "mzMax")
     tmp_FIR[, seq(1, 4)] <- vapply(tmp_FIR[, seq(1, 4)], as.numeric,
                                 FUN.VALUE = numeric(nrow(tmp_targetFeatTable)))
-    
+
     # establish if uROIExist
     tmp_uROIExist <- !any(is.na(tmp_uROI[, c("rtMin", "rtMax", "mzMin",
                                             "mzMax")]))
     if (tmp_uROIExist) {
-        if (verbose) {
-            message("uROIExist set to TRUE") }
+        if (verbose) { message("uROIExist set to TRUE") }
     } else {
-        if (verbose) {
-            message("NA in uROI, uROIExist is set to FALSE") }
-    }
-    
+        if (verbose) { message("NA in uROI, uROIExist is set to FALSE") }}
+
     # check loaded data ROI
     if (!(all(tmp_targetFeatTable$rtMin <= tmp_targetFeatTable$rtMax) &
             all(tmp_targetFeatTable$mzMin <= tmp_targetFeatTable$mzMax))) {
         stop(paste0('Check ROI values: \"rtMin\" < \"rtMax\" and \"mzMin\" ',
-                    '< \"mzMax\"'))
-    }
+                    '< \"mzMax\"')) }
     # uROI
     if (tmp_uROIExist) {
         if (!(all(tmp_uROI$rtMin <= tmp_uROI$rtMax) &
                 all(tmp_uROI$mzMin <= tmp_uROI$mzMax))) {
             stop(paste0('Check uROI values: \"rtMin\" < \"rtMax\" and ',
-                        '\"mzMin\" < \"mzMax\"'))
-        }
-    }
-    
+                        '\"mzMin\" < \"mzMax\"')) }}
+
     # Initialise new object
     tmp_annotation <- peakPantheRAnnotation(
                                         targetFeatTable = tmp_targetFeatTable,
                                         uROI = tmp_uROI, FIR = tmp_FIR,
                                         uROIExist = tmp_uROIExist)
-    if (verbose) {
-        message("New peakPantheRAnnotation object initialised for ",
-                nbCompounds(tmp_annotation), " compounds")
-    }
+    if (verbose) { message("New peakPantheRAnnotation object initialised for ",
+                            nbCompounds(tmp_annotation), " compounds") }
     return(tmp_annotation)
+}
+# check and read csv
+loadAnnotationParamsCSV_readCSV <- function(CSVParamPath) {
+
+    # Check file exist
+    if (!file.exists(CSVParamPath)) {
+        stop("specified \"CSVParamPath\" does not exist")
+    }
+
+    # Read file
+    tmp_csv <- read.csv(CSVParamPath, header = TRUE, sep = ",", quote = "\"",
+                        stringsAsFactors = FALSE)
+    # Check columns
+    expected_col <- c("cpdID", "cpdName", "ROI_rt", "ROI_mz", "ROI_rtMin",
+        "ROI_rtMax", "ROI_mzMin", "ROI_mzMax", "uROI_rtMin", "uROI_rtMax",
+        "uROI_mzMin", "uROI_mzMax", "uROI_rt", "uROI_mz", "FIR_rtMin",
+        "FIR_rtMax", "FIR_mzMin", "FIR_mzMax")
+    if (!(all(expected_col %in% colnames(tmp_csv)))) {
+        stop(paste0('Columns in \"CSVParamPath\" must be: \"cpdID\", ',
+    '\"cpdName\", \"ROI_rt\", \"ROI_mz\", \"ROI_rtMin\", \"ROI_rtMax\", ',
+    '\"ROI_mzMin\", \"ROI_mzMax\", \"uROI_rtMin\", \"uROI_rtMax\", ',
+    '\"uROI_mzMin\", \"uROI_mzMax\", \"uROI_rt\", \"uROI_mz\", \"FIR_rtMin\", ',
+    '\"FIR_rtMax\", \"FIR_mzMin\", \"FIR_mzMax\"'))
+    }
+
+    return(tmp_csv)
 }

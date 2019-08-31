@@ -1838,8 +1838,8 @@ outputAnnotationResult_saveSpectraMetadata <- function(object, saveFolder,
 }
 # save peakTables
 outputAnnotationResult_savePeaktable <- function(object, saveFolder,
-                                                annotationName, verbose) {
-   for (i in colnames(object@peakTables[[1]])) {
+                                                    annotationName, verbose) {
+    for (i in colnames(object@peakTables[[1]])) {
         tmp_var <- annotationTable(object = object, column = i)
         path_var <- paste(saveFolder, "/", annotationName, "_", i, ".csv",
                         sep = "")
