@@ -1,90 +1,122 @@
 ---
 title: "Getting Started with the peakPantheR package"
-author: "Arnaud Wolfer"
-date: "2018-02-21"
-output: rmarkdown::html_vignette
+date: "2019-06-09"
+package: peakPantheR
+output:
+    BiocStyle::html_document:
+        toc_float: true
+bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Getting Started with the peakPantheR package}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Getting Started with the peakPantheR package}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle}
+    %\VignettePackage{peakPantheR}
+    %\VignetteKeywords{mass spectrometry, metabolomics}
 ---
 
+```{r biocstyle, echo = FALSE, results = "asis" }
+BiocStyle::markdown()
+```
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 ```
-```{r, echo = FALSE, include = FALSE}
-required <- c("faahKO")
-if (!all(unlist(lapply(required, function(pkg) requireNamespace(pkg, quietly = TRUE))))) {
-  knitr::opts_chunk$set(eval = FALSE)
-}
+
+**Package**: `r Biocpkg("peakPantheR")`<br />
+**Authors**: Arnaud Wolfer<br />
+
+```{r init, message = FALSE, echo = FALSE, results = "hide" }
+## Silently loading all packages
+library(BiocStyle)
+library(peakPantheR)
+library(faahKO)
+library(pander)
 ```
 
-# peakPantheR
-Package for _Peak Picking and ANnoTation of High resolution Experiments in R_, implemented in `R` and `Shiny`
+
+Package for _Peak Picking and ANnoTation of High resolution Experiments in R_,
+implemented in `R` and `Shiny`
 
 
-## Overview
+# Overview
 
-`peakPantheR` implements functions to detect, integrate and report pre-defined features in MS files.
+`peakPantheR` implements functions to detect, integrate and report pre-defined
+features in MS files (_e.g. compounds, fragments, adducts, ..._).
+
 It is designed for:
 
-* **Real time** feature detection and integration (see [Real Time Annotation](real-time-annotation.html))
+* **Real time** feature detection and integration (see
+[Real Time Annotation](real-time-annotation.html))
     + process `multiple` compounds in `one` file at a time
-* **Post-acquisition** feature detection, integration and reporting (see [Parallel Annotation](parallel-annotation.html))
-    + process `multiple` compounds in `multiple` files in `parallel`, store results in a `single` object
+* **Post-acquisition** feature detection, integration and reporting (see 
+[Parallel Annotation](parallel-annotation.html))
+    + process `multiple` compounds in `multiple` files in `parallel`, store 
+    results in a `single` object
 
+`peakPantheR` can process LC/MS data files in _NetCDF_, _mzML_/_mzXML_ and 
+_mzData_ format as data import is achieved using Bioconductor's 
+`r Biocpkg("mzR")` package. 
 
-## Installation
+# Installation
 
-Install the development version of the package directly from GitHub with:
+To install `peakPantheR` from Bioconductor:
+```{r, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("peakPantheR")
+```
+
+Install the development version of `peakPantheR` directly from GitHub with:
 ```{r, eval = FALSE}
 # Install devtools
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("phenomecentre/peakPantheR")
 ```
 
-If the dependencies `mzR` and `MSnbase` are not successfully installed, `Bioconductor` must be added to the default repositories with:
-```{r, eval = FALSE}
-setRepositories(ind=1:2)
-```
+# Input Data
 
-
-## Input Data
-
-Both real time and parallel compound integration require a common set of information:
+Both real time and parallel compound integration require a common set of 
+information:
 
 * Path(s) to `netCDF` / `mzML` MS file(s)
 * An expected region of interest (`RT` / `m/z` window) for each compound.
 
 
-The _`faahKO`_ package provides with a set of MS spectra that we can use for `peakPantheR` annotation and is installed as follow:
+## MS files
+
+For demonstration purpose we can annotate a set a set of raw MS spectra (in 
+_NetCDF_ format) provided by the `r Biocpkg("faahKO")` package. Briefly, this 
+subset of the data from [@Saghatelian04] invesigate the metabolic consequences 
+of knocking out the fatty acid amide hydrolase (FAAH) gene in mice. The dataset 
+consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice. 
+Each file contains data in centroid mode acquired in positive ion mode form 
+200-600 m/z and 2500-4500 seconds.
+
+Below we install the `r Biocpkg("faahKO")` package and locate raw CDF files of 
+interest:
 ```{r, eval = FALSE}
-setRepositories(ind=1:4)
-install.packages('faahKO')
-```
-```{r, echo = FALSE, include = FALSE}
-# hide package load message
-library(faahKO)
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("faahKO")
 ```
 ```{r}
 library(faahKO)
 ## file paths
 input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-```
-```{r, echo = FALSE}
-library(faahKO)
-input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 input_spectraPaths
 ```
 
-A table of targeted features contains as column:
+## Expected regions of interest
+
+Expected regions of interest (targeted features) are specified using the 
+following information:
 
 * `cpdID` (numeric)
 * `cpdName` (character)
@@ -95,24 +127,41 @@ A table of targeted features contains as column:
 * `mzMax` (m/z)
 * `mz` (m/z, optional / `NA`)
 
+Below we define 2 features of interest that are present in the 
+`r Biocpkg("faahKO")` dataset and can be employed in subsequent vignettes:
 ```{r, eval = FALSE}
 # targetFeatTable
-input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
+                        c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
+                        "mz", "mzMax"))), stringsAsFactors=FALSE)
+input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 
+                                522.2, 522.205222)
+input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038,
+                                496.2, 496.204962)
+input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], 
+                                            as.numeric)
 ```
 ```{r, results = "asis", echo = FALSE}
-input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
-input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], as.numeric)
+# use pandoc for improved readability
+input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
+                        c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
+                        "mz", "mzMax"))), stringsAsFactors=FALSE)
+input_targetFeatTable[1,] <- c(1, "Cpd 1", 3310., 3344.888, 3390., 522.194778, 
+                                522.2, 522.205222)
+input_targetFeatTable[2,] <- c(2, "Cpd 2", 3280., 3385.577, 3440., 496.195038,
+                                496.2, 496.204962)
+input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], 
+                                            as.numeric)
 rownames(input_targetFeatTable) <- NULL
 pander::pandoc.table(input_targetFeatTable, digits = 9)
 ```
 
 
-## See Also
+# See Also
 
 * [Real Time Annotation](real-time-annotation.html)
 * [Parallel Annotation](parallel-annotation.html)
+
+
+# References
+

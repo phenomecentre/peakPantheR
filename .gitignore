@@ -29,3 +29,4 @@ doc/*.Rmd
 *.knit.md
 Rplots.pdf
 tests/testthat/Rplots.pdf
+.idea

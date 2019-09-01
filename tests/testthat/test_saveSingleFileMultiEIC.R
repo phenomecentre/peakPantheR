@@ -26,7 +26,7 @@ input_ROIsDataPoints  <- list(tmp_DataPoints1, tmp_DataPoints2)
 input_curveFit        <- list(fit1, fit2)
 
 # peakTable
-input_peakTable     <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=F)
+input_peakTable     <- data.frame(matrix(vector(), 2, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
 input_peakTable[1,] <- c(TRUE, 995., 1000., 1005., 522.19, 522.2, 522.21, 20000, 21, 21)
 input_peakTable[2,] <- c(TRUE, 997., 1002., 1007., 464.19, 464.2, 464.21, 20000, 21, 21)
 input_peakTable[,1] <- sapply(input_peakTable[,c(1)], as.logical)

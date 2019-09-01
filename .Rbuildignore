@@ -10,3 +10,5 @@ LICENSE
 ^cran-comments.md
 tests\testthat\Rplots.pdf
 ^Rplots.pdf
+^.idea
+^.git
