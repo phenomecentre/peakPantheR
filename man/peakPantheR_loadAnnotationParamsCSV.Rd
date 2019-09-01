@@ -12,8 +12,46 @@ peakPantheR_loadAnnotationParamsCSV(CSVParamPath, verbose = TRUE)
 \item{verbose}{(bool) If TRUE message progress}
 }
 \value{
-(peakPantheRAnnotation) Object initialised with ROI, uROI and FIR read from the CSV file
+(peakPantheRAnnotation) Object initialised with ROI, uROI and FIR
+read from the CSV file
 }
 \description{
-Initialise a new \code{peakPantheRAnnotation} object after loading ROI, uROI and FIR parameters from CSV. \code{spectraPaths}, \code{spectraMetadata} or \code{cpdMetadata} are not initialised and will need to be filled before annotation. \code{useUROI} and \code{useFIR} are set to \code{FALSE} and will need to be set accordingly. \code{uROIExist} is established depending on the uROI columns present in the CSV and will be set to \code{TRUE} only if no \code{NA} are present
+Initialise a new \code{peakPantheRAnnotation} object after
+loading ROI, uROI and FIR parameters from CSV. \code{spectraPaths},
+\code{spectraMetadata} or \code{cpdMetadata} are not initialised and will
+need to be filled before annotation. \code{useUROI} and \code{useFIR} are set
+to \code{FALSE} and will need to be set accordingly. \code{uROIExist} is
+established depending on the uROI columns present in the CSV and will be set
+to \code{TRUE} only if no \code{NA} are present
+}
+\examples{
+## Input data
+input_CSV <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(),
+    c('cpdID', 'cpdName',
+    'X','ROI_rt', 'ROI_mz', 'ROI_rtMin', 'ROI_rtMax','ROI_mzMin','ROI_mzMax',
+    'X','uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt',
+    'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
+input_CSV[1,]  <- c('ID-1', 'Cpd 1', '|', 1.,  2.,  3.,  4.,  5.,  6.,  '|',
+                    7.,  8.,  9.,  10., 11., 12., '|', 13., 14., 15., 16.)
+input_CSV[2,]  <- c('ID-2', 'Cpd 2', '|', 17., 18., 19., 20., 21., 22., '|',
+                    23., 24., 25., 26., 27., 28., '|', 29., 30., 31., 32.)
+input_CSV[,-c(1,2,3,10,17)]  <- vapply(input_CSV[,-c(1,2,3,10,17)],
+                                            as.numeric, FUN.VALUE=numeric(2))
+
+# temporary file location
+savePath1      <- tempfile(pattern='file', tmpdir=tempdir(), fileext='.csv')
+# save csv
+utils::write.csv(input_CSV, file=savePath1, row.names=FALSE)
+
+# Load parameters from CSV
+loadedAnnotation <- peakPantheR_loadAnnotationParamsCSV(savePath1,
+                                                        verbose=TRUE)
+# uROIExist set to TRUE
+# New peakPantheRAnnotation object initialised for 2 compounds
+# An object of class peakPantheRAnnotation
+#  2 compounds in 0 samples.
+#   updated ROI exist (uROI)
+#   does not use updated ROI (uROI)
+#   does not use fallback integration regions (FIR)
+#   is not annotated
 }

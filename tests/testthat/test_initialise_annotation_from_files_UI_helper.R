@@ -1,8 +1,8 @@
 context('initialise_annotation_from_files_UI_helper()')
 
 ## Test the initialisation of a full annotation object from parameter files and metadata paths
-# Reading parameters is managed by peakPantheR_loadAnnotationParamsCSV()
-# Errors on cpd and spectra metadata are catched by peakPantherAnnotation_validObject()
+# No need to check different CSV format as this is managed and tested in peakPantheR_loadAnnotationParamsCSV()
+# No need to check errors in cpd and spectra metadata as it's catched by peakPantherAnnotation_validObject()
 
 ## Input data
 input_param      <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
@@ -30,18 +30,18 @@ utils::write.csv(input_cpdMetadata, file=cpdMetaPath, row.names=FALSE)
 
 ## Expected result
 # targetFeatTable
-input_targetFeatTable_adv     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+input_targetFeatTable_adv     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
 input_targetFeatTable_adv[1,] <- c("ID-1", "Cpd 1",  3.,  1.,  4.,  5.,  2.,  6.)
 input_targetFeatTable_adv[2,] <- c("ID-2", "Cpd 2", 19., 17., 20., 21., 18., 22.)
 input_targetFeatTable_adv[,c(3:8)] <- sapply(input_targetFeatTable_adv[,c(3:8)], as.numeric)
 
 # uROI
-input_uROI_adv      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+input_uROI_adv      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
 input_uROI_adv[1,]  <- c( 7., 11. , 8.,  9., 12., 10.)
 input_uROI_adv[2,]  <- c(23., 27., 24., 25., 28., 26.)
 
 # FIR
-input_FIR_adv       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
+input_FIR_adv       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=FALSE)
 input_FIR_adv[1,]   <- c(13., 14., 15., 16.)
 input_FIR_adv[2,]   <- c(29., 30., 31., 32.)
 
@@ -59,18 +59,20 @@ input_annotation_meta   <- peakPantheRAnnotation(targetFeatTable = input_targetF
                                                  cpdMetadata = input_cpdMetadata,
                                                  spectraMetadata = input_spectraMetadata)
 
+# TODO
 # create some metadata, add some fake paths
-# make a simple import that should match the input_annotation_adv
+# make a simple import that should match the input_annotation_adv -> not sure that it's needed, covered by loadAnnotationParamsCSV
 # an import with/without metadata
 # each import with/without verbose
 # trigger errors on the metadata (size, path exist!)
 
 ## EITHER VERBOSE IN CREATION OR IN UPDATE, CONTROL USING VERBOSE=TRUE
 
+
 test_that('parameters, spectraPaths, no metadata, verbose, no verbose', {
   # expected
   expected_annotation <- input_annotation_nometa
-  expected_message    <- c("uROIExist set to TRUE\n", "New peakPantheRAnnotation object initialised for 2 compounds\n")
+  expected_message    <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)\n  is not annotated"
   
   # results (output, warnings and messages)
   result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
@@ -81,9 +83,9 @@ test_that('parameters, spectraPaths, no metadata, verbose, no verbose', {
   # Check result
   expect_equal(result_load1$result, expected_annotation)
   
-  # Check result messages
-  expect_equal(length(result_load1$messages), 2)
-  expect_equal(result_load1$messages, expected_message)
+  # Check result messages (in output)
+  expect_equal(length(result_load1$output), 1)
+  expect_equal(result_load1$output, expected_message)
   
   ## no verbose
   result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
@@ -91,12 +93,13 @@ test_that('parameters, spectraPaths, no metadata, verbose, no verbose', {
                                                                                      spectraMetadataPath = NULL,
                                                                                      verbose = FALSE))
   expect_equal(length(result_load2$messages), 0)
+  expect_equal(result_load2$output, "")
 })
 
 test_that('parameters, spectraPaths, with metadata, verbose, no verbose', {
   # expected
   expected_annotation <- input_annotation_meta
-  expected_message    <- c("uROIExist set to TRUE\n", "New peakPantheRAnnotation object initialised for 2 compounds\n")
+  expected_message    <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)\n  is not annotated"
   
   # results (output, warnings and messages)
   result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
@@ -108,8 +111,8 @@ test_that('parameters, spectraPaths, with metadata, verbose, no verbose', {
   expect_equal(result_load1$result, expected_annotation)
   
   # Check result messages
-  expect_equal(length(result_load1$messages), 2)
-  expect_equal(result_load1$messages, expected_message)
+  expect_equal(length(result_load1$output), 1)
+  expect_equal(result_load1$output, expected_message)
   
   ## no verbose
   result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths, 
@@ -117,6 +120,7 @@ test_that('parameters, spectraPaths, with metadata, verbose, no verbose', {
                                                                                      spectraMetadataPath = spectraMetaPath, 
                                                                                      verbose = FALSE))
   expect_equal(length(result_load2$messages), 0)
+  expect_equal(result_load2$output, "")
 })
 
 test_that('raise errors', {

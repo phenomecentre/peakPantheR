@@ -7,14 +7,17 @@
 peakPantheR_start_GUI(browser = TRUE)
 }
 \arguments{
-\item{browser}{If TRUE open the graphical user interface in a web browser instead of a R window. Default is TRUE}
+\item{browser}{If TRUE open the graphical user interface in a web browser
+instead of a R window. Default is TRUE}
 }
 \value{
 None, start GUI. To exit press \code{ESC} in the command line.
 }
 \description{
-peakPantheR Graphical User Interface (GUI) implements all the functions for the parallel detection, integration and reporting 
-of pre-defined features in multiple mass spectrometry data files. To exit press \code{ESC} in the command line.
+peakPantheR Graphical User Interface (GUI) implements all the functions for
+the parallel detection, integration and reporting of pre-defined features in
+multiple mass spectrometry data files. To exit press \code{ESC} in the
+command line.
 }
 \examples{
 \donttest{

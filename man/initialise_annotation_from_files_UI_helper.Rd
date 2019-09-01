@@ -5,22 +5,27 @@
 \title{UI data import helper}
 \usage{
 initialise_annotation_from_files_UI_helper(CSVParamPath, spectraPaths,
-  cpdMetadataPath = NULL, spectraMetadataPath = NULL, verbose = TRUE)
+    cpdMetadataPath = NULL, spectraMetadataPath = NULL, verbose = TRUE)
 }
 \arguments{
 \item{CSVParamPath}{(str) Path to a CSV file of fit parameters}
 
-\item{spectraPaths}{(str) character vector of spectra file paths, to set samples to process}
+\item{spectraPaths}{(str) character vector of spectra file paths, to set
+samples to process}
 
-\item{cpdMetadataPath}{NULL or path to a csv of compound metadata, with compounds as row and metadata as columns}
+\item{cpdMetadataPath}{NULL or path to a csv of compound metadata, with
+compounds as row and metadata as columns}
 
-\item{spectraMetadataPath}{NULL or path to a csv of sample metadata, with samples as row and metadata as columns}
+\item{spectraMetadataPath}{NULL or path to a csv of sample metadata, with
+samples as row and metadata as columns}
 
 \item{verbose}{(bool) If TRUE message progress}
 }
 \value{
-(peakPantheRAnnotation) Object initialised with ROI, uROI and FIR read from the CSV file
+(peakPantheRAnnotation) Object initialised with ROI, uROI and FIR
+read from the CSV file
 }
 \description{
-Fully initialise a \code{peakPantheRAnnotation} using the target files path, CSV parameter path and metadata.
+Fully initialise a \code{peakPantheRAnnotation} using the target files path,
+CSV parameter path and metadata.
 }
