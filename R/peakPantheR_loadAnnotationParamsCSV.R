@@ -83,7 +83,7 @@ peakPantheR_loadAnnotationParamsCSV <- function(CSVParamPath, verbose = TRUE) {
 #' mzMax, mz, rtMin, rtMax, rt}) and return input variables for
 #' \code{peakPantheRAnnotation()}
 #'
-#' @param parameterTable (data.frame) Target region parameters
+#' @param paramTable (data.frame) Target region parameters
 #'
 #' @return (list) List of \code{targetFeatTable, uROI, FIR, uROIExist}
 prepare_basic_target_parameters <- function(paramTable){
@@ -130,7 +130,7 @@ prepare_basic_target_parameters <- function(paramTable){
 #' FIR_mzMin, FIR_mzMax}) and return input variables for
 #' \code{peakPantheRAnnotation()}
 #'
-#' @param parameterTable (data.frame) Target region parameters
+#' @param paramTable (data.frame) Target region parameters
 #' @param verbose (bool) If TRUE message progress
 #'
 #' @return (list) List of \code{targetFeatTable, uROI, FIR, uROIExist}

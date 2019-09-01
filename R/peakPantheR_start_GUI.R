@@ -11,8 +11,8 @@
 #' @return None, start GUI. To exit press \code{ESC} in the command line.
 #'
 #' @examples
-#' \donttest{
-#' ## Start graphical interface, press 'ESC' in the command line to stop.
+#' # Start graphical interface, press 'ESC' in the command line to stop
+#' \dontrun{
 #' peakPantheR_start_GUI()
 #' }
 #'
