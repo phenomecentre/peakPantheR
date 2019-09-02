@@ -8,9 +8,9 @@ initialisation}
 prepare_advanced_target_parameters(paramTable, verbose)
 }
 \arguments{
-\item{verbose}{(bool) If TRUE message progress}
+\item{paramTable}{(data.frame) Target region parameters}
 
-\item{parameterTable}{(data.frame) Target region parameters}
+\item{verbose}{(bool) If TRUE message progress}
 }
 \value{
 (list) List of \code{targetFeatTable, uROI, FIR, uROIExist}

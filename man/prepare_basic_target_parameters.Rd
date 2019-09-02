@@ -8,7 +8,7 @@ initialisation}
 prepare_basic_target_parameters(paramTable)
 }
 \arguments{
-\item{parameterTable}{(data.frame) Target region parameters}
+\item{paramTable}{(data.frame) Target region parameters}
 }
 \value{
 (list) List of \code{targetFeatTable, uROI, FIR, uROIExist}
