@@ -10,23 +10,23 @@ library(faahKO)
 input_CSV      <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
 input_CSV[1,]  <- c('ID-1', 'Cpd 1', '|', 1.,  2.,  3.,  4.,  5.,  6.,  '|', 7.,  8.,  9.,  10., 11., 12., '|', 13., 14., 15., 16.)
 input_CSV[2,]  <- c('ID-2', 'Cpd 2', '|', 17., 18., 19., 20., 21., 22., '|', 23., 24., 25., 26., 27., 28., '|', 29., 30., 31., 32.)
-input_CSV[,-c(1,2,3,10,17)]  <- sapply(input_CSV[,-c(1,2,3,10,17)], as.numeric)
+input_CSV[,-c(1,2,3,10,17)]  <- vapply(input_CSV[,-c(1,2,3,10,17)], as.numeric, FUN.VALUE=numeric(2))
 
 
 ## Expected result
 # targetFeatTable
-input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+input_targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
 input_targetFeatTable[1,] <- c("ID-1", "Cpd 1",  3.,  1.,  4.,  5.,  2.,  6.)
 input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 19., 17., 20., 21., 18., 22.)
-input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
+input_targetFeatTable[,c(3:8)] <- vapply(input_targetFeatTable[,c(3:8)], as.numeric, FUN.VALUE=numeric(2))
 
 # uROI
-input_uROI      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=F)
+input_uROI      <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
 input_uROI[1,]  <- c( 7., 11. , 8.,  9., 12., 10.)
 input_uROI[2,]  <- c(23., 27., 24., 25., 28., 26.)
 
 # FIR
-input_FIR       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=F)
+input_FIR       <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=FALSE)
 input_FIR[1,]   <- c(13., 14., 15., 16.)
 input_FIR[2,]   <- c(29., 30., 31., 32.)
 
@@ -116,4 +116,36 @@ test_that('raise errors', {
   utils::write.csv(tmp_CSV, file=wrongCol, row.names=FALSE)
   msg2      <- paste('Columns in "CSVParamPath" must be: "cpdID", "cpdName", "ROI_rt", "ROI_mz", "ROI_rtMin", "ROI_rtMax", "ROI_mzMin", "ROI_mzMax", "uROI_rtMin", "uROI_rtMax", "uROI_mzMin", "uROI_mzMax", "uROI_rt", "uROI_mz", "FIR_rtMin", "FIR_rtMax", "FIR_mzMin", "FIR_mzMax"')
   expect_error(peakPantheR_loadAnnotationParamsCSV(wrongCol, verbose=TRUE), msg2, fixed=TRUE)
+  
+  # ROI rtMin > rtMax
+  wrongROIrt                <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+  tmp_wrongROIrt            <- input_CSV
+  tmp_wrongROIrt$ROI_rtMin  <- c(5, 19)
+  utils::write.csv(tmp_wrongROIrt, file=wrongROIrt, row.names=FALSE)
+  msg3      <- paste('Check ROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
+  expect_error(peakPantheR_loadAnnotationParamsCSV(wrongROIrt, verbose=FALSE), msg3, fixed=TRUE)
+  
+  # ROI mzMin > mzMax
+  wrongROImz                <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+  tmp_wrongROImz            <- input_CSV
+  tmp_wrongROImz$ROI_mzMin  <- c(5, 23)
+  utils::write.csv(tmp_wrongROImz, file=wrongROImz, row.names=FALSE)
+  msg4      <- paste('Check ROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
+  expect_error(peakPantheR_loadAnnotationParamsCSV(wrongROImz, verbose=FALSE), msg4, fixed=TRUE)
+  
+  # uROI rtMin > rtMax
+  wrongUROIrt                 <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+  tmp_wrongUROIrt             <- input_CSV
+  tmp_wrongUROIrt$uROI_rtMin  <- c(7, 25)
+  utils::write.csv(tmp_wrongUROIrt, file=wrongUROIrt, row.names=FALSE)
+  msg5    <- paste('Check uROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
+  expect_error(peakPantheR_loadAnnotationParamsCSV(wrongUROIrt, verbose=FALSE), msg5, fixed=TRUE)
+  
+  # uROI mzMin < mzMax
+  wrongUROImz                 <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+  tmp_wrongUROImz             <- input_CSV
+  tmp_wrongUROImz$uROI_mzMin  <- c(12, 25)
+  utils::write.csv(tmp_wrongUROImz, file=wrongUROImz, row.names=FALSE)
+  msg6    <- paste('Check uROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
+  expect_error(peakPantheR_loadAnnotationParamsCSV(wrongUROImz, verbose=FALSE), msg6, fixed=TRUE)
 })

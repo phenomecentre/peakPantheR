@@ -5,78 +5,122 @@
 \title{Find and integrate target features in each ROI}
 \usage{
 findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
-  params = "guess", sampling = 250, maxApexResidualRatio = 0.2,
-  verbose = FALSE, ...)
+    params = "guess", sampling = 250, maxApexResidualRatio = 0.2,
+    verbose = FALSE, ...)
 }
 \arguments{
-\item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame with signal as row and retention time ("rt"), mass ("mz") and intensity ("int) as columns. Must match each row of ROI.}
+\item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame
+with signal as row and retention time ('rt'), mass ('mz') and intensity
+('int) as columns. Must match each row of ROI.}
 
-\item{ROI}{(data.frame) A data.frame of compounds to target as rows. Columns: \code{rtMin} (float in seconds), \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float)}
+\item{ROI}{(data.frame) A data.frame of compounds to target as rows. Columns:
+\code{rtMin} (float in seconds), \code{rtMax} (float in seconds),
+\code{mzMin} (float), \code{mzMax} (float)}
 
-\item{curveModel}{(str) Name of the curve model to fit (currently \code{skewedGaussian})}
+\item{curveModel}{(str) Name of the curve model to fit (currently
+\code{skewedGaussian})}
 
-\item{params}{(list or str) Either 'guess' for automated parametrisation or list (one per ROI windows) of "guess" or list of curve fit parameters}
+\item{params}{(list or str) Either 'guess' for automated parametrisation or
+list (one per ROI windows) of 'guess' or list of curve fit parameters}
 
-\item{sampling}{(int) Number of points to employ when subsampling the fittedCurve (rt, rtMin, rtMax, integral calculation)}
+\item{sampling}{(int) Number of points to employ when subsampling the
+fittedCurve (rt, rtMin, rtMax, integral calculation)}
 
-\item{maxApexResidualRatio}{(float) Ratio of maximum allowed fit residual at the peak apex, compared to the fit max intensity. (e.g. 0.2 for a maximum residual of 20\% of apex intensity)}
+\item{maxApexResidualRatio}{(float) Ratio of maximum allowed fit residual at
+the peak apex, compared to the fit max intensity. (e.g. 0.2 for a maximum
+residual of 20\% of apex intensity)}
 
-\item{verbose}{(bool) If TRUE message the time taken and number of features found}
+\item{verbose}{(bool) If TRUE message the time taken and number of features
+found}
 
-\item{...}{Passes arguments to \code{fitCurve} to alter peak fitting (\code{params})}
+\item{...}{Passes arguments to \code{fitCurve} to alter peak fitting
+(\code{params})}
 }
 \value{
-A list: \code{list()$peakTable} (\emph{data.frame}) with targeted features as rows and peak measures as columns (see Details), \code{list()$curveFit} (\emph{list}) a list of \code{peakPantheR_curveFit} or NA for each ROI.
+A list: \code{list()$peakTable} (\emph{data.frame}) with targeted
+features as rows and peak measures as columns (see Details),
+\code{list()$curveFit} (\emph{list}) a list of \code{peakPantheR_curveFit} or
+NA for each ROI.
 
 \subsection{Details:}{
-  The returned \code{data.frame} is structured as follow:
-  \tabular{ll}{
-    found \tab was the peak found\cr
-    rt \tab retention time of peak apex (sec)\cr
-    rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of apex intensity\cr
-    mz \tab weighted (by intensity) mean of peak m/z across scans\cr
-    mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
-    mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
-    peakArea \tab integrated peak area\cr
-    maxIntMeasured \tab maximum peak intensity in raw data\cr
-    maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
-  }
+The returned \code{data.frame} is structured as follow:
+\tabular{ll}{
+found \tab was the peak found\cr
+rt \tab retention time of peak apex (sec)\cr
+rtMin \tab leading edge of peak retention time (sec) determined at 0.5\% of
+apex intensity\cr
+rtMax \tab trailing edge of peak retention time (sec) determined at 0.5\% of
+apex intensity\cr
+mz \tab weighted (by intensity) mean of peak m/z across scans\cr
+mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
+mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
+peakArea \tab integrated peak area\cr
+maxIntMeasured \tab maximum peak intensity in raw data\cr
+maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
+}
 }
 }
 \description{
-For each ROI, fit a curve and integrate the largest feature in the box. Each entry in \code{ROIsDataPoints} must match the corresponding row in \code{ROI}. The curve shape to employ for fitting can be changed with \code{curveModel} while fitting parameters can be changed with \code{params} (list with one param per ROI window). \code{rtMin} and \code{rtMax} are established at 0.5% of apex intensity using a moving window from the apex outward (the window is the ROI width); if after 8 iterations \code{rtMin} or \code{rtMax} is not found, NA is returned and the peak fit rejected. \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is the weighted (by intensity) average mz of datapoints falling into the \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax} falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are returned as the input ROI limits and \code{mz} is an approximation on the datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz would be NA, the peak is rejected). If any of the two following ratio are superior to \code{maxApexResidualRatio}, the fit is rejected: 1) ratio of fit residuals at the apex (predicted apex fit intensity vs measured apex intensity: fit overshoots the apex), 2) ratio of predicted apex fit intensity vs maximum measured peak intensity (fit misses the real apex in the peak).
+For each ROI, fit a curve and integrate the largest feature in
+the box. Each entry in \code{ROIsDataPoints} must match the corresponding row
+in \code{ROI}. The curve shape to employ for fitting can be changed with
+\code{curveModel} while fitting parameters can be changed with \code{params}
+(list with one param per ROI window). \code{rtMin} and \code{rtMax} are
+established at 0.5% of apex intensity using a moving window from the apex
+outward (the window is the ROI width); if after 8 iterations \code{rtMin} or
+\code{rtMax} is not found, NA is returned and the peak fit rejected.
+\code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is
+the weighted (by intensity) average mz of datapoints falling into the
+\code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the
+minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax}
+falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are
+returned as the input ROI limits and \code{mz} is an approximation on the
+datapoints available (if no scan of the ROI fall between rtMin/rtMax, mz
+would be NA, the peak is rejected). If any of the two following ratio are
+superior to \code{maxApexResidualRatio}, the fit is rejected: 1) ratio of fit
+residuals at the apex (predicted apex fit intensity vs measured apex
+intensity: fit overshoots the apex), 2) ratio of predicted apex fit intensity
+vs maximum measured peak intensity (fit misses the real apex in the peak).
 }
-\examples{
-\dontrun{
+\details{
+## Examples cannot be computed as the function is not exported:
 ## Load data
 library(faahKO)
 library(MSnbase)
-netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-raw_data       <- MSnbase::readMSData(netcdfFilePath, centroided=TRUE, mode='onDisk')
+netcdfFilePath <- system.file('cdf/KO/ko15.CDF', package = 'faahKO')
+raw_data <- MSnbase::readMSData(netcdfFilePath,centroided=TRUE,mode='onDisk')
 
 ## targetFeatTable
-targetFeatTable     <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID",
-                         "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
-                         stringsAsFactors=F)
-targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
-targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-targetFeatTable[,3:8] <- sapply(targetFeatTable[,3:8], as.numeric)
+targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+                        c('cpdID','cpdName','rtMin','rt','rtMax','mzMin',
+                        'mz','mzMax'))), stringsAsFactors=FALSE)
+targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+                        522.2, 522.205222)
+targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+                        496.2, 496.204962)
+targetFeatTable[,3:8] <- vapply(targetFeatTable[,3:8], as.numeric,
+                        FUN.VALUE=numeric(2))
 
-ROIsPt         <- extractSignalRawData(raw_data, rt=targetFeatTable[,c('rtMin','rtMax')],
-                                       mz=targetFeatTable[,c('mzMin','mzMax')], verbose=TRUE)
+ROIsPt <- extractSignalRawData(raw_data,
+                                rt=targetFeatTable[,c('rtMin','rtMax')],
+                                mz=targetFeatTable[,c('mzMin','mzMax')],
+                                verbose=TRUE)
 # Reading data from 2 windows
 
-foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, verbose=T)
-# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation,
+foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, verbose=TRUE)
+# Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
+# mzMin/mzMax calculation,
 # approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 # Found 2/2 features in 0.07 secs
 
 foundPeaks
 # $peakTable
-#   found    rtMin       rt    rtMax    mzMin    mz    mzMax peakArea maxIntMeasured maxIntPredicted
-# 1  TRUE 3309.759 3346.828 3385.410 522.1948 522.2 522.2052 26133727         889280        901015.8
-# 2  TRUE 3345.377 3386.529 3428.279 496.2000 496.2 496.2000 35472141        1128960       1113576.7
+#   found    rtMin       rt    rtMax    mzMin    mz    mzMax peakArea
+# 1  TRUE 3309.759 3346.828 3385.410 522.1948 522.2 522.2052 26133727
+# 2  TRUE 3345.377 3386.529 3428.279 496.2000 496.2 496.2000 35472141
+#   maxIntMeasured maxIntPredicted
+# 1         889280        901015.8
+# 2        1128960       1113576.7
 #
 # $curveFit
 # $curveFit[[1]]
@@ -96,10 +140,10 @@ foundPeaks
 # [1] 2
 # 
 # $curveModel
-# [1] "skewedGaussian"
+# [1] 'skewedGaussian'
 # 
-# attr(,"class")
-# [1] "peakPantheR_curveFit"
+# attr(,'class')
+# [1] 'peakPantheR_curveFit'
 # 
 # $curveFit[[2]]
 # $amplitude
@@ -118,9 +162,8 @@ foundPeaks
 # [1] 2
 # 
 # $curveModel
-# [1] "skewedGaussian"
+# [1] 'skewedGaussian'
 # 
-# attr(,"class")
-# [1] "peakPantheR_curveFit"
-}
+# attr(,'class')
+# [1] 'peakPantheR_curveFit'
 }

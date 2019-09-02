@@ -6,7 +6,6 @@
 [![Build
 Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR)
 [![codecov](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master/graph/badge.svg)](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/peakPantheR)](https://cran.r-project.org/package=peakPantheR)
 [![DOI](https://zenodo.org/badge/116680214.svg)](https://zenodo.org/badge/latestdoi/116680214)
 
 # peakPantheR
@@ -17,33 +16,31 @@ in R*, implemented in `R` and `Shiny`
 ## Overview
 
 `peakPantheR` implements functions to detect, integrate and report
-pre-defined features in MS files. It is designed for:
+pre-defined features in MS files (*e.g. compounds, fragments, adducts,
+…*). It is designed for:
 
   - **Real time** feature detection and integration (see [Real Time
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/inst/doc/real-time-annotation.html))
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/real-time-annotation.html))
       - process `multiple` compounds in `one` file at a time
   - **Post-acquisition** feature detection, integration and reporting
     (see [Parallel
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/inst/doc/parallel-annotation.html))
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/parallel-annotation.html))
       - process `multiple` compounds in `multiple` files in `parallel`,
         store results in a `single` object
 
+`peakPantheR` can process LC/MS data files in *NetCDF*, *mzML*/*mzXML*
+and *mzData* format as data import is achieved using Bioconductor’s
+[`mzR`](https://bioconductor.org/packages/3.10/mzR) package.
+
 ## Installation
 
-Install the development version of the package directly from GitHub
+Install the development version of `peakPantheR`can directly from GitHub
 with:
 
 ``` r
 # Install devtools
 if(!require("devtools")) install.packages("devtools")
-devtools::install_github("phenomecentre/peakPantheR")
-```
-
-If the dependencies `mzR` and `MSnbase` are not successfully installed,
-`Bioconductor` must be added to the default repositories with:
-
-``` r
-setRepositories(ind=1:2)
+devtools::install_github("phenomecentre/peakPantheR", ref="develop")
 ```
 
 ## Usage
@@ -60,11 +57,11 @@ information:
 More information is available in the following vignettes:
 
   - [Getting Started with
-    peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/inst/doc/getting-started.html)
+    peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/getting-started.html)
   - [Real Time
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/inst/doc/real-time-annotation.html)
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/real-time-annotation.html)
   - [Parallel
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/inst/doc/parallel-annotation.html)
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/parallel-annotation.html)
 
 ## Copyright
 
@@ -75,4 +72,4 @@ As a summary, the GPLv3 license requires attribution, inclusion of
 copyright and license information, disclosure of source code and
 changes. Derivative work must be available under the same terms.
 
-© National Phenome Centre (2018)
+© National Phenome Centre (2019)
