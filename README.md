@@ -4,8 +4,8 @@
 # peakPantheR <img src="man/figures/peakPantheR-logo.png" align="right" />
 
 [![Build
-Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=develop)](https://travis-ci.org/phenomecentre/peakPantheR)
-[![codecov](https://codecov.io/gh/phenomecentre/peakPantheR/branch/develop/graph/badge.svg)](https://codecov.io/gh/phenomecentre/peakPantheR/branch/develop)
+Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR)
+[![codecov](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master/graph/badge.svg)](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master)
 [![DOI](https://zenodo.org/badge/116680214.svg)](https://zenodo.org/badge/latestdoi/116680214)
 
 # peakPantheR
@@ -20,11 +20,11 @@ pre-defined features in MS files (*e.g. compounds, fragments, adducts,
 …*). It is designed for:
 
   - **Real time** feature detection and integration (see [Real Time
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/real-time-annotation.html))
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/real-time-annotation.html))
       - process `multiple` compounds in `one` file at a time
   - **Post-acquisition** feature detection, integration and reporting
     (see [Parallel
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/parallel-annotation.html))
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/parallel-annotation.html))
       - process `multiple` compounds in `multiple` files in `parallel`,
         store results in a `single` object
 
@@ -57,11 +57,11 @@ information:
 More information is available in the following vignettes:
 
   - [Getting Started with
-    peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/getting-started.html)
+    peakPantheR](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/getting-started.html)
   - [Real Time
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/real-time-annotation.html)
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/real-time-annotation.html)
   - [Parallel
-    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/develop/doc/parallel-annotation.html)
+    Annotation](http://htmlpreview.github.io/?https://github.com/phenomecentre/peakPantheR/blob/master/doc/parallel-annotation.html)
 
 ## Copyright
 
