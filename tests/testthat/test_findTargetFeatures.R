@@ -49,7 +49,7 @@ test_that('default parameters, skewedGaussian, guess params, sampling 250, no ve
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=FALSE))
 
   # Check result table
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
 
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 0)
@@ -73,7 +73,7 @@ test_that('trigger fitCurve TryCatch, with verbose', {
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
   
   # Check result messages (no timing)
   expect_equal(length(result_foundPeaks$messages), 3)
@@ -98,7 +98,7 @@ test_that('failed fit (fitCurve status 0/5/-1), with verbose', {
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
   
   # Check result messages (no timing)
   expect_equal(length(result_foundPeaks$messages), 3)
@@ -115,7 +115,7 @@ test_that('mzMin mzMax cannot be calculated due to rtMin (#3) rtMax (#4) outside
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 3)
@@ -151,7 +151,7 @@ test_that('rtMin rtMax cannot be found, fit is rejected, verbose', {
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table only
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 4)
@@ -186,7 +186,7 @@ test_that('mz cannot be calculated, fit is rejected, verbose', {
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table only
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 3)
@@ -195,10 +195,11 @@ test_that('mz cannot be calculated, fit is rejected, verbose', {
 
 # No other curveModel currently available
 
+if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
 test_that('ratio of fit residuals at apex or across maximum is superior to "maxApexResidualRatio", fit is rejected, verbose', {
   # Cpd3 fit fails, detected using the apex residuals ratio
   # Need another sample, same ROI
-  
+
   ## Prepare data
   tmp_singleSpectraDataPath <- system.file('cdf/KO/ko18.CDF', package = "faahKO")
   tmp_raw_data  						<- MSnbase::readMSData(tmp_singleSpectraDataPath, centroided=TRUE, mode='onDisk')
@@ -221,23 +222,23 @@ test_that('ratio of fit residuals at apex or across maximum is superior to "maxA
   tmp_cFit4           <- list(amplitude=26628.505498512375, center=3708.088, sigma=0.064131129861254479, gamma=0.0015719426982490699, fitStatus=2, curveModel="skewedGaussian")
   class(tmp_cFit4)    <- 'peakPantheR_curveFit'
   tmp_found_curveFit  <- list(tmp_cFit1, tmp_cFit2, tmp_cFit3, tmp_cFit4)
-  
+
   # expected results
   expected_foundPeaks <- list(peakTable=tmp_found_peakTable, curveFit=tmp_found_curveFit)
-  
+
   # expected messages
   expected_messages   <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2\n", "Fit of ROI #3 is unsuccessful (apex residuals is 0.45 of max fit intensity, max intensity residuals is 0.46 of max fit intensity)\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4\n")
-  
+
   # results (output, warnings and messages)
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
-  
+
   # Check result table only
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
-  
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
+
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 5)
   expect_equal(result_foundPeaks$messages[1:4], expected_messages)
-})
+  }) }
 
 test_that('change params for window #3', {
   # input params
@@ -281,7 +282,7 @@ test_that('change sampling', {
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(input_ROIsDataPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=50, verbose=FALSE))
   
   # Check result table
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 0)
@@ -315,7 +316,7 @@ test_that('In fit ratio calculation, special case when "IntRawApex" cannot be de
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmp_DataPoints, tmp_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
   
   # Check result table only
-  expect_equal(result_foundPeaks$result, expected_foundPeaks)
+  expect_equal(result_foundPeaks$result, expected_foundPeaks, tolerance=1e-6)
   
   # Check result messages
   expect_equal(length(result_foundPeaks$messages), 3)
