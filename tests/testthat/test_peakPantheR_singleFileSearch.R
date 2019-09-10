@@ -60,8 +60,8 @@ test_that('no peakStatistic, no plotEICsPath, no getAcquTime, no FIR, no verbose
 
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
 
@@ -89,8 +89,8 @@ test_that('peakStatistic, no plotEICsPath, no getAcquTime, no FIR, no verbose', 
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   
@@ -118,8 +118,8 @@ test_that('no peakStatistic, no plotEICsPath, with getAcquTime, no FIR, verbose'
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   
@@ -150,8 +150,8 @@ test_that('no peakStatistic, with plotEICsPath, no getAcquTime, no FIR, verbose'
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   
@@ -185,8 +185,8 @@ test_that('peakStatistic, plotEICsPath, getAcquTime, FIR, verbose', {
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   
@@ -261,8 +261,8 @@ test_that('no targetFeatures on import, no peakStatistic', {
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   
@@ -293,8 +293,8 @@ test_that('no targetFeatures on import, peakStatistic', {
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   
@@ -330,8 +330,8 @@ test_that('no features found, no FIR', {
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   
@@ -372,8 +372,8 @@ test_that('one feature not found (#3), use FIR', {
   
   # Check results
   expect_equal(result_singleFileSearch$result$TIC, expected_TIC)
-  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable)
-  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit)
+  expect_equal(result_singleFileSearch$result$peakTable, expected_peakTable, tolerance=1e-6)
+  expect_equal(result_singleFileSearch$result$curveFit, expected_curveFit, tolerance=1e-6)
   expect_equal(result_singleFileSearch$result$ROIsDataPoint, expected_ROIsDataPoint)
   expect_equal(result_singleFileSearch$result$acquTime, expected_acquTime)
   

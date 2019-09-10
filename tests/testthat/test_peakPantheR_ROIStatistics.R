@@ -69,7 +69,7 @@ test_that('3 files, save EICS, mean IS RT, save IS fit, with sampleColour, verbo
   # Check mean IS RT
   expect_true(file.exists(expected_path_CSV))
   saved_CSV       <- read.csv(expected_path_CSV, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
-  expect_equal(saved_CSV, expected_meanIS)
+  expect_equal(saved_CSV, expected_meanIS, tolerance=1e-4)
   
   # Check messages (no filepaths)
   expect_equal(length(result_ROIstatsV$messages), 64)
@@ -148,7 +148,7 @@ test_that('3 files, no save EICs, mean IS RT, no IS fit, without sampleColour, v
   # Check mean IS RT
   expect_true(file.exists(expected_path_CSV))
   saved_CSV       <- read.csv(expected_path_CSV, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
-  expect_equal(saved_CSV, expected_meanIS)
+  expect_equal(saved_CSV, expected_meanIS, tolerance=1e-4)
   
   # Check messages (no filepaths)
   expect_equal(length(result_ROIstatsV$messages), 47)
@@ -294,7 +294,7 @@ test_that('parallel give the same result: 3 files, no save EICs, mean IS RT, sav
   # Check mean IS RT
   expect_true(file.exists(expected_path_CSV))
   saved_CSV       <- read.csv(expected_path_CSV, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
-  expect_equal(saved_CSV, expected_meanIS)
+  expect_equal(saved_CSV, expected_meanIS, tolerance=1e-4)
   
   # Check messages (no filepaths)
   expect_equal(length(result_ROIstats_parallel$messages), 20)
