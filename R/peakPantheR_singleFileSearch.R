@@ -30,6 +30,8 @@
 #' Regions (FIR) when a feature is not found.  Compounds as row are identical to
 #' \code{targetFeatTable}, columns are \code{rtMin} (float in seconds),
 #' \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
+#' @param centroided (bool) use TRUE if the data is centroided, used by
+#' \code{\link[MSnbase]{readMSData}} when reading the raw data file
 #' @param verbose (bool) If TRUE message calculation progress, time taken and
 #' number of features found
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
@@ -213,7 +215,7 @@
 #' @export
 peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL,
-    verbose = TRUE, ...) {
+    centroided = TRUE, verbose = TRUE, ...) {
     stime <- Sys.time()
     # Check input
     resInp <- singleFileSearch_checkInput(singleSpectraDataPath,targetFeatTable,
@@ -224,7 +226,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     
     # Read file
     raw_data <- MSnbase::readMSData(singleSpectraDataPath,
-                                    centroided = TRUE, mode = "onDisk")
+                                    centroided = centroided, mode = "onDisk")
     
     # Get TIC
     TICvalue <- sum(MSnbase::tic(raw_data))

@@ -5,7 +5,7 @@
 \title{Search, integrate and report targeted features in a multiple spectra}
 \usage{
 peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
-    resetWorkers = 1, verbose = TRUE, ...)
+    resetWorkers = 1, centroided = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation
@@ -27,6 +27,9 @@ potentially impacting performance (need to wait until all \code{ncores *
 resetWorkers} files are processed before restarting the cluster), shutting
 down the workers processes regularly will ensure the OS can reallocate memory
 more efficiently. For values >1, ensure sufficient system memory is available}
+
+\item{centroided}{(bool) use TRUE if the data is centroided, used by
+\code{\link[MSnbase]{readMSData}} when reading the raw data files}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken,
 number of features found (total and matched to targets) and failures}
