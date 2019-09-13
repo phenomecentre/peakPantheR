@@ -163,8 +163,7 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
             stop("Check input \"rt\" must be numeric of length 2")}
         if (is(rt, "matrix") | is(rt, "data.frame")) {
             if (ncol(rt) != 2) {
-                stop(paste0('Check input \"rt\" must be a matrix or data.frame',
-                            ' with 2 columns'))
+                stop('Check input \"rt\" must be a matrix or data.frame with 2 columns')
             }
         }
     }
