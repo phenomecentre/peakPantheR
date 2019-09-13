@@ -1,4 +1,5 @@
 #####################################################################
+#####################################################################
 ## Constructor for \link{peakPantheRAnnotation-class}, initialising a new
 ## peakPantheRAnnotation with default values, \code{spectraPaths} and
 ## \code{targetFeatTable} will set the samples and compounds to process

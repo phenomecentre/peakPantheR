@@ -127,13 +127,13 @@ plotEICFit_checkInput <- function(ROIDataPointSampleList, curveFitSampleList,
             (nbSpl == length(rtMax))) {
             plotFit <- TRUE
         } else {
-            stop(paste0('"\"curveFitSampleList\", \"rtMin\", \"rtMax\" and ',
-                        '\"ROIDataPointSampleList\" must be the same length'))
+            stop('"\"curveFitSampleList\", \"rtMin\", \"rtMax\" and ',
+                        '\"ROIDataPointSampleList\" must be the same length')
         }
     } else {
         if (verbose) {
-            message(paste0('\"curveFitSampleList\", \"rtMin\" or \"rtMax\" no',
-                            ' provided, curveFit will not be plotted'))
+            message('\"curveFitSampleList\", \"rtMin\" or \"rtMax\" no',
+                            ' provided, curveFit will not be plotted')
         }
     }
 

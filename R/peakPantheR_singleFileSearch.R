@@ -303,12 +303,12 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
             stop("Check input, FIR must be a data.frame not ", class(FIR)) }
         # FIR number of rows
         if (dim(FIR)[1] != dim(targetFeatTable)[1]) {
-            stop(paste0('Check input, FIR must have the same number of rows as',
-                        ' targetFeatTable')) }
+            stop('Check input, FIR must have the same number of rows as',
+                        ' targetFeatTable') }
         # FIR columns
         if (!all(c("mzMin", "mzMax", "rtMin", "rtMax") %in% colnames(FIR))) {
-            stop(paste0('Check input, FIR must have \"mzMin\", \"mzMax\", ',
-                        '\"rtMin\" and \"rtMax\" as columns')) }
+            stop('Check input, FIR must have \"mzMin\", \"mzMax\", ',
+                        '\"rtMin\" and \"rtMax\" as columns') }
         useFIR <- TRUE
     }
     return(list(specPath=singleSpectraDataPath, plotPath=plotEICsPath,
@@ -346,8 +346,8 @@ singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
 
     } else { #No targeted features, initialise empty integration res and EICs
         if (verbose) {
-            message(paste0("- No target features passed in 'targetFeatTable', ",
-                            "no integration, only TIC will be reported -")) }
+            message("- No target features passed in 'targetFeatTable', ",
+                            "no integration, only TIC will be reported -") }
         if (peakStatistic) {
             finalOutput <- data.frame(matrix(vector(), 0, 17,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
