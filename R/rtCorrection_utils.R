@@ -4,7 +4,7 @@
 #' previously fitted compounds. The `method` and `params` are used to select and
 #' parametrise the retention time correction method employed. If `diagnostic` is
 #' TRUE, RT correction diagnostic plots are returned (specific to each
-#' correction method).
+#' correction method). This method will generate a peakPanthe
 #'
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as
 #' rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str),
@@ -40,11 +40,7 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
     # RANSAC
     if (method == 'RANSAC') {
 
-        ## TODO
-        # Check the parameters
-        # Run parameter guess
-        #   guess_RANSAC()
-
+        ransac_correctionFunction <- fit_RANSAC(corrected_targetFeatTable$rt, targetFeatTable$rt_dev_sec)
         ## Guess parameters and bounds
         #if (useGuess) {
         #  new_params   <- guess_RANSAC(x, y)
@@ -167,11 +163,28 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
 ## -----------------------------------------------------------------------------
 ##        RANSAC
 ## -----------------------------------------------------------------------------
+# New retention time calibration functions can be added below
+# All fitting functions should have the following argument:
+# of the kind x = theoreticalrt, y= Deviation (Rt_{obs} - Rt{exp}}
 
 # guess_RANSAC <- function(x, y)
 
-# fit_RANSAC <- function()
 
+predict_Rt <- function(x, y, correctionFunction=NA) {
+
+    if (is.na(correctionFunction)) {
+        stop("correctionFunction must be a previously fitted retention
+        time correction expression")
+    }
+
+}
+# fit_RANSAC <- function()
+fit_LOESS <- function(x, y, ...) {
+
+    loess_fun <- loess()
+
+    return (loess_fun)
+}
 # predict_RANSAC <- function()
 
 
