@@ -163,7 +163,8 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
             stop("Check input \"rt\" must be numeric of length 2")}
         if (is(rt, "matrix") | is(rt, "data.frame")) {
             if (ncol(rt) != 2) {
-                stop('Check input \"rt\" must be a matrix or data.frame with 2 columns')
+                stop('Check input \"rt\" must be a ',
+                'matrix or data.frame with 2 columns')
             }
         }
     }
@@ -175,8 +176,8 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
             stop("Check input \"mz\" must be numeric of length 2")}
         if (is(mz, "matrix") | is(mz, "data.frame")) {
             if (ncol(mz) != 2) {
-                stop(paste0('Check input \"mz\" must be a matrix or data.frame',
-                            ' with 2 columns'))
+                stop('Check input \"mz\" must be a matrix',
+                'or data.frame with 2 columns')
             }
         }
     }
@@ -186,13 +187,13 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
             (class(mz) %in% c("matrix", "data.frame"))) {
             if (nrow(rt) != nrow(mz)) {
                 if ((nrow(rt) != 1) & (nrow(mz) != 1)) {
-                    stop(paste0('Check input \"rt\" and \"mz\" matrix or ',
-                                'data.frame must have the same number of rows'))
+                    stop('Check input \"rt\" and \"mz\" matrix or '.
+                    'data.frame must have the same number of rows')
                 } else {
                     if (verbose) {
-                        message(paste0('\"rt\" or \"mz\" is a ',
-                        'matrix/data.frame of 1 row, rows will be duplicated ',
-                        'to match the other input'))
+                        message('\"rt\" or \"mz\" is a matrix/data.frame',
+                        'of 1 row, rows will be duplicated to match',
+                        'the other input')
                     }
                 }
             }
