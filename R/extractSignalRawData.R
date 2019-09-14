@@ -177,7 +177,7 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
         if (is(mz, "matrix") | is(mz, "data.frame")) {
             if (ncol(mz) != 2) {
                 stop('Check input \"mz\" must be a matrix',
-                'or data.frame with 2 columns')
+                ' or data.frame with 2 columns')
             }
         }
     }
@@ -192,8 +192,8 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
                 } else {
                     if (verbose) {
                         message('\"rt\" or \"mz\" is a matrix/data.frame',
-                        'of 1 row, rows will be duplicated to match',
-                        'the other input')
+                        ' of 1 row, rows will be duplicated to match',
+                        ' the other input')
                     }
                 }
             }
