@@ -111,12 +111,9 @@
 #' # 71 3409.051 522.2 588416
 extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
     stime <- Sys.time()
-    
-    # Check input check type and dimensions msLevel
-    extractSignalRawData_checkInput(rt, mz, msLevel, verbose)
 
-    # Init output
-    outParam <- extractSignalRawData_init(rt, mz, verbose)
+    # Check input and init output
+    outParam <- extractSignalRawData_init(rt, mz, msLevel, verbose)
     rt <- outParam$rt
     mz <- outParam$mz
     empty_res <- outParam$empty_res
@@ -201,29 +198,36 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
     }
 }
 # Init outputs
-extractSignalRawData_init <- function(rt, mz, verbose) {
+extractSignalRawData_init <- function(rt, mz, msLevel, verbose) {
+    # Check input check type and dimensions msLevel
+    extractSignalRawData_checkInput(rt, mz, msLevel, verbose)
+
     # Express rt and mz as matrix/data.frame of identical number of rows
     # replace missing by whole range
     if (missing(rt)) {
         rt <- matrix(c(-Inf, Inf), ncol = 2, byrow = TRUE)}
     if (missing(mz)) {
         mz <- matrix(c(-Inf, Inf), ncol = 2, byrow = TRUE)}
+
     # convert all numeric to matrix
     if (is(rt, "numeric")) {
         rt <- matrix(rt, nrow = 1, ncol = 2, byrow = TRUE)}
     if (is(mz, "numeric")) {
         mz <- matrix(mz, nrow = 1, ncol = 2, byrow = TRUE)}
+
     # Replicate rows (if only 1) to match other
     if (nrow(rt) == 1) {
         rt <- matrix(rep(as.numeric(rt), nrow(mz)), ncol = 2, byrow = TRUE)}
     if (nrow(mz) == 1) {
         mz <- matrix(rep(as.numeric(mz), nrow(rt)), ncol = 2, byrow = TRUE)}
     # now both rt and mz are either a matrix/data.frame of matching size
+
     if (verbose) {message("Reading data from ", nrow(rt), " windows")}
     # empty output
     empty_res <- lapply(vector("list", nrow(rt)), function(x) {
         data.frame(rt = numeric(), mz = numeric(), int = integer())
     })
+
     return(list(rt=rt, mz=mz, empty_res=empty_res))
 }
 # Extract scans for all windows in a single file access
