@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -1413,8 +1414,7 @@ background-color: inherit;
 tt, code, pre {
 font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
 }
-h1, h2, h3, h4, h5, h6 {
-font-family: Helvetica, Arial, sans-serif;
+h1, h2, h3, h4, h5, h6 { font-family: Helvetica, Arial, sans-serif;
 margin: 1.2em 150px 0.6em 0em;
 
 padding-left: 65px;
@@ -1461,14 +1461,12 @@ font-weight: bold;
 font-weight: bold;
 }
 
-code {
-background-color: #f0f0f0;
+code { background-color: #f0f0f0;
 color: #404040;
 font-size: 90%;
 }
 
-.figure {
-margin: 0em 0px 0.5em;
+.figure { margin: 0em 0px 0.5em;
 }
 img {
 max-width: 100%;
@@ -1478,11 +1476,6 @@ padding: 0px 150px 0px 130px;
 p > img {
 padding-left: 65px;
 padding-right: 0px;
-}
-td > img {
-padding: 0px;
-max-width: 100%;
-display: inline;
 }
 img.smallfigure {
 padding-left: 195px;
@@ -1581,8 +1574,7 @@ code > span.st { color: #40A040; }
 code > span.co { color: #808080; font-style: italic; } 
 code > span.ot { color: #2020F0; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #E07020; } 
-code > span.er { color: #FF0000; } 
+code > span.fu { color: #E07020; }  code > span.er { color: #FF0000; } 
 code > span.identifier { color: #404040; }
 code > span.number { color: #D02070; }
 code > span.string { color: #40A040; }
@@ -1608,7 +1600,6 @@ padding-left: 65px;
 
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -1682,48 +1673,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -1807,7 +1759,7 @@ div.tocify {
 <h1 class="title toc-ignore">Parallel Annotation</h1>
 <h4 class="date">2019-06-09</h4>
 <h4 class="package">Package</h4>
-<p>peakPantheR 0.99.0</p>
+<p>peakPantheR 0.99.2</p>
 
 </div>
 
@@ -1825,8 +1777,14 @@ document.addEventListener("DOMContentLoaded", function() {
       links[i].target = '_blank';
 });
 </script>
-<p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.10/peakPantheR">peakPantheR</a></em><br />
+<p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.9/peakPantheR">peakPantheR</a></em><br />
 <strong>Authors</strong>: Arnaud Wolfer<br /></p>
+<pre><code>#&gt; Warning in fun(libname, pkgname): mzR has been built against a different Rcpp version (1.0.1)
+#&gt; than is installed on your system (1.0.2). This might lead to errors
+#&gt; when loading mzR. If you encounter such issues, please send a report,
+#&gt; including the output of sessionInfo() to the Bioc support forum at 
+#&gt; https://support.bioconductor.org/. For details see also
+#&gt; https://github.com/sneumann/mzR/wiki/mzR-Rcpp-compiler-linker-issue.</code></pre>
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>The <code>peakPantheR</code> package is designed for the detection, integration and
@@ -1836,12 +1794,12 @@ adducts, …</em>).</p>
 compounds in <strong>multiple</strong> files in <strong>parallel</strong> and store results in a
 <strong>single</strong> object. It can be employed to integrate a large number of expected
 features across a dataset.</p>
-<p>Using the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> raw MS dataset as an example, this vignette
+<p>Using the <em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> raw MS dataset as an example, this vignette
 will:</p>
 <ul>
 <li>Detail the <strong>Parallel Annotation</strong> concept</li>
 <li>Apply the <strong>Parallel Annotation</strong> to a subset of pre-defined features in the
-<em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> dataset</li>
+<em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> dataset</li>
 </ul>
 <div id="abbreviations" class="section level2">
 <h2><span class="header-section-number">1.1</span> Abbreviations</h2>
@@ -1917,23 +1875,23 @@ fallback integration regions (FIR), with all samples</li>
 <div id="parallel-annotation-example" class="section level1">
 <h1><span class="header-section-number">3</span> Parallel Annotation Example</h1>
 <p>We can target 2 pre-defined features in 6 raw MS spectra file from the
-<em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package using <code>peakPantheR_parallelAnnotation()</code>. For more
+<em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> package using <code>peakPantheR_parallelAnnotation()</code>. For more
 details on the installation and input data employed, please consult the
 <a href="getting-started.html">Getting Started with peakPantheR</a> vignette.</p>
 <div id="input-data" class="section level2">
 <h2><span class="header-section-number">3.1</span> Input Data</h2>
-<p>First the paths to 3 MS file from the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> are located and used
+<p>First the paths to 3 MS file from the <em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> are located and used
 as input spectras. In this example these 3 samples are considered as
 representative of the whole run (e.g. Quality Control samples):</p>
 <pre class="r"><code>library(faahKO)
 ## file paths
-input_spectraPaths  &lt;- c(system.file('cdf/KO/ko15.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/KO/ko16.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/KO/ko18.CDF', package = &quot;faahKO&quot;))
+input_spectraPaths  &lt;- c(system.file(&#39;cdf/KO/ko15.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/KO/ko16.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/KO/ko18.CDF&#39;, package = &quot;faahKO&quot;))
 input_spectraPaths
-#&gt; [1] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF&quot;
-#&gt; [2] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF&quot;
-#&gt; [3] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF&quot;</code></pre>
+#&gt; [1] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko15.CDF&quot;
+#&gt; [2] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko16.CDF&quot;
+#&gt; [3] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko18.CDF&quot;</code></pre>
 <p>Two targeted features (<em>e.g. compounds, fragments, adducts, …</em>) are defined
 and stored in a table with as columns:</p>
 <ul>
@@ -1961,11 +1919,11 @@ input_targetFeatTable[,c(3:8)] &lt;- sapply(input_targetFeatTable[,c(3:8)],
 <col width="10%"></col>
 <col width="12%"></col>
 <col width="10%"></col>
-<col width="14%"></col>
+<col width="13%"></col>
 <col width="10%"></col>
 <col width="16%"></col>
 <col width="10%"></col>
-<col width="15%"></col>
+<col width="16%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2006,12 +1964,12 @@ input_targetFeatTable[,c(3:8)] &lt;- sapply(input_targetFeatTable[,c(3:8)],
 during the fitting procedure:</p>
 <pre class="r"><code># spectra Metadata
 input_spectraMetadata  &lt;- data.frame(matrix(c(&quot;sample type 1&quot;, &quot;sample type 2&quot;, 
-                                            &quot;sample type 1&quot;), 3, 1, 
-                                            dimnames=list(c(),c(&quot;sampleType&quot;))),
-                                    stringsAsFactors=FALSE)</code></pre>
-<table style="width:21%;">
+                            &quot;sample type 1&quot;), 3, 1, 
+                            dimnames=list(c(),c(&quot;sampleType&quot;))),
+                            stringsAsFactors=FALSE)</code></pre>
+<table style="width:22%;">
 <colgroup>
-<col width="20%"></col>
+<col width="22%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2039,8 +1997,8 @@ additional information and parameters such as <code>spectraMetadata</code>, <cod
 and if they should be used (<code>useUROI=TRUE</code>, <code>useFIR=TRUE</code>):</p>
 <pre class="r"><code>library(peakPantheR)
 init_annotation &lt;- peakPantheRAnnotation(spectraPaths = input_spectraPaths,
-                                        targetFeatTable = input_targetFeatTable,
-                                        spectraMetadata = input_spectraMetadata)</code></pre>
+                        targetFeatTable = input_targetFeatTable,
+                        spectraMetadata = input_spectraMetadata)</code></pre>
 <p>The resulting <code>peakPantheRAnnotation</code> object is not annotated, does not contain
 and use <code>uROI</code> and <code>FIR</code></p>
 <pre class="r"><code>init_annotation
@@ -2060,37 +2018,37 @@ annotation_result &lt;- peakPantheR_parallelAnnotation(init_annotation, ncores=0
 #&gt;   uROI:  FALSE
 #&gt;   FIR:   FALSE
 #&gt; ----- ko15 -----
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.55 secs
+#&gt; Data read in: 1.17 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-#&gt; Found 2/2 features in 0.04 secs
-#&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.1 secs
-#&gt; ----- ko16 -----
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
-#&gt; Check input, mzMLPath must be a .mzML
-#&gt; Reading data from 2 windows
-#&gt; Data read in: 0.54 secs
-#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
 #&gt; Found 2/2 features in 0.03 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1 secs
-#&gt; ----- ko18 -----
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
+#&gt; Feature search done in: 1.75 secs
+#&gt; ----- ko16 -----
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
 #&gt; Check input, mzMLPath must be a .mzML
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.52 secs
+#&gt; Data read in: 1.14 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
 #&gt; Found 2/2 features in 0.02 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 0.97 secs
+#&gt; Feature search done in: 1.58 secs
+#&gt; ----- ko18 -----
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
+#&gt; Check input, mzMLPath must be a .mzML
+#&gt; Reading data from 2 windows
+#&gt; Data read in: 1.53 secs
+#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
+#&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2
+#&gt; Found 2/2 features in 0.02 secs
+#&gt; Peak statistics done in: 0 secs
+#&gt; Feature search done in: 2.01 secs
 #&gt; Annotation object cannot be reordered by sample acquisition date
 #&gt; ----------------
-#&gt; Parallel annotation done in: 4.01 secs
+#&gt; Parallel annotation done in: 6.36 secs
 #&gt;   0 failure(s)
 
 # successful fit
@@ -2140,25 +2098,29 @@ with the argument <code>ncores</code>:</p>
 <pre class="r"><code># create a colourScale based on the sampleType
 uniq_sType &lt;- sort(unique(spectraMetadata(updated_annotation)$sampleType),
                     na.last=TRUE)
-col_sType  &lt;- unname( setNames(c('blue', 'red'),
+col_sType  &lt;- unname( setNames(c(&#39;blue&#39;, &#39;red&#39;),
                 c(uniq_sType))[spectraMetadata(updated_annotation)$sampleType] )
 
+# create a temporary location to save the diagnotic (otherwise provide the path
+# to the selected location)
+output_folder &lt;- tempdir()
+
 # output fit diagnostic to disk
-outputAnnotationDiagnostic(updated_annotation, saveFolder='/output_folder/', 
+outputAnnotationDiagnostic(updated_annotation, saveFolder=output_folder, 
                             savePlots=TRUE, sampleColour=col_sType, 
                             verbose=TRUE, ncores=2)</code></pre>
 <p>The data saved in <code>annotationParameters_summary.csv</code> is as follow:</p>
 <table>
-<caption>Table continues below</caption>
+<caption><span class="caption-title">Table continues below</caption></span><br>
 <colgroup>
 <col width="10%"></col>
 <col width="12%"></col>
 <col width="5%"></col>
-<col width="14%"></col>
+<col width="13%"></col>
 <col width="11%"></col>
 <col width="15%"></col>
 <col width="15%"></col>
-<col width="15%"></col>
+<col width="16%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2196,15 +2158,15 @@ outputAnnotationDiagnostic(updated_annotation, saveFolder='/output_folder/',
 </tbody>
 </table>
 <table>
-<caption>Table continues below</caption>
+<caption><span class="caption-title">Table continues below</caption></span><br>
 <colgroup>
-<col width="16%"></col>
-<col width="5%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="16%"></col>
-<col width="12%"></col>
+<col width="15%"></col>
+<col width="4%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
+<col width="15%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2303,7 +2265,7 @@ generated by <code>outputAnnotationDiagnostic()</code>) and initialise a
 the analysis to run. <code>uROIExist</code> is established depending on the <code>.csv</code> uROI
 column, and will only be set to TRUE if no <code>NA</code> are present. It is possible to
 reset the <code>FIR</code> values with the <code>uROI</code> windows using <code>resetFIR()</code>.</p>
-<pre class="r"><code>update_csv_path &lt;- '/path_to_new_csv/'
+<pre class="r"><code>update_csv_path &lt;- &#39;/path_to_new_csv/&#39;
 
 # load csv
 new_annotation &lt;- peakPantheR_loadAnnotationParamsCSV(update_csv_path)
@@ -2328,28 +2290,28 @@ same processing can be applied to all study samples. <code>resetAnnotation()</co
 reinitialise all the results and modify the samples or compounds targeted as
 required:</p>
 <pre class="r"><code>## new files
-new_spectraPaths   &lt;- c(system.file('cdf/KO/ko15.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/WT/wt15.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/KO/ko16.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/WT/wt16.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/KO/ko18.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/WT/wt18.CDF', package = &quot;faahKO&quot;))
+new_spectraPaths   &lt;- c(system.file(&#39;cdf/KO/ko15.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/WT/wt15.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/KO/ko16.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/WT/wt16.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/KO/ko18.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/WT/wt18.CDF&#39;, package = &quot;faahKO&quot;))
 
 new_spectraPaths
-#&gt; [1] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF&quot;
-#&gt; [2] &quot;C:/R/R-3.6.0/library/faahKO/cdf/WT/wt15.CDF&quot;
-#&gt; [3] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF&quot;
-#&gt; [4] &quot;C:/R/R-3.6.0/library/faahKO/cdf/WT/wt16.CDF&quot;
-#&gt; [5] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF&quot;
-#&gt; [6] &quot;C:/R/R-3.6.0/library/faahKO/cdf/WT/wt18.CDF&quot;</code></pre>
+#&gt; [1] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko15.CDF&quot;
+#&gt; [2] &quot;C:/R/R-3.6.1/library/faahKO/cdf/WT/wt15.CDF&quot;
+#&gt; [3] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko16.CDF&quot;
+#&gt; [4] &quot;C:/R/R-3.6.1/library/faahKO/cdf/WT/wt16.CDF&quot;
+#&gt; [5] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko18.CDF&quot;
+#&gt; [6] &quot;C:/R/R-3.6.1/library/faahKO/cdf/WT/wt18.CDF&quot;</code></pre>
 <p>Below we define the metadata of these new samples:</p>
 <pre class="r"><code>## new spectra metadata
 new_spectraMetadata  &lt;- data.frame(matrix(c(&quot;KO&quot;, &quot;WT&quot;, &quot;KO&quot;, &quot;WT&quot;, &quot;KO&quot;, &quot;WT&quot;),
                                         6, 1, dimnames=list(c(), c(&quot;Group&quot;))), 
                                     stringsAsFactors=FALSE)</code></pre>
-<table style="width:10%;">
+<table style="width:11%;">
 <colgroup>
-<col width="9%"></col>
+<col width="11%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2408,12 +2370,12 @@ features:</p>
 <pre class="r"><code># annotate files serially
 new_annotation_result &lt;- peakPantheR_parallelAnnotation(new_annotation, 
                                                         ncores=0, verbose=FALSE)
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
 
 # successful fit
 nbSamples(new_annotation_result$annotation)
@@ -2437,19 +2399,23 @@ new_annotation_result$failures
 <p>The final fits can be saved to disk with <code>outputAnnotationDiagnostic()</code>:</p>
 <pre class="r"><code># create a colourScale based on the sampleType
 uniq_group &lt;- sort(unique(spectraMetadata(final_annotation)$Group),na.last=TRUE)
-col_group  &lt;- unname( setNames(c('blue', 'red'),
+col_group  &lt;- unname( setNames(c(&#39;blue&#39;, &#39;red&#39;),
                     c(uniq_sType))[spectraMetadata(final_annotation)$Group] )
 
+# create a temporary location to save the diagnotic (otherwise provide the path
+# to the selected location)
+final_output_folder &lt;- tempdir()
+
 # output fit diagnostic to disk
-outputAnnotationDiagnostic(final_annotation, saveFolder='/final_output_folder/',
+outputAnnotationDiagnostic(final_annotation, saveFolder=final_output_folder,
                         savePlots=TRUE, sampleColour=col_group, verbose=TRUE)</code></pre>
 <p>For each processed sample, a <code>peakTables</code> contains all the fit information for
 all compounds targeted. <code>annotationTable( , column)</code> will group the values
 across all samples and compounds for any <code>peakTables</code> column:</p>
 <pre class="r"><code># peakTables for the first sample
 peakTables(final_annotation)[[1]]</code></pre>
-<table style="width:90%;">
-<caption>Table continues below</caption>
+<table style="width:92%;">
+<caption><span class="caption-title">Table continues below</caption></span><br>
 <colgroup>
 <col width="11%"></col>
 <col width="11%"></col>
@@ -2458,7 +2424,7 @@ peakTables(final_annotation)[[1]]</code></pre>
 <col width="11%"></col>
 <col width="11%"></col>
 <col width="11%"></col>
-<col width="13%"></col>
+<col width="15%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2495,14 +2461,14 @@ peakTables(final_annotation)[[1]]</code></pre>
 </tr>
 </tbody>
 </table>
-<table style="width:99%;">
-<caption>Table continues below</caption>
+<table>
+<caption><span class="caption-title">Table continues below</caption></span><br>
 <colgroup>
 <col width="23%"></col>
 <col width="25%"></col>
 <col width="16%"></col>
 <col width="16%"></col>
-<col width="16%"></col>
+<col width="18%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2530,12 +2496,12 @@ peakTables(final_annotation)[[1]]</code></pre>
 </tr>
 </tbody>
 </table>
-<table style="width:71%;">
+<table style="width:72%;">
 <colgroup>
 <col width="22%"></col>
 <col width="25%"></col>
 <col width="11%"></col>
-<col width="12%"></col>
+<col width="13%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2561,7 +2527,7 @@ peakTables(final_annotation)[[1]]</code></pre>
 </tbody>
 </table>
 <pre class="r"><code># Extract the found peak area for all compounds and all samples
-annotationTable(final_annotation, column='peakArea')</code></pre>
+annotationTable(final_annotation, column=&#39;peakArea&#39;)</code></pre>
 <table>
 <colgroup>
 <col width="69%"></col>
@@ -2577,32 +2543,32 @@ annotationTable(final_annotation, column='peakArea')</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<td align="center"><strong>C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.6.1/library/faahKO/cdf/KO/ko15.CDF</strong></td>
 <td align="center">18409123</td>
 <td align="center">35467323</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>C:/R/R-3.6.0/library/faahKO/cdf/WT/wt15.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.6.1/library/faahKO/cdf/WT/wt15.CDF</strong></td>
 <td align="center">23871264</td>
 <td align="center">37965512</td>
 </tr>
 <tr class="odd">
-<td align="center"><strong>C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.6.1/library/faahKO/cdf/KO/ko16.CDF</strong></td>
 <td align="center">24775525</td>
 <td align="center">37795145</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>C:/R/R-3.6.0/library/faahKO/cdf/WT/wt16.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.6.1/library/faahKO/cdf/WT/wt16.CDF</strong></td>
 <td align="center">25012332</td>
 <td align="center">34499235</td>
 </tr>
 <tr class="odd">
-<td align="center"><strong>C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.6.1/library/faahKO/cdf/KO/ko18.CDF</strong></td>
 <td align="center">21909568</td>
 <td align="center">36717689</td>
 </tr>
 <tr class="even">
-<td align="center"><strong>C:/R/R-3.6.0/library/faahKO/cdf/WT/wt18.CDF</strong></td>
+<td align="center"><strong>C:/R/R-3.6.1/library/faahKO/cdf/WT/wt18.CDF</strong></td>
 <td align="center">21729136</td>
 <td align="center">36961319</td>
 </tr>
@@ -2612,9 +2578,13 @@ annotationTable(final_annotation, column='peakArea')</code></pre>
 <code>outputAnnotationResult()</code>. These <code>.csv</code> will contain the compound metadata,
 spectra metadata and a file for each column of peakTables (with samples as rows
 and compounds as columns):</p>
-<pre class="r"><code># save
-outputAnnotationResult(final_annotation, saveFolder='/final_output_folder/', 
-                        annotationName='ProjectName', verbose=TRUE)
+<pre class="r"><code># create a temporary location to save the diagnotic (otherwise provide the path
+# to the selected location)
+final_output_folder &lt;- tempdir()
+
+# save
+outputAnnotationResult(final_annotation, saveFolder=final_output_folder, 
+                        annotationName=&#39;ProjectName&#39;, verbose=TRUE)
 #&gt; Compound metadata saved at /final_output_folder/ProjectName_cpdMetadata.csv
 #&gt; Spectra metadata saved at 
 #&gt;     /final_output_folder/ProjectName_spectraMetadata.csv
@@ -2671,6 +2641,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <script type="text/x-mathjax-config">

@@ -100,13 +100,16 @@ fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
                 "\"lower_bounds\" and \"upper_bounds\"") }
         # init_params is list
         if (typeof(params$init_params) != "list") {
-            stop("Error: \"params$init_params\" must be a list of parameters") }
+            stop("Error: \"params$init_params\" must be a list of parameters")
+        }
         # lower_bounds is list
         if (typeof(params$lower_bounds) != "list") {
-            stop("Error: \"params$lower_bounds\" must be a list of parameters")}
+            stop("Error: \"params$lower_bounds\" must be a list of parameters")
+        }
         # upper_bounds is list
         if (typeof(params$upper_bounds) != "list") {
-            stop("Error: \"params$upper_bounds\" must be a list of parameters")}
+            stop("Error: \"params$upper_bounds\" must be a list of parameters")
+        }
     }
     
     # Init

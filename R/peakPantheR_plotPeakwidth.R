@@ -115,15 +115,15 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
         # NA in acquTime
         if (any(is.na(acquTime))) {
             if (verbose) {
-                message(paste0('Warning: \"acquTime\" contains NA, run order ',
-                                'will not be plotted')) }
+                message('Warning: \"acquTime\" contains NA, run order ',
+                                'will not be plotted') }
             acquTime <- NULL  # helps with unittesting as dates in $plot_env
                                 # introduce OS differences
         } else {
             # check acquTime length
             if (nbSpl != length(acquTime)) {
-                stop(paste0('Error: \"apexValue\" and \"acquTime\" must be the',
-                            ' same length'))
+                stop('Error: \"apexValue\" and \"acquTime\" must be the',
+                            ' same length')
             } else { useRunOrder <- TRUE }
         }
     }
@@ -132,8 +132,8 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
     if (!is.null(widthMin) & !is.null(widthMax)) {
         # check length
         if ((nbSpl != length(widthMin)) | (nbSpl != length(widthMax))) {
-            stop(paste0('\"apexValue\", \"widthMin\" and \"widthMax\" must be ',
-                        'the same length'))
+            stop('\"apexValue\", \"widthMin\" and \"widthMax\" must be ',
+                        'the same length')
         } else { useWidth <- TRUE }
     }
     # set default colour (add a sample color ID that will be match in the plot)
@@ -143,8 +143,8 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
             colourSpl <- sampleColour
         } else {
             if (verbose) {
-                message(paste0('Warning: sampleColour length must match the ',
-                                'number of samples; default colour used')) }
+                message('Warning: sampleColour length must match the ',
+                                'number of samples; default colour used') }
         }
     }
     sampleIDColour <- paste("spl", seq(1, nbSpl), sep = "")

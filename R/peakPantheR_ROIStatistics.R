@@ -90,8 +90,8 @@ ROIStatistics_init_checks <- function(referenceSpectraFiles, saveFolder, ROI,
                             IS_ROI, sampleColour, verbose){
     # check input reference spectra
     if (typeof(referenceSpectraFiles) != "character") {
-        stop(paste0('Check input, \"referenceSpectraFiles\" must be a vector ',
-                    'of spectra paths'))
+        stop('Check input, \"referenceSpectraFiles\" must be a vector ',
+                    'of spectra paths')
     }
     nbSpectra <- length(referenceSpectraFiles)
 
@@ -105,9 +105,9 @@ ROIStatistics_init_checks <- function(referenceSpectraFiles, saveFolder, ROI,
         if ((typeof(sampleColour) != "character") |
             (length(sampleColour) != nbSpectra)) {
             if (verbose) {
-                message(paste0('Check input, \"sampleColour\" must be a vector',
+                message('Check input, \"sampleColour\" must be a vector',
                     ' of colour of same length as \"referenceSpectraFile\": ',
-                    'default colour used instead')) }
+                    'default colour used instead') }
             sampleColour <- rep("black", nbSpectra) }
     } else { sampleColour <- rep("black", nbSpectra) }
 
@@ -154,8 +154,8 @@ ROIStatistics_check_ROI_meanIS <- function(ROI, IS_ROI, verbose) {
                             'saved') }}
         } else {
             if (verbose) {
-                message(paste0('ROI is not a data.frame, EICs of ROI windows ',
-                                'will not be saved')) }}
+                message('ROI is not a data.frame, EICs of ROI windows ',
+                                'will not be saved') }}
     } else {
         if (verbose) {
             message("No ROI provided, EICs of ROI windows will not be saved") }}
@@ -177,8 +177,8 @@ ROIStatistics_check_ROI_meanIS <- function(ROI, IS_ROI, verbose) {
                             'will not be calculated') }}
         } else {
             if (verbose) {
-                message(paste0('IS_ROI is not a data.frame, mean RT of IS will',
-                                ' not be calculated')) }}
+                message('IS_ROI is not a data.frame, mean RT of IS will',
+                                ' not be calculated') }}
     } else {
         if (verbose) {
             message("No IS_ROI provided, mean RT of IS will not be calculated")
