@@ -4,7 +4,7 @@ context('getAcquisitionDatemzML()')
 
 
 test_that('get Acquisition date from real mzML, verbose', {
-  realmzML      <- system.file("testdata/test_fakemzML.mzML", package = "peakPantheR")
+  realmzML      <- system.file("extdata/test_fakemzML.mzML", package = "peakPantheR")
   expected_date <- as.POSIXct("2017-07-13 21:06:14")
 
   # results (output, warnings and messages)
@@ -18,7 +18,7 @@ test_that('get Acquisition date from real mzML, verbose', {
 })
 
 test_that('get Acquisition date from real mzML, no verbose', {
-  realmzML      <- system.file("testdata/test_fakemzML.mzML", package = "peakPantheR")
+  realmzML      <- system.file("extdata/test_fakemzML.mzML", package = "peakPantheR")
   expected_date <- as.POSIXct("2017-07-13 21:06:14")
 
   # results (output, warnings and messages)
@@ -62,7 +62,7 @@ test_that('detect not an mzML, no verbose', {
 
 test_that('detect wrong XML, verbose', {
   # create wrong XML file
-  xmlfile               <- XML::xmlParse(system.file("testdata/test_fakemzML.mzML", package = "peakPantheR"))
+  xmlfile               <- XML::xmlParse(system.file("extdata/test_fakemzML.mzML", package = "peakPantheR"))
   xmltop                <- XML::xmlRoot(xmlfile)
   XML::xmlName(xmltop)  <- "not_indexedmzML"
   wrongmzML             <- file.path(tempdir(),'notValidXML.mzML')
@@ -83,7 +83,7 @@ test_that('detect wrong XML, verbose', {
 
 test_that('detect wrong XML, no verbose', {
   # create wrong XML file
-  xmlfile               <- XML::xmlParse(system.file("testdata/test_fakemzML.mzML", package = "peakPantheR"))
+  xmlfile               <- XML::xmlParse(system.file("extdata/test_fakemzML.mzML", package = "peakPantheR"))
   xmltop                <- XML::xmlRoot(xmlfile)
   XML::xmlName(xmltop)  <- "not_indexedmzML"
   wrongmzML             <- file.path(tempdir(),'notValidXML.mzML')

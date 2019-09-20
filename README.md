@@ -1,5 +1,4 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # peakPantheR <img src="man/figures/peakPantheR-logo.png" align="right" />
 
@@ -34,7 +33,15 @@ and *mzData* format as data import is achieved using Bioconductor’s
 
 ## Installation
 
-Install the development version of `peakPantheR`can directly from GitHub
+To install this package, start R (version "3.6") and enter:
+
+``` r
+if (!requireNamespace("BiocManager", quietly = TRUE))
+   install.packages("BiocManager")
+BiocManager::install("peakPantheR")
+```
+
+Install the development version of `peakPantheR` directly from GitHub
 with:
 
 ``` r
