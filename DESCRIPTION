@@ -1,6 +1,6 @@
 Package: peakPantheR
 Title: Peak Picking and Annotation of High Resolution Experiments
-Version: 0.99.1
+Version: 0.99.2
 Date: 2019-09-03
 Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-5856-3218")),
 	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "ctb", comment = c(ORCID = "0000-0001-8271-9294")),
@@ -27,10 +27,11 @@ License: GPL-3
 BugReports: https://github.com/phenomecentre/peakPantheR/issues/new
 URL: https://github.com/phenomecentre/peakPantheR
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 6.1.1
 Suggests: testthat,
 	faahKO,
+	msdata,
 	knitr,
 	rmarkdown,
 	pander,

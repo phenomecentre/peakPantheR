@@ -30,6 +30,8 @@
 #' Regions (FIR) when a feature is not found.  Compounds as row are identical to
 #' \code{targetFeatTable}, columns are \code{rtMin} (float in seconds),
 #' \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
+#' @param centroided (bool) use TRUE if the data is centroided, used by
+#' \code{\link[MSnbase]{readMSData}} when reading the raw data file
 #' @param verbose (bool) If TRUE message calculation progress, time taken and
 #' number of features found
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
@@ -213,7 +215,7 @@
 #' @export
 peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL,
-    verbose = TRUE, ...) {
+    centroided = TRUE, verbose = TRUE, ...) {
     stime <- Sys.time()
     # Check input
     resInp <- singleFileSearch_checkInput(singleSpectraDataPath,targetFeatTable,
@@ -224,7 +226,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     
     # Read file
     raw_data <- MSnbase::readMSData(singleSpectraDataPath,
-                                    centroided = TRUE, mode = "onDisk")
+                                    centroided = centroided, mode = "onDisk")
     
     # Get TIC
     TICvalue <- sum(MSnbase::tic(raw_data))
@@ -301,12 +303,12 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
             stop("Check input, FIR must be a data.frame not ", class(FIR)) }
         # FIR number of rows
         if (dim(FIR)[1] != dim(targetFeatTable)[1]) {
-            stop(paste0('Check input, FIR must have the same number of rows as',
-                        ' targetFeatTable')) }
+            stop('Check input, FIR must have the same number of rows as',
+                        ' targetFeatTable') }
         # FIR columns
         if (!all(c("mzMin", "mzMax", "rtMin", "rtMax") %in% colnames(FIR))) {
-            stop(paste0('Check input, FIR must have \"mzMin\", \"mzMax\", ',
-                        '\"rtMin\" and \"rtMax\" as columns')) }
+            stop('Check input, FIR must have \"mzMin\", \"mzMax\", ',
+                        '\"rtMin\" and \"rtMax\" as columns') }
         useFIR <- TRUE
     }
     return(list(specPath=singleSpectraDataPath, plotPath=plotEICsPath,
@@ -344,8 +346,8 @@ singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
 
     } else { #No targeted features, initialise empty integration res and EICs
         if (verbose) {
-            message(paste0("- No target features passed in 'targetFeatTable', ",
-                            "no integration, only TIC will be reported -")) }
+            message("- No target features passed in 'targetFeatTable', ",
+                            "no integration, only TIC will be reported -") }
         if (peakStatistic) {
             finalOutput <- data.frame(matrix(vector(), 0, 17,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",

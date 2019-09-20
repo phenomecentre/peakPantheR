@@ -383,9 +383,9 @@ findTargetFeatures_findRTproperties <- function(i, ROI, tmp_EIC, fittedCurve,
 
     # rtMin, rtMax (look for 0.5% from max int, by rolling away from apex
     # until match or too many iterations)
-    rtMin <- findTargetFeatures_findRTMin(i, ROI, fittedCurve, rt,
+    rtMin <- findTargetFeatures_findRTMinMax(min=TRUE, i, ROI, fittedCurve, rt,
                                             maxIntPredicted, sampling, verbose)
-    rtMax <- findTargetFeatures_findRTMax(i, ROI, fittedCurve, rt,
+    rtMax <- findTargetFeatures_findRTMinMax(min=FALSE, i, ROI, fittedCurve, rt,
                                             maxIntPredicted, sampling, verbose)
 
     # if rtMin or rtMax cannot be determined the fit is not successful
@@ -399,85 +399,55 @@ findTargetFeatures_findRTproperties <- function(i, ROI, tmp_EIC, fittedCurve,
                 maxIntPredicted = maxIntPredicted))
 }
 
-## find rtMin for a fitted curve
-findTargetFeatures_findRTMin <- function(i, ROI, fittedCurve, rt,
+## find rtMin or rtMax for a fitted curve
+findTargetFeatures_findRTMinMax <- function(min, i, ROI, fittedCurve, rt,
                                         maxIntPredicted, sampling, verbose) {
-    # rtMin (look for 0.5% from max int, by rolling away from apex
+    # rtMin/Max (look for 0.5% from max int, by rolling away from apex
     # until match or too many iterations)
     peakLim_int <- 0.005 * maxIntPredicted
     deltaRt     <- ROI$rtMax[i] - ROI$rtMin[i]
 
-    # Up slope init
-    rtMin   <- as.numeric(NA)
-    boxMin  <- rt
-    cntr    <- 0
+    rtMinMax    <- as.numeric(NA)
+    cntr        <- 0
+    if (min) { boxMin <- rt } else { boxMax <- rt } # Up / Down slope init
 
-    # search rtMin
-    while (is.na(rtMin) & cntr <= 8) {
-        # box moves earlier in rt each time
-        boxMax  <- boxMin
-        boxMin  <- boxMax - deltaRt
-        cntr    <- cntr + 1
-        grid_rt <- seq(from = boxMax, to = boxMin,
-                        by = ((boxMin - boxMax)/(sampling - 1)))
+    # search rtMin/Max
+    while (is.na(rtMinMax) & cntr <= 8) {
+        cntr <- cntr + 1
+
+        if (min) {
+            # box moves earlier in rt each time
+            boxMax  <- boxMin
+            boxMin  <- boxMax - deltaRt
+            grid_rt <- seq(from = boxMax, to = boxMin,
+                            by = ((boxMin - boxMax)/(sampling - 1)))
             # reverse order for up slope
+        } else {
+            # box moves later in rt each time
+            boxMin  <- boxMax
+            boxMax  <- boxMin + deltaRt
+            grid_rt <- seq(from = boxMin, to = boxMax,
+                            by = ((boxMax - boxMin)/(sampling - 1)))
+        }
+
         slope_int <- predictCurve(fittedCurve, x = grid_rt)
         cutoff_pt <- match(-1, sign(slope_int - peakLim_int))
             # pos of 1st point past cutoff
         if (is.na(cutoff_pt)) {
-            rtMin <- as.numeric(NA)
+            rtMinMax <- as.numeric(NA)
             next
         }
         key_pt  <- c(cutoff_pt - 1, cutoff_pt)
-            # points left and right from rtMin
-        rtMin   <- stats::approx(x = slope_int[key_pt], y = grid_rt[key_pt],
+            # points left and right from rtMin/Max
+        rtMinMax <- stats::approx(x = slope_int[key_pt], y = grid_rt[key_pt],
                                 xout = peakLim_int)$y
             # linear interpolation of exact rt
     }
-    if (is.na(rtMin) & verbose) {
-        message("Warning: rtMin cannot be determined for ROI #", i)}
+    if (is.na(rtMinMax) & verbose) {
+        if (min) { txt <- 'rtMin' } else { txt <- 'rtMax' }
+        message("Warning: ", txt, " cannot be determined for ROI #", i)}
 
-    return(rtMin)
-}
-
-## find rtMax for a fitted curve
-findTargetFeatures_findRTMax <- function(i, ROI, fittedCurve, rt,
-                                        maxIntPredicted, sampling, verbose) {
-    # rtMax (look for 0.5% from max int, by rolling away from apex
-    # until match or too many iterations)
-    peakLim_int <- 0.005 * maxIntPredicted
-    deltaRt     <- ROI$rtMax[i] - ROI$rtMin[i]
-
-    # Down slope init
-    rtMax   <- as.numeric(NA)
-    boxMax  <- rt
-    cntr    <- 0
-
-    # search rtMax
-    while (is.na(rtMax) & cntr <= 8) {
-        # box moves later in rt each time
-        boxMin  <- boxMax
-        boxMax  <- boxMin + deltaRt
-        cntr    <- cntr + 1
-        grid_rt <- seq(from = boxMin, to = boxMax,
-                        by = ((boxMax - boxMin)/(sampling - 1)))
-        slope_int <- predictCurve(fittedCurve, x = grid_rt)
-        cutoff_pt <- match(-1, sign(slope_int - peakLim_int))
-            # pos of 1st point past cutoff
-        if (is.na(cutoff_pt)) {
-            rtMax <- as.numeric(NA)
-            next
-        }
-        key_pt  <- c(cutoff_pt - 1, cutoff_pt)
-            # points left and right from rtMax
-        rtMax   <- stats::approx(x = slope_int[key_pt], y = grid_rt[key_pt],
-                                xout = peakLim_int)$y
-            # linear interpolation of exact rt
-    }
-    if (is.na(rtMax) & verbose) {
-        message("Warning: rtMax cannot be determined for ROI #", i)}
-
-    return(rtMax)
+    return(rtMinMax)
 }
 
 ## find mz, mzMin and mzMax at a given rtMin rtMax

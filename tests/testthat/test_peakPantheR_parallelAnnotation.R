@@ -652,7 +652,7 @@ test_that('already annotated message in verbose', {
 
 test_that('catch file that doesnt exist, catch error processing, no file left', {
   # Object fully initialised
-  wrongPaths      <- c("aaa/bbb.cdf", system.file("testdata/test_fakemzML.mzML", package = "peakPantheR"))
+  wrongPaths      <- c("aaa/bbb.cdf", system.file("extdata/test_fakemzML.mzML", package = "peakPantheR"))
   initAnnotation  <- peakPantheRAnnotation(spectraPaths=wrongPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Expected annotation

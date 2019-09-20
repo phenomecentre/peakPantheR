@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -1413,8 +1414,7 @@ background-color: inherit;
 tt, code, pre {
 font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
 }
-h1, h2, h3, h4, h5, h6 {
-font-family: Helvetica, Arial, sans-serif;
+h1, h2, h3, h4, h5, h6 { font-family: Helvetica, Arial, sans-serif;
 margin: 1.2em 150px 0.6em 0em;
 
 padding-left: 65px;
@@ -1461,14 +1461,12 @@ font-weight: bold;
 font-weight: bold;
 }
 
-code {
-background-color: #f0f0f0;
+code { background-color: #f0f0f0;
 color: #404040;
 font-size: 90%;
 }
 
-.figure {
-margin: 0em 0px 0.5em;
+.figure { margin: 0em 0px 0.5em;
 }
 img {
 max-width: 100%;
@@ -1478,11 +1476,6 @@ padding: 0px 150px 0px 130px;
 p > img {
 padding-left: 65px;
 padding-right: 0px;
-}
-td > img {
-padding: 0px;
-max-width: 100%;
-display: inline;
 }
 img.smallfigure {
 padding-left: 195px;
@@ -1581,8 +1574,7 @@ code > span.st { color: #40A040; }
 code > span.co { color: #808080; font-style: italic; } 
 code > span.ot { color: #2020F0; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #E07020; } 
-code > span.er { color: #FF0000; } 
+code > span.fu { color: #E07020; }  code > span.er { color: #FF0000; } 
 code > span.identifier { color: #404040; }
 code > span.number { color: #D02070; }
 code > span.string { color: #40A040; }
@@ -1608,7 +1600,6 @@ padding-left: 65px;
 
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -1682,48 +1673,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -1807,7 +1759,7 @@ div.tocify {
 <h1 class="title toc-ignore">Real Time Annotation</h1>
 <h4 class="date">2019-06-09</h4>
 <h4 class="package">Package</h4>
-<p>peakPantheR 0.99.0</p>
+<p>peakPantheR 0.99.2</p>
 
 </div>
 
@@ -1825,8 +1777,14 @@ document.addEventListener("DOMContentLoaded", function() {
       links[i].target = '_blank';
 });
 </script>
-<p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.10/peakPantheR">peakPantheR</a></em><br />
+<p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.9/peakPantheR">peakPantheR</a></em><br />
 <strong>Authors</strong>: Arnaud Wolfer<br /></p>
+<pre><code>#&gt; Warning in fun(libname, pkgname): mzR has been built against a different Rcpp version (1.0.1)
+#&gt; than is installed on your system (1.0.2). This might lead to errors
+#&gt; when loading mzR. If you encounter such issues, please send a report,
+#&gt; including the output of sessionInfo() to the Bioc support forum at 
+#&gt; https://support.bioconductor.org/. For details see also
+#&gt; https://github.com/sneumann/mzR/wiki/mzR-Rcpp-compiler-linker-issue.</code></pre>
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>The <code>peakPantheR</code> package is designed for the detection, integration and
@@ -1837,12 +1795,12 @@ compounds in <strong>one</strong> file at a time.
 It therefore can be deployed on a LC-MS instrument to integrate a set of
 pre-defined features (<em>e.g. spiked standards</em>) as soon as the acquisition of a
 sample is completed.</p>
-<p>Using the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> raw MS dataset as an example, this vignette
+<p>Using the <em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> raw MS dataset as an example, this vignette
 will:</p>
 <ul>
 <li>Detail the <strong>Real Time Annotation</strong> concept</li>
 <li>Apply the <strong>Real Time Annotation</strong> to a subset of pre-defined features in the
-<em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> dataset</li>
+<em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> dataset</li>
 </ul>
 <div id="abbreviations" class="section level2">
 <h2><span class="header-section-number">1.1</span> Abbreviations</h2>
@@ -1894,18 +1852,18 @@ statistic</em>)</li>
 <div id="real-time-annotation-example" class="section level1">
 <h1><span class="header-section-number">3</span> Real Time Annotation Example</h1>
 <p>In the following example we will target two pre-defined features in a single raw
-MS spectra file from the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package. For more details on the
+MS spectra file from the <em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> package. For more details on the
 installation and input data employed, please consult the
 <a href="getting-started.html">Getting Started with peakPantheR</a> vignette.</p>
 <div id="input-data" class="section level2">
 <h2><span class="header-section-number">3.1</span> Input Data</h2>
-<p>The path to a MS file from the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> is located and used as
+<p>The path to a MS file from the <em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> is located and used as
 input spectra:</p>
 <pre class="r"><code>library(faahKO)
 ## file paths
-input_spectraPath  &lt;- c(system.file('cdf/KO/ko15.CDF', package = &quot;faahKO&quot;))
+input_spectraPath  &lt;- c(system.file(&#39;cdf/KO/ko15.CDF&#39;, package = &quot;faahKO&quot;))
 input_spectraPath
-#&gt; [1] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF&quot;</code></pre>
+#&gt; [1] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko15.CDF&quot;</code></pre>
 <p>Two targeted features (<em>e.g. compounds, fragments, adducts, …</em>) are defined
 and stored in a table with as columns:</p>
 <ul>
@@ -1933,11 +1891,11 @@ input_targetFeatTable[,c(3:8)] &lt;- sapply(input_targetFeatTable[,c(3:8)],
 <col width="10%"></col>
 <col width="12%"></col>
 <col width="10%"></col>
-<col width="14%"></col>
+<col width="13%"></col>
 <col width="10%"></col>
 <col width="16%"></col>
 <col width="10%"></col>
-<col width="15%"></col>
+<col width="16%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -1987,21 +1945,21 @@ annotation &lt;- peakPantheR_singleFileSearch(
                                     targetFeatTable = input_targetFeatTable,
                                     peakStatistic = TRUE,
                                     verbose = TRUE)
-#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.
+#&gt; Polarity can not be extracted from netCDF files, please set manually the polarity with the &#39;polarity&#39; method.
 #&gt; Reading data from 2 windows
-#&gt; Data read in: 0.53 secs
+#&gt; Data read in: 1.2 secs
 #&gt; Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
-#&gt; Found 2/2 features in 0.02 secs
+#&gt; Found 2/2 features in 0.03 secs
 #&gt; Peak statistics done in: 0 secs
-#&gt; Feature search done in: 1.02 secs</code></pre>
+#&gt; Feature search done in: 1.77 secs</code></pre>
 <pre class="r"><code>annotation$TIC
 #&gt; [1] 2410533091</code></pre>
 <pre class="r"><code>## acquisition time cannot be extracted from NetCDF files
 annotation$acquTime
 #&gt; [1] NA</code></pre>
 <pre class="r"><code>annotation$peakTable</code></pre>
-<table style="width:97%;">
-<caption>Table continues below</caption>
+<table style="width:99%;">
+<caption><span class="caption-title">Table continues below</caption></span><br>
 <colgroup>
 <col width="11%"></col>
 <col width="15%"></col>
@@ -2009,7 +1967,7 @@ annotation$acquTime
 <col width="15%"></col>
 <col width="15%"></col>
 <col width="11%"></col>
-<col width="13%"></col>
+<col width="15%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2044,14 +2002,14 @@ annotation$acquTime
 </tbody>
 </table>
 <table>
-<caption>Table continues below</caption>
+<caption><span class="caption-title">Table continues below</caption></span><br>
 <colgroup>
 <col width="14%"></col>
 <col width="22%"></col>
-<col width="24%"></col>
+<col width="23%"></col>
 <col width="10%"></col>
 <col width="13%"></col>
-<col width="14%"></col>
+<col width="15%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2082,12 +2040,12 @@ annotation$acquTime
 </tr>
 </tbody>
 </table>
-<table style="width:82%;">
+<table style="width:83%;">
 <colgroup>
 <col width="18%"></col>
 <col width="18%"></col>
 <col width="22%"></col>
-<col width="23%"></col>
+<col width="25%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -2313,7 +2271,7 @@ file annotation:</p>
 <li><code>peakStatistic</code> if <code>TRUE</code> calculates additional peak statistics:
 <em>‘ppm_error’</em>, <em>‘rt_dev_sec’</em>, <em>‘tailing factor’</em> and <em>‘asymmetry factor’</em></li>
 <li><code>plotEICsPath</code> if not <code>NA</code> will save a <code>.png</code> of all ROI EICs at the path
-provided (expects <code>'filepath/filename.png'</code> for example). If <code>NA</code> no plot is
+provided (expects <code>&#39;filepath/filename.png&#39;</code> for example). If <code>NA</code> no plot is
 saved</li>
 <li><code>getAcquTime</code> if <code>TRUE</code> the sample acquisition date-time is extracted from the
 <code>mzML</code> metadata. Acquisition time cannot be extracted from other file formats.
@@ -2361,6 +2319,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <script type="text/x-mathjax-config">
