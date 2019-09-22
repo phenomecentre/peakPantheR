@@ -20,9 +20,7 @@ multiple mass spectrometry data files. To exit press \code{ESC} in the
 command line.
 }
 \examples{
-# Start graphical interface, press 'ESC' in the command line to stop
-\dontrun{
-peakPantheR_start_GUI()
-}
+print("Start graphical interface, press 'ESC' in the command line to stop")
+# peakPantheR_start_GUI()
 
 }
