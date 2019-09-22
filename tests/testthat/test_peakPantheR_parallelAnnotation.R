@@ -110,6 +110,7 @@ ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTabl
 expected_dataPoints <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 
+if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
 test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   # Object fully initialised
   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
@@ -130,7 +131,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   # Expected message
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
-	# results (output, warnings and messages)
+  # results (output, warnings and messages)
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
@@ -140,8 +141,9 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   # Check messages (centwave output)
   expect_equal(length(result_parallelAnnotation$messages), 3)
   expect_equal(result_parallelAnnotation$messages, expected_message)
-})
+  }) }
 
+if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
 test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   # Object fully initialised
   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
@@ -166,13 +168,13 @@ test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (centwave output)
   expect_equal(length(result_parallelAnnotation$messages), 2)
   expect_equal(result_parallelAnnotation$messages, expected_message)
-})
+  }) }
 
 test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, modify parameter with ... (cpd #3)', {
   # Cpd 3 is now found in 3rd file
@@ -334,6 +336,7 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
   expect_equal(result_parallelAnnotation$messages, expected_message)
 })
 
+if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
 test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no verbose', {
   # Object fully initialised
   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=input_uROI, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
@@ -364,7 +367,7 @@ test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no v
   # Check messages (centwave output)
   expect_equal(length(result_parallelAnnotation$messages), 3)
   expect_equal(result_parallelAnnotation$messages, expected_message)
-})
+  }) }
 
 test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
   # sample 2 is missing
@@ -407,7 +410,7 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=TRUE, verbose=TRUE))
 
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (no timing)
@@ -456,7 +459,7 @@ test_that('parallel (with cluster reset): 3 files, (1 missing), 4 compounds, uRO
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=1, verbose=TRUE))
   
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
   
   # Check messages (no timing)
@@ -505,7 +508,7 @@ test_that('parallel (without cluster reset): 3 files, (1 missing), 4 compounds, 
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=0, verbose=TRUE))
   
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
   
   # Check messages (no timing)
@@ -527,7 +530,7 @@ test_that('serial and parallel (with cluster reset) give the same result: 3 file
   result_parallel <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=1, verbose=TRUE))
 
   # Check results
-  expect_equal(result_serial$result, result_parallel$result)
+  expect_equal(result_serial$result, result_parallel$result, tolerance=1e-6)
 })
 
 test_that('serial and parallel (without cluster reset) give the same result: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
@@ -544,7 +547,7 @@ test_that('serial and parallel (without cluster reset) give the same result: 3 f
   result_parallel <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=0, verbose=TRUE))
   
   # Check results
-  expect_equal(result_serial$result, result_parallel$result)
+  expect_equal(result_serial$result, result_parallel$result, tolerance=1e-6)
 })
 
 test_that('change to resetWorkers alters the number of parallel cluster reset', {
@@ -588,7 +591,7 @@ test_that('change to resetWorkers alters the number of parallel cluster reset', 
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=2, verbose=TRUE))
   
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
   
   # Check messages (no timing)
@@ -639,7 +642,7 @@ test_that('already annotated message in verbose', {
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=TRUE, verbose=TRUE))
   
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
   
   # Check messages (no timing)
@@ -649,7 +652,7 @@ test_that('already annotated message in verbose', {
 
 test_that('catch file that doesnt exist, catch error processing, no file left', {
   # Object fully initialised
-  wrongPaths      <- c("aaa/bbb.cdf", system.file("testdata/test_fakemzML.mzML", package = "peakPantheR"))
+  wrongPaths      <- c("aaa/bbb.cdf", system.file("extdata/test_fakemzML.mzML", package = "peakPantheR"))
   initAnnotation  <- peakPantheRAnnotation(spectraPaths=wrongPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
   # Expected annotation
@@ -662,7 +665,7 @@ test_that('catch file that doesnt exist, catch error processing, no file left', 
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=TRUE))
 
   # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   # cannot check the failure paths
   expect_equal(dim(result_parallelAnnotation$result$failures)[1], 2)
   expect_equal(dim(result_parallelAnnotation$result$failures)[2], 2)

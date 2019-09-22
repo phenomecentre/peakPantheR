@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -1413,8 +1414,7 @@ background-color: inherit;
 tt, code, pre {
 font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
 }
-h1, h2, h3, h4, h5, h6 {
-font-family: Helvetica, Arial, sans-serif;
+h1, h2, h3, h4, h5, h6 { font-family: Helvetica, Arial, sans-serif;
 margin: 1.2em 150px 0.6em 0em;
 
 padding-left: 65px;
@@ -1461,14 +1461,12 @@ font-weight: bold;
 font-weight: bold;
 }
 
-code {
-background-color: #f0f0f0;
+code { background-color: #f0f0f0;
 color: #404040;
 font-size: 90%;
 }
 
-.figure {
-margin: 0em 0px 0.5em;
+.figure { margin: 0em 0px 0.5em;
 }
 img {
 max-width: 100%;
@@ -1478,11 +1476,6 @@ padding: 0px 150px 0px 130px;
 p > img {
 padding-left: 65px;
 padding-right: 0px;
-}
-td > img {
-padding: 0px;
-max-width: 100%;
-display: inline;
 }
 img.smallfigure {
 padding-left: 195px;
@@ -1581,8 +1574,7 @@ code > span.st { color: #40A040; }
 code > span.co { color: #808080; font-style: italic; } 
 code > span.ot { color: #2020F0; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #E07020; } 
-code > span.er { color: #FF0000; } 
+code > span.fu { color: #E07020; }  code > span.er { color: #FF0000; } 
 code > span.identifier { color: #404040; }
 code > span.number { color: #D02070; }
 code > span.string { color: #40A040; }
@@ -1608,7 +1600,6 @@ padding-left: 65px;
 
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -1682,48 +1673,9 @@ summary {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -1807,7 +1759,7 @@ div.tocify {
 <h1 class="title toc-ignore">Getting Started with the peakPantheR package</h1>
 <h4 class="date">2019-06-09</h4>
 <h4 class="package">Package</h4>
-<p>peakPantheR 0.99.0</p>
+<p>peakPantheR 0.99.2</p>
 
 </div>
 
@@ -1825,8 +1777,14 @@ document.addEventListener("DOMContentLoaded", function() {
       links[i].target = '_blank';
 });
 </script>
-<p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.10/peakPantheR">peakPantheR</a></em><br />
+<p><strong>Package</strong>: <em><a href="https://bioconductor.org/packages/3.9/peakPantheR">peakPantheR</a></em><br />
 <strong>Authors</strong>: Arnaud Wolfer<br /></p>
+<pre><code>#&gt; Warning in fun(libname, pkgname): mzR has been built against a different Rcpp version (1.0.1)
+#&gt; than is installed on your system (1.0.2). This might lead to errors
+#&gt; when loading mzR. If you encounter such issues, please send a report,
+#&gt; including the output of sessionInfo() to the Bioc support forum at 
+#&gt; https://support.bioconductor.org/. For details see also
+#&gt; https://github.com/sneumann/mzR/wiki/mzR-Rcpp-compiler-linker-issue.</code></pre>
 <p>Package for <em>Peak Picking and ANnoTation of High resolution Experiments in R</em>,
 implemented in <code>R</code> and <code>Shiny</code></p>
 <div id="overview" class="section level1">
@@ -1849,7 +1807,7 @@ results in a <code>single</code> object</li>
 </ul>
 <p><code>peakPantheR</code> can process LC/MS data files in <em>NetCDF</em>, <em>mzML</em>/<em>mzXML</em> and
 <em>mzData</em> format as data import is achieved using Bioconductor’s
-<em><a href="https://bioconductor.org/packages/3.10/mzR">mzR</a></em> package.</p>
+<em><a href="https://bioconductor.org/packages/3.9/mzR">mzR</a></em> package.</p>
 </div>
 <div id="installation" class="section level1">
 <h1><span class="header-section-number">2</span> Installation</h1>
@@ -1874,13 +1832,13 @@ information:</p>
 <div id="ms-files" class="section level2">
 <h2><span class="header-section-number">3.1</span> MS files</h2>
 <p>For demonstration purpose we can annotate a set a set of raw MS spectra (in
-<em>NetCDF</em> format) provided by the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package. Briefly, this
+<em>NetCDF</em> format) provided by the <em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> package. Briefly, this
 subset of the data from <span class="citation">(Saghatelian et al. 2004)</span> invesigate the metabolic consequences
 of knocking out the fatty acid amide hydrolase (FAAH) gene in mice. The dataset
 consists of samples from the spinal cords of 6 knock-out and 6 wild-type mice.
 Each file contains data in centroid mode acquired in positive ion mode form
 200-600 m/z and 2500-4500 seconds.</p>
-<p>Below we install the <em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> package and locate raw CDF files of
+<p>Below we install the <em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> package and locate raw CDF files of
 interest:</p>
 <pre class="r"><code>if (!requireNamespace(&quot;BiocManager&quot;, quietly = TRUE))
     install.packages(&quot;BiocManager&quot;)
@@ -1888,13 +1846,13 @@ interest:</p>
 BiocManager::install(&quot;faahKO&quot;)</code></pre>
 <pre class="r"><code>library(faahKO)
 ## file paths
-input_spectraPaths  &lt;- c(system.file('cdf/KO/ko15.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/KO/ko16.CDF', package = &quot;faahKO&quot;),
-                        system.file('cdf/KO/ko18.CDF', package = &quot;faahKO&quot;))
+input_spectraPaths  &lt;- c(system.file(&#39;cdf/KO/ko15.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/KO/ko16.CDF&#39;, package = &quot;faahKO&quot;),
+                        system.file(&#39;cdf/KO/ko18.CDF&#39;, package = &quot;faahKO&quot;))
 input_spectraPaths
-#&gt; [1] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko15.CDF&quot;
-#&gt; [2] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko16.CDF&quot;
-#&gt; [3] &quot;C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF&quot;</code></pre>
+#&gt; [1] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko15.CDF&quot;
+#&gt; [2] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko16.CDF&quot;
+#&gt; [3] &quot;C:/R/R-3.6.1/library/faahKO/cdf/KO/ko18.CDF&quot;</code></pre>
 </div>
 <div id="expected-regions-of-interest" class="section level2">
 <h2><span class="header-section-number">3.2</span> Expected regions of interest</h2>
@@ -1911,7 +1869,7 @@ following information:</p>
 <li><code>mz</code> (m/z, optional / <code>NA</code>)</li>
 </ul>
 <p>Below we define 2 features of interest that are present in the
-<em><a href="https://bioconductor.org/packages/3.10/faahKO">faahKO</a></em> dataset and can be employed in subsequent vignettes:</p>
+<em><a href="https://bioconductor.org/packages/3.9/faahKO">faahKO</a></em> dataset and can be employed in subsequent vignettes:</p>
 <pre class="r"><code># targetFeatTable
 input_targetFeatTable &lt;- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
                         c(&quot;cpdID&quot;, &quot;cpdName&quot;, &quot;rtMin&quot;, &quot;rt&quot;, &quot;rtMax&quot;, &quot;mzMin&quot;, 
@@ -1927,11 +1885,11 @@ input_targetFeatTable[,c(1,3:8)] &lt;- sapply(input_targetFeatTable[,c(1,3:8)],
 <col width="10%"></col>
 <col width="12%"></col>
 <col width="10%"></col>
-<col width="14%"></col>
+<col width="13%"></col>
 <col width="10%"></col>
 <col width="16%"></col>
 <col width="10%"></col>
-<col width="15%"></col>
+<col width="16%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -1981,7 +1939,7 @@ input_targetFeatTable[,c(1,3:8)] &lt;- sapply(input_targetFeatTable[,c(1,3:8)],
 <h1>References</h1>
 <div id="refs" class="references">
 <div id="ref-Saghatelian04">
-<p>Saghatelian, A., S. A. Trauger, E. J. Want, E. G. Hawkins, G. Siuzdak, and B. F. Cravatt. 2004. “Assignment of Endogenous Substrates to Enzymes by Global Metabolite Profiling.” <em>Biochemistry</em> 43:14332–9. <a href="http://dx.doi.org/10.1021/bi0480335" class="uri">http://dx.doi.org/10.1021/bi0480335</a>.</p>
+<p>Saghatelian, A., S. A. Trauger, E. J. Want, E. G. Hawkins, G. Siuzdak, and B. F. Cravatt. 2004. “Assignment of Endogenous Substrates to Enzymes by Global Metabolite Profiling.” <em>Biochemistry</em> 43: 14332–9. <a href="http://dx.doi.org/10.1021/bi0480335">http://dx.doi.org/10.1021/bi0480335</a>.</p>
 </div>
 </div>
 </div>
@@ -2004,6 +1962,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <script type="text/x-mathjax-config">

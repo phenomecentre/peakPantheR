@@ -129,7 +129,7 @@ following information:
 
 Below we define 2 features of interest that are present in the 
 `r Biocpkg("faahKO")` dataset and can be employed in subsequent vignettes:
-```{r, eval = FALSE}
+```{r, eval=FALSE}
 # targetFeatTable
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
                         c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 

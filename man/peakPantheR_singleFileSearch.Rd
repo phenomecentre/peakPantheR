@@ -6,7 +6,7 @@
 \usage{
 peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
     peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE,
-    FIR = NULL, verbose = TRUE, ...)
+    FIR = NULL, centroided = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file
@@ -32,6 +32,9 @@ from the mzML metadata (the additional file access will impact run time)}
 Regions (FIR) when a feature is not found.  Compounds as row are identical to
 \code{targetFeatTable}, columns are \code{rtMin} (float in seconds),
 \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
+
+\item{centroided}{(bool) use TRUE if the data is centroided, used by
+\code{\link[MSnbase]{readMSData}} when reading the raw data file}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken and
 number of features found}

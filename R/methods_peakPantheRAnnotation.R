@@ -1243,8 +1243,8 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
     # not annotated, pass
     if (!outAnnotation@isAnnotated) {
         if (verbose) {
-            message(paste0('Warning: the object has not been annotated, return',
-                            ' the object untouched')) }
+            message('Warning: the object has not been annotated, return',
+                            ' the object untouched') }
         return(outAnnotation) }
     
     # uROI uROI doesn't exist, set uROI with min/max of found peaks (if NA, use
@@ -1267,8 +1267,8 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
 })
 # annotationParamsDiagnostic for uROI
 annotationParamsDiagnostic_uROI <- function(outAnnotation, verbose) {
-    if (verbose) { message(paste0('uROI will be set as mimimum/maximum of',
-                        ' found peaks (+/-5% of ROI in retention time)')) }
+    if (verbose) { message('uROI will be set as mimimum/maximum of',
+                        ' found peaks (+/-5% of ROI in retention time)') }
     # rt ROI 5% (no NA in ROI rtMin/rtMax)
     rtMargin <- (ROI(outAnnotation)$rtMax - ROI(outAnnotation)$rtMin) * 0.05
     # rtMin (min found peak -5% of ROI)
@@ -1276,8 +1276,8 @@ annotationParamsDiagnostic_uROI <- function(outAnnotation, verbose) {
         na.rm = TRUE, FUN.VALUE = numeric(1)))
     rtMinUROI <- rtMinUROI - rtMargin
     if (sum(is.infinite(rtMinUROI)) != 0) {
-        if (verbose) { message(paste0('uROI min rtMin which are NA are',
-                            ' replaced with ROI rtMin')) }
+        if (verbose) { message('uROI min rtMin which are NA are',
+                            ' replaced with ROI rtMin') }
         rtMinUROI[is.infinite(rtMinUROI)] <-
             outAnnotation@ROI[is.infinite(rtMinUROI), "rtMin"] }
     # rtMax (max found peak +5% of ROI)
@@ -1285,8 +1285,8 @@ annotationParamsDiagnostic_uROI <- function(outAnnotation, verbose) {
         na.rm = TRUE, FUN.VALUE = numeric(1)))
     rtMaxUROI <- rtMaxUROI + rtMargin
     if (sum(is.infinite(rtMaxUROI)) != 0) {
-        if (verbose) { message(paste0('uROI max rtMax which are NA are',
-                            ' replaced with ROI rtMax')) }
+        if (verbose) { message('uROI max rtMax which are NA are',
+                            ' replaced with ROI rtMax') }
         rtMaxUROI[is.infinite(rtMaxUROI)] <-
             outAnnotation@ROI[is.infinite(rtMaxUROI), "rtMax"] }
     # mzMin
@@ -1318,16 +1318,16 @@ annotationParamsDiagnostic_uROI <- function(outAnnotation, verbose) {
 }
 # annotationParamsDiagnostic for FIR
 annotationParamsDiagnostic_FIR <- function(outAnnotation, verbose) {
-    if (verbose) { message(paste0('FIR will be calculated as the median of',
-                        ' found \"rtMin\",\"rtMax\",\"mzMin\",\"mzMax\"')) }
+    if (verbose) { message('FIR will be calculated as the median of',
+                        ' found \"rtMin\",\"rtMax\",\"mzMin\",\"mzMax\"') }
 
     # rtMin
     rtMinFIR <- unname(vapply(annotationTable(outAnnotation, "rtMin"),
         stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
     if (sum(is.na(rtMinFIR)) != 0) {
         if (verbose) {
-            message(paste0('FIR median rtMin which are NA are replaced ',
-                            'with uROI rtMin')) }
+            message('FIR median rtMin which are NA are replaced ',
+                            'with uROI rtMin') }
         rtMinFIR[is.na(rtMinFIR)] <-
             outAnnotation@uROI[is.na(rtMinFIR), "rtMin"] }
 
@@ -1336,8 +1336,8 @@ annotationParamsDiagnostic_FIR <- function(outAnnotation, verbose) {
         stats::median, na.rm = TRUE, FUN.VALUE = numeric(1)))
     if (sum(is.na(rtMaxFIR)) != 0) {
         if (verbose) {
-            message(paste0('FIR median rtMax which are NA are replaced ',
-                            'with uROI rtMax')) }
+            message('FIR median rtMax which are NA are replaced ',
+                            'with uROI rtMax') }
         rtMaxFIR[is.na(rtMaxFIR)] <-
             outAnnotation@uROI[is.na(rtMaxFIR), "rtMax"] }
 
@@ -1484,8 +1484,8 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
 
     # Check object was annotated
     if (!object@isAnnotated) {
-        message(paste0('Warning: the object has not been annotated, return an',
-                        ' empty diagnostic plot list'))
+        message('Warning: the object has not been annotated, return an',
+                        ' empty diagnostic plot list')
         return(outList)
     }
     
@@ -1685,6 +1685,7 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
         ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
             device = "png", path = saveFolder, dpi = 100, width = 21,
             height = 29.7, units = "cm", limitsize = FALSE)
+        grDevices::dev.off()
         # output path
         if (verbose) {
             message("  Compound ", cpdNb, "/", nbCpd,
@@ -2096,8 +2097,8 @@ resetAnnot_newTargetFeatTable <- function(targetFeatTable, uROI, FIR,
     # reset to default
     .targetFeatTable <- targetFeatTable
     if (verbose) {
-        message(paste0('  New \"targetFeatTable\" value set (\"ROI\", ',
-                        '\"cpdID\", \"cpdName\"')) }
+        message('  New \"targetFeatTable\" value set (\"ROI\", ',
+                        '\"cpdID\", \"cpdName\"') }
     # uROI
     if (all(is.null(uROI))) {
         # Do not reuse old values if we change the compounds targeted
@@ -2105,8 +2106,8 @@ resetAnnot_newTargetFeatTable <- function(targetFeatTable, uROI, FIR,
             rtMax = numeric(), mzMin = numeric(), mz = numeric(),
             mzMax = numeric(), stringsAsFactors = FALSE)
         if (verbose) {
-            message(paste0('  Targeted compounds changed, previous ',
-                            '\"uROI\" cannot be kept and set to default')) }
+            message('  Targeted compounds changed, previous ',
+                            '\"uROI\" cannot be kept and set to default') }
     } else { # new value
         .uROI <- uROI
         if (verbose) { message("  New \"uROI\" value set") }
@@ -2117,8 +2118,8 @@ resetAnnot_newTargetFeatTable <- function(targetFeatTable, uROI, FIR,
         .FIR <- data.frame(rtMin = numeric(), rtMax = numeric(),
             mzMin = numeric(), mzMax = numeric(), stringsAsFactors = FALSE)
         if (verbose) {
-            message(paste0('  Targeted compounds changed, previous \"FIR\"',
-                            ' cannot be kept and set to default'))
+            message('  Targeted compounds changed, previous \"FIR\"',
+                            ' cannot be kept and set to default')
         }
     } else { # new value
         .FIR <- FIR
@@ -2129,8 +2130,8 @@ resetAnnot_newTargetFeatTable <- function(targetFeatTable, uROI, FIR,
         # Do not reuse old values if we change the compounds targeted
         .cpdMetadata <- data.frame()
         if (verbose) {
-            message(paste0('  Targeted compounds changed, previous ',
-                    '\"cpdMetadata\" cannot be kept and set to default'))
+            message('  Targeted compounds changed, previous ',
+                    '\"cpdMetadata\" cannot be kept and set to default')
         }
     } else { # new value
         .cpdMetadata <- cpdMetadata
@@ -2176,8 +2177,8 @@ resetAnnot_spectraPathMetadata <- function(previousAnnotation, spectraPaths,
             # Do not reuse old values if we change the spectra
             .spectraMetadata <- data.frame()
             if (verbose) {
-                message(paste0('  Targeted spectra changed, previous ',
-                    '\"spectraMetadata\" cannot be kept and set to default'))
+                message('  Targeted spectra changed, previous ',
+                    '\"spectraMetadata\" cannot be kept and set to default')
             }
         } else {
             # new value
@@ -2205,8 +2206,8 @@ resetAnnot_uROIExist <- function(uROIExist, targetFeatTable, previousAnnotation,
             # Do not reuse old values if we change the compounds
             .uROIExist <- FALSE
             if (verbose) {
-                message(paste0('  Targeted compounds changed, previous ',
-                            '\"uROIExist\" cannot be kept and set to default'))
+                message('  Targeted compounds changed, previous ',
+                            '\"uROIExist\" cannot be kept and set to default')
             }
         }
     } else {
@@ -2234,8 +2235,8 @@ resetAnnot_useUROIuseFIR <- function(useUROI, useFIR, targetFeatTable,
             # Do not reuse old values if we change the compound
             .useUROI <- FALSE
             if (verbose) {
-                message(paste0('  Targeted compounds changed, previous ',
-                            '\"useUROI\" cannot be kept and set to default'))
+                message('  Targeted compounds changed, previous ',
+                            '\"useUROI\" cannot be kept and set to default')
             }
         }
     } else { # new value
@@ -2255,8 +2256,8 @@ resetAnnot_useUROIuseFIR <- function(useUROI, useFIR, targetFeatTable,
         } else { # Do not reuse old values if we change the compound
             .useFIR <- FALSE
             if (verbose) {
-                message(paste0('  Targeted compounds changed, previous ',
-                                '\"useFIR\" cannot be kept and set to default'))
+                message('  Targeted compounds changed, previous ',
+                                '\"useFIR\" cannot be kept and set to default')
             }
         }
     } else { # new value
@@ -2316,8 +2317,8 @@ setMethod("resetFIR", "peakPantheRAnnotation", function(object, verbose) {
         # uROI not defined
     } else {
         if (verbose) {
-            message(paste0('FIR will be reset with ROI values as uROI values ',
-                            'are not set'))
+            message('FIR will be reset with ROI values as uROI values ',
+                            'are not set')
         }
         newFIR <- ROI(object)[, c("rtMin", "rtMax", "mzMin", "mzMax")]
     }
