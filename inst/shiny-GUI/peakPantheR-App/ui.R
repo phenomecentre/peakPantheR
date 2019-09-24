@@ -24,7 +24,13 @@
 #require(shiny)
 #require(shinythemes)
 
-
+# NOTE:
+#
+# A page is 12 columns wide
+#
+# uiOutput('nameUI') with 'nameUI' defined in server side, allow for ui blocks to be dynamically changed
+# see http://shiny.rstudio.com/gallery/dynamic-ui.html
+#
 # v2.0 with more tabs?
 # plot + update uROI on screen?
 # update + refit in UI?
@@ -35,15 +41,15 @@ shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPanthe
     inverse = TRUE,
     collapsible = TRUE,
 
-
     # ABOUT - Tab panel  ------------------------------------------------------ #
     tabPanel("About",
       includeHTML("data/about.html")
-    ), # end ABOUT Tab panel
+    ), # end ABOUT Tab panel -------------------------------------------------- #
 
 
-    # IMPORT - Tab panel  ------------------------------------------------------ #
+    # IMPORT - Tab panel  ----------------------------------------------------- #
     tabPanel("Import Data",
+      fluidRow( # top block containing both imports
 
         ## Init from files
         # get param csv path
@@ -51,36 +57,53 @@ shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPanthe
         # cpd/spl metadata (no checks, just length, allowed not to be here)
         # returns init object!
 
+        column(6,
+          h4(HTML("Create a new <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
+          wellPanel(
+            #TODO: all the path boxes
+          ) # end left panel (New annotation)
+          #TODO: HERE LEFT GO BUTTON
+        ),	# end column
+
         ## Init from previous object
         # load
 
-        ## BOTH
-        # run validateObj() [duplicate for init from files]
-        # do the show on screen!
+        column(6,
+          h4(HTML("Load a <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
+          wellPanel(
+            #TODO: only one path box
+          ) # end right panel (Load annoation)
+          #TODO: HERE RIGHT GO BUTTON
+        )   # end column
+      )     # end fluidRow
+
+      ## BOTH
+      # run validateObj() [duplicate for init from files]
+      # do the show on screen!
+
+      #TODO: HERE success band 12 col wide (green) / FAIL (red) [uiOutput()]
+      #TODO: HERE a box with the Show(init) results
+    ), # end IMPORT Tab panel ------------------------------------------------- #
 
 
-      uiOutput("importUI")
-    ), # end IMPORT Tab panel
-
-
-    # RUN - Tab panel  ------------------------------------------------------ #
+    # RUN - Tab panel  -------------------------------------------------------- #
     tabPanel("Run",
       # will need condition based on import successfully initialised
       uiOutput("runUI")
-    ), # end RUN Tab panel
+    ), # end RUN Tab panel ---------------------------------------------------- #
 
-    # DIAGNOSTIC - Tab panel  ------------------------------------------------------ #
+    # DIAGNOSTIC - Tab panel  ------------------------------------------------- #
     tabPanel("Diagnostic: update and plots",
       # update uROI/FIR, output plots and parameters used
       uiOutput("diangosticUI")
-    ), # end DIAGNOSTIC Tab panel
+    ), # end DIAGNOSTIC Tab panel --------------------------------------------- #
 
 
-    # EXPORT - Tab panel  ------------------------------------------------------ #
+    # EXPORT - Tab panel  ----------------------------------------------------- #
     tabPanel("Export results",
       uiOutput("exportUI")
-    ) # end EXPORT Tab panel
-  ) # end navbar
+    ) # end EXPORT Tab panel  ------------------------------------------------- #
+  ) # end navbar (at the top)
 
 ) # end fluidPage
 ) # end shinyUI
