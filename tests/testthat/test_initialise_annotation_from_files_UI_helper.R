@@ -2,7 +2,8 @@ context('initialise_annotation_from_files_UI_helper()')
 
 ## Test the initialisation of a full annotation object from parameter files and metadata paths
 # No need to check different CSV format as this is managed and tested in peakPantheR_loadAnnotationParamsCSV()
-# No need to check errors in cpd and spectra metadata as it's catched by peakPantherAnnotation_validObject()
+# In order to be more understandable by the user, we raise a warning for cpd and spectra metadata size (instead of catching/crashing it in peakPantherAnnotation_validObject())
+# If cpd or spectraMetadata files do not exist, raise an error
 
 ## Input data
 input_param      <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
@@ -52,88 +53,129 @@ input_annotation_nometa <- peakPantheRAnnotation(targetFeatTable = input_targetF
                                                  FIR = input_FIR_adv,
                                                  uROIExist = TRUE)
 input_annotation_meta   <- peakPantheRAnnotation(targetFeatTable = input_targetFeatTable_adv,
-                                                 spectraPaths = input_spectraPaths, 
-                                                 uROI = input_uROI_adv, 
+                                                 spectraPaths = input_spectraPaths,
+                                                 uROI = input_uROI_adv,
                                                  FIR = input_FIR_adv,
                                                  uROIExist = TRUE,
                                                  cpdMetadata = input_cpdMetadata,
                                                  spectraMetadata = input_spectraMetadata)
 
-# TODO
-# create some metadata, add some fake paths
-# make a simple import that should match the input_annotation_adv -> not sure that it's needed, covered by loadAnnotationParamsCSV
-# an import with/without metadata
-# each import with/without verbose
-# trigger errors on the metadata (size, path exist!)
-
-## EITHER VERBOSE IN CREATION OR IN UPDATE, CONTROL USING VERBOSE=TRUE
-
 
 test_that('parameters, spectraPaths, no metadata, verbose, no verbose', {
-  # expected
-  expected_annotation <- input_annotation_nometa
-  expected_message    <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)\n  is not annotated"
-  
-  # results (output, warnings and messages)
-  result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
+    # expected
+    expected_annotation <- input_annotation_nometa
+    expected_message    <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)\n  is not annotated"
+
+    # results (output, warnings and messages)
+    result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
                                                                                      cpdMetadataPath = NULL,
                                                                                      spectraMetadataPath = NULL,
                                                                                      verbose = TRUE))
-  
-  # Check result
-  expect_equal(result_load1$result, expected_annotation)
-  
-  # Check result messages (in output)
-  expect_equal(length(result_load1$output), 1)
-  expect_equal(result_load1$output, expected_message)
-  
-  ## no verbose
-  result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
+
+    # Check result
+    expect_equal(result_load1$result, expected_annotation)
+
+    # Check result messages (in output)
+    expect_equal(length(result_load1$output), 1)
+    expect_equal(result_load1$output, expected_message)
+
+    ## no verbose
+    result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
                                                                                      cpdMetadataPath = NULL,
                                                                                      spectraMetadataPath = NULL,
                                                                                      verbose = FALSE))
-  expect_equal(length(result_load2$messages), 0)
-  expect_equal(result_load2$output, "")
+    expect_equal(length(result_load2$messages), 0)
+    expect_equal(result_load2$output, "")
 })
 
-test_that('parameters, spectraPaths, with metadata, verbose, no verbose', {
-  # expected
-  expected_annotation <- input_annotation_meta
-  expected_message    <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)\n  is not annotated"
-  
-  # results (output, warnings and messages)
-  result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
-                                                                                     cpdMetadataPath = cpdMetaPath, 
-                                                                                     spectraMetadataPath = spectraMetaPath, 
+test_that('parameters, spectraPaths, with correct metadata, verbose, no verbose', {
+    # expected
+    expected_annotation <- input_annotation_meta
+    expected_message    <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)\n  is not annotated"
+
+    # results (output, warnings and messages)
+    result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
+                                                                                     cpdMetadataPath = cpdMetaPath,
+                                                                                     spectraMetadataPath = spectraMetaPath,
                                                                                      verbose = TRUE))
-  
-  # Check result
-  expect_equal(result_load1$result, expected_annotation)
-  
-  # Check result messages
-  expect_equal(length(result_load1$output), 1)
-  expect_equal(result_load1$output, expected_message)
-  
-  ## no verbose
-  result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths, 
-                                                                                     cpdMetadataPath = cpdMetaPath, 
-                                                                                     spectraMetadataPath = spectraMetaPath, 
+
+    # Check result
+    expect_equal(result_load1$result, expected_annotation)
+
+    # Check result messages
+    expect_equal(length(result_load1$output), 1)
+    expect_equal(result_load1$output, expected_message)
+
+    ## no verbose
+    result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
+                                                                                     cpdMetadataPath = cpdMetaPath,
+                                                                                     spectraMetadataPath = spectraMetaPath,
                                                                                      verbose = FALSE))
-  expect_equal(length(result_load2$messages), 0)
-  expect_equal(result_load2$output, "")
+    expect_equal(length(result_load2$messages), 0)
+    expect_equal(result_load2$output, "")
+})
+
+test_that('parameters, spectraPaths, with wrong sized metadata, verbose, no verbose', {
+    # input
+    wrong_spectraMetadata <- data.frame(matrix(data=c('a','b'), nrow=2, ncol=1, dimnames=list(c(),c('testcol')), byrow=TRUE), stringsAsFactors=FALSE)
+    wrong_cpdMetadata     <- data.frame(matrix(data=c('a','b','c'), nrow=3, ncol=1, dimnames=list(c(),c('testcol')), byrow=TRUE), stringsAsFactors=FALSE)
+    spectraMetaPath2      <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+    utils::write.csv(wrong_spectraMetadata, file=spectraMetaPath2, row.names=FALSE)
+    cpdMetaPath2          <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+    utils::write.csv(wrong_cpdMetadata, file=cpdMetaPath2, row.names=FALSE)
+
+    # expected (no metadata version as meta files are rejected based on number of rows)
+    expected_annotation <- input_annotation_nometa
+    expected_output     <- "An object of class peakPantheRAnnotation\n 2 compounds in 3 samples. \n  updated ROI exist (uROI)\n  does not use updated ROI (uROI)\n  does not use fallback integration regions (FIR)\n  is not annotated"
+    expected_message    <- c("Warning: cpdMetadata number of rows (3) does not match the number of compounds targeted (2)\n",
+                           "Warning: spectraMetadata number of rows (2) does not match the number of compounds targeted (3)\n")
+
+    # results (output, warnings and messages)
+    result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
+                                                                                     cpdMetadataPath = cpdMetaPath2,
+                                                                                     spectraMetadataPath = spectraMetaPath2,
+                                                                                     verbose = TRUE))
+
+    # Check result
+    expect_equal(result_load1$result, expected_annotation)
+
+    # Check output (show object)
+    expect_equal(length(result_load1$output), 1)
+    expect_equal(result_load1$output, expected_output)
+    # Check message (from metadata number of rows) /!\ 3rd message is only '\n'
+    expect_equal(length(result_load1$message), 3)
+    expect_equal(result_load1$message[1:2], expected_message)
+
+    ## no verbose
+    result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
+                                                                                     cpdMetadataPath = cpdMetaPath2,
+                                                                                     spectraMetadataPath = spectraMetaPath2,
+                                                                                     verbose = FALSE))
+    # Check output (show object, return only an empty value)
+    expect_equal(length(result_load2$output), 1)
+    expect_equal(result_load2$output, "")
+    # Check message (from metadata number of rows)
+    expect_equal(length(result_load2$message), 2)
+    expect_equal(result_load2$message, expected_message)
 })
 
 test_that('raise errors', {
-  # loadAnnotationParamCSV() error
-  # no spectraPaths
-  #   maybe that's safe
-  # cpdMetadataPath doesn't exist
-  # cpdMetadata error (dimensions? caught by validateObject?)
-  # spectraMetadataPath doesn't exist
-  # spectraMetadata error (dimensions? caught by validateObject?)
-  
-  # file doesn't exist
-  noFile  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
-  msg1    <- paste('specified "CSVParamPath" does not exist', sep='')
-  expect_error(peakPantheR_loadAnnotationParamsCSV(noFile, verbose=TRUE), msg1, fixed=TRUE)
+    # loadAnnotationParamCSV() error
+    # no spectraPaths is safe (spectraPaths = NULL, init with 0 samples)
+
+
+    noFile  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+
+    # CSVParam file doesn't exist (loadAnnotationParamCSV error)
+    msg1    <- paste('specified "CSVParamPath" does not exist', sep='')
+    expect_error(initialise_annotation_from_files_UI_helper(noFile, NULL, verbose=TRUE), msg1, fixed=TRUE)
+
+    # cpdMetadata file doesn't exist
+    msg2    <- paste('Error: cpdMetadata file does not exist', sep='')
+    expect_error(initialise_annotation_from_files_UI_helper(paramPath, NULL, cpdMetadataPath=noFile, verbose=TRUE), msg2, fixed=TRUE)
+
+    # spectraMetadata file doesn't exist
+    msg3    <- paste('Error: spectraMetadata file does not exist', sep='')
+    expect_error(initialise_annotation_from_files_UI_helper(paramPath, NULL, spectraMetadataPath=noFile, verbose=TRUE), msg3, fixed=TRUE)
+
 })

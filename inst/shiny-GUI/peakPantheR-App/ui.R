@@ -34,39 +34,53 @@ shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPanthe
   navbarPage(textOutput("peakPantheR_ver"),
     inverse = TRUE,
     collapsible = TRUE,
-             
-    
-    # ABOUT - Tab panel  ------------------------------------------------------ # 
+
+
+    # ABOUT - Tab panel  ------------------------------------------------------ #
     tabPanel("About",
       includeHTML("data/about.html")
     ), # end ABOUT Tab panel
-    
-    
-    # IMPORT - Tab panel  ------------------------------------------------------ # 
+
+
+    # IMPORT - Tab panel  ------------------------------------------------------ #
     tabPanel("Import Data",
-      # spectraPaths, CSVParamPaths, Optional: cpdMetadata and spectraMetadata
+
+        ## Init from files
+        # get param csv path
+        # get a list of file paths
+        # cpd/spl metadata (no checks, just length, allowed not to be here)
+        # returns init object!
+
+        ## Init from previous object
+        # load
+
+        ## BOTH
+        # run validateObj() [duplicate for init from files]
+        # do the show on screen!
+
+
       uiOutput("importUI")
     ), # end IMPORT Tab panel
-    
-    
-    # RUN - Tab panel  ------------------------------------------------------ # 
+
+
+    # RUN - Tab panel  ------------------------------------------------------ #
     tabPanel("Run",
       # will need condition based on import successfully initialised
       uiOutput("runUI")
     ), # end RUN Tab panel
-    
-    # DIAGNOSTIC - Tab panel  ------------------------------------------------------ # 
+
+    # DIAGNOSTIC - Tab panel  ------------------------------------------------------ #
     tabPanel("Diagnostic: update and plots",
       # update uROI/FIR, output plots and parameters used
       uiOutput("diangosticUI")
     ), # end DIAGNOSTIC Tab panel
-    
-    
-    # EXPORT - Tab panel  ------------------------------------------------------ # 
+
+
+    # EXPORT - Tab panel  ------------------------------------------------------ #
     tabPanel("Export results",
       uiOutput("exportUI")
     ) # end EXPORT Tab panel
   ) # end navbar
-    
+
 ) # end fluidPage
 ) # end shinyUI
