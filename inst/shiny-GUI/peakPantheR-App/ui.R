@@ -1,9 +1,9 @@
 # ui.R
 
 # peakPantheR-App
-# Based on peakPantheR v1.2.3, R >= 3.4.0, shiny >= 1.0.5, shinythemes >= 1.1.1
+# Based on peakPantheR v0.99.2, R >= 3.6.0, shiny >= 1.0.5, shinythemes >= 1.1.1
 # National Phenome Centre
-# 01/03/2019
+# 25/09/2019
 # Licensed under GPLv3	
 #
 # Copyright (C) {2019}  {National Phenome Centre}
@@ -41,69 +41,21 @@ shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPanthe
     inverse = TRUE,
     collapsible = TRUE,
 
-    # ABOUT - Tab panel  ------------------------------------------------------ #
-    tabPanel("About",
-      includeHTML("data/about.html")
-    ), # end ABOUT Tab panel -------------------------------------------------- #
+    # -- About Tab --
+    source(file.path("ui", "ui_about.R"),  local = TRUE)$value,
 
+    # -- Import Tab --
+    source(file.path("ui", "ui_import.R"),  local = TRUE)$value,
 
-    # IMPORT - Tab panel  ----------------------------------------------------- #
-    tabPanel("Import Data",
-      fluidRow( # top block containing both imports
+    # -- Run Tab --
+    source(file.path("ui", "ui_run.R"),  local = TRUE)$value,
 
-        ## Init from files
-        # get param csv path
-        # get a list of file paths
-        # cpd/spl metadata (no checks, just length, allowed not to be here)
-        # returns init object!
+    # -- Diagnostic Tab --
+    source(file.path("ui", "ui_diagnostic.R"),  local = TRUE)$value,
 
-        column(6,
-          h4(HTML("Create a new <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
-          wellPanel(
-            #TODO: all the path boxes
-          ) # end left panel (New annotation)
-          #TODO: HERE LEFT GO BUTTON
-        ),	# end column
+    # -- Export Tab --
+    source(file.path("ui", "ui_export.R"),  local = TRUE)$value
 
-        ## Init from previous object
-        # load
-
-        column(6,
-          h4(HTML("Load a <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
-          wellPanel(
-            #TODO: only one path box
-          ) # end right panel (Load annoation)
-          #TODO: HERE RIGHT GO BUTTON
-        )   # end column
-      )     # end fluidRow
-
-      ## BOTH
-      # run validateObj() [duplicate for init from files]
-      # do the show on screen!
-
-      #TODO: HERE success band 12 col wide (green) / FAIL (red) [uiOutput()]
-      #TODO: HERE a box with the Show(init) results
-    ), # end IMPORT Tab panel ------------------------------------------------- #
-
-
-    # RUN - Tab panel  -------------------------------------------------------- #
-    tabPanel("Run",
-      # will need condition based on import successfully initialised
-      uiOutput("runUI")
-    ), # end RUN Tab panel ---------------------------------------------------- #
-
-    # DIAGNOSTIC - Tab panel  ------------------------------------------------- #
-    tabPanel("Diagnostic: update and plots",
-      # update uROI/FIR, output plots and parameters used
-      uiOutput("diangosticUI")
-    ), # end DIAGNOSTIC Tab panel --------------------------------------------- #
-
-
-    # EXPORT - Tab panel  ----------------------------------------------------- #
-    tabPanel("Export results",
-      uiOutput("exportUI")
-    ) # end EXPORT Tab panel  ------------------------------------------------- #
   ) # end navbar (at the top)
-
 ) # end fluidPage
 ) # end shinyUI

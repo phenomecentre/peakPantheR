@@ -1,9 +1,9 @@
 # server.R
 
 # peakPantheR-App
-# Based on peakPantheR v1.2.3, R >= 3.4.0, shiny >= 1.0.5, shinythemes >= 1.1.1
+# Based on peakPantheR v0.99.2, R >= 3.6.0, shiny >= 1.0.5, shinythemes >= 1.1.1
 # National Phenome Centre
-# 01/03/2019
+# 25/09/2019
 # Licensed under GPLv3	
 #
 # Copyright (C) {2019}  {National Phenome Centre}
@@ -24,37 +24,36 @@
 #require(shiny)
 
 
-options(shiny.maxRequestSize=500*1024^2) # increase upload size to 500MB
-
+# increase upload size to 500MB
+options(shiny.maxRequestSize=500*1024^2)
+# define max number of parallel cores
 maxCores <- parallel::detectCores()
+
 
 shinyServer( function(input, output, session){
 
-  ## General Initialisation ------------------------------------------------------
-  
+  # -- General Initialisation --
+
+  # close app if tab is shut
+  session$onSessionEnded(stopApp)
+
   # get peakPantheR version
   output$peakPantheR_ver <- renderText({ paste("peakPantheR v",packageVersion('peakPantheR'),sep="") })
-  
+
   # get max number of cpu cores
   output$cpu <- renderText({ maxCores })
   
   
-  ## Import ------------------------------------------------------
-  #importUI
-  # spectraPaths, CSVParams, spectraMetadata, cpdMetadata
-  # load on trigger with initialise_annotation_from_files_UI_helper()
+  # -- Import Tab --
+  source(file.path("server", "server_import.R"),  local = TRUE)$value
   
-  
-  ## Run ------------------------------------------------------  
-  #runUI
-  
-  
-  ## Diagnostic ------------------------------------------------------  
-  #diangosticUI
-  
-  
-  ## Export ------------------------------------------------------  
-  #exportUI
-  
-  
+  # -- Run Tab --
+  source(file.path("server", "server_run.R"),  local = TRUE)$value
+
+  # -- Diagnostic Tab --
+  source(file.path("server", "server_diagnostic.R"),  local = TRUE)$value
+
+  # -- Export Tab --
+  source(file.path("server", "server_diagnostic.R"),  local = TRUE)$value
+
 })
