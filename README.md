@@ -12,7 +12,7 @@ Package for *Peak Picking and ANnoTation of High resolution Experiments in R*, i
 
 ## Overview
 
-`peakPantheR` is an R/Bioconductor package that implements functions to detect, integrate and report pre-defined features in MS files (*e.g. compounds, fragments, adducts, …*). It is designed for:
+[**peakPantheR**](https://phenomecentre.github.io/peakPantheR.github.io/) is an R/Bioconductor package that implements functions to detect, integrate and report pre-defined features in MS files (*e.g. compounds, fragments, adducts, …*). It is designed for:
 
   - **Real time** feature detection and integration (see [Real Time Annotation](https://phenomecentre.github.io/peakPantheR.github.io/articles/real-time-annotation.html))
       - process `multiple` compounds in `one` file at a time
@@ -20,6 +20,10 @@ Package for *Peak Picking and ANnoTation of High resolution Experiments in R*, i
       - process `multiple` compounds in `multiple` files in `parallel`, store results in a `single` object
 
 `peakPantheR` can process LC/MS data files in *NetCDF*, *mzML*/*mzXML* and *mzData* format as data import is achieved using Bioconductor’s [`mzR`](https://bioconductor.org/packages/3.10/mzR) package.
+
+The reference versions of `peakPantheR` is available on the corresponding Bioconductor page ([release](https://bioconductor.org/packages/release/bioc/html/peakPantheR.html) or [dev](https://bioconductor.org/packages/devel/bioc/html/peakPantheR.html) version).
+
+Active development and issue tracking take place on the [github page](https://github.com/phenomecentre/peakPantheR), while an overview of the package, vignettes and documentation are available on the [supporting website](https://phenomecentre.github.io/peakPantheR.github.io/).
 
 ## Installation
 
