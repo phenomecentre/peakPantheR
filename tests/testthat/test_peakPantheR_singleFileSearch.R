@@ -3,6 +3,9 @@ context('peakPantheR_singleFileSearch()')
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
 
+# remove Rplots.pdf created by ggplot2
+on.exit( tryCatch({ file.remove('./Rplots.pdf') }, error=function(e){ invisible() }, warning=function(w){ invisible() }) )
+
 
 ## Input and expected data
 # use ko15.CDf file from the pkg faahKO

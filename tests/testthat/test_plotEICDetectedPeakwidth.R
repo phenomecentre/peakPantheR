@@ -1,5 +1,8 @@
 context('plotEICDetectedPeakwidth()')
 
+# remove Rplots.pdf created by ggplot2
+on.exit( tryCatch({ file.remove('./Rplots.pdf') }, error=function(e){ invisible() }, warning=function(w){ invisible() }) )
+
 
 ## Input and expected data
 # fake sample 1
