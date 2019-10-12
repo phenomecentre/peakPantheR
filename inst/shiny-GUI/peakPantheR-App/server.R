@@ -54,6 +54,6 @@ shinyServer( function(input, output, session){
   source(file.path("server", "server_diagnostic.R"),  local = TRUE)$value
 
   # -- Export Tab --
-  source(file.path("server", "server_diagnostic.R"),  local = TRUE)$value
+  source(file.path("server", "server_export.R"),  local = TRUE)$value
 
 })
