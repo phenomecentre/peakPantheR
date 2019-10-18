@@ -1685,7 +1685,7 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
         ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
             device = "png", path = saveFolder, dpi = 100, width = 21,
             height = 29.7, units = "cm", limitsize = FALSE)
-        dev.off()
+        grDevices::dev.off()
         # output path
         if (verbose) {
             message("  Compound ", cpdNb, "/", nbCpd,

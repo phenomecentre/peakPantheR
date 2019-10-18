@@ -1,5 +1,8 @@
 context('peakPantheR_plotPeakWidth()')
 
+# remove Rplots.pdf created by ggplot2
+on.exit( tryCatch({ file.remove('./Rplots.pdf') }, error=function(e){ invisible() }, warning=function(w){ invisible() }) )
+
 
 ## Input data
 apexVal <- c(1, 2, 3, 4)
