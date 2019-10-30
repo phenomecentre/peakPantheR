@@ -1,0 +1,65 @@
+destination: ../peakPantheR.github.io/docs
+
+reference:
+  - title: Exported Functions
+    desc: Functions exported by peakPantheR
+    contents:
+      - peakPantheR
+      - starts_with("peakPantheR_")
+  - title: peakPantheRAnnotation object Accessors
+    desc: Accessors
+    contents:
+      - peakPantheRAnnotation
+      - cpdID
+      - cpdName
+      - ROI
+      - uROI
+      - FIR
+      - filepath
+      - cpdMetadata
+      - spectraMetadata
+      - acquisitionTime
+      - uROIExist
+      - useUROI
+      - useFIR
+      - TIC
+      - peakTables
+      - dataPoints
+      - peakFit
+      - isAnnotated
+      - nbSamples
+      - nbCompounds
+      - annotationTable
+      - EICs
+      - filename
+  - title: peakPantheRAnnotation object Methods
+    desc: Methods
+    contents:
+      - matches("[[]")
+      - annotationParamsDiagnostic
+      - outputAnnotationParamsCSV
+      - annotationDiagnosticPlots
+      - outputAnnotationDiagnostic
+      - outputAnnotationResult
+      - resetAnnotation
+      - resetFIR
+  - title: Internals
+    desc: Internal functions and helpers
+    contents:
+      - extractSignalRawData
+      - generateIonChromatogram
+      - findTargetFeatures
+      - fitCurve
+      - is.peakPantheR_curveFit
+      - annotationDiagnosticMultiplot
+      - getAcquisitionDatemzML
+      - getTargetFeatureStatistic
+      - integrateFIR
+      - plotEICDetectedPeakwidth
+      - plotHistogram
+      - predictCurve
+      - saveSingleFileMultiEIC
+      - skewedGaussian_guess
+      - skewedGaussian_minpack.lm
+      - skewedGaussian_minpack.lm_objectiveFun
+      - skew_erf

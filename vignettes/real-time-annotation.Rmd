@@ -1,6 +1,6 @@
 ---
 title: "Real Time Annotation"
-date: "2019-06-09"
+date: "2019-10-01"
 package: peakPantheR
 output:
     BiocStyle::html_document:

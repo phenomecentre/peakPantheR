@@ -12,3 +12,7 @@ tests\testthat\Rplots.pdf
 ^Rplots.pdf
 ^.idea
 ^.git
+docs
+^docs$
+^_pkgdown\.yml$
+^pkgdown$
