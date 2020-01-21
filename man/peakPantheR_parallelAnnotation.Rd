@@ -92,8 +92,8 @@ result_parallelAnnotation <- peakPantheR_parallelAnnotation(initAnnotation,
                                                         getAcquTime=FALSE,
                                                         verbose=TRUE)
 # Processing 4 compounds in 3 samples:
-#  uROI:\\tFALSE
-#  FIR:\\tFALSE
+#  uROI:\tFALSE
+#  FIR:\tFALSE
 # ----- ko15 -----
 # Polarity can not be extracted from netCDF files, please set manually the
 #  polarity with the 'polarity' method.
@@ -162,11 +162,13 @@ result_parallelAnnotation$annotation
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheRAnnotation}},
-    \code{\link{peakPantheR_singleFileSearch}}
+Other peakPantheR: 
+\code{\link{peakPantheRAnnotation}},
+\code{\link{peakPantheR_singleFileSearch}()}
 
-Other parallelAnnotation: \code{\link{peakPantheRAnnotation}},
-    \code{\link{peakPantheR_singleFileSearch}}
+Other parallelAnnotation: 
+\code{\link{peakPantheRAnnotation}},
+\code{\link{peakPantheR_singleFileSearch}()}
 }
 \concept{parallelAnnotation}
 \concept{peakPantheR}
