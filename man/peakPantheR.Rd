@@ -5,7 +5,6 @@
 \alias{peakPantheR}
 \alias{_PACKAGE}
 \alias{peakpanther}
-\alias{peakPantheR-package}
 \title{peakPantheR: A package for Peak Picking and ANnoTation of High resolution
 Experiments}
 \description{
@@ -27,19 +26,23 @@ command line tutorials.
 Useful links:
 \itemize{
     \item \url{https://github.com/phenomecentre/peakPantheR}
-    \item Report bugs at
+    \item Report bugs at 
     \url{https://github.com/phenomecentre/peakPantheR/issues/new}
 }
 
 }
 \author{
-\strong{Maintainer}: Arnaud Wolfer \email{adwolfer@gmail.com}
-    (0000-0001-5856-3218)
+\strong{Maintainer}: Arnaud Wolfer \email{adwolfer@gmail.com} 
+    (\href{https://orcid.org/0000-0001-5856-3218}{ORCID})
+
+Authors:
+\itemize{
+    \item Goncalo Correia \email{gscorreia89@gmail.com} 
+        (\href{https://orcid.org/0000-0001-8271-9294}{ORCID})
+}
 
 Other contributors:
 \itemize{
-    \item Goncalo Correia \email{gscorreia89@gmail.com} (0000-0001-8271-9294)
-        [contributor]
     \item Jake Pearce \email{jake.pearce@gmail.com} [contributor]
     \item Caroline Sands \email{caz119@hotmail.co.uk} [contributor]
 }
