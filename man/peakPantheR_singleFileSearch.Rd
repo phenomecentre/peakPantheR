@@ -222,11 +222,13 @@ res
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheRAnnotation}},
-    \code{\link{peakPantheR_parallelAnnotation}}
+Other peakPantheR: 
+\code{\link{peakPantheRAnnotation}},
+\code{\link{peakPantheR_parallelAnnotation}()}
 
-Other parallelAnnotation: \code{\link{peakPantheRAnnotation}},
-    \code{\link{peakPantheR_parallelAnnotation}}
+Other parallelAnnotation: 
+\code{\link{peakPantheRAnnotation}},
+\code{\link{peakPantheR_parallelAnnotation}()}
 }
 \concept{parallelAnnotation}
 \concept{peakPantheR}
