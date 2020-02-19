@@ -23,8 +23,6 @@ input_cpdMetadata     <- data.frame(matrix(data=c('a','b'), nrow=2, ncol=1, dimn
 # temporary files
 paramPath             <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
 utils::write.csv(input_param, file=paramPath, row.names=FALSE)
-spectraMetaPath       <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
-utils::write.csv(input_spectraMetadata, file=spectraMetaPath, row.names=FALSE)
 cpdMetaPath           <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
 utils::write.csv(input_cpdMetadata, file=cpdMetaPath, row.names=FALSE)
 
@@ -69,7 +67,7 @@ test_that('parameters, spectraPaths, no metadata, verbose, no verbose', {
     # results (output, warnings and messages)
     result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
                                                                                      cpdMetadataPath = NULL,
-                                                                                     spectraMetadataPath = NULL,
+                                                                                     spectraMetadata = NULL,
                                                                                      verbose = TRUE))
 
     # Check result
@@ -82,7 +80,7 @@ test_that('parameters, spectraPaths, no metadata, verbose, no verbose', {
     ## no verbose
     result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
                                                                                      cpdMetadataPath = NULL,
-                                                                                     spectraMetadataPath = NULL,
+                                                                                     spectraMetadata = NULL,
                                                                                      verbose = FALSE))
     expect_equal(length(result_load2$messages), 0)
     expect_equal(result_load2$output, "")
@@ -95,9 +93,9 @@ test_that('parameters, spectraPaths, with correct metadata, verbose, no verbose'
 
     # results (output, warnings and messages)
     result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
-                                                                                     cpdMetadataPath = cpdMetaPath,
-                                                                                     spectraMetadataPath = spectraMetaPath,
-                                                                                     verbose = TRUE))
+                                                                                       cpdMetadataPath = cpdMetaPath,
+                                                                                       spectraMetadata = input_spectraMetadata,
+                                                                                       verbose = TRUE))
 
     # Check result
     expect_equal(result_load1$result, expected_annotation)
@@ -108,9 +106,9 @@ test_that('parameters, spectraPaths, with correct metadata, verbose, no verbose'
 
     ## no verbose
     result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
-                                                                                     cpdMetadataPath = cpdMetaPath,
-                                                                                     spectraMetadataPath = spectraMetaPath,
-                                                                                     verbose = FALSE))
+                                                                                       cpdMetadataPath = cpdMetaPath,
+                                                                                       spectraMetadata = input_spectraMetadata,
+                                                                                       verbose = FALSE))
     expect_equal(length(result_load2$messages), 0)
     expect_equal(result_load2$output, "")
 })
@@ -119,8 +117,6 @@ test_that('parameters, spectraPaths, with wrong sized metadata, verbose, no verb
     # input
     wrong_spectraMetadata <- data.frame(matrix(data=c('a','b'), nrow=2, ncol=1, dimnames=list(c(),c('testcol')), byrow=TRUE), stringsAsFactors=FALSE)
     wrong_cpdMetadata     <- data.frame(matrix(data=c('a','b','c'), nrow=3, ncol=1, dimnames=list(c(),c('testcol')), byrow=TRUE), stringsAsFactors=FALSE)
-    spectraMetaPath2      <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
-    utils::write.csv(wrong_spectraMetadata, file=spectraMetaPath2, row.names=FALSE)
     cpdMetaPath2          <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
     utils::write.csv(wrong_cpdMetadata, file=cpdMetaPath2, row.names=FALSE)
 
@@ -133,7 +129,7 @@ test_that('parameters, spectraPaths, with wrong sized metadata, verbose, no verb
     # results (output, warnings and messages)
     result_load1        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
                                                                                      cpdMetadataPath = cpdMetaPath2,
-                                                                                     spectraMetadataPath = spectraMetaPath2,
+                                                                                     spectraMetadata = wrong_spectraMetadata,
                                                                                      verbose = TRUE))
 
     # Check result
@@ -149,7 +145,7 @@ test_that('parameters, spectraPaths, with wrong sized metadata, verbose, no verb
     ## no verbose
     result_load2        <- evaluate_promise(initialise_annotation_from_files_UI_helper(paramPath, input_spectraPaths,
                                                                                      cpdMetadataPath = cpdMetaPath2,
-                                                                                     spectraMetadataPath = spectraMetaPath2,
+                                                                                     spectraMetadata = wrong_spectraMetadata,
                                                                                      verbose = FALSE))
     # Check output (show object, return only an empty value)
     expect_equal(length(result_load2$output), 1)
@@ -174,8 +170,8 @@ test_that('raise errors', {
     msg2    <- paste('Error: cpdMetadata file does not exist', sep='')
     expect_error(initialise_annotation_from_files_UI_helper(paramPath, NULL, cpdMetadataPath=noFile, verbose=TRUE), msg2, fixed=TRUE)
 
-    # spectraMetadata file doesn't exist
-    msg3    <- paste('Error: spectraMetadata file does not exist', sep='')
-    expect_error(initialise_annotation_from_files_UI_helper(paramPath, NULL, spectraMetadataPath=noFile, verbose=TRUE), msg3, fixed=TRUE)
+    # spectraMetadata is not a DataFrame
+    msg3    <- paste('Error: spectraMetadata is not a DataFrame', sep='')
+    expect_error(initialise_annotation_from_files_UI_helper(paramPath, NULL, spectraMetadata='notADataFrame', verbose=TRUE), msg3, fixed=TRUE)
 
 })

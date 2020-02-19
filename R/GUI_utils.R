@@ -1,4 +1,4 @@
-#' UI data import helper
+#' UI data import helper - initialise new annotation from files
 #'
 #' Fully initialise a \code{peakPantheRAnnotation} using the target files path,
 #' CSV parameter path and metadata.
@@ -8,7 +8,7 @@
 #' samples to process
 #' @param cpdMetadataPath NULL or path to a csv of compound metadata, with
 #' compounds as row and metadata as columns
-#' @param spectraMetadataPath NULL or path to a csv of sample metadata, with
+#' @param spectraMetadata NULL or DataFrame of sample metadata, with
 #' samples as row and metadata as columns
 #' @param verbose (bool) If TRUE message progress
 #'
@@ -18,7 +18,7 @@
 initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
                                                     spectraPaths,
                                                     cpdMetadataPath = NULL,
-                                                    spectraMetadataPath = NULL,
+                                                    spectraMetadata = NULL,
                                                     verbose = TRUE) {
     # Initialise with parameters
     init_annotation <- peakPantheR_loadAnnotationParamsCSV(CSVParamPath,
@@ -29,10 +29,9 @@ initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
                                         verbose = FALSE)
     # Load metadata
     cpdMetadata     <- NULL
-    spectraMetadata <- NULL
     if (!is.null(cpdMetadataPath)) {
         if (!file.exists(cpdMetadataPath)) {
-                stop('Error: cpdMetadata file does not exist') }
+            stop('Error: cpdMetadata file does not exist') }
         tmp_cpdMeta <- read.csv(cpdMetadataPath, header=TRUE, sep=",",
                                 quote="\"", stringsAsFactors=FALSE)
         # check nb rows match the nb of cpd
@@ -42,18 +41,17 @@ initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
                     nbCompounds(init_annotation), ')')
         } else { cpdMetadata <- tmp_cpdMeta }
     }
-    if (!is.null(spectraMetadataPath)) {
-        if (!file.exists(spectraMetadataPath)) {
-                stop('Error: spectraMetadata file does not exist') }
-        tmp_spectraMeta <- read.csv(spectraMetadataPath, header=TRUE, sep=",",
-                                    quote="\"", stringsAsFactors=FALSE)
+    if (!is.null(spectraMetadata)) {
+        if (!is.data.frame(spectraMetadata)) {
+            stop('Error: spectraMetadata is not a DataFrame') }
         # check nb of rows match the nb of spectra
-        if (dim(tmp_spectraMeta)[1] != nbSamples(init_annotation)) {
+        if (dim(spectraMetadata)[1] != nbSamples(init_annotation)) {
             message('Warning: spectraMetadata number of rows (',
-                    dim(tmp_spectraMeta)[1],
+                    dim(spectraMetadata)[1],
                     ') does not match the number of compounds targeted (',
                     nbSamples(init_annotation), ')')
-        } else { spectraMetadata <- tmp_spectraMeta }
+            spectraMetadata <- NULL
+        } # else keep the spectraMetadata value
     }
 
     # Update annotation with metadata
@@ -67,3 +65,55 @@ initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
 }
 
 
+#' UI data import helper - prepare file paths and metadata
+#'
+#' Return spectraPaths and spectraMetadata from a .csv file (if available).
+#' If reading from the spectraMetadata file, the spectraPaths are taken from
+#' the `filepath` column
+#'
+#' @param spectraPaths NULL or character vector of spectra file paths, to set
+#' samples to process
+#' @param cpdMetadataPath NULL or path to a csv of compound metadata, with
+#' compounds as row and metadata as columns. (spectraPaths in column `filepath`)
+#' @param verbose (bool) If TRUE message progress
+#'
+#' @return spectraPaths (str) and spectraMetadata (DataFrame or NULL) read from
+#' the CSV file
+#'
+spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
+                                                spectraMetadataPath = NULL) {
+    # None are set
+    if (is.null(spectraPaths) & is.null(spectraMetadataPath)) {
+        stop('Error: spectraPaths and spectraMetadataPath are not set')
+    }
+
+    # Only spectraPaths are set
+    if (!is.null(spectraPaths) & is.null(spectraMetadataPath)) {
+        out_path <- spectraPaths
+        out_meta <- NULL
+    }
+
+    # spectraMetadataPath is set
+    if (!is.null(spectraMetadataPath)) {
+
+        # load file
+        if (!file.exists(spectraMetadataPath)) {
+                stop('Error: spectraMetadata file does not exist') }
+        tmp_spectraMeta <- read.csv(spectraMetadataPath, header=TRUE, sep=",",
+                                    quote="\"", stringsAsFactors=FALSE)
+
+        # check 'filepath' is in columns
+        if (!('filepath' %in% colnames(tmp_spectraMeta))) {
+            stop("Error: the column 'filepath' must be present in the ",
+                "spectraMetadata")
+        }
+
+        # extract filepaths
+        out_path <- tmp_spectraMeta[,'filepath']
+        # remove filepaths from metadata
+        out_meta <- tmp_spectraMeta[ , !(names(tmp_spectraMeta) %in%
+                                        c('filepath')), drop=FALSE]
+    }
+
+    return(list(spectra=out_path, meta=out_meta))
+}

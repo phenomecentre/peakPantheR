@@ -2,10 +2,15 @@
 % Please edit documentation in R/GUI_utils.R
 \name{initialise_annotation_from_files_UI_helper}
 \alias{initialise_annotation_from_files_UI_helper}
-\title{UI data import helper}
+\title{UI data import helper - initialise new annotation from files}
 \usage{
-initialise_annotation_from_files_UI_helper(CSVParamPath, spectraPaths,
-    cpdMetadataPath = NULL, spectraMetadataPath = NULL, verbose = TRUE)
+initialise_annotation_from_files_UI_helper(
+    CSVParamPath,
+    spectraPaths,
+    cpdMetadataPath = NULL,
+    spectraMetadata = NULL,
+    verbose = TRUE
+)
 }
 \arguments{
 \item{CSVParamPath}{(str) Path to a CSV file of fit parameters}
@@ -16,7 +21,7 @@ samples to process}
 \item{cpdMetadataPath}{NULL or path to a csv of compound metadata, with
 compounds as row and metadata as columns}
 
-\item{spectraMetadataPath}{NULL or path to a csv of sample metadata, with
+\item{spectraMetadata}{NULL or DataFrame of sample metadata, with
 samples as row and metadata as columns}
 
 \item{verbose}{(bool) If TRUE message progress}
