@@ -13,10 +13,8 @@ spectraPaths_and_metadata_UI_helper(
 \item{spectraPaths}{NULL or character vector of spectra file paths, to set
 samples to process}
 
-\item{cpdMetadataPath}{NULL or path to a csv of compound metadata, with
-compounds as row and metadata as columns. (spectraPaths in column `filepath`)}
-
-\item{verbose}{(bool) If TRUE message progress}
+\item{spectraMetadataPath}{NULL or path to a csv of spectra metadata, with
+spectra as row and metadata as columns. (spectraPaths in column `filepath`)}
 }
 \value{
 spectraPaths (str) and spectraMetadata (DataFrame or NULL) read from

@@ -73,9 +73,8 @@ initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
 #'
 #' @param spectraPaths NULL or character vector of spectra file paths, to set
 #' samples to process
-#' @param cpdMetadataPath NULL or path to a csv of compound metadata, with
-#' compounds as row and metadata as columns. (spectraPaths in column `filepath`)
-#' @param verbose (bool) If TRUE message progress
+#' @param spectraMetadataPath NULL or path to a csv of spectra metadata, with
+#' spectra as row and metadata as columns. (spectraPaths in column `filepath`)
 #'
 #' @return spectraPaths (str) and spectraMetadata (DataFrame or NULL) read from
 #' the CSV file
@@ -117,3 +116,10 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 
     return(list(spectra=out_path, meta=out_meta))
 }
+
+
+# UI data import helper - check loaded annotation
+#
+# does the file exist, is the name ok, is it a valid annotation
+#
+#
