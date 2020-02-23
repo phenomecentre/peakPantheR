@@ -16,10 +16,10 @@
 #' read from the CSV file
 #'
 initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
-                                                    spectraPaths,
-                                                    cpdMetadataPath = NULL,
-                                                    spectraMetadata = NULL,
-                                                    verbose = TRUE) {
+                                                        spectraPaths,
+                                                        cpdMetadataPath = NULL,
+                                                        spectraMetadata = NULL,
+                                                        verbose = TRUE) {
     # Initialise with parameters
     init_annotation <- peakPantheR_loadAnnotationParamsCSV(CSVParamPath,
                                                             verbose = FALSE)
@@ -118,8 +118,37 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 }
 
 
-# UI data import helper - check loaded annotation
-#
-# does the file exist, is the name ok, is it a valid annotation
-#
-#
+#' UI data import helper - check loaded annotation
+#'
+#' Load a .RData file (check it exists) and that a peakPantheRAnnotation named
+#' "annotationObject" is present. Returns the annotation if everything is valid
+#'
+#' @param annotationPath (str) Path to a RData file containing a
+#' peakPantheRAnnotation names `annotationObject`
+#'
+#' @return (peakPantheRAnnotation) Object loaded from file
+#'
+load_annotation_from_file_UI_helper <- function(annotationPath) {
+    # Check file exist
+    if (!file.exists(annotationPath)) {
+        stop('Error: annotation file does not exist') }
+
+    # load file content
+    load(annotationPath)
+
+    # check it exist and is named correctly
+    if (length(ls()[ls() == 'annotationObject']) !=1) {
+        stop("Error: annotation file must contain a `peakPantheRAnnotaiton` ",
+            "named 'annotationObject'") }
+    # dummy initialisation to pass BiocCheck. In no case would the code reach
+    # this section if `annotationObject` wasn't present in the environment
+    if (0) {annotationObject <- NULL}
+
+    # check it's a peakPantheRAnnotation
+    if (!is(annotationObject, "peakPantheRAnnotation")) {
+        stop("Error: the variable loaded is not a `peakPantheRAnnotation`") }
+
+    return(annotationObject)
+}
+
+
