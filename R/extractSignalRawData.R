@@ -180,8 +180,8 @@ extractSignalRawData_checkInput <- function(rt, mz, msLevel, verbose) {
     }
     # both rt and mz have same number of rows (unless one of them has only 1row)
     if (!missing(rt) & !missing(mz)) {
-        if ((class(rt) %in% c("matrix", "data.frame")) &
-            (class(mz) %in% c("matrix", "data.frame"))) {
+        if (any(is(rt, "matrix"), is(rt, "data.frame")) &
+            any(is(mz, "matrix"), is(mz, "data.frame"))) {
             if (nrow(rt) != nrow(mz)) {
                 if ((nrow(rt) != 1) & (nrow(mz) != 1)) {
                     stop('Check input \"rt\" and \"mz\" matrix or ',
