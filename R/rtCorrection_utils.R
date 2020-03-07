@@ -4,7 +4,7 @@
 #' previously fitted compounds. The `method` and `params` are used to select and
 #' parametrise the retention time correction method employed. If `diagnostic` is
 #' TRUE, RT correction diagnostic plots are returned (specific to each
-#' correction method). This method will generate a peakPanthe
+#' correction method).
 #'
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as
 #' rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str),
@@ -40,7 +40,8 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
     # RANSAC
     if (method == 'RANSAC') {
 
-        ransac_correctionFunction <- fit_RANSAC(corrected_targetFeatTable$rt, targetFeatTable$rt_dev_sec)
+        ransac_correctionFunction <- fit_RANSAC(corrected_targetFeatTable$rt,
+                                                targetFeatTable$rt_dev_sec)
         ## Guess parameters and bounds
         #if (useGuess) {
         #  new_params   <- guess_RANSAC(x, y)
