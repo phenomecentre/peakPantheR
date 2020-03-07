@@ -1,14 +1,14 @@
 Package: peakPantheR
 Title: Peak Picking and Annotation of High Resolution Experiments
-Version: 1.1.0
-Date: 2020-01-21
+Version: 1.1.1
+Date: 2020-03-04
 Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-5856-3218")),
 	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "aut", comment = c(ORCID = "0000-0001-8271-9294")),
 	person("Jake", "Pearce", email = "jake.pearce@gmail.com", role = "ctb"),
 	person("Caroline", "Sands", email = "caz119@hotmail.co.uk", role = "ctb"))
 Description: An automated pipeline for the detection, integration and reporting of predefined features across a large number of mass spectrometry data files.
 Depends: 
-	R (>= 3.6.0)
+	R (>= 4.0)
 Imports: 
 	foreach (>= 1.4.4),
 	doParallel (>= 1.0.11),
