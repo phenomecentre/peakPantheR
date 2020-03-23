@@ -9,9 +9,8 @@ tabPanel("Import Data",
     # cpd/spl metadata (no checks, just length, allowed not to be here)
     # returns init object!
     column(7,
-  h4(HTML("Create a new <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
+      h4(HTML("Create a new <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
       wellPanel(
-        #TODO: all the path boxes
         fluidRow(
           h5(HTML("Targeted features"), style="color:#3e648d;font-weight:bold"),
           helpText("Select a .CSV file containing the ", span(strong("fit parameters")), span(em('with targeted features as rows and target windows as columns (at minimum: "cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")')),style="color:black"),
@@ -44,7 +43,6 @@ tabPanel("Import Data",
                     accept=c('text/csv','text/comma-separated-values,text/plain','.csv','.tsv'))
         ), # end FluidRow feature metadata
 
-        #TODO: HERE LEFT GO BUTTON
         fluidRow(
           div(actionButton("triggerImportNewAnnotation", label="Import",
                            class="btn btn-primary btn-lg"), align="center")
@@ -56,30 +54,37 @@ tabPanel("Import Data",
     ## Init from previous object
     # load
     column(5,
-  h4(HTML("Load a <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
+      h4(HTML("Load a <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
       wellPanel(
         h5(HTML("Annotation"), style="color:#3e648d;font-weight:bold"),
         helpText("Select a .RData file containing a ", span(strong("peakPantheRAnnotation")), " named", span(em("annotationObject")),style="color:black"),
         fluidRow(
-          fileInput('pathANNOTATION', 'Choose a .RData File',
+          fileInput('pathAnnotation', 'Choose a .RData File',
                     accept=c('application/octet-stream','.RData','.rdata'))
         ),
 
-        #TODO: HERE RIGHT GO BUTTON
         fluidRow(
-          div(actionButton("triggerLoadPreviousAnnoation", label="Import",
+          div(actionButton("triggerLoadPreviousAnnotation", label="Import",
                            class="btn btn-primary btn-lg"), align="center")
         ) # end import button row
       )# end right panel
     )   # end right column (Load annotation)
-  )     # end fluidRow (top block containing both imports)
+  ),     # end fluidRow (top block containing both imports)
 
 
-  ## BOTH
-  # run validateObj() [duplicate for init from files]
-  # do the show on screen!
+  ## Result of both imports
+  fluidRow(
+    # Row success / fail
+    column(width=12,
+      # success band 12 col wide (green) / FAIL (red)
+      uiOutput("resultImportCheck")  # error/success message
+    ), # end column
 
-  #TODO: HERE success band 12 col wide (green) / FAIL (red) [uiOutput()]
-  #TODO: HERE a box with the Show(init) results
-)
+    # Row show annotation
+    column(width=12,
+      # box with the Show(init) results
+      uiOutput("showImportResult")  # show() object properties
+    ) # end column (row) of shown results
+  )   # end fluidRow (bottom block containing both imports result)
+)     # end tabPanel
 # end IMPORT Tab panel ------------------------------------------------------- #

@@ -52,22 +52,22 @@ test_that('raise errors', {
     noFile          <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
 
     wrongNameObject <- annotationObject
-    wongName_path   <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
-    save(wrongNameObject, file=wongName_path, compress=TRUE)
+    wrongName_path  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+    save(wrongNameObject, file=wrongName_path, compress=TRUE)
 
     annotationObject    <- 'notAPeakPantheRAnnotation'
-    wongObject_path     <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
-    save(annotationObject, file=wongObject_path, compress=TRUE)
+    wrongObject_path    <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+    save(annotationObject, file=wrongObject_path, compress=TRUE)
 
     # file doesn't exist
     msg1    <- paste('Error: annotation file does not exist', sep='')
     expect_error(load_annotation_from_file_UI_helper(annotationPath = noFile), msg1, fixed=TRUE)
 
     # wrong name in .RData
-    msg2    <- paste("Error: annotation file must contain a `peakPantheRAnnotaiton` named 'annotationObject'", sep='')
-    expect_error(load_annotation_from_file_UI_helper(annotationPath = wongName_path), msg2, fixed=TRUE)
+    msg2    <- paste("Error: annotation file must contain a `peakPantheRAnnotation` named 'annotationObject'", sep='')
+    expect_error(load_annotation_from_file_UI_helper(annotationPath = wrongName_path), msg2, fixed=TRUE)
 
     # not a peakPantheRAnnotation
     msg3    <- paste("Error: the variable loaded is not a `peakPantheRAnnotation`", sep='')
-    expect_error(load_annotation_from_file_UI_helper(annotationPath = wongObject_path), msg3, fixed=TRUE)
+    expect_error(load_annotation_from_file_UI_helper(annotationPath = wrongObject_path), msg3, fixed=TRUE)
 })

@@ -1,7 +1,7 @@
 # ui.R
 
 # peakPantheR-App
-# Based on peakPantheR v1.1.0, R >= 3.6.2, shiny >= 1.0.5, shinythemes >= 1.1.1
+# Based on peakPantheR v1.1.1, R >= 4.0, shiny >= 1.0.5, shinythemes >= 1.1.1
 # National Phenome Centre
 # 21/01/2020
 # Licensed under GPLv3	

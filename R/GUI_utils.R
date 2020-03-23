@@ -138,7 +138,7 @@ load_annotation_from_file_UI_helper <- function(annotationPath) {
 
     # check it exist and is named correctly
     if (length(ls()[ls() == 'annotationObject']) !=1) {
-        stop("Error: annotation file must contain a `peakPantheRAnnotaiton` ",
+        stop("Error: annotation file must contain a `peakPantheRAnnotation` ",
             "named 'annotationObject'") }
     # dummy initialisation to pass BiocCheck. In no case would the code reach
     # this section if `annotationObject` wasn't present in the environment
