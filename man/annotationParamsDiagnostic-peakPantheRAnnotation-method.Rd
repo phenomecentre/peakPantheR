@@ -6,8 +6,7 @@
 \alias{annotationParamsDiagnostic}
 \title{Set uROI and FIR based on annotation results}
 \usage{
-\S4method{annotationParamsDiagnostic}{peakPantheRAnnotation}(object,
-    verbose)
+\S4method{annotationParamsDiagnostic}{peakPantheRAnnotation}(object, verbose)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}
