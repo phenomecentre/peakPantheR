@@ -1,12 +1,12 @@
 # ui.R
 
 # peakPantheR-App
-# Based on peakPantheR v1.1.1, R >= 4.0, shiny >= 1.0.5, shinythemes >= 1.1.1
+# Based on peakPantheR v1.3.0, R >= 4.0, shiny >= 1.0.5, shinythemes >= 1.1.1
 # National Phenome Centre
-# 21/01/2020
+# 24/05/2020
 # Licensed under GPLv3	
 #
-# Copyright (C) {2019}  {National Phenome Centre}
+# Copyright (C) {2020}  {National Phenome Centre}
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
