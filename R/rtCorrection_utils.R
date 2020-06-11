@@ -166,7 +166,7 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
 ## -----------------------------------------------------------------------------
 # New retention time calibration functions can be added below
 # All fitting functions should have the following argument:
-# of the kind x = theoreticalrt, y= Deviation (Rt_{obs} - Rt{exp}}
+# of the kind x = theoretical rt, y= Deviation (Rt_{obs} - Rt{exp}}
 
 # guess_RANSAC <- function(x, y)
 
