@@ -2327,3 +2327,156 @@ setMethod("resetFIR", "peakPantheRAnnotation", function(object, verbose) {
         newFIR[, c("rtMin", "rtMax", "mzMin", "mzMax")]
     return(object)
 })
+
+#####################################################################
+# Use retention time correction algorithms to adjust the rt information in the
+# uROI of a peakPantheRAnnotation object
+setGeneric("retentionTimeCorrection",
+    function(annotationObject, rtCorrectionReferences=NULL, params, robust, rtWindowWidth=15,
+            verbose = TRUE, ...)
+    standardGeneric("retentionTimeCorrection"))
+#' @title Apply retention time correction methods to adjust the retention time information in the uROI of
+#' peakPantheRAnnotation object
+#' @description Performs retention time correction to re-adjust the expected retention time position of compounds.
+#' Requires an annotated peakPantheRAnnotation object (\code{isAnnotated=TRUE}). The original \code(rt) value is used as
+#' expected and the observed deviation measured in the \code{rt_dev_sec} field is taken as the deviation to be corrected.
+#' @param previousAnnotation (peakPantheRAnnotation) object with previous fit results to adjust retention time values
+#' in uROI and FIR
+#' @param rtCorrectionReferences (list) of compounds IDs (\code{cpdID}) to be used as retention time references.
+#' All \code{cpdID} entries must be present in the object and previously annotated. If NULL, use all compounds.
+#' @param method (str) name of RT correction method to use (currently
+#' \code{polynomial})
+#' @param params (list) list of parameters to pass to the each correction method.
+#' Currently allowed inputs are \code{polynomialOrder} for \code{method='polynomial'}
+#' @param robust (bool) whether to use the RANSAC algorithm to flag and ignore outliers
+#' during retention time correction
+#' @param rtWindowWidth (numeric) full width in seconds of the retention time window defined around the corrected
+#' retention time value for each compound
+#' #' @param rtWindowWidth (numeric) full width in seconds of the retention time window defined around the corrected
+#' retention time value for each compound
+#' @param diagnostic (bool) If TRUE returns diagnostic plots (specific to each correction method)
+#' @param verbose (bool) If TRUE message progress
+#' @return (peakPantheRAnnotation) object with new uROI and FIR values with an adjusted retention time
+#' @docType methods
+#' @aliases retentionTimeCorrection
+#' @export
+#' @examples
+#' if(requireNamespace('faahKO')){
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
+#'
+#' # Paths to spectra files
+#' library(faahKO)
+#' spectraPaths <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'))
+#'
+#' # targetFeatTable
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
+#'
+#' smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
+#' smallAnnotation
+#' # An object of class peakPantheRAnnotation
+#' #  2 compounds in 2 samples.
+#' #  updated ROI do not exist (uROI)
+#' #  does not use updated ROI (uROI)
+#' #  does not use fallback integration regions (FIR)
+#' #  is not annotated
+#'
+#' # Reset and change number of spectra
+#' newSpectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
+#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
+#' largerAnnotation <- resetAnnotation(smallAnnotation,
+#'                                     spectraPaths=newSpectraPaths,
+#'                                     verbose=TRUE)
+#' largerAnnotation
+#' # An object of class peakPantheRAnnotation
+#' #  2 compounds in 3 samples.
+#' #  updated ROI do not exist (uROI)
+#' #  does not use updated ROI (uROI)
+#' #  does not use fallback integration regions (FIR)
+#' #  is not annotated
+#' }
+setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
+    function(annotationObject, rtCorrectionReferences=NULL,
+      method, params, robust, rtWindowWidth=15, diagnostic=FALSE,
+             verbose = TRUE, ...) {
+
+    # copy annotation object
+    newAnnotation <- annotationObject
+
+    if (isFALSE(newAnnotation@isAnnotated)) {
+        stop('The retention time correction functionality requires an annotated peakPantheRAnnotation object
+        (annotationObject@isAnnotated = TRUE)')
+    }
+    if (is.null(rtCorrectionReferences)) {
+        rtCorrectionReferences <- newAnnotation@cpdID
+    } else {
+        if (!all(rtCorrectionReferences %in% newAnnotation@cpdID)) {
+            stop("All compound IDs in rtCorrectionReferences must be present on the annotationObject")
+        }
+    }
+
+    if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWith <= 0) {
+        stop("rtWindowWidth must be a positive number")
+    }
+    # if uROI doesn't exist, initialise one with the same m/z information as ROI and add later the corrected rt
+    if (!newAnnotation@uROIExist) {
+        newAnnotation@uROI[, "mzMin"] <- newAnnotation@ROI[, "mzMin"]
+        newAnnotation@uROI[, "mzMax"] <- newAnnotation@ROI[, "mzMax"]
+        newAnnotation@uROI[, "mz"] <- newAnnotation@ROI[, "mz"]
+    }
+    # if FIR doesn't exist, initialise one with the same m/z information as ROI and add later the corrected rt
+    # The end result should be a modified or new uROI/FIR with adjusted rt, and the previous m/z if uROI and FIR existed,
+    # or m/z set as in ROI
+    if (!newAnnotation@useFIR) {
+        newAnnotation@FIR[, "mzMin"] <- newAnnotation@ROI[, "mzMin"]
+        newAnnotation@FIR[, "mzMax"] <- newAnnotation@ROI[, "mzMax"]
+        # Keep useFIR as set before.
+    }
+    # Obtain the mean retention time deviation per second
+    rt_dev_secMatrix <- annotationTable(newAnnotation,"rt_dev_sec")
+    rt_dev_sec_mean <- unname(vapply(rt_dev_secMatrix, mean, na.rm=TRUE, FUN.VALUE = numeric(1)))
+    # If uROI exists and useROI was set to true, use that value as original RT
+    if (newAnnotation@uROIExist & newAnnotation@useUROI) { rt_expected <- newAnnotation@uROI[, "rt"]
+    } else { rt_expected <- newAnnotation@ROI[, "rt"] }
+
+    # get the necessary information for all features
+    targetFeatTable <- data.frame(cpdID=newAnnotation@cpdID, cpdName=newAnnotation@cpdName,
+                             rt=rt_expected, rt_dev_sec=rt_dev_sec_mean)
+    # subset the references from the table of all compounds to correct
+    referenceTable <- targetFeatTable[rtCorrectionReferences %in% newAnnotation@cpdID, ]
+    # Exclude features with mean rt_dev_sec = NA
+    referenceTable <-  referenceTable[!is.na(referenceTable$rt_dev_sec), ]
+    rtCorrectionOutput <- peakPantheR_applyRTCorrection(targetFeatTable, referenceTable, method,
+                                                             params, robust, diagnostic=diagnostic)
+    correctedRetentionTimes <- rtCorrectionOutput$correctedRtTable
+
+    newAnnotation@uROI[, "rtMin"] <- correctedRetentionTimes - (rtWindowWidth/2)
+    newAnnotation@uROI[, "rtMax"] <- correctedRetentionTimes + (rtWindowWidth/2)
+    newAnnotation@uROI[, "rt"] <- correctedRetentionTimes
+    newAnnotation@FIR[, "rtMin"] <- correctedRetentionTimes - (rtWindowWidth/2)
+    newAnnotation@FIR[, "rtMax"] <- correctedRetentionTimes + (rtWindowWidth/2)
+
+    # set uROIExist # needs to be set as corrected values are in the values
+    newAnnotation@uROIExist <- TRUE
+    if (isTRUE(diagnostic)) {
+        # Handle
+
+    }
+   }
+)
+
+
+
+
+

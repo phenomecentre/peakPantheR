@@ -2,7 +2,8 @@
 #'
 #' Correct targeted features retention time using the RT and RT deviation of
 #' previously fitted compounds. The `method` and `params` are used to select and
-#' parametrise the retention time correction method employed. If `diagnostic` is
+#' parametrise the retention time correction method employed. When `robust` is set to TRUE, the RANSAC algorithm is used
+#' to automatically flag outliers and robustify the correction function fitting. If `diagnostic` is
 #' TRUE, RT correction diagnostic plots are returned (specific to each
 #' correction method).
 #'
@@ -15,9 +16,11 @@
 #' information as rows and properties as columns: \code{cpdID} (str),
 #' \code{cpdName} (str), \code{rt} (float), \code{rt_dev_sec} (float)
 #' @param method (str) name of RT correction method to use (currently
-#' \code{RANSAC})
-#' @param params (list or str) either 'guess' for automated parametrisation or
-#' list of parameters (specific to each correction method)
+#' \code{polynomial})
+#' @param params (list) list of parameters to pass to the each correction method.
+#' Currently allowed inputs are \code{polynomialOrder} for \code{method='polynomial'}
+#' @param robust (bool) whether to use the RANSAC algorithm to flag and ignore outliers
+#' during retention time correction
 #' @param diagnostic (bool) If TRUE returns diagnostic plots (specific to each
 #' correction method)
 #' @param verbose (bool) If TRUE message progress of RT correction
@@ -27,41 +30,45 @@
 #' 
 #' @export
 peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
-                                        method='RANSAC', params='guess',
+                                        method='polynomial', params=list(polynomialOrder=3), robust=T,
                                         diagnostic=FALSE, verbose=TRUE, ...) {
 
     # Check inputs
-    applyRTCorrection_checkInput(targetFeatTable, referenceTable, method,params)
+    applyRTCorrection_checkInput(targetFeatTable, referenceTable, method, params, robust)
 
     # Init
     corrected_targetFeatTable <- targetFeatTable
 
     ## Run correction
-    # RANSAC
-    if (method == 'RANSAC') {
-
-        ransac_correctionFunction <- fit_RANSAC(corrected_targetFeatTable$rt,
-                                                targetFeatTable$rt_dev_sec)
-        ## Guess parameters and bounds
-        #if (useGuess) {
-        #  new_params   <- guess_RANSAC(x, y)
-        #} else {
-        #  new_params   <- params
-        #}
-
-        # fit
-        #  fit_RANSAC()
-        # predict
-        #   predict_RANSAC()
-        # put results in table
+    # Polynomial models (linear, quadratic, etc...)
+    if (method == 'polynomial') {
+        # Use RANSAC?
+        if (robust == T) {
+            rtCorrectionOutput <- fit_RANSAC(referenceTable$rt,
+                                                referenceTable$rt_dev_sec,
+                                             polynomialOrder=params[['polynomialOrder']])
+        }  else {
+            rtCorrectionOutput <- fit_polynomial(referenceTable$rt,
+                                                referenceTable$rt_dev_sec,
+                                             polynomialOrder=params[['polynomialOrder']])
+        }
+        # Get the
+        correctionFunction <- rtCorrectionOutput$model
+        correctedRt <- predict(correctionFunction, newdata=targetFeatTable$rt)
+        corrected_targetFeatTable <- targetFeatTable$rt - correctedRt
 
     }
-    # for future curve shapes
+    # for future functions/Shape, etcx
     #} else if () {
     #}
-
-    return(corrected_targetFeatTable)
-
+    if (isTRUE(diagnostic)) {
+        # plot the diagnostic
+        if (isTRUE(robust)) {
+        }
+      return(list(correctedRtTable=corrected_targetFeatTable))
+    } else {
+      return(list(correctedRtTable=corrected_targetFeatTable))
+    }
     ## TODO
     # unittest
     # @example
@@ -69,7 +76,7 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
 }
 # applyRTCorrection check input
 applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
-                                            method, params) {
+                                            method, params, robust) {
     ## Check targetFeatTable
     applyRTCorrection_checkTargetFeatTable(targetFeatTable)
 
@@ -101,20 +108,28 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
     }
 
     ## Check method
-    KNOWN_CORRECTIONMETHODs <- c('RANSAC')
+    KNOWN_CORRECTIONMETHODs <- c("polynomial")
     if (!(method %in% KNOWN_CORRECTIONMETHODs)) {
         stop(paste('Error: "method" must be one of:', KNOWN_CORRECTIONMETHODs))
     }
 
     ## Check params input
-    if (!(is.character(params) | is.list(params))) {
-        stop('Check input, "params" must be "guess" or list') }
-    # params is 'guess' if character
-    if (is.character(params)){
-        if (params != 'guess') {
-            stop('Check input, "params" must be "guess" if not list')
-        }
+    if (!is.list(params)) {
+        stop('Check input, "params" must be list') }
+    # Verify if parameters passed on params are adequate for chosen method
+    if (is.list(params)){
+       if (method == 'polynomial') {
+           if (!any(names(params) == 'polynomialOrder')) {
+               stop("polynomialOrder must be provided in params")}
+           else { if (!isTRUE(all.equal(params[['polynomialOrder']], as.integer(params[['polynomialOrder']]))) | (params[['polynomialOrder']] >= 1)) {
+               stop("polynomialOrder must be an integer and equal or greater than 1")
+                    }
+                }
+       }
     }
+
+    ## Check robust argument
+    if (!is.boolean(robust)) { stop("robust must be either TRUE or FALSE")}
 }
 # check input targetFeatTable
 applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
@@ -124,10 +139,9 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
     }
 
     # required columns are present
-    if (!all(c("cpdID", "cpdName", "rtMin", "rt", "rtMax",
-    "mzMin", "mz", "mzMax") %in% colnames(targetFeatTable))){
+    if (!all(c("cpdID", "cpdName", "rt", "rt_dev_sec") %in% colnames(targetFeatTable))){
         stop("expected columns in targetFeatTable are \"cpdID\", \"cpdName\", ",
-        "\"rtMin\", \"rt\", \"rtMax\", \"mzMin\", \"mz\" and \"mzMax\"")
+        "\"rt\", \"rt_dev_sec\"")
     }
 
     # column type
@@ -138,26 +152,13 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
         if (!is.character(targetFeatTable$cpdName[1])){
             stop("targetFeatTable$cpdName must be character")
         }
-        if (!is.numeric(targetFeatTable$rtMin[1])){
-            stop("targetFeatTable$rtMin must be numeric")
-        }
         if (!(is.numeric(targetFeatTable$rt[1]) |
                 is.na(targetFeatTable$rt[1]))){
             stop("targetFeatTable$rt must be numeric or NA")
         }
-        if (!is.numeric(targetFeatTable$rtMax[1])){
-            stop("targetFeatTable$rtMax must be numeric")
-        }
-        if (!is.numeric(targetFeatTable$mzMin[1])){
-            stop("targetFeatTable$mzMin must be numeric")
-        }
-        if (!(is.numeric(targetFeatTable$mz[1]) |
-                is.na(targetFeatTable$mz[1]))){
-            stop("targetFeatTable$mz must be numeric or NA")
-        }
-        if (!is.numeric(targetFeatTable$mzMax[1])){
-            stop("targetFeatTable$mzMax must be numeric")
-        }
+        if (!(is.numeric(targetFeatTable$rt_dev_sec[1]) | is.na(targetFeatTable$rt_dev_sec[1]))) {
+            stop("targetFeatTable$rt_dev_sec must be numeric or NA") }
+
     }
 }
 
@@ -167,25 +168,197 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
 # New retention time calibration functions can be added below
 # All fitting functions should have the following argument:
 # of the kind x = theoretical rt, y= Deviation (Rt_{obs} - Rt{exp}}
-
-# guess_RANSAC <- function(x, y)
-
-
-predict_Rt <- function(x, y, correctionFunction=NA) {
-
-    if (is.na(correctionFunction)) {
-        stop("correctionFunction must be a previously fitted retention
-        time correction expression")
-    }
-
-}
-# fit_RANSAC <- function()
+# LOESS placeholder.
 fit_LOESS <- function(x, y, ...) {
 
     loess_fun <- loess()
 
     return (loess_fun)
 }
-# predict_RANSAC <- function()
+# General purpose polynomial function - can be used for linear fits
+fit_polynomial <- function(x, y, polynomialOrder, returnFitted=FALSE) {
 
+    polyModel <- lm(y ~ poly(x, degree=polynomialOrder))
 
+    if (isTRUE(returnFitted)) {
+        modelFitted <- fitted(polyModel)
+        modelResiduals <- residuals(polyModel)
+        return(list(model=polyModel, fitted=modelFitted, residuals=modelResiduals))
+    }
+    else {return(list(model=polyModel))}
+}
+
+## Port of the RANSAC regressor from scikit-learn
+ransacRegressor <- function(x, y, polynomialOrder=3,
+                            residual_threshold=NULL,
+                            loss='absolute_loss',
+                            min_samples=NULL,
+                            max_trials = 1000, max_skips=100, stop_n_inliers=Inf, stop_score=Inf,
+                            stop_probability=0.99, random_state=NULL) {
+
+    if (length(x) != length(y)) {
+        stop('x and y must have the same length')
+    }
+    #
+   if (isFALSE(all.equal(polynomialOrder, as.integer(polynomialOrder)) | (polynomialOrder >= 1))) {
+       stop("`polynomialOrder` must be an integer and equal or greater than 1")
+    }
+
+    # If residual_threshold is NULL, use
+    # the MAD (median absolute deviation) of the y variable as cutoff
+    if (is.null(residual_threshold)) {
+      residual_threshold <- median(abs(y - median(y)))
+    }
+    # Select the loss function
+    if (loss == "absolute_loss") {
+      loss_function <- loss_absolute
+    }
+    else if (loss == "squared_loss") {
+      loss_function <- loss_squared
+    }
+    else {
+        stop("Allowed `loss` functions are `loss_squared` and `loss_absolute`")
+    }
+
+    if (!is.null(random_state)) {
+      set.seed(random_state)
+    }
+    # Create a data frame to use when calling "predict.lm"
+    x_data <- data.frame(x)
+    colnames(x_data) <- 'x'
+
+    n_inliers_best <- 0
+    score_best <- 0
+    n_samples <- length(x)
+    # Minimum number of samples - by default use polynomial function degree + 1
+    if (is.null(min_samples)) {
+        min_samples <- polynomialOrder + 1 }
+    # Generate array of indices for all samples to use later
+    all_samples_idx <- seq(1, n_samples)
+
+    n_trials <- 0
+    n_skips_no_inliers <- 0
+
+    # Core of the RANSAC algorithm
+    while (n_trials < max_trials) {
+        n_trials <- n_trials + 1
+
+        # choose random sample set
+        data_subset_idx <- sample(all_samples_idx, min_samples, replace=FALSE)
+
+        current_x <- x[data_subset_idx]
+        current_y <- y[data_subset_idx]
+
+        fitted_model_current_iteration <- fit_polynomial(current_x, current_y, polynomialOrder=polynomialOrder)
+
+        # residuals of all data for current random sample model
+        y_pred <- predict(fitted_model_current_iteration$model, newdata=x_data)
+
+        residuals_subset <- loss_function(y, y_pred)
+
+        # classify data into inliers and outliers
+        inlier_mask_subset <- residuals_subset < residual_threshold
+        n_inliers_subset <- sum(inlier_mask_subset)
+
+        # less inliers -> skip current random sample
+        if (n_inliers_subset < n_inliers_best) {
+            n_skips_no_inliers <- n_skips_no_inliers + 1
+            next
+        }
+
+        # extract inlier data set
+        inlier_idxs_subset <- all_samples_idx[inlier_mask_subset]
+        X_inlier_subset <- x[inlier_idxs_subset]
+        y_inlier_subset <- y[inlier_idxs_subset]
+
+        # score of inlier data set - implement
+        score_subset <- summary(fit_polynomial(X_inlier_subset,
+                                       y_inlier_subset, polynomialOrder=polynomialOrder)$model)$r.squared
+
+        # same number of inliers but worse score -> skip current random
+        if ((n_inliers_subset == n_inliers_best) & ( score_subset < score_best)) {
+            next
+        }
+
+        # save current random sample as best sample
+        n_inliers_best <- n_inliers_subset
+        score_best <- score_subset
+        inlier_mask_best <- inlier_mask_subset
+        X_inlier_best <- X_inlier_subset
+        y_inlier_best <- y_inlier_subset
+
+        # Do we need this?? # Check all these conditions and code wrapping
+        max_trials <- min(max_trials, dynamic_max_trials(n_inliers_best, n_samples, min_samples, stop_probability))
+
+        # break if sufficient number of inliers or score is reached
+        if ((n_inliers_best >= stop_n_inliers) | (score_best >= stop_score)) { break }
+        }
+
+        # if none of the iterations met the required criteria
+        if (is.null(inlier_mask_best)) {
+          if ((n_skips_no_inliers) > max_skips) {
+            warning("Number of skipped iterations larger than `max_skips`") }
+          else {
+            warning(
+              "RANSAC could not find a valid consensus set") }
+        }
+          else {
+            if ((n_skips_no_inliers) > max_skips) {
+                warning("RANSAC found a valid consensus set but exited
+                        early due to skipping more iterations than
+                        `max_skips`") }
+        }
+
+        # estimate final model using all inliers
+        final_fitted_regressor <- fit_polynomial(X_inlier_best, y_inlier_best, polynomialOrder)
+        inlier_mask <- inlier_mask_best
+        return(list(model=final_fitted_regressor$model, inlier=inlier_mask))
+
+}
+
+# Absolute Loss function - part of RANSAC interpretation
+loss_absolute <- function(y_true, y_pred) {
+  loss_value <- abs(y_true - y_pred)
+  return(loss_value)
+}
+
+# Square loss function - part of RANSAC interpretation
+loss_squared <- function(y_true, y_pred) {
+
+  loss_value <- (y_true - y_pred) ** 2
+  return(loss_value)
+
+}
+
+# dynamic max trials - part of the RANSAC implementation
+dynamic_max_trials <- function(n_inliers, n_samples, min_samples, probability) {
+  "Determine number trials such that at least one outlier-free subset is
+    sampled for the given inlier/outlier ratio.
+    Parameters
+    ----------
+    n_inliers : int
+        Number of inliers in the data.
+    n_samples : int
+        Total number of samples in the data.
+    min_samples : int
+        Minimum number of samples chosen randomly from original data.
+    probability : float
+        Probability (confidence) that one outlier-free sample is generated.
+    Returns
+    -------
+    trials : int
+        Number of trials.
+    "
+
+  epsilon <- .Machine$double.eps
+  inlier_ratio <- n_inliers / n_samples
+
+  nom <- max(epsilon, 1 - probability)
+  denom <- max(epsilon, 1 - inlier_ratio ** min_samples)
+
+  if (nom == 1) {return(0)}
+  if (denom == 1) {return(Inf)}
+
+  return(abs(ceiling(log(nom) / log(denom))))
+
+}
