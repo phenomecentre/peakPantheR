@@ -1,19 +1,7 @@
 context('peakPantheR_applyRTCorrection()')
 
+
 ## Input and expected data
-
-
-
-#test_that('correct RANSAC, guess params', {})
-
-#test_that('correct RANSAC, input params', {})
-
-#test_that('correct RANSAC, diagnostic', {})
-
-#test_that('correct RANSAC, empty targetFeatTable, with NA exclusion', {})
-
-#test_that('correct RANSAC, empty referenceTable, with NA exclusion', {})
-
 test_that('raises error()', {
   # Input
   tmp_targetFeatTable           <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
@@ -25,8 +13,8 @@ test_that('raises error()', {
   tmp_referenceTable[1,]        <- c("Ref-1", "Ref Cpd 1", 10, 1)
   tmp_referenceTable[2,]        <- c("Ref-2", "Ref Cpd 2", 20, 1.5)
   tmp_referenceTable[,c(3:4)]   <- sapply(tmp_referenceTable[,c(3:4)], as.numeric)
-  
-  
+
+
   # Trigger checks on targetFeatTable input
   # targetFeatTable is not a data.frame
   expect_error(peakPantheR_applyRTCorrection(targetFeatTable='notADataFrame', referenceTable=tmp_referenceTable), 'specified targetFeatTable is not a data.frame')
@@ -101,4 +89,81 @@ test_that('raises error()', {
   
   # PARAMS SPECIFIC CHECKS
   
+})
+
+test_that('peakPantheR_applyRTCorrection()', {
+  # Input FIR with 1 empty box (without the widened mz cpd 3 should not return any matching scan)
+  input_rt                    <- c()
+  input_rt_dev_sec            <- c()
+
+  # Expected model and results
+  expected_corrected                 <- full_peakTable
+
+  # results (output, warnings and messages)
+  polynomial_regression <- evaluate_promise(fit_polynomial(x=input_rt, y=input_rt_dev_sec))
+
+  # Check results
+  expect_equal(result_integrateFIR$result, expected_peakTable)
+
+  # Check messages (cannot check time on message)
+  expect_equal(length(result_integrateFIR$messages), 5)
+  expect_equal(result_integrateFIR$messages[c(1,2,4)], expected_messages)
+})
+
+test_that('polynomial_regression rt function', {
+  # Input FIR with 1 empty box (without the widened mz cpd 3 should not return any matching scan)
+  input_rt                    <- c()
+  input_rt_dev_sec            <- c()
+
+  # Expected model and results
+  expected_corrected                 <- full_peakTable
+
+  # results (output, warnings and messages)
+  polynomial_regression <- evaluate_promise(fit_polynomial(x=input_rt, y=input_rt_dev_sec, robust=T))
+
+  # Check results
+  expect_equal(result_integrateFIR$result, expected_peakTable)
+
+  # Check messages (cannot check time on message)
+  expect_equal(length(result_integrateFIR$messages), 5)
+  expect_equal(result_integrateFIR$messages[c(1,2,4)], expected_messages)
+})
+
+test_that('RANSAC rt correction function', {
+  # Input FIR with 1 empty box (without the widened mz cpd 3 should not return any matching scan)
+  input_rt                    <- c()
+  input_rt_dev_sec            <- c()
+
+  # Expected model and results
+  expected_corrected                 <- full_peakTable
+
+  # results (output, warnings and messages)
+  polynomial_regression <- evaluate_promise(fit_polynomial(x=input_rt, y=input_rt_dev_sec))
+
+  # Check results
+  expect_equal(result_integrateFIR$result, expected_peakTable)
+
+  # Check messages (cannot check time on message)
+  expect_equal(length(result_integrateFIR$messages), 5)
+  expect_equal(result_integrateFIR$messages[c(1,2,4)], expected_messages)
+})
+
+
+test_that('constant rt correction', {
+  # Input FIR with 1 empty box (without the widened mz cpd 3 should not return any matching scan)
+  input_rt                    <- c()
+  input_rt_dev_sec            <- c()
+
+  # Expected model and results
+  expected_corrected                 <- full_peakTable
+
+  # results (output, warnings and messages)
+  polynomial_regression <- evaluate_promise(fit_polynomial(x=input_rt, y=input_rt_dev_sec))
+
+  # Check results
+  expect_equal(result_integrateFIR$result, expected_peakTable)
+
+  # Check messages (cannot check time on message)
+  expect_equal(length(result_integrateFIR$messages), 5)
+  expect_equal(result_integrateFIR$messages[c(1,2,4)], expected_messages)
 })
