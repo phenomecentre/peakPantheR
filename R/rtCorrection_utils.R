@@ -45,8 +45,8 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
     # Polynomial models (linear, quadratic, etc...)
     if (method == 'polynomial') {
         # Adjust the polynomialOrder if the number of references passed in insuficient
-        if (dim(referenceTable)[1] < params[['polynomialOrder']]) {
-            params[['polynomialOrder']] <- dim(referenceTable)[1]
+        if (dim(referenceTable)[1] <= params[['polynomialOrder']]) {
+            params[['polynomialOrder']] <- dim(referenceTable)[1] - 1
         }
         # Use RANSAC?
         if (isTRUE(robust)) {
@@ -74,8 +74,8 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
     }
     else if (method == 'constant') {
         # The predicted drift is the constant observed drift in the single reference
+        corrected_targetFeatTable$correctedRt <- corrected_targetFeatTable$rt - rep(referenceTable$rt_dev_sec, dim(corrected_targetFeatTable)[1])
         corrected_targetFeatTable$predictedRtDrift <- rep(referenceTable$rt_dev_sec, dim(corrected_targetFeatTable)[1])
-        corrected_targetFeatTable$correctedRt <- corrected_targetFeatTable$rt - corrected_targetFeatTable$predictedRtDrift
         which_reference <- corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
         corrected_targetFeatTable$isReference[which_reference] <- 'Reference set'
     }
@@ -125,26 +125,33 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
     ## Check method
     KNOWN_CORRECTIONMETHODs <- c("polynomial", "constant")
     if (!(method %in% KNOWN_CORRECTIONMETHODs)) {
-        stop(paste('Error: "method" must be one of:', KNOWN_CORRECTIONMETHODs))
+        stop('Error: \"method\" must be one of: \"polynomial\", \"constant\"')
     }
+
+   if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
+         stop('No function can be fitted with a single reference. Use method=\`offset\` instead.')
+       }
 
     ## Check params input
     if (!is.list(params)) {
         stop('Check input, "params" must be list') }
     # Verify if parameters passed on params are adequate for chosen method
-    if (is.list(params)){
+    if (is.list(params)) {
        if (method == 'polynomial') {
            if (!any(names(params) == 'polynomialOrder')) {
-               stop("polynomialOrder must be provided in params")}
-           else { if (isFALSE(all.equal(params[['polynomialOrder']], as.integer(params[['polynomialOrder']]))) | (params[['polynomialOrder']] < 1)) {
-               stop("polynomialOrder must be an integer and equal or greater than 1")
-                    }
-                  else if (params[['polynomialOrder']] > dim(referenceTable)[1]) {
-                      warning("`polynomialOrder` is larger than the number of references passed + 1. `polynomialOrder`
-                      will be set equal to number of reference compounds")
-                    }
-                }
+               stop("polynomialOrder must be provided in params") }
+           else {
+             if (!is(params[['polynomialOrder']], 'numeric')) {
+                  stop("polynomialOrder must be an integer and equal or greater than 1") }
+             else if (!isTRUE(all.equal(params[['polynomialOrder']], as.integer(params[['polynomialOrder']]))) | (params[['polynomialOrder']] < 1)) {
+                  stop("polynomialOrder must be an integer and equal or greater than 1")
+             }
+             else if (params[['polynomialOrder']] >= dim(referenceTable)[1]) {
+                 warning("`polynomialOrder` is larger than the number of references passed. `polynomialOrder` will be set equal to number of reference compounds - 1")
+                 }
+             }
        }
+
       else if (method == 'constant') {
          if (dim(referenceTable)[1] > 1) {
            stop("`constant` Rt correction can only use a single reference")
@@ -154,6 +161,8 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
 
     ## Check robust argument
     if (!is.logical(robust)) { stop("robust must be either TRUE or FALSE")}
+
+
 }
 # check input targetFeatTable
 applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {

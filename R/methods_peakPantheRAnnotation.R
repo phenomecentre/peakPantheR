@@ -2425,9 +2425,12 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         if (!all(rtCorrectionReferences %in% newAnnotation@cpdID)) {
             stop("All compound IDs in rtCorrectionReferences must be present on the annotationObject.")
         }
-        if ((length(rtCorrectionReferences) == 1) & (method != 'constant')) {warning('No function can be fitted with
-        a single reference. Retention time will
-        be offset by the distance to reference instead.')}
+    }
+
+    if (method == 'polynomial') {
+        if (params[['polynomialOrder']] >= dim(referenceTable)[1]) {
+        params[['polynomialOrder']] <-  dim(referenceTable)[1] - 1
+        }
     }
 
     if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
