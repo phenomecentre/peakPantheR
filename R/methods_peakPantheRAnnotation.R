@@ -2503,7 +2503,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
           ggplot2::geom_point(ggplot2::aes(col=isReference)) + ggplot2::geom_line(ggplot2::aes(x=rt, y=predictedRtDrift))
 
         rtAdjustmentPlot <- rtAdjustmentPlot +
-          ggplot2::xlab('Retention time') + ggplot2::ylab('Observed Retention Time Deviation')
+          ggplot2::xlab('Retention time') + ggplot2::ylab('Retention time deviation')
 
         return(list(annotation=newAnnotation, plot=rtAdjustmentPlot))
     } else {return(list(annotation=newAnnotation))}
