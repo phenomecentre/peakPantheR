@@ -152,3 +152,47 @@ load_annotation_from_file_UI_helper <- function(annotationPath) {
 }
 
 
+#' UI show annotation helper - list of properties
+#'
+#' show method specific to the UI, that returns each field in a named list to
+#' ease display
+#'
+#' @param annotation (peakPantherAnnotation) Object to describe
+#'
+#' @return (list) Named list of annotation properties
+annotation_showMethod_UI_helper <- function(annotation){
+    properties <- list(nbCompounds = nbCompounds(annotation),
+                       nbSamples = nbSamples(annotation),
+                       uROIExist = uROIExist(annotation),
+                       useUROI = useUROI(annotation),
+                       useFIR = useFIR(annotation),
+                       isAnnotated = isAnnotated(annotation)
+    )
+
+    return(properties)
+}
+
+
+#' UI show annotation helper - UI sidebar string
+#'
+#' Return a text description of an annotation for UI presentation
+#'
+#' @param annotProp (list) Named list of annotation properties as
+#' created by \code{annotation_showMethod_UI_helper()}
+#'
+#' @return (str) Textual description of the annotation to show on UI
+annotation_showText_UI_helper <- function(annotProp){
+    UI_string = list(
+        if (annotProp$isAnnotated) {'Is annotated'} else {'Not annotated'},
+        paste0(annotProp$nbCompounds, ' compounds'),
+        paste0(annotProp$nbSamples, ' samples'),
+        if (annotProp$uROIExist) {'updated ROI exist (uROI)'
+        } else {'updated ROI do not exist (uROI)'},
+        if (annotProp$useUROI) {'uses updated ROI (uROI)'
+        } else {'does not use updated ROI (uROI)'},
+        if (annotProp$useFIR) {'uses fallback integration regions (FIR)'
+        } else {'does not use fallback integration regions (FIR)'}
+    )
+
+    return(UI_string)
+}
