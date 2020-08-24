@@ -2427,12 +2427,6 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         }
     }
 
-    if (method == 'polynomial') {
-        if (params[['polynomialOrder']] >= dim(referenceTable)[1]) {
-        params[['polynomialOrder']] <-  dim(referenceTable)[1] - 1
-        }
-    }
-
     if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
         stop("rtWindowWidth must be a positive number")
     }
@@ -2464,6 +2458,12 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
                              rt=rt_expected, rt_dev_sec=rt_dev_sec_mean)
     # subset the references from the table of all compounds to correct
     referenceTable <- targetFeatTable[targetFeatTable$cpdID %in% rtCorrectionReferences, ]
+
+    if (method == 'polynomial') {
+        if (params[['polynomialOrder']] >= dim(referenceTable)[1]) {
+        params[['polynomialOrder']] <-  dim(referenceTable)[1] - 1
+        }
+    }
     # Exclude features with mean rt_dev_sec = NA from the correction function fitting
     if (any(is.na(referenceTable$rt_dev_sec))) {
         warning(paste(c("The following references could not be integrated previously and will be excluded: ",
