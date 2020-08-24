@@ -4,9 +4,15 @@
 \alias{peakPantheR_applyRTCorrection}
 \title{Correct targeted retention time based on reference compounds}
 \usage{
-peakPantheR_applyRTCorrection(targetFeatTable, referenceTable,
-    method = "RANSAC", params = "guess", diagnostic = FALSE,
-    verbose = TRUE, ...)
+peakPantheR_applyRTCorrection(
+  targetFeatTable,
+  referenceTable,
+  method = "polynomial",
+  params = list(polynomialOrder = 3),
+  robust = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{targetFeatTable}{a \code{\link{data.frame}} of compounds to target as
@@ -20,13 +26,13 @@ information as rows and properties as columns: \code{cpdID} (str),
 \code{cpdName} (str), \code{rt} (float), \code{rt_dev_sec} (float)}
 
 \item{method}{(str) name of RT correction method to use (currently
-\code{RANSAC})}
+\code{polynomial})}
 
-\item{params}{(list or str) either 'guess' for automated parametrisation or
-list of parameters (specific to each correction method)}
+\item{params}{(list) list of parameters to pass to the each correction method.
+Currently allowed inputs are \code{polynomialOrder} for \code{method='polynomial'}}
 
-\item{diagnostic}{(bool) If TRUE returns diagnostic plots (specific to each
-correction method)}
+\item{robust}{(bool) whether to use the RANSAC algorithm to flag and ignore outliers
+during retention time correction}
 
 \item{verbose}{(bool) If TRUE message progress of RT correction}
 
@@ -38,7 +44,8 @@ a targetFeatTable with corrected RT, or diagnostic information
 \description{
 Correct targeted features retention time using the RT and RT deviation of
 previously fitted compounds. The `method` and `params` are used to select and
-parametrise the retention time correction method employed. If `diagnostic` is
+parametrise the retention time correction method employed. When `robust` is set to TRUE, the RANSAC algorithm is used
+to automatically flag outliers and robustify the correction function fitting. If `diagnostic` is
 TRUE, RT correction diagnostic plots are returned (specific to each
 correction method).
 }

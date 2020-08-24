@@ -6,8 +6,7 @@
 \alias{outputAnnotationParamsCSV}
 \title{Save annotation parameters as CSV}
 \usage{
-\S4method{outputAnnotationParamsCSV}{peakPantheRAnnotation}(object,
-    saveFolder, verbose)
+\S4method{outputAnnotationParamsCSV}{peakPantheRAnnotation}(object, saveFolder, verbose)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}

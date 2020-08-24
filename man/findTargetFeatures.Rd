@@ -4,9 +4,16 @@
 \alias{findTargetFeatures}
 \title{Find and integrate target features in each ROI}
 \usage{
-findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
-    params = "guess", sampling = 250, maxApexResidualRatio = 0.2,
-    verbose = FALSE, ...)
+findTargetFeatures(
+  ROIsDataPoints,
+  ROI,
+  curveModel = "skewedGaussian",
+  params = "guess",
+  sampling = 250,
+  maxApexResidualRatio = 0.2,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame

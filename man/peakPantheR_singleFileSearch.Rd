@@ -4,9 +4,17 @@
 \alias{peakPantheR_singleFileSearch}
 \title{Search, integrate and report targeted features in a raw spectra}
 \usage{
-peakPantheR_singleFileSearch(singleSpectraDataPath, targetFeatTable,
-    peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE,
-    FIR = NULL, centroided = TRUE, verbose = TRUE, ...)
+peakPantheR_singleFileSearch(
+  singleSpectraDataPath,
+  targetFeatTable,
+  peakStatistic = FALSE,
+  plotEICsPath = NA,
+  getAcquTime = FALSE,
+  FIR = NULL,
+  centroided = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{singleSpectraDataPath}{(str) path to netCDF or mzML raw data file

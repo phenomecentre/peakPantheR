@@ -4,9 +4,16 @@
 \alias{peakPantheR_ROIStatistics}
 \title{Save to disk each ROI EIC and mean IS RT}
 \usage{
-peakPantheR_ROIStatistics(referenceSpectraFiles, saveFolder, ROI = NULL,
-    IS_ROI = NULL, sampleColour = NULL, ncores = 0,
-    saveISPlots = TRUE, verbose = TRUE)
+peakPantheR_ROIStatistics(
+  referenceSpectraFiles,
+  saveFolder,
+  ROI = NULL,
+  IS_ROI = NULL,
+  sampleColour = NULL,
+  ncores = 0,
+  saveISPlots = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{referenceSpectraFiles}{(str) A character vector of paths to the

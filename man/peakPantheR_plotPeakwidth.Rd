@@ -4,9 +4,16 @@
 \alias{peakPantheR_plotPeakwidth}
 \title{Plot peak value and peakwidth by acquisition time or in input order}
 \usage{
-peakPantheR_plotPeakwidth(apexValue, widthMin = NULL, widthMax = NULL,
-    acquTime = NULL, varName = "variable", sampleColour = NULL,
-    rotateAxis = FALSE, verbose = TRUE)
+peakPantheR_plotPeakwidth(
+  apexValue,
+  widthMin = NULL,
+  widthMax = NULL,
+  acquTime = NULL,
+  varName = "variable",
+  sampleColour = NULL,
+  rotateAxis = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{apexValue}{(float) vector of apex value}

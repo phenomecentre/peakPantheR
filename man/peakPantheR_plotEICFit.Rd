@@ -4,9 +4,15 @@
 \alias{peakPantheR_plotEICFit}
 \title{Plot samples raw data and detected feature for a single ROI}
 \usage{
-peakPantheR_plotEICFit(ROIDataPointSampleList, curveFitSampleList = NULL,
-    rtMin = NULL, rtMax = NULL, sampling = 250, sampleColour = NULL,
-    verbose = TRUE)
+peakPantheR_plotEICFit(
+  ROIDataPointSampleList,
+  curveFitSampleList = NULL,
+  rtMin = NULL,
+  rtMax = NULL,
+  sampling = 250,
+  sampleColour = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{ROIDataPointSampleList}{(list) list of \code{data.frame} of raw data

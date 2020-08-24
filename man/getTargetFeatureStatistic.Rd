@@ -4,8 +4,12 @@
 \alias{getTargetFeatureStatistic}
 \title{Calculate chromatographic peak properties}
 \usage{
-getTargetFeatureStatistic(fittedCurves, targetFeatTable, foundPeakTable,
-    verbose = FALSE)
+getTargetFeatureStatistic(
+  fittedCurves,
+  targetFeatTable,
+  foundPeakTable,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{fittedCurves}{(list) A list (one entry per ROI window) of
