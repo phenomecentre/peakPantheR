@@ -24,22 +24,19 @@ tabPanel("Run",
         # Run options and trigger (full menu)
         wellPanel(
           fluidRow(
-
-            # TODO: use uROI (only if exist!)
-            # TODO: use FIR (only if exist!)
             # useUROI & useFIR
             column(5, offset=1,
-              h4('Checkbox: use uROI'),
-              h4('Checkbox: use FIR')
+              uiOutput("useUROICheckbox"), # use uROI
+              uiOutput("useFIRCheckbox"),  # use FIR
             ), # end column (useUROI, useFIR)
 
             # ncores cpuslider
             column(4, offset=1,
 			  checkboxInput("parallelisation",
-                label = p("Parallelisation", style="font-weight:bold"),
+                label = p("Parallelisation", style="color:#3e648d;font-weight:bold"),
 				value = FALSE
               ),
-              uiOutput("cpuSlider_fit")
+              uiOutput("cpuSlider")
             )  # end column (cpu slider)
           ),   # end fluidRow run parameters
           tags$hr(),

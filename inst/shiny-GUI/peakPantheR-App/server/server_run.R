@@ -1,6 +1,6 @@
 ## Run Tab ---------------------------------------------------------------------
 
-# no import
+## no import
   output$noImportForFitUI <- renderUI ({
     if(importSuccess()=='yes') return()
     tagList(
@@ -10,12 +10,13 @@
   })
 
 
-# show the status of the peakPantheRAnnotation
+## show the status of the peakPantheRAnnotation
 output$showAnnotStatus <- renderUI({
   # Capture the annotation shown and split by line into a list
   tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(annotation()))
   # render the panel
   wellPanel(
+    h4('Status:', style="color:#3e648d;font-weight:bold"),
     helpText(tmp_text[[1]],style="color:black"),
     helpText(tmp_text[[2]],style="color:black"),
     helpText(tmp_text[[3]],style="color:black"),
@@ -26,7 +27,7 @@ output$showAnnotStatus <- renderUI({
 })
 
 
-# Message if already annotated
+## Message if already annotated
 output$alreadyAnnotatedUI <- renderUI({
   # only check before run is triggered
   if(input$runTrigger == 0) {
@@ -50,27 +51,52 @@ output$alreadyAnnotatedUI <- renderUI({
 # TODO: CHECK the 'Already Annotated' UI
 
 
-# Run UI buttons
-# make a cpu slider appear
-output$cpuSlider_fit <- renderUI({
-  if(input$parallelisation == 0) return(NULL)
+## Run UI buttons
+# Checkbox use uROI (set default to current annotation value)
+output$useUROICheckbox <- renderUI({
+  # if uROI does not exist, strikethrough the label
+  if (peakPantheR::uROIExist(annotation())) {
+    lbl <- p("use ", shiny::span(em("updated Regions of Interest")))
+  } else {
+    lbl <- p(shiny::tags$s("use "), shiny::span(em(shiny::tags$s("updated Regions of Interest"))))
+  }
+  # set the default value based on the annotation status
+  tagList(
+    h5(HTML("uROI"), style="color:#3e648d;font-weight:bold"),
+    checkboxInput("useUROI",
+                   label = lbl,
+                    value = peakPantheR::useUROI(annotation()))
+  )
+})# TODO: CHECK uROI checkbox is striked-through and activated correctly
 
+# Checkbox use FIR (set default to current annotation value)
+output$useFIRCheckbox <- renderUI({
+  tagList(
+    h5(HTML("FIR"), style="color:#3e648d;font-weight:bold"),
+    checkboxInput("useFIR",
+                  label = p("use ", shiny::span(em("Fallback Integration Regions"))),
+                  value = peakPantheR::useFIR(annotation()))
+  )
+}) # TODO: CHECK FIR checkbox is activated correctly [cannot do the strikethrough]
+
+# Cpu slider appears if parallelisation is selected
+output$cpuSlider <- renderUI({
+  if(input$parallelisation == 0) return(NULL)
   tagList(
     sliderInput("ncores",
       label = paste("Available cores: ",maxCores,sep=""),
       min = 0, max = maxCores, value = maxCores, step=1
-    ),
-    checkboxInput("forPar",
-      label = "Force parallelisation",
-      value = FALSE
     )
   )
 })
 # TODO: !! CHECK the slider and related properties exist !!
-# TODO: menu UI specific buttons
 
 
-# Progress bar
+# TODO: !! Run the computation here !!
+## Run the annotation
+
+
+## Progress bar
 output$progressBarUI <- renderUI({
   h2('woohoo a progress bar')
 })
@@ -106,7 +132,7 @@ runSuccess <- reactive({
 })
 
 
-# Success message
+## Success message
 output$successAnnotationUI <- renderUI({
   if(runSuccess()=='no') {
     # not imported yet
