@@ -1,6 +1,6 @@
 ---
 title: "Getting Started with the peakPantheR package"
-date: "2019-10-01"
+date: "2020-08-25"
 package: peakPantheR
 output:
     BiocStyle::html_document:

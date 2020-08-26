@@ -4,15 +4,8 @@
 \alias{peakPantheR_parallelAnnotation}
 \title{Search, integrate and report targeted features in a multiple spectra}
 \usage{
-peakPantheR_parallelAnnotation(
-  object,
-  ncores = 0,
-  getAcquTime = TRUE,
-  resetWorkers = 1,
-  centroided = TRUE,
-  verbose = TRUE,
-  ...
-)
+peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
+    resetWorkers = 1, centroided = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation

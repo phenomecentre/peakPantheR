@@ -7,15 +7,9 @@
 \title{Save to disk the annotation parameters as CSV and a diagnostic plot
 per fitted compound}
 \usage{
-\S4method{outputAnnotationDiagnostic}{peakPantheRAnnotation}(
-  object,
-  saveFolder,
-  savePlots = TRUE,
-  sampleColour = NULL,
-  verbose = TRUE,
-  ncores = 0,
-  ...
-)
+\S4method{outputAnnotationDiagnostic}{peakPantheRAnnotation}(object,
+    saveFolder, savePlots = TRUE, sampleColour = NULL, verbose = TRUE,
+    ncores = 0, ...)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}

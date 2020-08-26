@@ -1,6 +1,6 @@
 ---
 title: "Parallel Annotation"
-date: "2019-10-01"
+date: "2020-08-25"
 package: peakPantheR
 output:
     BiocStyle::html_document:
@@ -79,7 +79,7 @@ Parallel compound integration is set to process **multiple** compounds in
 knitr::include_graphics("../man/figures/parallelAnnotation.png")
 ```
 
-To acheive this, `peakPantheR` will:
+To achieve this, `peakPantheR` will:
 
 1. load a list of expected _RT_ / _m/z_ ROI and a list of files to process
 2. initialise an output object with expected ROI and file paths
@@ -269,6 +269,13 @@ output_folder <- tempdir()
 outputAnnotationDiagnostic(updated_annotation, saveFolder=output_folder, 
                             savePlots=TRUE, sampleColour=col_sType, 
                             verbose=TRUE, ncores=2)
+```
+
+Drifts in  peakPantheR provides a methid for. This method requires data from a previous annotation `isAnnotated=TRUE`. If `useUROI` is set to
+TRUE, then the expected retention time value is taken from. The `retentionTimeCorrection` method returns a list with 2 `peakPantheR` annotation object
+```{r, results="asis", echo=FALSE}
+
+
 ```
 
 The data saved in `annotationParameters_summary.csv` is as follow:

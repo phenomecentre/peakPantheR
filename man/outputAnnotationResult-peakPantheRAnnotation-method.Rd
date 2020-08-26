@@ -6,12 +6,8 @@
 \alias{outputAnnotationResult}
 \title{Save to disk all annotation results as csv files}
 \usage{
-\S4method{outputAnnotationResult}{peakPantheRAnnotation}(
-  object,
-  saveFolder,
-  annotationName = "annotationResult",
-  verbose = TRUE
-)
+\S4method{outputAnnotationResult}{peakPantheRAnnotation}(object,
+    saveFolder, annotationName = "annotationResult", verbose = TRUE)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}
