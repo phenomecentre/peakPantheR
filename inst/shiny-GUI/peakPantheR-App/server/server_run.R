@@ -1,19 +1,19 @@
 ## Run Tab ---------------------------------------------------------------------
 
 ## no import
-  output$noImportForFitUI <- renderUI ({
-    if(importSuccess()=='yes') return()
-    tagList(
-      HTML("<div class=\"alert alert-dismissible alert-danger\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button> <h4 style=\"font-weight:bold\">No annotation imported</h4>Create or load a <i>peakPantheRAnnotation</i></div>")#,
-      #includeHTML("data/aboutTSAnalysis.html")
-    )
-  })
+output$noImportForFitUI <- renderUI ({
+  if(importSuccess()=='yes') return()
+  tagList(
+    HTML("<div class=\"alert alert-dismissible alert-danger\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button> <h4 style=\"font-weight:bold\">No annotation imported</h4>Create or load a <i>peakPantheRAnnotation</i></div>")#,
+    #includeHTML("data/aboutTSAnalysis.html")
+  )
+})
 
 
 ## show the status of the peakPantheRAnnotation
 output$showAnnotStatus <- renderUI({
   # Capture the annotation shown and split by line into a list
-  tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(annotation()))
+  tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(values$annotation))
   # render the panel
   wellPanel(
     h4('Status:', style="color:#3e648d;font-weight:bold"),
@@ -32,7 +32,7 @@ output$alreadyAnnotatedUI <- renderUI({
   # only check before run is triggered
   if(input$goAnnotation == 0) {
     # warning message
-    if(peakPantheR::isAnnotated(annotation())) {
+    if(peakPantheR::isAnnotated(values$annotation)) {
       # annotated, message
       return(
         tagList(
@@ -55,7 +55,7 @@ output$alreadyAnnotatedUI <- renderUI({
 # Checkbox use uROI (set default to current annotation value)
 output$useUROICheckbox <- renderUI({
   # if uROI does not exist, strikethrough the label
-  if (peakPantheR::uROIExist(annotation())) {
+  if (peakPantheR::uROIExist(values$annotation)) {
     lbl <- p("use ", shiny::span(em("updated Regions of Interest")))
   } else {
     lbl <- p(shiny::tags$s("use "), shiny::span(em(shiny::tags$s("updated Regions of Interest"))))
@@ -65,7 +65,7 @@ output$useUROICheckbox <- renderUI({
     h5(HTML("uROI"), style="color:#3e648d;font-weight:bold"),
     checkboxInput("useUROI",
                    label = lbl,
-                    value = peakPantheR::useUROI(annotation()))
+                    value = peakPantheR::useUROI(values$annotation))
   )
 })# TODO: CHECK uROI checkbox is striked-through and activated correctly
 
@@ -75,7 +75,7 @@ output$useFIRCheckbox <- renderUI({
     h5(HTML("FIR"), style="color:#3e648d;font-weight:bold"),
     checkboxInput("useFIR",
                   label = p("use ", shiny::span(em("Fallback Integration Regions"))),
-                  value = peakPantheR::useFIR(annotation()))
+                  value = peakPantheR::useFIR(values$annotation))
   )
 }) # TODO: CHECK FIR checkbox is activated correctly [cannot do the strikethrough]
 
@@ -94,28 +94,27 @@ ncoresInput <- reactive ({
   if( input$parallelisation != 0 ) { input$ncores }
   else { return(0) }
 })
-# TODO: !! CHECK the slider and related properties exist !!
 
 
-# TODO: !! Run the computation here !!
 ## Run the annotation (simplest setup possible)
 observeEvent(input$goAnnotation, {
-  # Need to update the annotation first
-  tmp_annotation <- annotation()
-  # use UROI (if uROI does not exist, it is always FALSE)
-  #if (peakPantheR::uROIExist(tmp_annotation)) {
-  #  tmp_annotation$useUROI <- input$useUROICheckbox
-  #} else {
-  #  tmp_annotation$useUROI <- FALSE
-  #}
-  # Use FIR
-  #tmp_annotation$useFIR <- input$useFIRCheckbox
-
-  # computation (discard the fails)
-  annotation(peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), verbose=TRUE)$annotation)
+  ## Need to update an annotation first with useUROI and useFIR
+  tmp_annotation <- values$annotation
+  # proxy for useUROI (if uROI does not exist: it is always FALSE)
+  if (peakPantheR::uROIExist(tmp_annotation)) { tmp_useUROI <- input$useUROI } else { tmp_useUROI <- FALSE }
+  # finalise the setup of the annotation (useUROI, useFIR)
+  tmp_annotation <- peakPantheR::resetAnnotation(tmp_annotation,
+                                                 useUROI=tmp_useUROI,
+                                                 useFIR=input$useFIR,
+                                                 verbose=FALSE)
+  ## Annotate!
+  result <- peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), verbose=TRUE)
+  # Store the annotation and failures into the reactiveValue
+  values$annotation <- result$annotation
+  values$failures   <- result$failures
 })
-# TODO: ensure setting of useUROI and useFIR works
-# TODO: !! reactiveValues instead of reactive ??
+# TODO: check the resulting annotation
+# TODO: !! a .rdata with proper filepaths for FaahKO !!
 
 
 ## Progress bar
@@ -132,6 +131,7 @@ runSuccess <- reactive({
   if(input$goAnnotation == 0) { return('no')} # annotation not clicked
   return('yes')
   # TODO: CHECK the annotation results after `goAnnotation` got triggered
+  # TODO: a message of # failures? ~ is it a fail if not samples left (notAnnotated it seems)
 #  # return 'no' until a trigger button is clicked
 #  if(input$triggerImportNewAnnotation == 0 & input$triggerLoadPreviousAnnotation == 0) { return('no')} # import not clicked
 #
