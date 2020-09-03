@@ -30,7 +30,7 @@ output$showAnnotStatus <- renderUI({
 ## Message if already annotated
 output$alreadyAnnotatedUI <- renderUI({
   # only check before run is triggered
-  if(input$runTrigger == 0) {
+  if(input$goAnnotation == 0) {
     # warning message
     if(peakPantheR::isAnnotated(annotation())) {
       # annotated, message
@@ -89,11 +89,33 @@ output$cpuSlider <- renderUI({
     )
   )
 })
+# correction when slider doesn't appear
+ncoresInput <- reactive ({
+  if( input$parallelisation != 0 ) { input$ncores }
+  else { return(0) }
+})
 # TODO: !! CHECK the slider and related properties exist !!
 
 
 # TODO: !! Run the computation here !!
-## Run the annotation
+## Run the annotation (simplest setup possible)
+observeEvent(input$goAnnotation, {
+  # Need to update the annotation first
+  tmp_annotation <- annotation()
+  # use UROI (if uROI does not exist, it is always FALSE)
+  #if (peakPantheR::uROIExist(tmp_annotation)) {
+  #  tmp_annotation$useUROI <- input$useUROICheckbox
+  #} else {
+  #  tmp_annotation$useUROI <- FALSE
+  #}
+  # Use FIR
+  #tmp_annotation$useFIR <- input$useFIRCheckbox
+
+  # computation (discard the fails)
+  annotation(peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), verbose=TRUE)$annotation)
+})
+# TODO: ensure setting of useUROI and useFIR works
+# TODO: !! reactiveValues instead of reactive ??
 
 
 ## Progress bar
@@ -107,9 +129,9 @@ output$progressBarUI <- renderUI({
 # value for success
 runSuccess <- reactive({
   # return 'no' until the trigger button is clicked
-  if(input$runTrigger == 0) { return('no')} # annotation not clicked
+  if(input$goAnnotation == 0) { return('no')} # annotation not clicked
   return('yes')
-  # TODO: CHECK the annotation results after `runTrigger` got... triggered
+  # TODO: CHECK the annotation results after `goAnnotation` got triggered
 #  # return 'no' until a trigger button is clicked
 #  if(input$triggerImportNewAnnotation == 0 & input$triggerLoadPreviousAnnotation == 0) { return('no')} # import not clicked
 #
@@ -136,7 +158,7 @@ runSuccess <- reactive({
 output$successAnnotationUI <- renderUI({
   if(runSuccess()=='no') {
     # not imported yet
-    if(input$runTrigger == 0) {
+    if(input$goAnnotation == 0) {
       return()
     # Run failed
     } else {

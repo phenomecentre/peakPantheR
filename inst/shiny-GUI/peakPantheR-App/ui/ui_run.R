@@ -42,7 +42,7 @@ tabPanel("Run",
           tags$hr(),
 
           fluidRow(
-            div(actionButton("runTrigger", label="Annotate", class="btn btn-primary btn-lg"), align="center")
+            div(actionButton("goAnnotation", label="Annotate", class="btn btn-primary btn-lg"), align="center")
           )  # end fluidRow run button
         ),   # end wellPanel (run options + trigger)
 
