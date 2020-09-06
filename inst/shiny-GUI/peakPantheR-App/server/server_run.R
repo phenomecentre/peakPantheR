@@ -1,11 +1,20 @@
 ## Run Tab ---------------------------------------------------------------------
 
+# - message if no import (conditional panel)
+# - status of the annotation (and failures) on the sidebar
+# - message if already annotated (also triggered after computation)
+# - useUROI, useFIR and parallelisation controls [pre-checked based on annotation properties, useUROI strikedthrough if uROI do not exist]
+# - run annotation after updating useUROI useFIR (erase previous data)
+# - progress indicator during computation
+# - success/failure message with number of failed samples
+
+
 ## no import
 output$noImportForFitUI <- renderUI ({
   if(importSuccess()=='yes') return()
   tagList(
     HTML("<div class=\"alert alert-dismissible alert-danger\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button> <h4 style=\"font-weight:bold\">No annotation imported</h4>Create or load a <i>peakPantheRAnnotation</i></div>")#,
-    #includeHTML("data/aboutTSAnalysis.html")
+    #includeHTML("data/aboutRunAnnotation.html")
   )
 })
 
@@ -14,6 +23,7 @@ output$noImportForFitUI <- renderUI ({
 output$showAnnotStatus <- renderUI({
   # Capture the annotation shown and split by line into a list
   tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(values$annotation))
+  fail_text <- paste(dim(values$failures)[1], 'annotation failure(s)')
   # render the panel
   wellPanel(
     h4('Status:', style="color:#3e648d;font-weight:bold"),
@@ -22,33 +32,27 @@ output$showAnnotStatus <- renderUI({
     helpText(tmp_text[[3]],style="color:black"),
     helpText(tmp_text[[4]],style="color:black"),
     helpText(tmp_text[[5]],style="color:black"),
-    helpText(tmp_text[[6]],style="color:black")
+    helpText(tmp_text[[6]],style="color:black"),
+    tags$hr(),
+    if (!is.null(values$failures)) {
+      helpText(fail_text,style="color:black")
+    }
   )
 })
 
 
 ## Message if already annotated
 output$alreadyAnnotatedUI <- renderUI({
-  # only check before run is triggered
-  if(input$goAnnotation == 0) {
-    # warning message
-    if(peakPantheR::isAnnotated(values$annotation)) {
-      # annotated, message
-      return(
-        tagList(
-          HTML("<div class=\"alert alert-dismissible alert-warning\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Warning</h4>This dataset is already annotated, if selecting `Annotate` the data will be overwritten</div>")
-        )
+  # annotated, warning message
+  if(peakPantheR::isAnnotated(values$annotation)) {
+    return(
+      tagList(
+        HTML("<div class=\"alert alert-dismissible alert-warning\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Warning</h4>This dataset is already annotated, if selecting `Annotate` the data will be overwritten</div>")
       )
-    } else {
-      # not annotated, no message
-      return()
-    }
-  # no need for msg after run is triggered
-  } else {
-    return()
-  }
+    )
+  # not annotated, no msg
+  } else { return() }
 })
-# TODO: CHECK the 'Already Annotated' UI
 
 
 ## Run UI buttons
@@ -113,49 +117,40 @@ observeEvent(input$goAnnotation, {
   values$annotation <- result$annotation
   values$failures   <- result$failures
 })
-# TODO: check the resulting annotation
-# TODO: !! a .rdata with proper filepaths for FaahKO !!
+# TODO: CHECK the resulting annotation
+# TODO: CHECK that we can rerun
 
 
 ## Progress bar
 output$progressBarUI <- renderUI({
-  h2('woohoo a progress bar')
+  conditionalPanel(condition="$('html').hasClass('shiny-busy')",
+                   column(10, align="center",
+                          h4('Processing ...', style="color:#3e648d;font-weight:bold"),
+                          shiny::img(src="annot_progress.gif", width="350px")
+                   )
+  )
 })
-# TODO: a progress bar?
 
 
 ## Check annotation run is a success
 # value for success
 runSuccess <- reactive({
-  # return 'no' until the trigger button is clicked
-  if(input$goAnnotation == 0) { return('no')} # annotation not clicked
-  return('yes')
-  # TODO: CHECK the annotation results after `goAnnotation` got triggered
-  # TODO: a message of # failures? ~ is it a fail if not samples left (notAnnotated it seems)
-#  # return 'no' until a trigger button is clicked
-#  if(input$triggerImportNewAnnotation == 0 & input$triggerLoadPreviousAnnotation == 0) { return('no')} # import not clicked
-#
-#  isolate({
-#    # use a validObject as check to stop having a 'yes' in case of problems
-#    # if error raised during import, could have an annotation() that exist (NULL) and validObject(NULL) is TRUE... so check it's a peakPantheRAnnotation
-#    if( isTRUE(validObject(annotation(), test=TRUE)) & is(annotation(), 'peakPantheRAnnotation') ) {
-#      return('yes')
-#
-#    # not valid, return 'no'.
-#    # If it isn't a peakPantheRAnnotation, the app is killed with the error raised in the loading part (ordering is out of our control)
-#    # If it is an annotation, it is killed here
-#    } else {
-#      if(is(annotation(), 'peakPantheRAnnotation')) {
-#        stopApp( paste('Error:', validObject(annotation(), test=TRUE)))
-#      }
-#      return('no')
-#    }
-#  })
+  # no annotation computed yet (cover the case of no import without having to do an isAnnotated on NULL which would throw an error)
+  if(is.null(values$annotation)) {
+    return('no')
+  }
+  # annotation successful or already annotated
+  if(peakPantheR::isAnnotated(values$annotation)) {
+    return('yes')
+  # annotation not yet run or all spectra fail (trigger is checked in successAnnotationUI
+  } else {
+    return('no')
+  }
 })
-
 
 ## Success message
 output$successAnnotationUI <- renderUI({
+  failure_text <- paste(dim(values$failures)[1], 'annotation failure(s)')
   if(runSuccess()=='no') {
     # not imported yet
     if(input$goAnnotation == 0) {
@@ -164,14 +159,20 @@ output$successAnnotationUI <- renderUI({
     } else {
       return(
         tagList(
-          HTML("<div class=\"alert alert-dismissible alert-danger\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Error</h4>Annotation run failed</div>")
+          HTML(paste0("<div class=\"alert alert-dismissible alert-danger\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Error</h4>Annotation run failed<br>", failure_text, "</div>"))
         )
       )
     }
   # Run is successful
   } else if(runSuccess()=='yes') {
     tagList(
-      HTML("<div class=\"alert alert-dismissible alert-success\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Success</h4>Annotation successfully finished</div>")
+      HTML(paste0("<div class=\"alert alert-dismissible alert-success\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Success</h4>Annotation successfully finished<br>", failure_text, "</div>"))
     )
   }
+})
+
+
+# Conditional panels control (next tab)
+output$AnnotationDone <- renderText({
+  if( runSuccess()=='yes' ) { 'yes' } else { 'no' }
 })

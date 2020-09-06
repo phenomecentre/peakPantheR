@@ -59,4 +59,5 @@ shinyServer( function(input, output, session){
 
   # force update of conditional statement triggers and "generate Input" buttons even if not yet open
   outputOptions(output, "importDone", suspendWhenHidden=FALSE)
+  outputOptions(output, "AnnotationDone", suspendWhenHidden=FALSE)
 })

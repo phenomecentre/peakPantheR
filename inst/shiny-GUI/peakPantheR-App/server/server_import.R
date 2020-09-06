@@ -122,7 +122,7 @@ output$showImportResult <- renderUI({
 })
 
 
-# Conditional panels control
+# Conditional panels control (next tab)
 output$importDone <- renderText({
   if( importSuccess()=='yes' ) { 'yes' } else { 'no' }
 })

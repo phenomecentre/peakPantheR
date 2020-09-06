@@ -21,7 +21,7 @@ tabPanel("Run",
         # Message already annotated
         uiOutput("alreadyAnnotatedUI"),
 
-        # Run options and trigger (full menu)
+        # Run options and trigger
         wellPanel(
           fluidRow(
             # useUROI & useFIR
@@ -54,7 +54,6 @@ tabPanel("Run",
         # Success (green) / fail (red) row
         fluidRow(
           uiOutput("successAnnotationUI") # error/success message
-          # TODO: CHECK success/failure UI
         ) # end fluiRow (success panel)
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)
