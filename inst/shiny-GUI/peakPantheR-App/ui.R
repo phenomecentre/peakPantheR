@@ -53,6 +53,9 @@ shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPanthe
     # -- Diagnostic Tab --
     source(file.path("ui", "ui_diagnostic.R"),  local = TRUE)$value,
 
+    # -- Results Tab --
+    source(file.path("ui", "ui_results.R"),  local = TRUE)$value,
+
     # -- Export Tab --
     source(file.path("ui", "ui_export.R"),  local = TRUE)$value
 

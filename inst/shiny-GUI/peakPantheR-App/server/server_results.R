@@ -1,24 +1,24 @@
-## Diagnostic Tab --------------------------------------------------------------
+## Results Tab --------------------------------------------------------------
 
 # - message if no import (conditional panel)
 # - status of the annotation (and failures) on the sidebar
 
-# - [TAB] update uROI/FIR
-# - [TAB] show plots
-# - [TAB] show updated parameters + modify ?
+# - [TAB] show overall results
+# - [TAB] show the values per compound
+# - [TAB] show the values per sample
 
 ## not annotated
-output$notAnnotForDiagUI <- renderUI ({
+output$notAnnotForResUI <- renderUI ({
   if(runSuccess()=='yes') return()
   tagList(
     HTML("<div class=\"alert alert-dismissible alert-danger\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button> <h4 style=\"font-weight:bold\">No annotation computed</h4>Annotate a <i>peakPantheRAnnotation</i></div>")#,
-    #includeHTML("data/aboutDiagnotic.html")
+    #includeHTML("data/aboutResults.html")
   )
 })
 
 
 ## show the status of the peakPantheRAnnotation (need to be separated from the previous panel so they can be hidden)
-output$showAnnotStatusDiag <- renderUI({
+output$showAnnotStatusRes <- renderUI({
   # Capture the annotation shown and split by line into a list
   tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(values$annotation))
   fail_text <- paste(dim(values$failures)[1], 'annotation failure(s)')

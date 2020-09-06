@@ -1,9 +1,9 @@
-# DIAGNOSTIC - Tab panel  ---------------------------------------------------- #
+# Results - Tab panel  ---------------------------------------------------- #
 
-tabPanel("Diagnostic: update and plots",
+tabPanel("Integration results",
 
   # Conditional UI based on import successfully initialised
-  uiOutput("notAnnotForDiagUI"),
+  uiOutput("notAnnotForResUI"),
   conditionalPanel(
     condition = "output.AnnotationDone=='yes'",
     fluidRow(
@@ -11,25 +11,25 @@ tabPanel("Diagnostic: update and plots",
   ## Sidebar
       column(width=2,
         # Current annotation status
-        uiOutput("showAnnotStatusDiag")
+        uiOutput("showAnnotStatusRes")
       ), # end Sidebar column
 
   ## Main panel
       column(10,
         # Overall title
-        h3('Diagnostic', style="color:#3e648d;font-weight:bold"),
+        h3('Results', style="color:#3e648d;font-weight:bold"),
 
-        # TODO: 3 tabs; auto-update params, diag plots, params update
+        # TODO: 3 tabs; overall, per cpd, per spl
 
-        # Diagnostic options
+        # Results options
         wellPanel(
           fluidRow(
             h5('Lorem Ipsum')
           ) # end fluidRow
-        ) # end wellPanel diagnostic options
+        ) # end wellPanel result options
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)
   )       # end conditional panel
 )
-# end DIAGNOSTIC Tab panel --------------------------------------------------- #
+# end RESULTS Tab panel --------------------------------------------------- #
 
