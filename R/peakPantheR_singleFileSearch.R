@@ -32,6 +32,8 @@
 #' \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @param centroided (bool) use TRUE if the data is centroided, used by
 #' \code{\link[MSnbase]{readMSData}} when reading the raw data file
+#' @param curveModel (str) specify the peak-shape model to fit, by default \code{skewedGaussian}.
+#' Accepted values are \code{skewedGaussian} and \code{emgGaussian}
 #' @param verbose (bool) If TRUE message calculation progress, time taken and
 #' number of features found
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
@@ -215,11 +217,11 @@
 #' @export
 peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL,
-    centroided = TRUE, verbose = TRUE, ...) {
+    centroided = TRUE, curveModel='skewedGaussian', verbose = TRUE, ...) {
     stime <- Sys.time()
     # Check input
     resInp <- singleFileSearch_checkInput(singleSpectraDataPath,targetFeatTable,
-                                            plotEICsPath, FIR)
+                                            plotEICsPath, FIR, curveModel)
     singleSpectraDataPath <- resInp$specPath
     plotEICsPath <- resInp$plotPath
     useFIR <- resInp$useFIR
@@ -246,7 +248,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
     # Integrate
     resInt <- singleFileSearch_integrate(raw_data, targetFeatTable,
-            ROIsDataPoint, peakStatistic, useFIR, FIR, plotEICsPath,verbose,...)
+            ROIsDataPoint, peakStatistic, useFIR, FIR, plotEICsPath, curveModel, verbose,...)
     finalOutput <- resInt$finalOutput
     curveFit <- resInt$curveFit
 
@@ -269,7 +271,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
 # Check inputs
 singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
-                                        plotEICsPath, FIR) {
+                                        plotEICsPath, FIR, curveModel) {
     singleSpectraDataPath <- normalizePath(singleSpectraDataPath,
                                             mustWork = FALSE)
     if (!file.exists(singleSpectraDataPath)) {
@@ -316,11 +318,12 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
 }
 # Integrate if there is at minimum 1 target feature
 singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
-                        peakStatistic, useFIR, FIR, plotEICsPath, verbose, ...){
+                        peakStatistic, useFIR, FIR, plotEICsPath, curveModel="skewedGaussian", verbose, ...){
     if (dim(targetFeatTable)[1] != 0) { #Only integrate if there is min 1 target
         # Integrate features using ROI
         foundPeaks <- findTargetFeatures(ROIsDataPoint,
                                         targetFeatTable,
+                                        curveModel=curveModel,
                                         verbose = verbose,
                                         ...)
         foundPeakTable <- foundPeaks$peakTable

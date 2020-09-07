@@ -27,6 +27,8 @@
 #' more efficiently. For values >1, ensure sufficient system memory is available
 #' @param centroided (bool) use TRUE if the data is centroided, used by
 #' \code{\link[MSnbase]{readMSData}} when reading the raw data files
+#' @param curveModel (str) specify the peak-shape model to fit, by default \code{skewedGaussian}.
+#' Accepted values are \code{skewedGaussian} and \code{emgGaussian}
 #' @param verbose (bool) If TRUE message calculation progress, time taken,
 #' number of features found (total and matched to targets) and failures
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
@@ -153,7 +155,7 @@
 #'
 #' @export
 peakPantheR_parallelAnnotation <- function(object, ncores = 0,
-    getAcquTime = TRUE, resetWorkers = 1, centroided = TRUE, verbose=TRUE, ...){
+    getAcquTime = TRUE, resetWorkers = 1, centroided = TRUE, curveModel='skewedGaussian', verbose=TRUE, ...){
 
     # Check inputs, Initialise variables and outputs
     initRes <- parallelAnnotation_init(object, resetWorkers, verbose)
@@ -166,7 +168,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores = 0,
     # (list, each item is the result of a file, errors are passed into the list)
     allFilesRes <- parallelAnnotation_runSingleFileSearch(object, file_paths,
         target_peak_table, input_FIR, ncores, getAcquTime, resetWorkersMulti,
-        centroided, verbose,...)
+        centroided, curveModel=curveModel, verbose,...)
 
     # Collect, process and reorder results
     res <- parallelAnnotation_process(allFilesRes, object, verbose)
@@ -222,7 +224,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores = 0,
 #  or NULL)} a string detailing the error (named with the
 #  singleSpectraDataPath) or NA if the processing is successful.
 parallelAnnotation_parallelHelper <- function(singleSpectraDataPath,
-targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,inVerbose=TRUE,...){
+targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE, curveModel='skewedGaussian', inVerbose=TRUE,...){
     # Check input path exist or exit with error message
     if (!file.exists(singleSpectraDataPath)) {
         if (inVerbose) {
@@ -246,6 +248,7 @@ targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,inVerbose=TRUE,...){
         tmpResult <- peakPantheR_singleFileSearch(singleSpectraDataPath,
             targetFeatTable, peakStatistic = TRUE, plotEICsPath = NA,
             getAcquTime = inGetAcquTime, FIR = inFIR, centroided = centr,
+            curveModel = curveModel,
             verbose = inVerbose, ...)
         # add failure status
         failureMsg <- NA
