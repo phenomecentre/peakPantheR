@@ -49,7 +49,7 @@ in uROI and FIR}
 }
 \description{
 Performs retention time correction to re-adjust the expected retention time position of compounds.
-Requires an annotated peakPantheRAnnotation object (\code{isAnnotated=TRUE}). The original \code(rt) value is used as
+Requires an annotated peakPantheRAnnotation object (\code{isAnnotated=TRUE}). The original \code{rt} value is used as
 expected and the observed deviation measured in the \code{rt_dev_sec} field is taken as the deviation to be corrected.
 }
 \examples{

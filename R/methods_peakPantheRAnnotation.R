@@ -2340,7 +2340,7 @@ setGeneric("retentionTimeCorrection",
 #' @title Apply retention time correction methods to adjust the retention time information in the uROI of
 #' peakPantheRAnnotation object
 #' @description Performs retention time correction to re-adjust the expected retention time position of compounds.
-#' Requires an annotated peakPantheRAnnotation object (\code{isAnnotated=TRUE}). The original \code(rt) value is used as
+#' Requires an annotated peakPantheRAnnotation object (\code{isAnnotated=TRUE}). The original \code{rt} value is used as
 #' expected and the observed deviation measured in the \code{rt_dev_sec} field is taken as the deviation to be corrected.
 #' @param previousAnnotation (peakPantheRAnnotation) object with previous fit results to adjust retention time values
 #' in uROI and FIR
