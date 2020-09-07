@@ -294,7 +294,7 @@ gaussian_erf <- function(x) {
 #'
 #' @return Value of the gaussian error function evaluated at x
 gaussian_cerf <- function(x) {
-    return(2 * stats::pnorm(x * sqrt(2)) - 1)
+    return(1 - (2 * stats::pnorm(x * sqrt(2)) - 1))
 }
 
 
@@ -330,10 +330,10 @@ skewedGaussian_minpack.lm <- function(params, xx) {
 #'
 #' @return value of the exponentially modified gaussian evaluated at xx
 emgGaussian_minpack.lm <- function(params, xx) {
-    erf_term <- 1 + skew_erf((params$gamma * (xx-params$center))/params$sigma *
-        sqrt(2))
-    yy <- (params$amplitude/(params$sigma * sqrt(2 * pi))) *
-        exp(-(xx - params$center)^2/2 * params$sigma^2) * erf_term
+    cerf_term <- skew_cerf((params$center + params$gamma * (params$sigma^2) - xx)/(params$sigma *
+        sqrt(2)))
+    yy <- (params$amplitude*params$gamma/2) *
+        exp(params$gamma*(params$center - xx + (params$gamma * (params$sigma^2)/2))) * cerf_term
 
     return(yy)
 }
