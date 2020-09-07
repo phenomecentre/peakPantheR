@@ -6,12 +6,12 @@ os:
   - osx
 
 r:
-  - bioc-devel
   - bioc-release
+  - bioc-devel
 
 matrix:
   allow_failures:
-    - r: bioc-release
+    - r: bioc-devel
 
 bioc_required: true
 bioc_check: true
