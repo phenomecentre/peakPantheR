@@ -271,13 +271,6 @@ outputAnnotationDiagnostic(updated_annotation, saveFolder=output_folder,
                             verbose=TRUE, ncores=2)
 ```
 
-Drifts in  peakPantheR provides a methid for. This method requires data from a previous annotation `isAnnotated=TRUE`. If `useUROI` is set to
-TRUE, then the expected retention time value is taken from. The `retentionTimeCorrection` method returns a list with 2 `peakPantheR` annotation object
-```{r, results="asis", echo=FALSE}
-
-
-```
-
 The data saved in `annotationParameters_summary.csv` is as follow:
 ```{r, results = "asis", echo = FALSE}
 # use pandoc for improved readability, display the diagnostic results
@@ -359,6 +352,18 @@ new_annotation <- resetFIR(new_annotation)
 #> FIR will be reset with uROI values
 ```
 
+### Retention time correction
+The `peakPantheRAnnotation::retentionTimeCorrection` method provides an interface to adjust the expected ROI retention time values and account for chromatographic batch effects. In order to apply this method, the `peakPantheRAnnotation` must be previously annotated (`isAnnotated=TRUE`). The retention time correction algorithm can be chosen with the `method` argument. Currently implemented methods are `polynomial` and `constant`. The `peakPantheRAnnotation::retentionTimeCorrection` method fits a correction function to model the dependency of the mean `rt_dev_sec` per feature with the expected databased retention time. If `useUROI=TRUE`, the expected retention time value is taken from the `UROI_rt` field, otherwise `ROI_rt` is used. If `robust=TRUE`, the RANSAC algorithm is used to automatically detect outliers and exclude them from the fit (should only be used with a large number of references). The `peakPantheRAnnotation::retentionTimeCorrection` method returns a list with 2 elements, a modified `peakPantheRAnnotation` object and a `ggplot2` diagnostic plot (optional, depending on whether `TRUE` or `FALSE` is passed to the `diagnostic` argument). The returned `peakPantheRAnnotation` object contains the same `uROI` and `FIR` `mz` values from the original annotation, but the retention time related parameters (`rt`, `rtMin` and `rtMax`) are replaced by the adjusted values. The `rtMax` and `rtMin` are set as the corrected `rt` value plus or minus half the value passed to the `rtWindowWidth` argument, respectively. `useUROI` and `useFIR` are also set to TRUE. To continue with the workflow, simply use the new annotation object and call `peakPantheR_parallelAnnotation()` again.
+```{r, results="asis", echo=FALSE}
+# Example with second degree polynomial, no robust
+rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,  rtCorrectionReferences=NULL,
+                                              method='polynomial', params=list(polynomialOrder=2), robust=F, rtWindowWidth=15, diagnostic=T)
+# Example with constant correction.
+rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,  rtCorrectionReferences=c('ID-1'), method='constant', robust=F, rtWindowWidth=15, diagnostic=T)
+updatated_annotation <- rtCorrectionOutput$annotation
+# The ggplot2 plot object
+rtCorrectionOutput$plot
+```
 
 ### Add new samples to process
 
