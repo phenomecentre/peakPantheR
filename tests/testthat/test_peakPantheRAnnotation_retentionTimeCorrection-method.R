@@ -98,11 +98,11 @@ test_that('retentionTimeCorrection-method', {
   # Test if object is modified correctly
   # input
   constantCorrected <- evaluate_promise(retentionTimeCorrection(filledAnnotation, rtCorrectionReference=c('ID-1'),
-                                               method='constant', params=list(polynomialOrder=1), robust=T))
+                                               method='constant', params=list(polynomialOrder=1), robust=TRUE))
   filledAnnotation@useUROI <- FALSE
   # test also if ROI vs uROI are used correctly as original RT value based on useUROI
   constantCorrected_useROI <- evaluate_promise(retentionTimeCorrection(filledAnnotation, rtCorrectionReference=c('ID-1'),
-                                               method='constant', params=list(polynomialOrder=1), robust=T))
+                                               method='constant', params=list(polynomialOrder=1), robust=TRUE))
 
   filledAnnotation@useUROI <- TRUE
   # expected ROI/uROI

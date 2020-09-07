@@ -67,7 +67,7 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
         }
         # Get the correction outputs
         correctionFunction <- rtCorrectionOutput$model
-        correctedRtDrift <- predict(correctionFunction, newdata=data.frame(x=targetFeatTable$rt))
+        correctedRtDrift <- stats::predict(correctionFunction, newdata=data.frame(x=targetFeatTable$rt))
         corrected_targetFeatTable$correctedRt <- corrected_targetFeatTable$rt - correctedRtDrift
         corrected_targetFeatTable$predictedRtDrift <- correctedRtDrift
 
@@ -84,10 +84,7 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
     #
     return(list(correctedRtTable=corrected_targetFeatTable))
     }
-    ## TODO
-    # unittest
-    # @example
-    # vignette, where it is integrated in the workflow
+
 
 # applyRTCorrection check input
 applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
@@ -201,76 +198,74 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
 # New retention time calibration functions can be added below
 # All fitting functions should have the following argument:
 # of the kind x = theoretical rt, y= Deviation (Rt_{obs} - Rt{exp}}
+
 # LOESS placeholder.
 fit_LOESS <- function(x, y, ...) {
 
-    loess_fun <- loess()
+    loess_fun <- stats::loess()
 
     return (loess_fun)
 }
+
 # General purpose polynomial function - can be used for linear fits
 fit_polynomial <- function(x, y, polynomialOrder, returnFitted=FALSE) {
 
-    polyModel <- lm(y ~ poly(x, degree=polynomialOrder))
+    polyModel <- stats::lm(y ~ poly(x, degree=polynomialOrder))
 
     if (isTRUE(returnFitted)) {
-        modelFitted <- fitted(polyModel)
-        modelResiduals <- residuals(polyModel)
+        modelFitted <- stats::fitted(polyModel)
+        modelResiduals <- stats::residuals(polyModel)
         return(list(model=polyModel, fitted=modelFitted, residuals=modelResiduals))
     }
     else {return(list(model=polyModel))}
 }
 
 ## Port of the RANSAC regressor from scikit-learn
-#
-#
-#
 fit_RANSAC <- function(x, y, polynomialOrder=3,
-                            residual_threshold=NULL,
-                            loss='absolute_loss',
-                            min_samples=NULL,
-                            max_trials = 1000, max_skips=Inf, stop_n_inliers=Inf, stop_score=Inf,
-                            stop_probability=0.99, random_state=NULL) {
-
+                       residual_threshold=NULL,
+                       loss='absolute_loss',
+                       min_samples=NULL,
+                       max_trials = 1000, max_skips=Inf, stop_n_inliers=Inf,
+                       stop_score=Inf, stop_probability=0.99, random_state=NULL) {
     if (length(x) != length(y)) {
         stop('x and y must have the same length')
     }
-    #
-   if (isFALSE(all.equal(polynomialOrder, as.integer(polynomialOrder)) | (polynomialOrder >= 1))) {
-       stop("`polynomialOrder` must be an integer and equal or greater than 1")
+
+    if (isFALSE(all.equal(polynomialOrder, as.integer(polynomialOrder)) | (polynomialOrder >= 1))) {
+        stop("`polynomialOrder` must be an integer and equal or greater than 1")
     }
 
     # If residual_threshold is NULL, use
     # the MAD (median absolute deviation) of the y variable as cutoff
     if (is.null(residual_threshold)) {
-      residual_threshold <- median(abs(y - median(y)))
+        residual_threshold <- stats::median(abs(y - stats::median(y)))
     }
     # Select the loss function
     if (loss == "absolute_loss") {
-      loss_function <- loss_absolute
-    }
-    else if (loss == "squared_loss") {
-      loss_function <- loss_squared
-    }
-    else {
+        loss_function <- loss_absolute
+    } else if (loss == "squared_loss") {
+        loss_function <- loss_squared
+    } else {
         stop("Allowed `loss` functions are `loss_squared` and `loss_absolute`")
     }
 
     if (!is.null(random_state)) {
-      set.seed(random_state)
+        set.seed(random_state)
     }
+
     # Create a data frame to use when calling "predict.lm"
     x_data <- data.frame(x)
     colnames(x_data) <- 'x'
 
     n_inliers_best <- 0
     score_best <- 0
-    # Minimum number of samples - by default the max between polynomial function degree + 1 and half of the dataset
-    # size
-    if (is.null(min_samples)) {
-        min_samples <- max(polynomialOrder + 1 , ceiling(0.5*length(x)))}
-    # Generate array of indices for all samples to use later
 
+    # Minimum number of samples - by default the max between polynomial function degree + 1 and half of the dataset size
+    if (is.null(min_samples)) {
+        min_samples <- max(polynomialOrder + 1 , ceiling(0.5*length(x)))
+    }
+
+    # Generate array of indices for all samples to use later
     n_samples <- length(x)
     all_samples_idx <- seq(1, n_samples)
 
@@ -287,14 +282,14 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
         current_x <- x[data_subset_idx]
         current_y <- y[data_subset_idx]
 
-        fitted_model_current_iteration <- tryCatch(fit_polynomial(current_x, current_y, polynomialOrder=polynomialOrder),
-        error=function(e) e)
-          if(inherits(fitted_model_current_iteration, "error")){
+        fitted_model_current_iteration <- tryCatch(fit_polynomial(current_x, current_y, polynomialOrder=polynomialOrder), error=function(e) e)
+        if(inherits(fitted_model_current_iteration, "error")){
             n_skips_no_inliers <- n_skips_no_inliers + 1
             next
         }
+
         # residuals of all data for current random sample model
-        y_pred <- predict(fitted_model_current_iteration$model, newdata=x_data)
+        y_pred <- stats::predict(fitted_model_current_iteration$model, newdata=x_data)
 
         residuals_subset <- loss_function(y, y_pred)
 
@@ -314,8 +309,7 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
         y_inlier_subset <- y[inlier_idxs_subset]
 
         # score of inlier data set - implement
-        score_subset <- summary(fit_polynomial(X_inlier_subset,
-                                       y_inlier_subset, polynomialOrder=polynomialOrder)$model)$r.squared
+        score_subset <- summary(fit_polynomial(X_inlier_subset, y_inlier_subset, polynomialOrder=polynomialOrder)$model)$r.squared
 
         # same number of inliers but worse score -> skip current random
         if ((n_inliers_subset == n_inliers_best) & ( score_subset < score_best)) {
@@ -334,56 +328,51 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
 
         # break if sufficient number of inliers or score is reached
         if ((n_inliers_best >= stop_n_inliers) | (score_best >= stop_score)) { break }
-        }
+    }
 
-        # if none of the iterations met the required criteria
-        if (is.null(inlier_mask_best)) {
-          if ((n_skips_no_inliers) > max_skips) {
-            warning("Number of skipped iterations larger than `max_skips`") }
-          else {
-            warning(
-              "RANSAC could not find a valid consensus set") }
+    # if none of the iterations met the required criteria
+    if (is.null(inlier_mask_best)) {
+        if ((n_skips_no_inliers) > max_skips) {
+            warning("Number of skipped iterations larger than `max_skips`")
+        } else {
+            warning("RANSAC could not find a valid consensus set")
         }
-          else {
-            if ((n_skips_no_inliers) > max_skips) {
-                warning("RANSAC found a valid consensus set but exited
-                        early due to skipping more iterations than
-                        `max_skips`") }
+    } else {
+        if ((n_skips_no_inliers) > max_skips) {
+            warning("RANSAC found a valid consensus set but exited
+                    early due to skipping more iterations than
+                    `max_skips`")
         }
+    }
 
-        # estimate final model using all inliers
-        final_fitted_regressor <- fit_polynomial(X_inlier_best, y_inlier_best, polynomialOrder)
-        inlier_mask <- inlier_mask_best
-        return(list(model=final_fitted_regressor$model, inlier=inlier_mask))
-
+    # estimate final model using all inliers
+    final_fitted_regressor <- fit_polynomial(X_inlier_best, y_inlier_best, polynomialOrder)
+    inlier_mask <- inlier_mask_best
+    return(list(model=final_fitted_regressor$model, inlier=inlier_mask))
 }
 
 # Absolute Loss function - part of RANSAC interpretation
 loss_absolute <- function(y_true, y_pred) {
-  loss_value <- abs(y_true - y_pred)
-  return(loss_value)
+    loss_value <- abs(y_true - y_pred)
+    return(loss_value)
 }
 
 # Square loss function - part of RANSAC interpretation
 loss_squared <- function(y_true, y_pred) {
-
-  loss_value <- (y_true - y_pred) ** 2
-  return(loss_value)
-
+    loss_value <- (y_true - y_pred) ** 2
+    return(loss_value)
 }
 
 # dynamic max trials - part of the RANSAC implementation
 dynamic_max_trials <- function(n_inliers, n_samples, min_samples, probability) {
+    epsilon <- .Machine$double.eps
+    inlier_ratio <- n_inliers / n_samples
 
-  epsilon <- .Machine$double.eps
-  inlier_ratio <- n_inliers / n_samples
+    nom <- max(epsilon, 1 - probability)
+    denom <- max(epsilon, 1 - inlier_ratio ** min_samples)
 
-  nom <- max(epsilon, 1 - probability)
-  denom <- max(epsilon, 1 - inlier_ratio ** min_samples)
+    if (nom == 1) {return(0)}
+    if (denom == 1) {return(Inf)}
 
-  if (nom == 1) {return(0)}
-  if (denom == 1) {return(Inf)}
-
-  return(abs(ceiling(log(nom) / log(denom))))
-
+    return(abs(ceiling(log(nom) / log(denom))))
 }

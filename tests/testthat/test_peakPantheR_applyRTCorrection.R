@@ -72,21 +72,21 @@ test_that('raises error()', {
 
   # Method <-> params SPECIFIC CHECKS
   # method = polynomial but no polynomial order
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(a=5), robust=T), 'polynomialOrder must be provided in params', fixed=TRUE)
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(a=5), robust=F), 'polynomialOrder must be provided in params', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(a=5), robust=TRUE), 'polynomialOrder must be provided in params', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(a=5), robust=FALSE), 'polynomialOrder must be provided in params', fixed=TRUE)
   # method = polynomial but polynomial order is not valid
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder='NA'), robust=F), 'polynomialOrder must be an integer and equal or greater than 1', fixed=TRUE)
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1.3), robust=F), 'polynomialOrder must be an integer and equal or greater than 1', fixed=TRUE)
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1.3), robust=T), 'polynomialOrder must be an integer and equal or greater than 1', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder='NA'), robust=FALSE), 'polynomialOrder must be an integer and equal or greater than 1', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1.3), robust=FALSE), 'polynomialOrder must be an integer and equal or greater than 1', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1.3), robust=TRUE), 'polynomialOrder must be an integer and equal or greater than 1', fixed=TRUE)
 
   # method = polynomial, valid polynomial order but exceeds number of references
-  expect_warning(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=4), robust=F), '`polynomialOrder` is larger than the number of references passed. `polynomialOrder` will be set equal to number of reference compounds - 1', fixed=TRUE)
-  expect_warning(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=4), robust=T), '`polynomialOrder` is larger than the number of references passed. `polynomialOrder` will be set equal to number of reference compounds - 1', fixed=TRUE)
+  expect_warning(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=4), robust=FALSE), '`polynomialOrder` is larger than the number of references passed. `polynomialOrder` will be set equal to number of reference compounds - 1', fixed=TRUE)
+  expect_warning(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=4), robust=TRUE), '`polynomialOrder` is larger than the number of references passed. `polynomialOrder` will be set equal to number of reference compounds - 1', fixed=TRUE)
   # test sugestion of method=constant if ref = 1
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=F), 'No function can be fitted with a single reference. Use method=\`offset\` instead.', fixed=TRUE)
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=T), 'No function can be fitted with a single reference. Use method=\`offset\` instead.', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=FALSE), 'No function can be fitted with a single reference. Use method=\`offset\` instead.', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=TRUE), 'No function can be fitted with a single reference. Use method=\`offset\` instead.', fixed=TRUE)
   # test constant method throws error with multiple references
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='constant', params=list(polynomialOrder=1), robust=T), "`constant` Rt correction can only use a single reference", fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='constant', params=list(polynomialOrder=1), robust=TRUE), "`constant` Rt correction can only use a single reference", fixed=TRUE)
 
 })
 
@@ -128,9 +128,9 @@ test_that('polynomial method rt correction', {
   expected_corrected_dg3[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.013466,  predictedRtDrift=6.986534)
 
    # results (output, warnings and messages)
-  polynomial_regression_dg1 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=F))
+  polynomial_regression_dg1 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=FALSE))
   polynomial_regression_dg3 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable,
-                                                                          method='polynomial', params=list(polynomialOrder=3), robust=F))
+                                                                          method='polynomial', params=list(polynomialOrder=3), robust=FALSE))
   # Check results
   expect_equal(polynomial_regression_dg1$result$correctedRtTable, expected_corrected, tolerance=1e-5)
   expect_equal(polynomial_regression_dg3$result$correctedRtTable, expected_corrected_dg3, tolerance=1e-5)
@@ -153,7 +153,7 @@ test_that('polynomial method rt correction', {
   expected_corrected_isRef[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.72851,  predictedRtDrift=5.271487)
   expected_corrected_isRef[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.29195,  predictedRtDrift=6.708049)
 
-  polynomial_regression_ref <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=F))
+  polynomial_regression_ref <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=FALSE))
 
   expect_equal(polynomial_regression_ref$result$correctedRtTable, expected_corrected_isRef, tolerance=1e-5)
   # Check messages (cannot check time on message)
@@ -200,10 +200,9 @@ test_that('RANSAC rt correction function', {
 
    # results (output, warnings and messages)
   set.seed(19472)
-  polynomial_ransac_dg1 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=T))
+  polynomial_ransac_dg1 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=TRUE))
   set.seed(390753)
-  polynomial_ransac_dg3 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable,
-                                                                          method='polynomial', params=list(polynomialOrder=3), robust=T))
+  polynomial_ransac_dg3 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=3), robust=TRUE))
   # Check results
   expect_equal(polynomial_ransac_dg1$result$correctedRtTable, expected_corrected, tolerance=1e-5)
   expect_equal(polynomial_ransac_dg3$result$correctedRtTable, expected_corrected_dg3, tolerance=1e-5)
@@ -248,13 +247,13 @@ test_that('RANSAC rt correction function', {
   expected_corrected_outlier_nd[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.00000,  predictedRtDrift=7.000000)
 
   set.seed(22142)
-  polynomial_ransac_outlier <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable_outlier, method='polynomial', params=list(polynomialOrder=1), robust=T))
+  polynomial_ransac_outlier <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable_outlier, method='polynomial', params=list(polynomialOrder=1), robust=TRUE))
   set.seed(12149)
   polynomial_ransac_outlier_dg3 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable_outlier,
-                                                                          method='polynomial', params=list(polynomialOrder=3), robust=T))
+                                                                          method='polynomial', params=list(polynomialOrder=3), robust=TRUE))
   set.seed(4871414)
   polynomial_ransac_outlier_nd <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable_outlier,
-                                                                          method='polynomial', params=list(polynomialOrder=3), robust=T))
+                                                                          method='polynomial', params=list(polynomialOrder=3), robust=TRUE))
 
   expect_equal(polynomial_ransac_outlier$result$correctedRtTable, expected_corrected_outlier, tolerance=1e-5)
   expect_equal(polynomial_ransac_outlier_dg3$result$correctedRtTable, expected_corrected_outlier_dg3, tolerance=1e-5)
@@ -288,7 +287,7 @@ test_that('constant rt correction', {
   expected_corrected[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=43.9,  predictedRtDrift=1.1)
   expected_corrected[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=53.9,  predictedRtDrift=1.1)
 
-  constant_correction <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='constant', params=list(polynomialOrder=1), robust=F))
+  constant_correction <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='constant', params=list(polynomialOrder=1), robust=FALSE))
 
   expect_equal(constant_correction$result$correctedRtTable, expected_corrected, tolerance=1e-5)
 })

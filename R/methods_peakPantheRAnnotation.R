@@ -2328,9 +2328,10 @@ setMethod("resetFIR", "peakPantheRAnnotation", function(object, verbose) {
     return(object)
 })
 
+
 #####################################################################
-# Use retention time correction algorithms to adjust the rt information in the
-# uROI of a peakPantheRAnnotation object
+# Retention time correction: adjust uROI rt based on previously integrated signal
+
 setGeneric("retentionTimeCorrection",
     function(annotationObject, rtCorrectionReferences=NULL, method='polynomial', params,
              robust=FALSE, rtWindowWidth=15,
