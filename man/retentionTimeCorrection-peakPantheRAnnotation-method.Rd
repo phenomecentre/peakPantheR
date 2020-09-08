@@ -9,15 +9,15 @@ retention time information in the uROI of
 peakPantheRAnnotation object}
 \usage{
 \S4method{retentionTimeCorrection}{peakPantheRAnnotation}(
-  annotationObject,
-  rtCorrectionReferences = NULL,
-  method = "polynomial",
-  params,
-  robust = FALSE,
-  rtWindowWidth = 15,
-  diagnostic = TRUE,
-  verbose = TRUE,
-  ...
+    annotationObject,
+    rtCorrectionReferences = NULL,
+    method = "polynomial",
+    params,
+    robust = FALSE,
+    rtWindowWidth = 15,
+    diagnostic = TRUE,
+    verbose = TRUE,
+    ...
 )
 }
 \arguments{

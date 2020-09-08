@@ -2,7 +2,7 @@
 ## Constructor for \link{peakPantheRAnnotation-class}, see function
 # peakPantheRAnnotation() for the initialisation checks
 setMethod("initialize", "peakPantheRAnnotation",
-          function(.Object, ...) {
+    function(.Object, ...) {
     ## load ... arguments
     .Object <- methods::callNextMethod(.Object, ...)
     
@@ -408,7 +408,7 @@ setGeneric("spectraMetadata",
 #' # data frame with 0 columns and 3 rows
 #' }
 setMethod("spectraMetadata", "peakPantheRAnnotation",
-          function(object) {
+    function(object) {
     object@spectraMetadata
 })
 
@@ -452,7 +452,7 @@ setGeneric("acquisitionTime",
 #' # [1] NA NA NA
 #' }
 setMethod("acquisitionTime", "peakPantheRAnnotation",
-          function(object) {
+    function(object) {
     as.POSIXct(object@acquisitionTime)
 })
 
@@ -938,7 +938,7 @@ setGeneric("annotationTable",
 #' # C:/R/R-3.6.0/library/faahKO/cdf/KO/ko18.CDF   NA   NA
 #' }
 setMethod("annotationTable", "peakPantheRAnnotation",
-          function(object, column) {
+    function(object, column) {
     
     ## Expect the object to be valid, therefore peakTables is a list of NULL or
     ## data.frame
@@ -1094,7 +1094,7 @@ setMethod("filename", "peakPantheRAnnotation", function(object) {
 #' @docType methods
 #'
 setMethod("[", "peakPantheRAnnotation",
-          function(x, i, j, drop = "missing") {
+    function(x, i, j, drop = "missing") {
     ## i is row, samples j is col, compounds
     
     # check inputs and fallback
@@ -2311,7 +2311,7 @@ setGeneric("resetFIR",
 #' updatedAnnotation <- resetFIR(annotation, verbose=TRUE)
 #' # FIR will be reset with ROI values as uROI values are not set
 setMethod("resetFIR", "peakPantheRAnnotation",
-          function(object, verbose) {
+    function(object, verbose) {
     
     # uROI exist
     if (uROIExist(object)) {
@@ -2339,9 +2339,9 @@ setMethod("resetFIR", "peakPantheRAnnotation",
 # signal
 setGeneric("retentionTimeCorrection",
     function(annotationObject, rtCorrectionReferences=NULL,
-             method='polynomial', params,
-             robust=FALSE, rtWindowWidth=15,
-            verbose = TRUE, ...)
+    method='polynomial', params,
+    robust=FALSE, rtWindowWidth=15,
+    verbose = TRUE, ...)
     standardGeneric("retentionTimeCorrection"))
 #' @title Apply retention time correction methods to adjust the retention time
 #' information in the uROI of
@@ -2427,8 +2427,8 @@ setGeneric("retentionTimeCorrection",
 #' }
 setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     function(annotationObject, rtCorrectionReferences=NULL,
-      method='polynomial', params, robust=FALSE, rtWindowWidth=15,
-             diagnostic=TRUE, verbose = TRUE, ...) {
+    method='polynomial', params, robust=FALSE, rtWindowWidth=15,
+    diagnostic=TRUE, verbose = TRUE, ...) {
 
     # copy annotation object
     newAnnotation <- annotationObject
@@ -2470,7 +2470,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     # Obtain the mean retention time deviation per second
     rt_dev_secMatrix <- annotationTable(newAnnotation,"rt_dev_sec")
     rt_dev_sec_mean <- unname(vapply(rt_dev_secMatrix, mean, na.rm=TRUE,
-                                     FUN.VALUE = numeric(1)))
+    FUN.VALUE = numeric(1)))
     # If uROI exists and useROI was set to true, use that value as original RT,
     # otherwise the "theoretical rt" is taken from ROI
     if (newAnnotation@uROIExist & newAnnotation@useUROI) {
@@ -2479,9 +2479,9 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
 
     # get the necessary information for all features
     targetFeatTable <- data.frame(cpdID=newAnnotation@cpdID,
-                                  cpdName=newAnnotation@cpdName,
-                                  rt=rt_expected,
-                                  rt_dev_sec=rt_dev_sec_mean)
+        cpdName=newAnnotation@cpdName,
+        rt=rt_expected,
+        rt_dev_sec=rt_dev_sec_mean)
     # subset the references from the table of all compounds to correct
     referenceTable <- targetFeatTable[targetFeatTable$cpdID
                                             %in% rtCorrectionReferences, ]
@@ -2497,7 +2497,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         warning(paste(c("The following references could not be integrated
         previously and will be excluded: ",
             referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]),
-                      collapse=", "))
+            collapse=", "))
     }
     referenceTable <-  referenceTable[!is.na(referenceTable$rt_dev_sec), ]
 
@@ -2507,43 +2507,43 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         warning(paste(c("The following compounds could not be
         integrated previously and will be not be corrected: ",
         targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]),
-          collapse=", "))
-       if  (isFALSE(newAnnotation@useUROI)) {
-           newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] <-
-             newAnnotation@ROI[is.na(targetFeatTable$rt_dev_sec), "rt"]
-       }
-     newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
-     newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
-       (rtWindowWidth/2)
-     newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
-     newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
-       (rtWindowWidth/2)
-     newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
-     newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
-       (rtWindowWidth/2)
-     newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
-     newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
-       (rtWindowWidth/2)
+        collapse=", "))
+        if  (isFALSE(newAnnotation@useUROI)) {
+            newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] <-
+            newAnnotation@ROI[is.na(targetFeatTable$rt_dev_sec), "rt"]
+        }
+    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
+    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
+        (rtWindowWidth/2)
+    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
+    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
+        (rtWindowWidth/2)
+    newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
+    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
+        (rtWindowWidth/2)
+    newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
+    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
+        (rtWindowWidth/2)
     }
 
     rtCorrectionOutput <-
-      peakPantheR_applyRTCorrection(
-        targetFeatTable[!is.na(targetFeatTable$rt_dev_sec), ],
-        referenceTable, method,
-        params, robust,
-        diagnostic=diagnostic)
+        peakPantheR_applyRTCorrection(
+            targetFeatTable[!is.na(targetFeatTable$rt_dev_sec), ],
+            referenceTable, method,
+            params, robust,
+            diagnostic=diagnostic)
     correctedRtTable <- rtCorrectionOutput$correctedRtTable
     # Only compounds with measured rt_dev_sec can be adjusted
     newAnnotation@uROI[!is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
-      correctedRtTable$correctedRt - (rtWindowWidth/2)
+        correctedRtTable$correctedRt - (rtWindowWidth/2)
     newAnnotation@uROI[!is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
-      correctedRtTable$correctedRt + (rtWindowWidth/2)
+        correctedRtTable$correctedRt + (rtWindowWidth/2)
     newAnnotation@uROI[!is.na(targetFeatTable$rt_dev_sec), "rt"] <-
-      correctedRtTable$correctedRt
+        correctedRtTable$correctedRt
     newAnnotation@FIR[!is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
-      correctedRtTable$correctedRt - (rtWindowWidth/2)
+        correctedRtTable$correctedRt - (rtWindowWidth/2)
     newAnnotation@FIR[!is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
-      correctedRtTable$correctedRt + (rtWindowWidth/2)
+        correctedRtTable$correctedRt + (rtWindowWidth/2)
 
     # set uROIExist to TRUE
     # after corrrection useUROI is TRUE as corrected info is updated there
@@ -2552,16 +2552,16 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     if (isTRUE(diagnostic)) {
         rtAdjustmentPlot <- ggplot2::ggplot(correctedRtTable,
                                             ggplot2::aes(x=rt, y=rt_dev_sec)) +
-          ggplot2::geom_point(ggplot2::aes(col=isReference)) +
-          ggplot2::geom_line(ggplot2::aes(x=rt, y=predictedRtDrift))
+        ggplot2::geom_point(ggplot2::aes(col=isReference)) +
+        ggplot2::geom_line(ggplot2::aes(x=rt, y=predictedRtDrift))
 
         rtAdjustmentPlot <- rtAdjustmentPlot +
-          ggplot2::xlab('Retention time') +
-          ggplot2::ylab('Retention time deviation')
+        ggplot2::xlab('Retention time') +
+        ggplot2::ylab('Retention time deviation')
 
         return(list(annotation=newAnnotation, plot=rtAdjustmentPlot))
     } else {return(list(annotation=newAnnotation))}
-   }
+    }
 )
 
 

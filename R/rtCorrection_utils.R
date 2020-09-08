@@ -31,21 +31,21 @@
 #' 
 #' @export
 peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
-                                        method='polynomial',
-                                        params=list(polynomialOrder=3),
-                                        robust=TRUE,
-                                        verbose=TRUE, ...) {
+                                    method='polynomial',
+                                    params=list(polynomialOrder=3),
+                                    robust=TRUE,
+                                    verbose=TRUE, ...) {
 
     # Check inputs
     applyRTCorrection_checkInput(targetFeatTable, referenceTable,
-                                 method, params, robust)
+                                method, params, robust)
 
     # Init
     corrected_targetFeatTable <- targetFeatTable
     corrected_targetFeatTable$isReference <- 'External set'
 
     if (dim(referenceTable)[1] == 1) {
-      method <- 'constant'
+        method <- 'constant'
     }
     ## Run correction
     # Polynomial models (linear, quadratic, etc...)
@@ -58,35 +58,35 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
         # Use RANSAC?
         if (isTRUE(robust)) {
         rtCorrectionOutput <- fit_RANSAC(referenceTable$rt,
-                                         referenceTable$rt_dev_sec,
-                                         polynomialOrder =
-                                           params[['polynomialOrder']])
-          which_outlier <-
-               corrected_targetFeatTable$cpdID %in% referenceTable$cpdID[
-               !rtCorrectionOutput$inlier]
-          which_reference <-
+                                referenceTable$rt_dev_sec,
+                                polynomialOrder =
+                                params[['polynomialOrder']])
+        which_outlier <-
             corrected_targetFeatTable$cpdID %in% referenceTable$cpdID[
-              rtCorrectionOutput$inlier]
-          corrected_targetFeatTable$isReference[which_outlier] <-
+                !rtCorrectionOutput$inlier]
+        which_reference <-
+        corrected_targetFeatTable$cpdID %in% referenceTable$cpdID[
+            rtCorrectionOutput$inlier]
+        corrected_targetFeatTable$isReference[which_outlier] <-
             'Reference set outlier'
-          corrected_targetFeatTable$isReference[which_reference] <-
-            'Reference set'
+        corrected_targetFeatTable$isReference[which_reference] <-
+        'Reference set'
 
         }  else {
             rtCorrectionOutput <-
-              fit_polynomial(referenceTable$rt, referenceTable$rt_dev_sec,
-                             polynomialOrder=params[['polynomialOrder']])
-             which_reference <-
-               corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
-             corrected_targetFeatTable$isReference[which_reference] <-
-               'Reference set'
+                fit_polynomial(referenceTable$rt, referenceTable$rt_dev_sec,
+                    polynomialOrder=params[['polynomialOrder']])
+            which_reference <-
+                corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
+            corrected_targetFeatTable$isReference[which_reference] <-
+                'Reference set'
         }
         # Get the correction outputs
         correctionFunction <- rtCorrectionOutput$model
         correctedRtDrift <- stats::predict(correctionFunction,
-                           newdata=data.frame(x=targetFeatTable$rt))
+                            newdata=data.frame(x=targetFeatTable$rt))
         corrected_targetFeatTable$correctedRt <-
-          corrected_targetFeatTable$rt - correctedRtDrift
+            corrected_targetFeatTable$rt - correctedRtDrift
         corrected_targetFeatTable$predictedRtDrift <- correctedRtDrift
 
     }
@@ -94,14 +94,14 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
         # The predicted drift is the constant observed drift in the
         # single reference
         corrected_targetFeatTable$correctedRt <-
-          corrected_targetFeatTable$rt - rep(referenceTable$rt_dev_sec,
-                                             dim(corrected_targetFeatTable)[1])
+            corrected_targetFeatTable$rt - rep(referenceTable$rt_dev_sec,
+                dim(corrected_targetFeatTable)[1])
         corrected_targetFeatTable$predictedRtDrift <-
-          rep(referenceTable$rt_dev_sec, dim(corrected_targetFeatTable)[1])
+            rep(referenceTable$rt_dev_sec, dim(corrected_targetFeatTable)[1])
         which_reference <-
-          corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
+            corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
         corrected_targetFeatTable$isReference[which_reference] <-
-          'Reference set'
+            'Reference set'
     }
     # for future Rt correction algorithms, just extend the else if()
 
@@ -149,49 +149,49 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
         stop('Error: \"method\" must be one of: \"polynomial\", \"constant\"')
     }
 
-   if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
-         stop('No function can be fitted with a single reference.
-         Use method=\`offset\` instead.')
-       }
+    if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
+        stop('No function can be fitted with a single reference.
+        Use method=\`offset\` instead.')
+        }
 
     ## Check params input
     if (!is.list(params)) {
         stop('Check input, "params" must be list') }
     # Verify if parameters passed on params are adequate for chosen method
     if (is.list(params)) {
-       if (method == 'polynomial') {
-           if (!any(names(params) == 'polynomialOrder')) {
-               stop("polynomialOrder must be provided in params") }
-           else {
-             if (!is(params[['polynomialOrder']], 'numeric')) {
-                  stop("polynomialOrder must be an integer and equal
-                  or greater than 1") }
-             else if (!isTRUE(all.equal(params[['polynomialOrder']],
+        if (method == 'polynomial') {
+            if (!any(names(params) == 'polynomialOrder')) {
+                stop("polynomialOrder must be provided in params") }
+            else {
+                if (!is(params[['polynomialOrder']], 'numeric')) {
+                    stop("polynomialOrder must be an integer and equal
+                    or greater than 1") }
+                else if (!isTRUE(all.equal(params[['polynomialOrder']],
                     as.integer(params[['polynomialOrder']]))) |
-               (params[['polynomialOrder']] < 1)) {
-                  stop("polynomialOrder must be an
-                  integer and equal or greater than 1")
-             }
-             else if (params[['polynomialOrder']] >= dim(referenceTable)[1]) {
-                 warning("`polynomialOrder` is larger than the number of
-                 references passed. `polynomialOrder` will be
-                 set equal to number of reference compounds - 1")
-                 }
-             }
-       }
-
-      else if (method == 'constant') {
-         if (dim(referenceTable)[1] > 1) {
-           stop("`constant` Rt correction can only use a single reference")
-         }
-       }
+                    (params[['polynomialOrder']] < 1)) {
+                    stop("polynomialOrder must be an
+                    integer and equal or greater than 1")
+                }
+                else if (params[['polynomialOrder']] >=
+                dim(referenceTable)[1]) {
+                    warning("`polynomialOrder` is larger than the number of
+                    references passed. `polynomialOrder` will be
+                    set equal to number of reference compounds - 1")
+                }
+            }
+        }
+        else if (method == 'constant') {
+            if (dim(referenceTable)[1] > 1) {
+                stop("`constant` Rt correction can
+                only use a single reference")
+            }
+        }
     }
 
     ## Check robust argument
     if (!is.logical(robust)) { stop("robust must be either TRUE or FALSE")}
-
-
 }
+
 # check input targetFeatTable
 applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
     # is data.frame
@@ -201,7 +201,7 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
 
     # required columns are present
     if (!all(c("cpdID", "cpdName", "rt",
-               "rt_dev_sec") %in% colnames(targetFeatTable))){
+            "rt_dev_sec") %in% colnames(targetFeatTable))){
         stop("expected columns in targetFeatTable
         are \"cpdID\", \"cpdName\", ",
         "\"rt\", \"rt_dev_sec\"")
@@ -220,7 +220,7 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
             stop("targetFeatTable$rt must be numeric or NA")
         }
         if (!(is.numeric(targetFeatTable$rt_dev_sec[1]) |
-          is.na(targetFeatTable$rt_dev_sec[1]))) {
+            is.na(targetFeatTable$rt_dev_sec[1]))) {
             stop("targetFeatTable$rt_dev_sec must be numeric or NA") }
 
     }
@@ -257,11 +257,11 @@ fit_polynomial <- function(x, y, polynomialOrder, returnFitted=FALSE) {
 
 ## Port of the RANSAC regressor from scikit-learn
 fit_RANSAC <- function(x, y, polynomialOrder=3,
-                       residual_threshold=NULL,
-                       loss='absolute_loss',
-                       min_samples=NULL,
-                       max_trials = 1000, max_skips=Inf, stop_n_inliers=Inf,
-                       stop_score=Inf, stop_probability=0.99) {
+                        residual_threshold=NULL,
+                        loss='absolute_loss',
+                        min_samples=NULL,
+                        max_trials = 1000, max_skips=Inf, stop_n_inliers=Inf,
+                        stop_score=Inf, stop_probability=0.99) {
     if (length(x) != length(y)) {
         stop('x and y must have the same length')
     }
@@ -316,9 +316,9 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
         current_y <- y[data_subset_idx]
 
         fitted_model_current_iteration <-
-          tryCatch(fit_polynomial(current_x, current_y,
-                   polynomialOrder=polynomialOrder),
-                   error=function(e) e)
+            tryCatch(fit_polynomial(current_x, current_y,
+                polynomialOrder=polynomialOrder),
+                error=function(e) e)
         if(inherits(fitted_model_current_iteration, "error")){
             n_skips_no_inliers <- n_skips_no_inliers + 1
             next
@@ -326,7 +326,7 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
 
         # residuals of all data for current random sample model
         y_pred <- stats::predict(fitted_model_current_iteration$model,
-                                 newdata=x_data)
+                                newdata=x_data)
 
         residuals_subset <- loss_function(y, y_pred)
 
@@ -349,11 +349,11 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
         score_subset <- summary(fit_polynomial(X_inlier_subset,
                                 y_inlier_subset,
                                 polynomialOrder =
-                                 polynomialOrder)$model)$r.squared
+                                polynomialOrder)$model)$r.squared
 
         # same number of inliers but worse score -> skip current random
         if ((n_inliers_subset == n_inliers_best) &
-          ( score_subset < score_best)) {
+            (score_subset < score_best)) {
             next
         }
 
@@ -366,13 +366,13 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
 
         # Do we need this?? # Check all these conditions and code wrapping
         max_trials <- min(max_trials,
-           dynamic_max_trials(n_inliers_best, n_samples,
-                              min_samples, stop_probability))
+            dynamic_max_trials(n_inliers_best, n_samples,
+                min_samples, stop_probability))
 
         # break if sufficient number of inliers or score is reached
         if ((n_inliers_best >= stop_n_inliers) |
-          (score_best >= stop_score)) { break }
-    }
+            (score_best >= stop_score)) { break }
+        }
 
     # if none of the iterations met the required criteria
     if (is.null(inlier_mask_best)) {
@@ -391,7 +391,7 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
 
     # estimate final model using all inliers
     final_fitted_regressor <- fit_polynomial(X_inlier_best,
-                                             y_inlier_best, polynomialOrder)
+                                            y_inlier_best, polynomialOrder)
     inlier_mask <- inlier_mask_best
     return(list(model=final_fitted_regressor$model, inlier=inlier_mask))
 }
