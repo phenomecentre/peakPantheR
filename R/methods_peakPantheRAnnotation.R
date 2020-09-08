@@ -2344,14 +2344,13 @@ setGeneric("retentionTimeCorrection",
     verbose = TRUE, ...)
     standardGeneric("retentionTimeCorrection"))
 #' @title Apply retention time correction methods to adjust the retention time
-#' information in the uROI of
-#' peakPantheRAnnotation object
+#' information in the uROI of peakPantheRAnnotation object
 #' @description Performs retention time correction to re-adjust the expected
 #' retention time position of compounds.
 #' Requires an annotated peakPantheRAnnotation object (\code{isAnnotated=TRUE}).
-#' The original \code{rt} value is used as
-#' expected and the observed deviation measured in the \code{rt_dev_sec} field
-#' is taken as the deviation to be corrected.
+#' The original \code{rt} value is used as expected and the observed deviation
+#' measured in the \code{rt_dev_sec} field is taken as the deviation to be
+#' corrected.
 #' @param previousAnnotation (peakPantheRAnnotation) object with previous fit
 #' results to adjust retention time values in uROI and FIR
 #' @param rtCorrectionReferences (list) of compounds IDs (\code{cpdID})
@@ -2363,19 +2362,18 @@ setGeneric("retentionTimeCorrection",
 #' @param params (list) list of parameters to pass to each correction method.
 #' Currently allowed inputs are \code{polynomialOrder}
 #' for \code{method='polynomial'}
-#' @param robust (bool) whether to use the RANSAC algorithm
-#' to flag and ignore outliers during retention time correction
+#' @param robust (bool) whether to use the RANSAC algorithm to flag and ignore
+#' outliers during retention time correction
 #' @param rtWindowWidth (numeric) full width in seconds
 #' of the retention time window defined around the corrected retention time
 #' value for each compound
-#' @param rtWindowWidth (numeric) full width in seconds of the
-#' retention time window defined around the correctedretention time value
-#' for each compound
-#' @param diagnostic (bool) If TRUE returns diagnostic plots
-#' (specific to each correction method)
+#' @param rtWindowWidth (numeric) full width in seconds of the retention time
+#' window defined around the correctedretention time value for each compound
+#' @param diagnostic (bool) If TRUE returns diagnostic plots (specific to each
+#' correction method)
 #' @param verbose (bool) If TRUE message progress
-#' @return (peakPantheRAnnotation) object with new uROI and
-#' FIR values with an adjusted retention time
+#' @return (peakPantheRAnnotation) object with new uROI and FIR values with an
+#' adjusted retention time
 #' @docType methods
 #' @aliases retentionTimeCorrection
 #' @export

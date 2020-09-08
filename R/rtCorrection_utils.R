@@ -47,6 +47,7 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
     return(correctedFeatTable)
 }
 
+# Run correction
 applyRTCorrection_correctFeatTable <- function(targetFeatTable, referenceTable,
     method='polynomial', params=list(polynomialOrder=3), robust=TRUE) {
 
@@ -152,6 +153,7 @@ applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
     }
 }
 
+# check input referenceTable
 applyRTCorrection_checkInput_checkReferenceTable <- function(referenceTable) {
     ## Check referenceTable
     # is data.frame
@@ -181,6 +183,7 @@ applyRTCorrection_checkInput_checkReferenceTable <- function(referenceTable) {
     }
 }
 
+# check input parameters
 applyRTCorrection_checkInputParams <- function(params, method, referenceTable) {
     ## Check params input
     if (!is.list(params)) { stop('Check input, "params" must be list') }
@@ -247,8 +250,8 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
                         stop_score=Inf, stop_probability=0.99) {
 
     loss_function <- fit_RANSAC_checkInput(x, y, polynomialOrder, loss)
-    # If residual_threshold is NULL, use
-    # the MAD (median absolute deviation) of the y variable as cutoff
+    # If residual_threshold is NULL, use the MAD (median absolute deviation)
+    # of the y variable as cutoff
     if (is.null(residual_threshold)) {
         residual_threshold <- stats::median(abs(y - stats::median(y)))
     }
@@ -274,13 +277,13 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
     return(list(model=final_fitted_regressor$model, inlier=inlier_mask))
 }
 
-# Absolute Loss function - part of RANSAC interpretation
+# Absolute Loss function - part of RANSAC implementation
 loss_absolute <- function(y_true, y_pred) {
     loss_value <- abs(y_true - y_pred)
     return(loss_value)
 }
 
-# Square loss function - part of RANSAC interpretation
+# Square loss function - part of RANSAC implementation
 loss_squared <- function(y_true, y_pred) {
     loss_value <- (y_true - y_pred) ** 2
     return(loss_value)
@@ -352,6 +355,7 @@ fit_RANSAC_coreOptimization <- function(x, y, max_trials,
                 inlier_mask_best=inlier_mask_best))
 }
 
+# check convergence - part of RANSAC implementation
 fit_RANSAC_checkFinalConvergence <- function(inlier_mask_best, max_skips,
                                                 n_skips_no_inliers) {
     # if none of the iterations met the required criteria
@@ -369,6 +373,7 @@ fit_RANSAC_checkFinalConvergence <- function(inlier_mask_best, max_skips,
     }
 }
 
+# check input - part of RANSAC implementation
 fit_RANSAC_checkInput <- function(x,y, polynomialOrder, loss) {
     if (length(x) != length(y)) {
         stop('x and y must have the same length')

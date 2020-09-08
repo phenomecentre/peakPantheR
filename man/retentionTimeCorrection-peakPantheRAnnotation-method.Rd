@@ -4,9 +4,8 @@
 \name{retentionTimeCorrection,peakPantheRAnnotation-method}
 \alias{retentionTimeCorrection,peakPantheRAnnotation-method}
 \alias{retentionTimeCorrection}
-\title{Apply retention time correction methods to adjust the
-retention time information in the uROI of
-peakPantheRAnnotation object}
+\title{Apply retention time correction methods to adjust the retention time
+information in the uROI of peakPantheRAnnotation object}
 \usage{
 \S4method{retentionTimeCorrection}{peakPantheRAnnotation}(
     annotationObject,
@@ -21,49 +20,43 @@ peakPantheRAnnotation object}
 )
 }
 \arguments{
-\item{rtCorrectionReferences}{(list) of compounds IDs (\code{cpdID}) to be
-used as retention time references.
-All \code{cpdID} entries must be present in the object
-and previously annotated. If NULL, use all compounds.}
+\item{rtCorrectionReferences}{(list) of compounds IDs (\code{cpdID})
+to be used as retention time references.
+All \code{cpdID} entries must be present in the object and previously
+annotated. If NULL, use all compounds.}
 
 \item{method}{(str) name of RT correction method to use (currently
 \code{polynomial})}
 
-\item{params}{(list) list of parameters to pass to the each correction method.
+\item{params}{(list) list of parameters to pass to each correction method.
 Currently allowed inputs are \code{polynomialOrder}
 for \code{method='polynomial'}}
 
-\item{robust}{(bool) whether to use the RANSAC algorithm to flag
-and ignore outliers during retention time correction}
+\item{robust}{(bool) whether to use the RANSAC algorithm to flag and ignore
+outliers during retention time correction}
 
-\item{rtWindowWidth}{(numeric) full width in seconds of the retention
-time window defined around the corrected retention time value
-for each compound
+\item{rtWindowWidth}{(numeric) full width in seconds of the retention time
+window defined around the correctedretention time value for each compound}
 
-#' @param rtWindowWidth (numeric) full width in seconds of the retention
-time window defined around the corrected
-retention time value for each compound}
-
-\item{diagnostic}{(bool) If TRUE returns diagnostic plots
-(specific to each correction method)}
+\item{diagnostic}{(bool) If TRUE returns diagnostic plots (specific to each
+correction method)}
 
 \item{verbose}{(bool) If TRUE message progress}
 
-\item{previousAnnotation}{(peakPantheRAnnotation) object with
-previous fit results to adjust retention time values
-in uROI and FIR}
+\item{previousAnnotation}{(peakPantheRAnnotation) object with previous fit
+results to adjust retention time values in uROI and FIR}
 }
 \value{
-(peakPantheRAnnotation) object with new uROI and FIR values
-with an adjusted retention time
+(peakPantheRAnnotation) object with new uROI and FIR values with an
+adjusted retention time
 }
 \description{
-Performs retention time correction to re-adjust the expected retention
-time position of compounds.
+Performs retention time correction to re-adjust the expected
+retention time position of compounds.
 Requires an annotated peakPantheRAnnotation object (\code{isAnnotated=TRUE}).
-The original \code{rt} value is used as
-expected and the observed deviation measured in the \code{rt_dev_sec}
-field is taken as the deviation to be corrected.
+The original \code{rt} value is used as expected and the observed deviation
+measured in the \code{rt_dev_sec} field is taken as the deviation to be
+corrected.
 }
 \examples{
 if(requireNamespace('faahKO')){
