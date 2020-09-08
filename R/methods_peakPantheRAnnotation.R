@@ -2038,11 +2038,11 @@ resetAnnot_targetFeatTable_uROI_FIR_cpdMeta <- function(previousAnnotation,
                             targetFeatTable, uROI, FIR, cpdMetadata, verbose) {
     # reuse previous values
     if (all(is.null(targetFeatTable))) {
-        reset = resetAnnot_prevTargetFeatTable(previousAnnotation, uROI, FIR,
+        reset <- resetAnnot_prevTargetFeatTable(previousAnnotation, uROI, FIR,
                                                 cpdMetadata, verbose)
     } else {
         # reset to default
-        reset = resetAnnot_newTargetFeatTable(targetFeatTable, uROI, FIR,
+        reset <- resetAnnot_newTargetFeatTable(targetFeatTable, uROI, FIR,
                                                 cpdMetadata, verbose)
     }
     return(reset)
@@ -2430,43 +2430,8 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     method='polynomial', params, robust=FALSE, rtWindowWidth=15,
     diagnostic=TRUE, verbose = TRUE, ...) {
 
-    # copy annotation object
-    newAnnotation <- annotationObject
-
-    if (isFALSE(newAnnotation@isAnnotated)) {
-        stop('The retention time correction functionality requires an
-        annotated peakPantheRAnnotation object
-        (annotationObject@isAnnotated = TRUE)')
-    }
-    if (is.null(rtCorrectionReferences)) {
-        rtCorrectionReferences <- newAnnotation@cpdID
-    } else {
-        if (!all(rtCorrectionReferences %in% newAnnotation@cpdID)) {
-            stop("All compound IDs in rtCorrectionReferences must be present
-            on the annotationObject.")
-        }
-    }
-
-    if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
-        stop("rtWindowWidth must be a positive number")
-    }
-
-    # if uROI doesn't exist, initialise one with the same m/z information
-        # as ROI and add later the corrected rt
-    if (isFALSE(newAnnotation@uROIExist)) {
-        newAnnotation@uROI[, "mzMin"] <- newAnnotation@ROI[, "mzMin"]
-        newAnnotation@uROI[, "mzMax"] <- newAnnotation@ROI[, "mzMax"]
-        newAnnotation@uROI[, "mz"] <- newAnnotation@ROI[, "mz"]
-    }
-    # if FIR doesn't exist, initialise one with the same m/z information
-    # as ROI and add later the corrected rt
-    # The end result should be a modified or new uROI/FIR with adjusted rt,
-    # and the previous m/z if uROI and FIR existed, or m/z set as in ROI
-    if (isFALSE(newAnnotation@useFIR)) {
-        newAnnotation@FIR[, "mzMin"] <- newAnnotation@ROI[, "mzMin"]
-        newAnnotation@FIR[, "mzMax"] <- newAnnotation@ROI[, "mzMax"]
-        # Keep useFIR as set before.
-    }
+    newAnnotation <- rtCorrection_checkInput(annotationObject,
+        rtCorrectionReferences,rtWindowWidth, method, params, robust)
     # Obtain the mean retention time deviation per second
     rt_dev_secMatrix <- annotationTable(newAnnotation,"rt_dev_sec")
     rt_dev_sec_mean <- unname(vapply(rt_dev_secMatrix, mean, na.rm=TRUE,
@@ -2477,20 +2442,13 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         rt_expected <- newAnnotation@uROI[, "rt"]
     } else { rt_expected <- newAnnotation@ROI[, "rt"] }
 
-    # get the necessary information for all features
     targetFeatTable <- data.frame(cpdID=newAnnotation@cpdID,
-        cpdName=newAnnotation@cpdName,
-        rt=rt_expected,
-        rt_dev_sec=rt_dev_sec_mean)
+            cpdName=newAnnotation@cpdName, rt=rt_expected,
+            rt_dev_sec=rt_dev_sec_mean)
     # subset the references from the table of all compounds to correct
     referenceTable <- targetFeatTable[targetFeatTable$cpdID
-                                            %in% rtCorrectionReferences, ]
+                                %in% rtCorrectionReferences, ]
 
-    if (method == 'polynomial') {
-        if (params[['polynomialOrder']] >= dim(referenceTable)[1]) {
-        params[['polynomialOrder']] <-  dim(referenceTable)[1] - 1
-        }
-    }
     # Exclude features with mean rt_dev_sec = NA from the correction
     # function fitting
     if (any(is.na(referenceTable$rt_dev_sec))) {
@@ -2550,21 +2508,60 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     newAnnotation@uROIExist <- TRUE
     newAnnotation@useUROI <- TRUE
     if (isTRUE(diagnostic)) {
-        rtAdjustmentPlot <- ggplot2::ggplot(correctedRtTable,
-                                            ggplot2::aes(x=rt, y=rt_dev_sec)) +
-        ggplot2::geom_point(ggplot2::aes(col=isReference)) +
-        ggplot2::geom_line(ggplot2::aes(x=rt, y=predictedRtDrift))
+        rtAdjustmentPlot <-
+            rtCorrection_diagnosticPlot(correctedRtTable)
+        return(list(annotation=newAnnotation, plot=rtAdjustmentPlot))
+    } else {return(list(annotation=newAnnotation))}
+    })
+
+#' Diagnostic plot helper function
+#' @param correctedRt Table(data.frame) table obtained from rtCorrection
+#' @return rtAdjustmentPlot (ggplot2) the diagnostic plot
+rtCorrection_diagnosticPlot <- function(correctedRtTable) {
+    rtAdjustmentPlot <- ggplot2::ggplot() +
+                        ggplot2::geom_point(data=correctedRtTable,
+                        ggplot2::aes(x=rt,
+                                     y=rt_dev_sec, col=isReference)) +
+                        ggplot2::geom_line(data=correctedRtTable,
+                        ggplot2::aes(x=rt, y=predictedRtDrift))
 
         rtAdjustmentPlot <- rtAdjustmentPlot +
         ggplot2::xlab('Retention time') +
         ggplot2::ylab('Retention time deviation')
+    return(rtAdjustmentPlot)
+}
 
-        return(list(annotation=newAnnotation, plot=rtAdjustmentPlot))
-    } else {return(list(annotation=newAnnotation))}
+rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
+                                    rtWindowWidth, method, params, robust) {
+    if (isFALSE(annotation@isAnnotated)) {
+        stop('The retention time correction functionality requires an
+        annotated peakPantheRAnnotation object
+        (annotationObject@isAnnotated = TRUE)')
     }
-)
+    if (is.null(rtCorrectionReferences)) {
+        rtCorrectionReferences <- annotation@cpdID
+    } else {
+        if (!all(rtCorrectionReferences %in% annotation@cpdID)) {
+            stop("All compound IDs in rtCorrectionReferences must be present
+            on the annotationObject.")
+        }
+    }
+    if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
+        stop("rtWindowWidth must be a positive number")
+    }
 
-
-
-
-
+    # if uROI doesn't exist, initialise one with the same m/z information
+    # as ROI and add later the corrected rt
+    if (isFALSE(annotation@uROIExist)) {
+        annotation@uROI[, "mzMin"] <- annotation@ROI[, "mzMin"]
+        annotation@uROI[, "mzMax"] <- annotation@ROI[, "mzMax"]
+        annotation@uROI[, "mz"] <- annotation@ROI[, "mz"]
+    }
+    # if FIR doesn't exist, initialise one with the same m/z information
+    # as ROI
+    if (isFALSE(annotation@useFIR)) {
+        annotation@FIR[, "mzMin"] <- annotation@ROI[, "mzMin"]
+        annotation@FIR[, "mzMax"] <- annotation@ROI[, "mzMax"]
+    }
+    return(annotation)
+}

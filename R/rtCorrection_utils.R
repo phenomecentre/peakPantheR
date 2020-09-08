@@ -31,47 +31,41 @@
 #' 
 #' @export
 peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
-                                    method='polynomial',
-                                    params=list(polynomialOrder=3),
-                                    robust=TRUE,
-                                    verbose=TRUE, ...) {
-
+    method='polynomial', params=list(polynomialOrder=3), robust=TRUE,
+    verbose=TRUE, ...) {
     # Check inputs
     applyRTCorrection_checkInput(targetFeatTable, referenceTable,
                                 method, params, robust)
-
-    # Init
-    corrected_targetFeatTable <- targetFeatTable
-    corrected_targetFeatTable$isReference <- 'External set'
+    params <- applyRTCorrection_checkInputParams(params, method, referenceTable)
 
     if (dim(referenceTable)[1] == 1) {
         method <- 'constant'
     }
     ## Run correction
-    # Polynomial models (linear, quadratic, etc...)
+    correctedFeatTable <- applyRTCorrection_correctFeatTable(
+    targetFeatTable, referenceTable, method, params, robust)
+    return(correctedFeatTable)
+}
+
+applyRTCorrection_correctFeatTable <- function(targetFeatTable, referenceTable,
+    method='polynomial', params=list(polynomialOrder=3), robust=TRUE) {
+
+    corrected_targetFeatTable <- targetFeatTable
+    corrected_targetFeatTable$isReference <- 'External set'
     if (method == 'polynomial') {
-        # Adjust the polynomialOrder if the number of references
-        # passed in insuficient
-        if (dim(referenceTable)[1] <= params[['polynomialOrder']]) {
-            params[['polynomialOrder']] <- dim(referenceTable)[1] - 1
-        }
-        # Use RANSAC?
         if (isTRUE(robust)) {
-        rtCorrectionOutput <- fit_RANSAC(referenceTable$rt,
-                                referenceTable$rt_dev_sec,
-                                polynomialOrder =
-                                params[['polynomialOrder']])
+            rtCorrectionOutput <- fit_RANSAC(referenceTable$rt,
+        referenceTable$rt_dev_sec, polynomialOrder=params[['polynomialOrder']])
+
         which_outlier <-
             corrected_targetFeatTable$cpdID %in% referenceTable$cpdID[
-                !rtCorrectionOutput$inlier]
+            !rtCorrectionOutput$inlier]
         which_reference <-
         corrected_targetFeatTable$cpdID %in% referenceTable$cpdID[
             rtCorrectionOutput$inlier]
         corrected_targetFeatTable$isReference[which_outlier] <-
             'Reference set outlier'
-        corrected_targetFeatTable$isReference[which_reference] <-
-        'Reference set'
-
+        corrected_targetFeatTable$isReference[which_reference]<-'Reference set'
         }  else {
             rtCorrectionOutput <-
                 fit_polynomial(referenceTable$rt, referenceTable$rt_dev_sec,
@@ -79,20 +73,16 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
             which_reference <-
                 corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
             corrected_targetFeatTable$isReference[which_reference] <-
-                'Reference set'
-        }
+                'Reference set'}
         # Get the correction outputs
         correctionFunction <- rtCorrectionOutput$model
         correctedRtDrift <- stats::predict(correctionFunction,
                             newdata=data.frame(x=targetFeatTable$rt))
         corrected_targetFeatTable$correctedRt <-
             corrected_targetFeatTable$rt - correctedRtDrift
-        corrected_targetFeatTable$predictedRtDrift <- correctedRtDrift
-
-    }
+        corrected_targetFeatTable$predictedRtDrift <- correctedRtDrift }
     else if (method == 'constant') {
-        # The predicted drift is the constant observed drift in the
-        # single reference
+        # {redicted drift = constant observed drift in the reference
         corrected_targetFeatTable$correctedRt <-
             corrected_targetFeatTable$rt - rep(referenceTable$rt_dev_sec,
                 dim(corrected_targetFeatTable)[1])
@@ -100,22 +90,69 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
             rep(referenceTable$rt_dev_sec, dim(corrected_targetFeatTable)[1])
         which_reference <-
             corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
-        corrected_targetFeatTable$isReference[which_reference] <-
-            'Reference set'
-    }
-    # for future Rt correction algorithms, just extend the else if()
-
-    #
+        corrected_targetFeatTable$isReference[which_reference]<- 'Reference set'
+    }  # for future Rt correction algorithms, just extend the else if()
     return(list(correctedRtTable=corrected_targetFeatTable))
-    }
-
+}
 
 # applyRTCorrection check input
 applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
                                             method, params, robust) {
-    ## Check targetFeatTable
+    ## Check targetFeatTable and reference Table
     applyRTCorrection_checkTargetFeatTable(targetFeatTable)
+    applyRTCorrection_checkInput_checkReferenceTable(referenceTable)
+    ## Check method
+    KNOWN_CORRECTIONMETHODs <- c("polynomial", "constant")
+    if (!(method %in% KNOWN_CORRECTIONMETHODs)) {
+        stop('Error: \"method\" must be one of: \"polynomial\", \"constant\"')}
+    if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
+        stop("No function can be fitted with a single reference. ",
+        "Use method=\`offset\` instead.") }
 
+    if (method == 'constant') {
+        if (dim(referenceTable)[1] > 1) {
+            stop("`constant` Rt correction can ",
+            "only use a single reference") } }
+
+    ## Check robust argument
+    if (!is.logical(robust)) { stop("robust must be either TRUE or FALSE")}
+}
+
+# check input targetFeatTable
+applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
+    # is data.frame
+    if (!is(targetFeatTable, "data.frame")){
+        stop("specified targetFeatTable is not a data.frame")
+    }
+
+    # required columns are present
+    if (!all(c("cpdID", "cpdName", "rt",
+            "rt_dev_sec") %in% colnames(targetFeatTable))){
+        stop("expected columns in targetFeatTable ",
+        "are \"cpdID\", \"cpdName\", ",
+        "\"rt\", \"rt_dev_sec\"")
+    }
+
+    # column type
+    if (dim(targetFeatTable)[1] != 0){
+        if (!is.character(targetFeatTable$cpdID[1])){
+            stop("targetFeatTable$cpdID must be character")
+        }
+        if (!is.character(targetFeatTable$cpdName[1])){
+            stop("targetFeatTable$cpdName must be character")
+        }
+        if (!(is.numeric(targetFeatTable$rt[1]) |
+                is.na(targetFeatTable$rt[1]))){
+            stop("targetFeatTable$rt must be numeric or NA")
+        }
+        if (!(is.numeric(targetFeatTable$rt_dev_sec[1]) |
+            is.na(targetFeatTable$rt_dev_sec[1]))) {
+            stop("targetFeatTable$rt_dev_sec must be numeric or NA") }
+
+    }
+}
+
+applyRTCorrection_checkInput_checkReferenceTable <- function(referenceTable) {
     ## Check referenceTable
     # is data.frame
     if (!is(referenceTable, "data.frame")){
@@ -142,21 +179,11 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
         is.na(referenceTable$rt_dev_sec[1]))){
             stop("referenceTable$rt_dev_sec must be numeric or NA") }
     }
+}
 
-    ## Check method
-    KNOWN_CORRECTIONMETHODs <- c("polynomial", "constant")
-    if (!(method %in% KNOWN_CORRECTIONMETHODs)) {
-        stop('Error: \"method\" must be one of: \"polynomial\", \"constant\"')
-    }
-
-    if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
-        stop('No function can be fitted with a single reference.
-        Use method=\`offset\` instead.')
-        }
-
+applyRTCorrection_checkInputParams <- function(params, method, referenceTable) {
     ## Check params input
-    if (!is.list(params)) {
-        stop('Check input, "params" must be list') }
+    if (!is.list(params)) { stop('Check input, "params" must be list') }
     # Verify if parameters passed on params are adequate for chosen method
     if (is.list(params)) {
         if (method == 'polynomial') {
@@ -164,66 +191,22 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
                 stop("polynomialOrder must be provided in params") }
             else {
                 if (!is(params[['polynomialOrder']], 'numeric')) {
-                    stop("polynomialOrder must be an integer and equal
-                    or greater than 1") }
+                    stop("polynomialOrder must be an integer and equal ",
+                    "or greater than 1") }
                 else if (!isTRUE(all.equal(params[['polynomialOrder']],
                     as.integer(params[['polynomialOrder']]))) |
                     (params[['polynomialOrder']] < 1)) {
-                    stop("polynomialOrder must be an
-                    integer and equal or greater than 1")
-                }
+                    stop("polynomialOrder must be an ",
+                    "integer and equal or greater than 1") }
                 else if (params[['polynomialOrder']] >=
                 dim(referenceTable)[1]) {
-                    warning("`polynomialOrder` is larger than the number of
-                    references passed. `polynomialOrder` will be
-                    set equal to number of reference compounds - 1")
-                }
-            }
-        }
-        else if (method == 'constant') {
-            if (dim(referenceTable)[1] > 1) {
-                stop("`constant` Rt correction can
-                only use a single reference")
-            }
+                    warning("`polynomialOrder` is larger than the number of ",
+                    "references passed. `polynomialOrder` will be ",
+                    "set equal to number of reference compounds - 1")
+                    params[['polynomialOrder']] <- dim(referenceTable)[1] - 1}}
         }
     }
-
-    ## Check robust argument
-    if (!is.logical(robust)) { stop("robust must be either TRUE or FALSE")}
-}
-
-# check input targetFeatTable
-applyRTCorrection_checkTargetFeatTable <- function(targetFeatTable) {
-    # is data.frame
-    if (!is(targetFeatTable, "data.frame")){
-        stop("specified targetFeatTable is not a data.frame")
-    }
-
-    # required columns are present
-    if (!all(c("cpdID", "cpdName", "rt",
-            "rt_dev_sec") %in% colnames(targetFeatTable))){
-        stop("expected columns in targetFeatTable
-        are \"cpdID\", \"cpdName\", ",
-        "\"rt\", \"rt_dev_sec\"")
-    }
-
-    # column type
-    if (dim(targetFeatTable)[1] != 0){
-        if (!is.character(targetFeatTable$cpdID[1])){
-            stop("targetFeatTable$cpdID must be character")
-        }
-        if (!is.character(targetFeatTable$cpdName[1])){
-            stop("targetFeatTable$cpdName must be character")
-        }
-        if (!(is.numeric(targetFeatTable$rt[1]) |
-                is.na(targetFeatTable$rt[1]))){
-            stop("targetFeatTable$rt must be numeric or NA")
-        }
-        if (!(is.numeric(targetFeatTable$rt_dev_sec[1]) |
-            is.na(targetFeatTable$rt_dev_sec[1]))) {
-            stop("targetFeatTable$rt_dev_sec must be numeric or NA") }
-
-    }
+    return(params)
 }
 
 ## ----------------------------------------------------------------------------
