@@ -2469,6 +2469,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     } else {return(list(annotation=newAnnotation))}
 })
 
+# Helper functions for the retentionTimeCorrection method
 rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
                                     rtWindowWidth) {
     if (isFALSE(annotation@isAnnotated)) {
@@ -2491,6 +2492,7 @@ rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
     return(rtCorrectionReferences)
 }
 
+# Helper functions for the retentionTimeCorrection method
 rtCorrection_prepareTargetFeatTable <- function(newAnnotation,
                                             rtCorrectionReferences) {
 
@@ -2528,6 +2530,7 @@ rtCorrection_prepareTargetFeatTable <- function(newAnnotation,
                 referenceTable=referenceTable))
 }
 
+# Helper functions for the retentionTimeCorrection method
 rtCorrection_prepareAnnotation <-function(newAnnotation, targetFeatTable,
                                     rtWindowWidth) {
 
