@@ -132,8 +132,8 @@ test_that('polynomial method rt correction', {
   polynomial_regression_dg3 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable,
                                                                           method='polynomial', params=list(polynomialOrder=3), robust=FALSE))
   # Check results
-  expect_equal(polynomial_regression_dg1$result$correctedRtTable, expected_corrected, tolerance=1e-5)
-  expect_equal(polynomial_regression_dg3$result$correctedRtTable, expected_corrected_dg3, tolerance=1e-5)
+  expect_equal(polynomial_regression_dg1$result, expected_corrected, tolerance=1e-5)
+  expect_equal(polynomial_regression_dg3$result, expected_corrected_dg3, tolerance=1e-5)
 
   # test isReference is assigned correctely
   tmp_referenceTable            <- data.frame(matrix(vector(), 5, 4, dimnames=list(c(), c("cpdID", "cpdName", "rt", "rt_dev_sec"))), stringsAsFactors=FALSE)
@@ -155,7 +155,7 @@ test_that('polynomial method rt correction', {
 
   polynomial_regression_ref <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=FALSE))
 
-  expect_equal(polynomial_regression_ref$result$correctedRtTable, expected_corrected_isRef, tolerance=1e-5)
+  expect_equal(polynomial_regression_ref$result, expected_corrected_isRef, tolerance=1e-5)
   # Check messages (cannot check time on message)
   #expect_equal(length(result_integrateFIR$messages), 5)
   #expect_equal(result_integrateFIR$messages[c(1,2,4)], expected_messages)
@@ -204,8 +204,8 @@ test_that('RANSAC rt correction function', {
   set.seed(390753)
   polynomial_ransac_dg3 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=3), robust=TRUE))
   # Check results
-  expect_equal(polynomial_ransac_dg1$result$correctedRtTable, expected_corrected, tolerance=1e-5)
-  expect_equal(polynomial_ransac_dg3$result$correctedRtTable, expected_corrected_dg3, tolerance=1e-5)
+  expect_equal(polynomial_ransac_dg1$result, expected_corrected, tolerance=1e-5)
+  expect_equal(polynomial_ransac_dg3$result, expected_corrected_dg3, tolerance=1e-5)
 
   # Add outlier
   tmp_referenceTable_outlier            <- data.frame(matrix(vector(), 5, 4, dimnames=list(c(), c("cpdID", "cpdName", "rt", "rt_dev_sec"))), stringsAsFactors=FALSE)
@@ -255,9 +255,9 @@ test_that('RANSAC rt correction function', {
   polynomial_ransac_outlier_nd <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable_outlier,
                                                                           method='polynomial', params=list(polynomialOrder=3), robust=TRUE))
 
-  expect_equal(polynomial_ransac_outlier$result$correctedRtTable, expected_corrected_outlier, tolerance=1e-5)
-  expect_equal(polynomial_ransac_outlier_dg3$result$correctedRtTable, expected_corrected_outlier_dg3, tolerance=1e-5)
-  expect_equal(polynomial_ransac_outlier_nd$result$correctedRtTable, expected_corrected_outlier_nd, tolerance=1e-5)
+  expect_equal(polynomial_ransac_outlier$result, expected_corrected_outlier, tolerance=1e-5)
+  expect_equal(polynomial_ransac_outlier_dg3$result, expected_corrected_outlier_dg3, tolerance=1e-5)
+  expect_equal(polynomial_ransac_outlier_nd$result, expected_corrected_outlier_nd, tolerance=1e-5)
 
 })
 
@@ -289,5 +289,5 @@ test_that('constant rt correction', {
 
   constant_correction <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='constant', params=list(polynomialOrder=1), robust=FALSE))
 
-  expect_equal(constant_correction$result$correctedRtTable, expected_corrected, tolerance=1e-5)
+  expect_equal(constant_correction$result, expected_corrected, tolerance=1e-5)
 })

@@ -92,7 +92,7 @@ applyRTCorrection_correctFeatTable <- function(targetFeatTable, referenceTable,
             corrected_targetFeatTable$cpdID %in% referenceTable$cpdID
         corrected_targetFeatTable$isReference[which_reference]<- 'Reference set'
     }  # for future Rt correction algorithms, just extend the else if()
-    return(list(correctedRtTable=corrected_targetFeatTable))
+    return(corrected_targetFeatTable)
 }
 
 # applyRTCorrection check input

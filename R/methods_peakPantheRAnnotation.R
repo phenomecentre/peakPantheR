@@ -2430,67 +2430,26 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     method='polynomial', params, robust=FALSE, rtWindowWidth=15,
     diagnostic=TRUE, verbose = TRUE, ...) {
 
-    newAnnotation <- rtCorrection_checkInput(annotationObject,
-        rtCorrectionReferences,rtWindowWidth, method, params, robust)
-    # Obtain the mean retention time deviation per second
-    rt_dev_secMatrix <- annotationTable(newAnnotation,"rt_dev_sec")
-    rt_dev_sec_mean <- unname(vapply(rt_dev_secMatrix, mean, na.rm=TRUE,
-    FUN.VALUE = numeric(1)))
-    # If uROI exists and useROI was set to true, use that value as original RT,
-    # otherwise the "theoretical rt" is taken from ROI
-    if (newAnnotation@uROIExist & newAnnotation@useUROI) {
-        rt_expected <- newAnnotation@uROI[, "rt"]
-    } else { rt_expected <- newAnnotation@ROI[, "rt"] }
+    newAnnotation <- annotationObject
+    rtCorrectionReferences <- rtCorrection_checkInput(newAnnotation,
+    rtCorrectionReferences,rtWindowWidth)
+    featureInformation <-
+        rtCorrection_prepareRtCorrectionTargetFeatTable(newAnnotation,
+        rtCorrectionReferences)
 
-    targetFeatTable <- data.frame(cpdID=newAnnotation@cpdID,
-            cpdName=newAnnotation@cpdName, rt=rt_expected,
-            rt_dev_sec=rt_dev_sec_mean)
-    # subset the references from the table of all compounds to correct
-    referenceTable <- targetFeatTable[targetFeatTable$cpdID
-                                %in% rtCorrectionReferences, ]
-
-    # Exclude features with mean rt_dev_sec = NA from the correction
-    # function fitting
-    if (any(is.na(referenceTable$rt_dev_sec))) {
-        warning(paste(c("The following references could not be integrated
-        previously and will be excluded: ",
-            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]),
-            collapse=", "))
-    }
+    referenceTable <- featureInformation$referenceTable
+    targetFeatTable <- featureInformation$targetFeatTable
+    newAnnotation <- rtCorrection_prepareAnnotation(newAnnotation,
+        targetFeatTable, rtWindowWidth)
     referenceTable <-  referenceTable[!is.na(referenceTable$rt_dev_sec), ]
 
-    # ignore compounds with rt_dev_sec = NA (leave rt = previous uROI or
-    # ROI and adjust windows by rtWindowWidth)
-    if (any(is.na(targetFeatTable$rt_dev_sec))) {
-        warning(paste(c("The following compounds could not be
-        integrated previously and will be not be corrected: ",
-        targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]),
-        collapse=", "))
-        if  (isFALSE(newAnnotation@useUROI)) {
-            newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] <-
-            newAnnotation@ROI[is.na(targetFeatTable$rt_dev_sec), "rt"]
-        }
-    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
-    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
-        (rtWindowWidth/2)
-    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
-    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
-        (rtWindowWidth/2)
-    newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
-    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
-        (rtWindowWidth/2)
-    newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
-    newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
-        (rtWindowWidth/2)
-    }
-
-    rtCorrectionOutput <-
+    correctedRtTable  <-
         peakPantheR_applyRTCorrection(
             targetFeatTable[!is.na(targetFeatTable$rt_dev_sec), ],
             referenceTable, method,
             params, robust,
             diagnostic=diagnostic)
-    correctedRtTable <- rtCorrectionOutput$correctedRtTable
+
     # Only compounds with measured rt_dev_sec can be adjusted
     newAnnotation@uROI[!is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
         correctedRtTable$correctedRt - (rtWindowWidth/2)
@@ -2503,36 +2462,15 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     newAnnotation@FIR[!is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
         correctedRtTable$correctedRt + (rtWindowWidth/2)
 
-    # set uROIExist to TRUE
-    # after corrrection useUROI is TRUE as corrected info is updated there
-    newAnnotation@uROIExist <- TRUE
-    newAnnotation@useUROI <- TRUE
     if (isTRUE(diagnostic)) {
         rtAdjustmentPlot <-
             rtCorrection_diagnosticPlot(correctedRtTable)
         return(list(annotation=newAnnotation, plot=rtAdjustmentPlot))
     } else {return(list(annotation=newAnnotation))}
-    })
-
-#' Diagnostic plot helper function
-#' @param correctedRt Table(data.frame) table obtained from rtCorrection
-#' @return rtAdjustmentPlot (ggplot2) the diagnostic plot
-rtCorrection_diagnosticPlot <- function(correctedRtTable) {
-    rtAdjustmentPlot <- ggplot2::ggplot() +
-                        ggplot2::geom_point(data=correctedRtTable,
-                        ggplot2::aes(x=rt,
-                                     y=rt_dev_sec, col=isReference)) +
-                        ggplot2::geom_line(data=correctedRtTable,
-                        ggplot2::aes(x=rt, y=predictedRtDrift))
-
-        rtAdjustmentPlot <- rtAdjustmentPlot +
-        ggplot2::xlab('Retention time') +
-        ggplot2::ylab('Retention time deviation')
-    return(rtAdjustmentPlot)
-}
+})
 
 rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
-                                    rtWindowWidth, method, params, robust) {
+                                    rtWindowWidth) {
     if (isFALSE(annotation@isAnnotated)) {
         stop('The retention time correction functionality requires an
         annotated peakPantheRAnnotation object
@@ -2550,18 +2488,81 @@ rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
         stop("rtWindowWidth must be a positive number")
     }
 
-    # if uROI doesn't exist, initialise one with the same m/z information
-    # as ROI and add later the corrected rt
-    if (isFALSE(annotation@uROIExist)) {
-        annotation@uROI[, "mzMin"] <- annotation@ROI[, "mzMin"]
-        annotation@uROI[, "mzMax"] <- annotation@ROI[, "mzMax"]
-        annotation@uROI[, "mz"] <- annotation@ROI[, "mz"]
+    return(rtCorrectionReferences)
+}
+
+rtCorrection_prepareTargetFeatTable <- function(newAnnotation,
+                                            rtCorrectionReferences) {
+
+    # Obtain the mean retention time deviation per second
+    rt_dev_secMatrix <- annotationTable(newAnnotation,"rt_dev_sec")
+    rt_dev_sec_mean <- unname(vapply(rt_dev_secMatrix, mean, na.rm=TRUE,
+    FUN.VALUE = numeric(1)))
+    # If uROI exists and useROI was set to true, use that value as original RT,
+    # otherwise the "theoretical rt" is taken from ROI
+    if (newAnnotation@uROIExist & newAnnotation@useUROI) {
+        rt_expected <- newAnnotation@uROI[, "rt"]
+    } else { rt_expected <- newAnnotation@ROI[, "rt"] }
+
+    targetFeatTable <- data.frame(cpdID=newAnnotation@cpdID,
+            cpdName=newAnnotation@cpdName, rt=rt_expected,
+            rt_dev_sec=rt_dev_sec_mean)
+    # subset the references from the table of all compounds to correct
+    referenceTable <- targetFeatTable[targetFeatTable$cpdID
+                                %in% rtCorrectionReferences, ]
+    # Exclude features with mean rt_dev_sec = NA from the correction
+    # function fitting
+    if (any(is.na(referenceTable$rt_dev_sec))) {
+        warning(paste(c("The following references could not be integrated
+        previously and will be excluded: ",
+            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]),
+            collapse=", "))
     }
-    # if FIR doesn't exist, initialise one with the same m/z information
-    # as ROI
-    if (isFALSE(annotation@useFIR)) {
-        annotation@FIR[, "mzMin"] <- annotation@ROI[, "mzMin"]
-        annotation@FIR[, "mzMax"] <- annotation@ROI[, "mzMax"]
+    if (any(is.na(targetFeatTable$rt_dev_sec))) {
+        warning(paste(c("The following compounds could not be
+        integrated previously and will be not be corrected: ",
+        targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]),
+        collapse=", "))}
+
+    return(list(targetFeatTable=targetFeatTable,
+                referenceTable=referenceTable))
+}
+
+rtCorrection_prepareAnnotation <-function(newAnnotation, targetFeatTable,
+                                    rtWindowWidth) {
+
+    if  (isFALSE(newAnnotation@useUROI)) {
+        newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] <-
+        newAnnotation@ROI[is.na(targetFeatTable$rt_dev_sec), "rt"]
+        newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
+        newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
+        (rtWindowWidth/2)
+        newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
+        newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
+        (rtWindowWidth/2)
+        newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
+        newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] -
+        (rtWindowWidth/2)
+        newAnnotation@FIR[is.na(targetFeatTable$rt_dev_sec), "rtMax"] <-
+        newAnnotation@uROI[is.na(targetFeatTable$rt_dev_sec), "rt"] +
+        (rtWindowWidth/2)
     }
-    return(annotation)
+        # set uROIExist to TRUE
+    # after corrrection useUROI is TRUE as corrected info is updated there
+    newAnnotation@uROIExist <- TRUE
+    newAnnotation@useUROI <- TRUE
+}
+
+rtCorrection_diagnosticPlot <- function(correctedRtTable) {
+    rtAdjustmentPlot <- ggplot2::ggplot() +
+                        ggplot2::geom_point(data=correctedRtTable,
+                        ggplot2::aes(x=rt,
+                        y=rt_dev_sec, col=isReference)) +
+                        ggplot2::geom_line(data=correctedRtTable,
+                        ggplot2::aes(x=rt, y=predictedRtDrift))
+
+        rtAdjustmentPlot <- rtAdjustmentPlot +
+        ggplot2::xlab('Retention time') +
+        ggplot2::ylab('Retention time deviation')
+    return(rtAdjustmentPlot)
 }
