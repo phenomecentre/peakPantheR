@@ -6,7 +6,8 @@
         utils::globalVariables(
         # data.frame column names used in ggplot (cannot use aes_string due to
         # transformations to the column in aes())
-        c("x","y","colr","..density..","rt","int","specID")
+        c("x","y","colr","..density..","rt","int","specID", "rt_dev_sec",
+          "isReference", "predictedRtDrift")
         )
         invisible()
     }
