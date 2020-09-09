@@ -134,7 +134,7 @@ test_that('retentionTimeCorrection-method', {
                                   correctedRt=1.500414, predictedRtDrift=8.499586)
   expected_plotFrame[2, ] <- list(cpdID='ID-2', cpdName='Cpd 2', rt=16, rt_dev_sec=16.361353, isReference='External set',
                                   correctedRt=7.500414, predictedRtDrift=8.499586)
-  expect_equal(constantCorrected$result$plot[[1]], expected_plotFrame, tolerance=1e-5)
+  expect_equal(constantCorrected$result$plot[[1]], expected_plotFrame, tolerance=1e-6)
   expect_equal(length(constantCorrected$result$plot), 9)
   expect_equal(constantCorrected$result$plot$labels$x, 'Retention time')
   expect_equal(constantCorrected$result$plot$labels$y, 'Retention time deviation')

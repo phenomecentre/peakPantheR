@@ -2432,7 +2432,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     rtCorrectionReferences <- rtCorrection_checkInput(newAnnotation,
     rtCorrectionReferences,rtWindowWidth)
     featureInformation <-
-        rtCorrection_prepareRtCorrectionTargetFeatTable(newAnnotation,
+        rtCorrection_prepareTargetFeatTable(newAnnotation,
         rtCorrectionReferences)
 
     referenceTable <- featureInformation$referenceTable
@@ -2552,15 +2552,15 @@ rtCorrection_prepareAnnotation <-function(newAnnotation, targetFeatTable,
     # after corrrection useUROI is TRUE as corrected info is updated there
     newAnnotation@uROIExist <- TRUE
     newAnnotation@useUROI <- TRUE
+    return(newAnnotation)
 }
 
 rtCorrection_diagnosticPlot <- function(correctedRtTable) {
-    rtAdjustmentPlot <- ggplot2::ggplot() +
-                        ggplot2::geom_point(data=correctedRtTable,
-                        ggplot2::aes(x=rt,
+    rtAdjustmentPlot <- ggplot2::ggplot(data=correctedRtTable) +
+                        ggplot2::geom_point(ggplot2::aes(x=rt,
                         y=rt_dev_sec, col=isReference)) +
-                        ggplot2::geom_line(data=correctedRtTable,
-                        ggplot2::aes(x=rt, y=predictedRtDrift))
+                        ggplot2::geom_line(ggplot2::aes(x=rt,
+                        y=predictedRtDrift))
 
         rtAdjustmentPlot <- rtAdjustmentPlot +
         ggplot2::xlab('Retention time') +
