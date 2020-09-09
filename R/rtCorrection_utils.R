@@ -28,8 +28,6 @@
 #' @param ... optional method specific parameters
 #' 
 #' @return a targetFeatTable with corrected RT, or diagnostic information
-#' 
-#' @export
 peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
     method='polynomial', params=list(polynomialOrder=3), robust=TRUE,
     verbose=TRUE, ...) {
