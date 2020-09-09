@@ -162,11 +162,11 @@ load_annotation_from_file_UI_helper <- function(annotationPath) {
 #' @return (list) Named list of annotation properties
 annotation_showMethod_UI_helper <- function(annotation){
     properties <- list(nbCompounds = nbCompounds(annotation),
-                       nbSamples = nbSamples(annotation),
-                       uROIExist = uROIExist(annotation),
-                       useUROI = useUROI(annotation),
-                       useFIR = useFIR(annotation),
-                       isAnnotated = isAnnotated(annotation)
+                        nbSamples = nbSamples(annotation),
+                        uROIExist = uROIExist(annotation),
+                        useUROI = useUROI(annotation),
+                        useFIR = useFIR(annotation),
+                        isAnnotated = isAnnotated(annotation)
     )
 
     return(properties)

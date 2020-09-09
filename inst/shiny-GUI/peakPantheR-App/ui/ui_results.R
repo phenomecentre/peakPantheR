@@ -19,14 +19,39 @@ tabPanel("Integration results",
         # Overall title
         h3('Results', style="color:#3e648d;font-weight:bold"),
 
+        # Tabs
+        shiny::tabsetPanel( id="diagnosticTabs", type="pills",
+
+        # Overall results - TAB
+          tabPanel("Overall results",
+            wellPanel(
+              fluidRow(
+                h3('all the results!')
+              ) # end fluidRow
+            )   # end wellPanel
+          ),    # end tabPanel
+
+        # Per feature - TAB
+          tabPanel("Values per Feature",
+            wellPanel(
+              fluidRow(
+                h3('feature valuuues!')
+              ) # end fluidRow
+            )   # end wellPanel
+          ),    # end tabPanel
+
+        # Per sample - TAB
+          tabPanel("Values per Sample",
+            wellPanel(
+              fluidRow(
+                h3('sample dataaaaa!')
+              ) # end fluidRow
+            )   # end wellPanel
+          )     # end tabPanel
+        )       # end tabsetPanels
+
         # TODO: 3 tabs; overall, per cpd, per spl
 
-        # Results options
-        wellPanel(
-          fluidRow(
-            h5('Lorem Ipsum')
-          ) # end fluidRow
-        ) # end wellPanel result options
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)
   )       # end conditional panel
