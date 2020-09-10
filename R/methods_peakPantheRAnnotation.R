@@ -2401,7 +2401,7 @@ setGeneric("retentionTimeCorrection",
 #'                                         targetFeatTable=targetFeatTable)
 #' # annotate files serially
 #' annotation_result <- peakPantheR_parallelAnnotation(smallAnnotation,
-#'                                          ncores=2, verbose=TRUE)
+#'                                          ncores=0, verbose=TRUE)
 #' data_annotation   <- annotation_result$annotation
 #'
 #' # Example with constant correction
