@@ -91,7 +91,7 @@ rtCorrectionOutput <- retentionTimeCorrection(
                         method='constant', params=list(),
                         robust=FALSE,
                         rtWindowWidth=15,
-                        diagnostic=TRUE, verbose=TRUE)
+                        diagnostic=TRUE)
 
 rtCorrectedAnnotation <- rtCorrectionOutput$annotation
 
