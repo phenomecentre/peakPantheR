@@ -343,7 +343,7 @@ The returned `peakPantheRAnnotation` object contains the same `uROI` and `FIR`
 parameters (`rt`, `rtMin` and `rtMax`) are replaced by the adjusted values. 
 The `rtMax` and `rtMin` are set as the corrected `rt` value plus or minus half 
 the value passed to the `rtWindowWidth` argument, respectively. 
-`useUROI` and `useFIR` are also set to TRUE. 
+`useUROI` is also set to TRUE.
 To continue with the workflow, simply set a new annotation object with the 
 fit parameters established by `retentionTimeCorrection()` and call 
 `peakPantheR_parallelAnnotation()` for the final annotation.
