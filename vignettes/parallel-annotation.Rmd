@@ -349,13 +349,6 @@ fit parameters established by `retentionTimeCorrection()` and call
 `peakPantheR_parallelAnnotation()` for the final annotation.
 
 ```{r, results="asis", echo=FALSE}
-# Example with second degree polynomial, no robust
-rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,
-                            rtCorrectionReferences=NULL,
-                            method='polynomial',
-                            params=list(polynomialOrder=2),
-                            robust=FALSE, rtWindowWidth=15,
-                            diagnostic=TRUE)
 # Example with constant correction.
 rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,
                             rtCorrectionReferences=c('ID-1'),
@@ -363,9 +356,18 @@ rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,
                             robust=FALSE,
                             rtWindowWidth=15,
                             diagnostic=TRUE)
-updatated_annotation <- rtCorrectionOutput$annotation
+updated_annotation <- rtCorrectionOutput$annotation
 # The ggplot2 plot object
 rtCorrectionOutput$plot
+
+# Example with second degree polynomial, without using RANSAC
+# # to obtain a robust fit
+rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,
+                            rtCorrectionReferences=NULL,
+                            method='polynomial',
+                            params=list(polynomialOrder=2),
+                            robust=FALSE, rtWindowWidth=15,
+                            diagnostic=TRUE)
 ```
 
 

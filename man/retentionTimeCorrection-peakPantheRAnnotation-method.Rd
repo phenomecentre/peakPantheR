@@ -11,7 +11,7 @@ information in the uROI of peakPantheRAnnotation object}
     annotationObject,
     rtCorrectionReferences = NULL,
     method = "polynomial",
-    params,
+    params=list(polynomialOrder=2),
     robust = FALSE,
     rtWindowWidth = 15,
     diagnostic = TRUE,
@@ -20,6 +20,10 @@ information in the uROI of peakPantheRAnnotation object}
 )
 }
 \arguments{
+\item{annotationObject}{(peakPantheRAnnotation) object with previous fit
+results to adjust retention time values in uROI and FIR
+annotationObject, rtCorrectionReferences=NULL,}
+
 \item{rtCorrectionReferences}{(list) of compounds IDs (\code{cpdID})
 to be used as retention time references.
 All \code{cpdID} entries must be present in the object and previously
@@ -35,20 +39,18 @@ for \code{method='polynomial'}}
 \item{robust}{(bool) whether to use the RANSAC algorithm to flag and ignore
 outliers during retention time correction}
 
-\item{rtWindowWidth}{(numeric) full width in seconds of the retention time
-window defined around the correctedretention time value for each compound}
+\item{rtWindowWidth}{(numeric) full width in seconds
+of the retention time window defined around the corrected retention time
+value for each compound}
 
 \item{diagnostic}{(bool) If TRUE returns diagnostic plots (specific to each
 correction method)}
 
 \item{verbose}{(bool) If TRUE message progress}
-
-\item{previousAnnotation}{(peakPantheRAnnotation) object with previous fit
-results to adjust retention time values in uROI and FIR}
 }
 \value{
-(peakPantheRAnnotation) object with new uROI and FIR values with an
-adjusted retention time
+(list) containing entries `annotation`, with the new and retention
+time corrected peakPantheRAnnotation, and `plot` (if \code{diagnostic=TRUE}).
 }
 \description{
 Performs retention time correction to re-adjust the expected
@@ -81,27 +83,37 @@ targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
 
 smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths,
                                         targetFeatTable=targetFeatTable)
-smallAnnotation
+# annotate files serially
+annotation_result <- peakPantheR_parallelAnnotation(smallAnnotation,
+                        ncores=2, verbose=TRUE)
+data_annotation   <- annotation_result$annotation
+
+# Example with constant correction
+rtCorrectionOutput <- retentionTimeCorrection(
+                            annotationObject = data_annotation,
+                            rtCorrectionReferences=c('ID-1'),
+                            method='constant', params=list(),
+                            robust=FALSE,
+                            rtWindowWidth=15,
+                            diagnostic=TRUE, verbose=TRUE)
+
+rtCorrectedAnnotation <- rtCorrectionOutput$annotation
+
+# rtCorrectedAnnotation
 # An object of class peakPantheRAnnotation
 #  2 compounds in 2 samples.
-#  updated ROI do not exist (uROI)
-#  does not use updated ROI (uROI)
-#  does not use fallback integration regions (FIR)
-#  is not annotated
+#  updated ROI exists, with a modified rt (uROI)
+#  uses updated ROI (uROI)
+#  uses fallback integration regions (FIR)
+#  is annotated
 
-# Reset and change number of spectra
-newSpectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-                    system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-                    system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
-largerAnnotation <- resetAnnotation(smallAnnotation,
-                                    spectraPaths=newSpectraPaths,
-                                    verbose=TRUE)
-largerAnnotation
-# An object of class peakPantheRAnnotation
-#  2 compounds in 3 samples.
-#  updated ROI do not exist (uROI)
-#  does not use updated ROI (uROI)
-#  does not use fallback integration regions (FIR)
-#  is not annotated
+rtCorrectionPlot <- rtCorrectionOutput$plot
+# rtCorrectedPlot
+# A ggplot2 object
+#  Scatterplot where x=`r` in the and y=`rt_dev_sec` from data_annotation
+#  Points colored depending on whether the reference was used to fit
+# the correction model
+#  uses updated ROI (uROI)
+#  uses fallback integration regions (FIR)
 }
 }

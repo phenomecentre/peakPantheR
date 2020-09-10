@@ -2339,7 +2339,7 @@ setMethod("resetFIR", "peakPantheRAnnotation",
 # signal
 setGeneric("retentionTimeCorrection",
     function(annotationObject, rtCorrectionReferences=NULL,
-    method='polynomial', params,
+    method='polynomial', params=list(polynomialOrder=2),
     robust=FALSE, rtWindowWidth=15,
     verbose = TRUE, ...)
     standardGeneric("retentionTimeCorrection"))
@@ -2351,8 +2351,9 @@ setGeneric("retentionTimeCorrection",
 #' The original \code{rt} value is used as expected and the observed deviation
 #' measured in the \code{rt_dev_sec} field is taken as the deviation to be
 #' corrected.
-#' @param previousAnnotation (peakPantheRAnnotation) object with previous fit
+#' @param annotationObject (peakPantheRAnnotation) object with previous fit
 #' results to adjust retention time values in uROI and FIR
+#' annotationObject, rtCorrectionReferences=NULL,
 #' @param rtCorrectionReferences (list) of compounds IDs (\code{cpdID})
 #' to be used as retention time references.
 #' All \code{cpdID} entries must be present in the object and previously
@@ -2367,13 +2368,11 @@ setGeneric("retentionTimeCorrection",
 #' @param rtWindowWidth (numeric) full width in seconds
 #' of the retention time window defined around the corrected retention time
 #' value for each compound
-#' @param rtWindowWidth (numeric) full width in seconds of the retention time
-#' window defined around the correctedretention time value for each compound
 #' @param diagnostic (bool) If TRUE returns diagnostic plots (specific to each
 #' correction method)
 #' @param verbose (bool) If TRUE message progress
-#' @return (peakPantheRAnnotation) object with new uROI and FIR values with an
-#' adjusted retention time
+#' @return (list) containing entries `annotation`, with the new and retention
+#' time corrected peakPantheRAnnotation, and `plot` (if \code{diagnostic=TRUE}).
 #' @docType methods
 #' @aliases retentionTimeCorrection
 #' @export
@@ -2400,33 +2399,43 @@ setGeneric("retentionTimeCorrection",
 #'
 #' smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths,
 #'                                         targetFeatTable=targetFeatTable)
-#' smallAnnotation
+#' # annotate files serially
+#' annotation_result <- peakPantheR_parallelAnnotation(smallAnnotation,
+#'                                          ncores=2, verbose=TRUE)
+#' data_annotation   <- annotation_result$annotation
+#'
+#' # Example with constant correction
+#' rtCorrectionOutput <- retentionTimeCorrection(
+#'                            annotationObject = data_annotation,
+#'                            rtCorrectionReferences=c('ID-1'),
+#'                            method='constant', params=list(),
+#'                            robust=FALSE,
+#'                            rtWindowWidth=15,
+#'                            diagnostic=TRUE, verbose=TRUE)
+#'
+#' rtCorrectedAnnotation <- rtCorrectionOutput$annotation
+#'
+#' # rtCorrectedAnnotation
 #' # An object of class peakPantheRAnnotation
 #' #  2 compounds in 2 samples.
-#' #  updated ROI do not exist (uROI)
-#' #  does not use updated ROI (uROI)
-#' #  does not use fallback integration regions (FIR)
-#' #  is not annotated
+#' #  updated ROI exists, with a modified rt (uROI)
+#' #  uses updated ROI (uROI)
+#' #  uses fallback integration regions (FIR)
+#' #  is annotated
 #'
-#' # Reset and change number of spectra
-#' newSpectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = 'faahKO'),
-#'                     system.file('cdf/KO/ko16.CDF', package = 'faahKO'),
-#'                     system.file('cdf/KO/ko18.CDF', package = 'faahKO'))
-#' largerAnnotation <- resetAnnotation(smallAnnotation,
-#'                                     spectraPaths=newSpectraPaths,
-#'                                     verbose=TRUE)
-#' largerAnnotation
-#' # An object of class peakPantheRAnnotation
-#' #  2 compounds in 3 samples.
-#' #  updated ROI do not exist (uROI)
-#' #  does not use updated ROI (uROI)
-#' #  does not use fallback integration regions (FIR)
-#' #  is not annotated
+#' rtCorrectionPlot <- rtCorrectionOutput$plot
+#' # rtCorrectedPlot
+#' # A ggplot2 object
+#' #  Scatterplot where x=`r` in the and y=`rt_dev_sec` from data_annotation
+#' #  Points colored depending on whether the reference was used to fit
+#' # the correction model
+#' #  uses updated ROI (uROI)
+#' #  uses fallback integration regions (FIR)
 #' }
 setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     function(annotationObject, rtCorrectionReferences=NULL,
-    method='polynomial', params, robust=FALSE, rtWindowWidth=15,
-    diagnostic=TRUE, verbose = TRUE, ...) {
+    method='polynomial', params=list(polynomialOrder=2), robust=FALSE,
+    rtWindowWidth=15, diagnostic=TRUE, verbose = TRUE) {
 
     newAnnotation <- annotationObject
     rtCorrectionReferences <- rtCorrection_checkInput(newAnnotation,
