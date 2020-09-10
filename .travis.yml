@@ -6,8 +6,8 @@ os:
   - osx
 
 r:
-  - bioc-devel
   - bioc-release
+  - bioc-devel
 
 matrix:
   allow_failures:

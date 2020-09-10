@@ -1,8 +1,4 @@
-Changes in version 0.99.3 (2019-10-01)
-+ Revisions for Bioconductor submission
-
-Changes in version 0.99.2 (2019-09-10)
-+ Revisions for Bioconductor submission
-
-Changes in version 0.99.0 (2019-06-09)
-+ Submitted to Bioconductor
+Changes in version 1.1.2 (2020-04-05)
++ Correct test tolerance for Win on R 4.0.0
+Changes in version 1.1.1 (2020-03-04)
++ Compatibility with R 4.0.0

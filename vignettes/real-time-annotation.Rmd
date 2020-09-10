@@ -1,6 +1,6 @@
 ---
 title: "Real Time Annotation"
-date: "2019-10-01"
+date: "2020-09-07"
 package: peakPantheR
 output:
     BiocStyle::html_document:
@@ -73,7 +73,7 @@ will:
 Real time compound integration is set to process **multiple** compounds in 
 **one** file at a time.
 
-To acheive this, `peakPantheR` will:
+To achieve this, `peakPantheR` will:
 
 * load a list of expected _RT_ / _m/z_ regions of interest (**ROI**)
 * detect features in each ROI and keep the highest intensity one
@@ -131,6 +131,7 @@ input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440.,
 input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], 
                                             as.numeric)
 ```
+
 ```{r, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 

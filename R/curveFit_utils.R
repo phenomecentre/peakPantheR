@@ -75,7 +75,6 @@ is.peakPantheR_curveFit <- function(x) {
 #' # attr(,'class')
 #' # [1] 'peakPantheR_curveFit'
 fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
-    
     # Check inputs x and y length
     if (length(x) != length(y)) {
         stop("Error: length of \"x\" and \"y\" must match!")
@@ -90,9 +89,9 @@ fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
         stop("Error: \"params\" must be a list or \"guess\"")
     }
 
-    useGuess = TRUE
+    useGuess <- TRUE
     if (any(params != "guess")) {
-        useGuess = FALSE
+        useGuess <- FALSE
         # check init_params, lower and upper bounds are defined
         if (!all(c("init_params", "lower_bounds", "upper_bounds") %in%
             names(params))) {

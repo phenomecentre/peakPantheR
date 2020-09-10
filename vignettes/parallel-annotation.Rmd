@@ -1,6 +1,6 @@
 ---
 title: "Parallel Annotation"
-date: "2019-10-01"
+date: "2020-09-07"
 package: peakPantheR
 output:
     BiocStyle::html_document:
@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 ```
 
 **Package**: `r Biocpkg("peakPantheR")`<br />
-**Authors**: Arnaud Wolfer<br />
+**Authors**: Arnaud Wolfer, Goncalo Correia<br />
 
 ```{r init, message = FALSE, echo = FALSE, results = "hide" }
 ## Silently loading all packages
@@ -79,7 +79,7 @@ Parallel compound integration is set to process **multiple** compounds in
 knitr::include_graphics("../man/figures/parallelAnnotation.png")
 ```
 
-To acheive this, `peakPantheR` will:
+To achieve this, `peakPantheR` will:
 
 1. load a list of expected _RT_ / _m/z_ ROI and a list of files to process
 2. initialise an output object with expected ROI and file paths
@@ -314,6 +314,62 @@ corresponding histograms to the right
 regions for when no peak is found) can also be tweaked to better fit the peaks.
 
 
+### Retention time correction
+The optional `retentionTimeCorrection()` method provides an interface to adjust
+the expected ROI rt values and account for chromatographic batch effects. By
+comparing expected and found rt values for a set of reference compounds, a model
+of the chromatographic shift for the present batch can be established. This 
+model can be in turned used to correct the expected retention time of all
+targeted compounds.
+In order to apply this method, the `peakPantheRAnnotation` must be previously
+annotated (`isAnnotated=TRUE`). 
+The retention time correction algorithm to use can be selected using the 
+`method` argument (currently `polynomial` and
+`constant` methods are available).
+`retentionTimeCorrection()` fits a correction function to model the dependency
+of the mean `rt_dev_sec` per reference feature with the expected databased 
+retention time. 
+If `useUROI=TRUE`, the expected retention time value is taken from the `UROI_rt`
+field, otherwise `ROI_rt` is used. 
+If `robust=TRUE`, the RANSAC algorithm is used to automatically detect outliers
+and exclude them from the fit (this should only be used with a large number of 
+reference features).
+`retentionTimeCorrection()` returns a list with 2 elements:
+* a modified `peakPantheRAnnotation` object
+* a `ggplot2` diagnostic plot (optional, depending on whether `TRUE` or `FALSE`
+is passed to the `diagnostic` argument).
+The returned `peakPantheRAnnotation` object contains the same `uROI` and `FIR` 
+`mz` values as the original annotation, but the retention time related 
+parameters (`rt`, `rtMin` and `rtMax`) are replaced by the adjusted values. 
+The `rtMax` and `rtMin` are set as the corrected `rt` value plus or minus half 
+the value passed to the `rtWindowWidth` argument, respectively. 
+`useUROI` and `useFIR` are also set to TRUE. 
+To continue with the workflow, simply set a new annotation object with the 
+fit parameters established by `retentionTimeCorrection()` and call 
+`peakPantheR_parallelAnnotation()` for the final annotation.
+
+```{r, results="asis", echo=FALSE}
+# Example with constant correction.
+rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,
+                            rtCorrectionReferences=c('ID-1'),
+                            method='constant',
+                            robust=FALSE,
+                            rtWindowWidth=15,
+                            diagnostic=TRUE)
+updated_annotation <- rtCorrectionOutput$annotation
+# The ggplot2 plot object
+rtCorrectionOutput$plot
+
+# Example with second degree polynomial, without using RANSAC
+# # to obtain a robust fit
+rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,
+                            rtCorrectionReferences=NULL,
+                            method='polynomial',
+                            params=list(polynomialOrder=2),
+                            robust=FALSE, rtWindowWidth=15,
+                            diagnostic=TRUE)
+```
+
 
 ## New Initialisation with Updated Parameters to be Applied to All Study Samples
 
@@ -351,7 +407,6 @@ new_annotation
 new_annotation <- resetFIR(new_annotation)
 #> FIR will be reset with uROI values
 ```
-
 
 ### Add new samples to process
 
