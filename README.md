@@ -46,13 +46,17 @@ Both real time and parallel compound integration require a common set of informa
   - An expected region of interest (`RT` / `m/z` window) for each compound.
 
 ## Vignettes
-
 An overview of the package and detailed information on usage are available in the following vignettes:
 
   - [Getting Started with peakPantheR](https://phenomecentre.github.io/peakPantheR.github.io/articles/getting-started.html)
   - [Real Time Annotation](https://phenomecentre.github.io/peakPantheR.github.io/articles/real-time-annotation.html)
   - [Parallel Annotation](https://phenomecentre.github.io/peakPantheR.github.io/articles/parallel-annotation.html)
-
+  
+## Examples
+Besides the vignettes, more tutorials are available via github:
+  - [Targeted integration of metabolites from 3 LC-MS profiling dataset using peakPantheR](https://github.com/phenomecentre/metabotyping-dementia-urine): Application of peakpPantheR to extract features from 3 LC-MS assays from a human urine metabolic profiling study on cognitive decline and dementia.   
+  - [Quality-Control of peakPantheR extracted using the nPYc-Toolbox](https://github.com/phenomecentre/nPYc-toolbox-tutorials): Tutorial on how to use the nPYC-Toolbox to perform QC on peakPanther extracted datasets.
+  
 ## Copyright
 
 `peakPantheR` is licensed under the [GPLv3](http://choosealicense.com/licenses/gpl-3.0/)

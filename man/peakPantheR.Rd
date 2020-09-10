@@ -26,18 +26,18 @@ command line tutorials.
 Useful links:
 \itemize{
     \item \url{https://github.com/phenomecentre/peakPantheR}
-    \item Report bugs at 
+    \item Report bugs at
     \url{https://github.com/phenomecentre/peakPantheR/issues/new}
 }
 
 }
 \author{
-\strong{Maintainer}: Arnaud Wolfer \email{adwolfer@gmail.com} 
+\strong{Maintainer}: Arnaud Wolfer \email{adwolfer@gmail.com}
     (\href{https://orcid.org/0000-0001-5856-3218}{ORCID})
 
 Authors:
 \itemize{
-    \item Goncalo Correia \email{gscorreia89@gmail.com} 
+    \item Goncalo Correia \email{gscorreia89@gmail.com}
         (\href{https://orcid.org/0000-0001-8271-9294}{ORCID})
 }
 
