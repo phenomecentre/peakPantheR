@@ -2340,8 +2340,7 @@ setMethod("resetFIR", "peakPantheRAnnotation",
 setGeneric("retentionTimeCorrection",
     function(annotationObject, rtCorrectionReferences=NULL,
     method='polynomial', params=list(polynomialOrder=2),
-    robust=FALSE, rtWindowWidth=15,
-    verbose = TRUE)
+    robust=FALSE, rtWindowWidth=15,  diagnostic=TRUE)
     standardGeneric("retentionTimeCorrection"))
 #' @title Apply retention time correction methods to adjust the retention time
 #' information in the uROI of peakPantheRAnnotation object
@@ -2370,7 +2369,6 @@ setGeneric("retentionTimeCorrection",
 #' value for each compound
 #' @param diagnostic (bool) If TRUE returns diagnostic plots (specific to each
 #' correction method)
-#' @param verbose (bool) If TRUE message progress
 #' @return (list) containing entries `annotation`, with the new and retention
 #' time corrected peakPantheRAnnotation, and `plot` (if \code{diagnostic=TRUE}).
 #' @docType methods
@@ -2434,7 +2432,7 @@ setGeneric("retentionTimeCorrection",
 #' }
 setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     function(annotationObject, rtCorrectionReferences, method, params, robust,
-    rtWindowWidth, diagnostic=TRUE, verbose ) {
+    rtWindowWidth, diagnostic) {
 
     newAnnotation <- annotationObject
     rtCorrectionReferences <- rtCorrection_checkInput(newAnnotation,

@@ -11,12 +11,10 @@ information in the uROI of peakPantheRAnnotation object}
     annotationObject,
     rtCorrectionReferences = NULL,
     method = "polynomial",
-    params=list(polynomialOrder=2),
+    params = list(polynomialOrder = 2),
     robust = FALSE,
     rtWindowWidth = 15,
-    diagnostic = TRUE,
-    verbose = TRUE,
-    ...
+    diagnostic = TRUE
 )
 }
 \arguments{
@@ -45,8 +43,6 @@ value for each compound}
 
 \item{diagnostic}{(bool) If TRUE returns diagnostic plots (specific to each
 correction method)}
-
-\item{verbose}{(bool) If TRUE message progress}
 }
 \value{
 (list) containing entries `annotation`, with the new and retention
@@ -85,17 +81,17 @@ smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths,
                                         targetFeatTable=targetFeatTable)
 # annotate files serially
 annotation_result <- peakPantheR_parallelAnnotation(smallAnnotation,
-                        ncores=2, verbose=TRUE)
+                                         ncores=0, verbose=TRUE)
 data_annotation   <- annotation_result$annotation
 
 # Example with constant correction
 rtCorrectionOutput <- retentionTimeCorrection(
-                            annotationObject = data_annotation,
-                            rtCorrectionReferences=c('ID-1'),
-                            method='constant', params=list(),
-                            robust=FALSE,
-                            rtWindowWidth=15,
-                            diagnostic=TRUE, verbose=TRUE)
+                        annotationObject = data_annotation,
+                        rtCorrectionReferences=c('ID-1'),
+                        method='constant', params=list(),
+                        robust=FALSE,
+                        rtWindowWidth=15,
+                        diagnostic=TRUE, verbose=TRUE)
 
 rtCorrectedAnnotation <- rtCorrectionOutput$annotation
 
