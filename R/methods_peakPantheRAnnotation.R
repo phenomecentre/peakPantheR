@@ -2341,7 +2341,7 @@ setGeneric("retentionTimeCorrection",
     function(annotationObject, rtCorrectionReferences=NULL,
     method='polynomial', params=list(polynomialOrder=2),
     robust=FALSE, rtWindowWidth=15,
-    verbose = TRUE, ...)
+    verbose = TRUE)
     standardGeneric("retentionTimeCorrection"))
 #' @title Apply retention time correction methods to adjust the retention time
 #' information in the uROI of peakPantheRAnnotation object
@@ -2433,9 +2433,8 @@ setGeneric("retentionTimeCorrection",
 #' #  uses fallback integration regions (FIR)
 #' }
 setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
-    function(annotationObject, rtCorrectionReferences=NULL,
-    method='polynomial', params=list(polynomialOrder=2), robust=FALSE,
-    rtWindowWidth=15, diagnostic=TRUE, verbose = TRUE) {
+    function(annotationObject, rtCorrectionReferences, method, params, robust,
+    rtWindowWidth, diagnostic=TRUE, verbose ) {
 
     newAnnotation <- annotationObject
     rtCorrectionReferences <- rtCorrection_checkInput(newAnnotation,
