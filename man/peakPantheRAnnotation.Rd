@@ -132,38 +132,41 @@ ROI as columns.
 \section{Slots}{
 
 \describe{
-\item{\code{cpdID}}{A character vector of compound IDs, of length number of
-compounds}
+\item{\code{cpdID}}{A character vector of compound IDs, of length
+number of compounds}
 
 \item{\code{cpdName}}{A character vector of compound names, of length number of
 compounds}
 
-\item{\code{ROI}}{A data.frame of Regions Of Interest (ROI) with compounds as
-row and ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt}
-(float in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin}
+\item{\code{ROI}}{A data.frame of Regions Of Interest (ROI) with
+compounds as row and
+ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float
+in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin}
 (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
-\item{\code{FIR}}{A data.frame of Fallback Integration Regions (FIR) with
-compounds as row and FIR parameters as columns: \code{rtMin} (float in seconds),
+\item{\code{FIR}}{A data.frame of Fallback Integration Regions (FIR)
+with compounds
+as row and FIR parameters as columns: \code{rtMin} (float in seconds),
 \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
 
-\item{\code{uROI}}{A data.frame of updated Regions Of Interest (uROI) with
-compounds as row and uROI parameters as columns: \code{rtMin} (float in
-seconds), \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in
-seconds), \code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax}
-(float).}
+\item{\code{uROI}}{A data.frame of updated Regions Of Interest
+(uROI) with compounds
+as row and uROI parameters as columns: \code{rtMin} (float in seconds),
+\code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds),
+\code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
 
-\item{\code{filepath}}{A character vector of file paths, of length number of
-spectra files}
+\item{\code{filepath}}{A character vector of file paths, of
+length number of spectra
+files}
 
-\item{\code{cpdMetadata}}{A data.frame of compound metadata, with compounds as
-row and metadata as columns}
+\item{\code{cpdMetadata}}{A data.frame of compound metadata,
+with compounds as row and metadata as columns}
 
-\item{\code{spectraMetadata}}{A data.frame of sample metadata, with samples as
-row and metadata as columns}
+\item{\code{spectraMetadata}}{A data.frame of sample metadata,
+with samples as row and metadata as columns}
 
-\item{\code{acquisitionTime}}{A character vector of acquisition date-time
-(converted from POSIXct) or NA}
+\item{\code{acquisitionTime}}{A character
+vector of acquisition date-time (converted from POSIXct) or NA}
 
 \item{\code{uROIExist}}{A logical stating if uROI have been set}
 
@@ -171,21 +174,21 @@ row and metadata as columns}
 
 \item{\code{useFIR}}{A logical stating if FIR are to be used}
 
-\item{\code{TIC}}{A numeric vector of TIC or NA, of length number of spectra
-files}
+\item{\code{TIC}}{A numeric vector of TIC or NA,
+of length number of spectra files}
 
-\item{\code{peakTables}}{A list of peakTable data.frame, of length number of
-spectra files. Each peakTable data.frame has compounds as rows and peak
-annotation results as columns.}
+\item{\code{peakTables}}{A list of peakTable data.frame, of
+length number of spectra files. Each peakTable data.frame
+has compounds as rows and peak annotation results as columns.}
 
-\item{\code{dataPoints}}{A list of length number of spectra files. Each list
-element is a \emph{ROIsDataPoint} list of \code{data.frame} of raw data points
-for each ROI/uROI (retention time 'rt', mass 'mz' and intensity 'int' (as
-column) of each raw data points (as row))}
+\item{\code{dataPoints}}{A list of length number of spectra files.
+Each list element is a \emph{ROIsDataPoint} list of \code{data.frame}
+of raw data points for each ROI/uROI (retention time 'rt',
+mass 'mz' and intensity 'int' (as column) of each raw data points (as row))}
 
-\item{\code{peakFit}}{A list of length number of spectra files. Each list
-element is a \emph{curveFit} list of \code{peakPantheR_curveFit} or NA for each
-ROI}
+\item{\code{peakFit}}{A list of length number of spectra files.
+Each list element is a \emph{curveFit} list of
+\code{peakPantheR_curveFit} or NA for each ROI}
 
 \item{\code{isAnnotated}}{A logical stating if the annotation has taken place
 
@@ -327,11 +330,13 @@ isAnnotated(annotation)
 
 }
 \seealso{
-Other peakPantheR: \code{\link{peakPantheR_parallelAnnotation}},
-    \code{\link{peakPantheR_singleFileSearch}}
+Other peakPantheR: 
+\code{\link{peakPantheR_parallelAnnotation}()},
+\code{\link{peakPantheR_singleFileSearch}()}
 
-Other parallelAnnotation: \code{\link{peakPantheR_parallelAnnotation}},
-    \code{\link{peakPantheR_singleFileSearch}}
+Other parallelAnnotation: 
+\code{\link{peakPantheR_parallelAnnotation}()},
+\code{\link{peakPantheR_singleFileSearch}()}
 }
 \concept{parallelAnnotation}
 \concept{peakPantheR}
