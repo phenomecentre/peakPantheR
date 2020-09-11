@@ -28,6 +28,7 @@ addons:
       - libhdf5-dev
 
 before_install:
+  - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then rm '/usr/local/bin/gfortran'; fi"
   - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew update; fi"
   - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew install libgit2; fi"
 
