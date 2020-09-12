@@ -38,3 +38,36 @@ output$showAnnotStatusDiag <- renderUI({
   )
 })
 
+
+## Run the update to uROI/FIR
+observeEvent(input$goDiagnosticUpdateUROIFIR, {
+  updated_annotation  <- peakPantheR::annotationParamsDiagnostic(values$annotation, verbose=TRUE)
+  values$annotation <- updated_annotation
+})
+# TODO: CHECK the uROI FIR diagnostic update
+
+## Check update uROI/FIR is a success
+diagSuccess <- reactive({
+  # Diagnostic not triggered yet
+  if(input$goDiagnosticUpdateUROIFIR == 0) {
+    return('no')
+  } else {
+    # Diagnostic triggered, no absolute certainty of result, but uROIExist will have been set by it
+    if(peakPantheR::isAnnotated(values$annotation) & peakPantheR::uROIExist(values$annotation)) {
+      return('yes')
+    # something is wrong
+    } else {
+      return('no')
+    }
+  }
+})
+# TODO: CHECK diag success message
+
+# Success update UROI/FIR using diagnostic message
+output$successUpdateDiagUI <- renderUI({
+  if(diagSuccess()=='yes') {
+    tagList(
+      HTML("<div class=\"alert alert-dismissible alert-success\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Success</h4>uROI and FIR updated sucessfully</div>")
+    )
+  }
+})

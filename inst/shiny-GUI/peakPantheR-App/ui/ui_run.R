@@ -24,10 +24,11 @@ tabPanel("Run",
         # Run options and trigger
         wellPanel(
           fluidRow(
-            # useUROI & useFIR
+            # useUROI, useFIR & curveModel
             column(5, offset=1,
-              uiOutput("useUROICheckbox"), # use uROI
-              uiOutput("useFIRCheckbox"),  # use FIR
+              uiOutput("useUROICheckbox"),       # use uROI
+              uiOutput("useFIRCheckbox"),        # use FIR
+              uiOutput("curveModelSelectInput"), # curveModel
             ), # end column (useUROI, useFIR)
 
             # ncores cpuslider

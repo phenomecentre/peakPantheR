@@ -83,6 +83,17 @@ output$useFIRCheckbox <- renderUI({
   )
 }) # TODO: CHECK FIR checkbox is activated correctly [cannot do the strikethrough]
 
+# selectInput choose curveModel (set default to current annotation value)
+output$curveModelSelectInput <- renderUI({
+  tagList(
+    selectInput("curveModel",
+                  label = 'Fitting model to use (curveModel)',
+                  choices = knownCurveModel,
+                  selected = NULL, # will be peakPantheR::curveModel(values$annotation))
+                  multiple = FALSE)
+  )
+}) # TODO: curveModel selectInput selectis set correctly
+
 # Cpu slider appears if parallelisation is selected
 output$cpuSlider <- renderUI({
   if(input$parallelisation == 0) return(NULL)
@@ -111,6 +122,7 @@ observeEvent(input$goAnnotation, {
                                                  useUROI=tmp_useUROI,
                                                  useFIR=input$useFIR,
                                                  verbose=FALSE)
+  # TODO: add here the change of curveModel
   ## Annotate!
   result <- peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), verbose=TRUE)
   # Store the annotation and failures into the reactiveValue

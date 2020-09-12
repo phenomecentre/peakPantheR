@@ -28,6 +28,8 @@
 options(shiny.maxRequestSize=500*1024^2)
 # define max number of parallel cores
 maxCores <- parallel::detectCores()
+# known curve fitting methods
+knownCurveModel <- c("skewedGaussian", "emgGaussian")
 
 
 shinyServer( function(input, output, session){
