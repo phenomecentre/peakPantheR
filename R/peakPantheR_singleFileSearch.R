@@ -248,14 +248,15 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
     # Integrate
     resInt <- singleFileSearch_integrate(raw_data, targetFeatTable,
-            ROIsDataPoint, peakStatistic, useFIR, FIR, plotEICsPath, curveModel, verbose,...)
+            ROIsDataPoint, peakStatistic, useFIR, FIR, plotEICsPath,
+            curveModel, verbose,...)
     finalOutput <- resInt$finalOutput
     curveFit <- resInt$curveFit
 
     etime <- Sys.time()
     if (verbose) { message("Feature search done in: ",
-                            round(as.double(difftime(etime, stime)), 2), " ",
-                            units(difftime(etime, stime))) }
+                            round(as.double(difftime(etime, stime)), 2),
+                           " ", units(difftime(etime, stime))) }
     
     # clear variables
     rm(raw_data)
@@ -318,14 +319,13 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
 }
 # Integrate if there is at minimum 1 target feature
 singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
-                        peakStatistic, useFIR, FIR, plotEICsPath, curveModel="skewedGaussian", verbose, ...){
+                        peakStatistic, useFIR, FIR, plotEICsPath,
+                        curveModel="skewedGaussian", verbose, ...){
     if (dim(targetFeatTable)[1] != 0) { #Only integrate if there is min 1 target
         # Integrate features using ROI
-        foundPeaks <- findTargetFeatures(ROIsDataPoint,
-                                        targetFeatTable,
+        foundPeaks <- findTargetFeatures(ROIsDataPoint, targetFeatTable,
                                         curveModel=curveModel,
-                                        verbose = verbose,
-                                        ...)
+                                        verbose = verbose, ...)
         foundPeakTable <- foundPeaks$peakTable
         curveFit <- foundPeaks$curveFit
         # Add compound information

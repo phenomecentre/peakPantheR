@@ -329,7 +329,7 @@ skewedGaussian_minpack.lm <- function(params, xx) {
 #'
 #' @return value of the exponentially modified gaussian evaluated at xx
 emgGaussian_minpack.lm <- function(params, xx) {
-    cerf_term <- skew_cerf((params$center + params$gamma * (params$sigma^2) - xx)/(params$sigma *
+    cerf_term <- gaussian_cerf((params$center + params$gamma * (params$sigma^2) - xx)/(params$sigma *
         sqrt(2)))
     yy <- (params$amplitude*params$gamma/2) *
         exp(params$gamma*(params$center - xx + (params$gamma * (params$sigma^2)/2))) * cerf_term
