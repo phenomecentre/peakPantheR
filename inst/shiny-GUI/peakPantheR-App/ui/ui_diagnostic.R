@@ -23,7 +23,7 @@ tabPanel("Diagnostic: update and plots",
         # Tabs
         shiny::tabsetPanel( id="diagnosticTabs", type="pills",
 
-        # Update uROI/FIR - TAB
+        # Automatic update uROI/FIR - TAB
           tabPanel("Update uROI/FIR",
             wellPanel(
               fluidRow(
@@ -46,11 +46,10 @@ tabPanel("Diagnostic: update and plots",
 
         # Show diagnostic plots - TAB
           tabPanel("Diagnostic plot",
-            wellPanel(
-              fluidRow(
-                h3('Plots!')
-              ) # end fluidRow
-            )   # end wellPanel
+            # control the plot
+            uiOutput("diagPlotControlUI"),
+            # plot output
+            uiOutput("diagPlotResultUI")
           ),    # end tabPanel
 
         # Show/modify updated parameters - TAB

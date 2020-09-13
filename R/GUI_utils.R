@@ -196,3 +196,40 @@ annotation_showText_UI_helper <- function(annotProp){
 
     return(UI_string)
 }
+
+
+#' UI diagnostic plot helper - single feature multiplot
+#'
+#' Return a ggplot object of a feature diagnostic multiplot
+#'
+#' @param cpdNb (int) postion of the feature to extract (1 to nbCpd)
+#' @param annotation (peakPantheRAnnotation) Annotation object
+#' @param sampleColour (str) NULL or vector colour for each sample
+#' @param ... Additional parameters for plotting
+#'
+#' @return (ggplotObject) Diagnostic multiplot for a feature
+annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
+                                sampleColour=NULL, ...) {
+    message(str(cpdNb))
+    message(show(annotation))
+    # subset annotation to only 1 cpd
+    tmp_annotation <- annotation[, cpdNb]
+
+    # diagnostic plots
+    tmp_diagPlotList <- annotationDiagnosticPlots(tmp_annotation,
+        sampleColour = sampleColour, verbose = FALSE, ...)
+
+    # multiplot
+    suppressMessages(suppressWarnings(
+        tmp_multiPlot <- annotationDiagnosticMultiplot(tmp_diagPlotList)))
+
+    # something to plot
+    if (length(tmp_multiPlot) != 0) {
+        return(tmp_multiplot)
+    # nothing to plot
+    } else {
+        # TODO: return NA? NULL?
+        return(NULL)
+    }
+}
+# TODO: unittest pumped from `annotationDiagnosticMultiplot`, maybe with a failed plot

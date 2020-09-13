@@ -128,6 +128,9 @@ observeEvent(input$goAnnotation, {
   # Store the annotation and failures into the reactiveValue
   values$annotation <- result$annotation
   values$failures   <- result$failures
+  # Set a list of feature name for later use
+  values$featNmeList        <- paste(cpdID(values$annotation), cpdName(values$annotation), sep=' - ')
+  names(values$featNmeList) <- 1:length(values$featNmeList)
 })
 # TODO: CHECK the resulting annotation
 # TODO: CHECK that we can rerun

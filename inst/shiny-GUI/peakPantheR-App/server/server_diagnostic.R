@@ -3,7 +3,7 @@
 # - message if no import (conditional panel)
 # - status of the annotation (and failures) on the sidebar
 
-# - [TAB] update uROI/FIR
+# - [TAB] automatic update uROI/FIR
 # - [TAB] show plots
 # - [TAB] show updated parameters + modify ?
 
@@ -39,12 +39,12 @@ output$showAnnotStatusDiag <- renderUI({
 })
 
 
+## Automatic update uROI/FIR ---------------------------------------------------
 ## Run the update to uROI/FIR
 observeEvent(input$goDiagnosticUpdateUROIFIR, {
   updated_annotation  <- peakPantheR::annotationParamsDiagnostic(values$annotation, verbose=TRUE)
   values$annotation <- updated_annotation
 })
-# TODO: CHECK the uROI FIR diagnostic update
 
 ## Check update uROI/FIR is a success
 diagSuccess <- reactive({
@@ -61,7 +61,6 @@ diagSuccess <- reactive({
     }
   }
 })
-# TODO: CHECK diag success message
 
 # Success update UROI/FIR using diagnostic message
 output$successUpdateDiagUI <- renderUI({
@@ -71,3 +70,38 @@ output$successUpdateDiagUI <- renderUI({
     )
   }
 })
+
+
+## Plot Diagnostic -------------------------------------------------------------
+# UI to control the diagnostic plot
+output$diagPlotControlUI <- renderUI({
+  wellPanel(
+    fluidRow(
+      column(12, offset=1,
+        h4('Fit diagnostic plots', style="color:#3e648d;font-weight:bold"),
+      ) # end column
+    ), # end fluidRow
+    fluidRow(
+      column(6, offset=0,
+        selectInput("plotFeatDiag", label="Feature", choices=unname(values$featNmeList))
+      ), # end column
+      column(5, offset=1,
+        numericInput("plotHeightDiag", label = "Plot Height", value = 400, min = 0, step = 1)
+      ) # end column
+    ) # end fluidRow
+  )   # end wellPanel
+})
+
+# TODO: /!\ hold off plotting until is annotated
+# TODO: check DataPoints exist and is fine before/after the sub-setting
+# plot feature diagnostic
+output$diagPlotResultUI <- renderUI ({
+  # find the cpdNb corresponding to the cpdID + cpdName shown
+  plotOutput(
+    annotation_diagnostic_multiplot_UI_helper(
+      cpdNb = names(values$featNmeList)[values$featNmeList == input$plotFeatDiag],
+      annotation = values$annotation),
+    height=input$plotHeightDiag
+  )
+})
+

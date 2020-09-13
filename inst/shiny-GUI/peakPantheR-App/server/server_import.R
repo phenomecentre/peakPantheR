@@ -10,7 +10,7 @@
 # check input but doesn't validate inputs
 
 # Default annotation as reactiveValue
-values <- reactiveValues(annotation = NULL, failures = NULL)
+values <- reactiveValues(annotation = NULL, failures = NULL, featNmeList = NULL)
 
 # New annotation
 observeEvent(input$triggerImportNewAnnotation, {
