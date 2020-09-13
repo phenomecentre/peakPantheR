@@ -92,14 +92,15 @@ output$diagPlotControlUI <- renderUI({
   )   # end wellPanel
 })
 
-# TODO: /!\ hold off plotting until is annotated
-# TODO: check DataPoints exist and is fine before/after the sub-setting
+# TODO: /!\ hold off plotting until is annotated AND/OR cpdNb!=0
+# TODO: plot offline to test output
+# TODO: plot waiting message as it's pulling from disk
 # plot feature diagnostic
 output$diagPlotResultUI <- renderUI ({
   # find the cpdNb corresponding to the cpdID + cpdName shown
   plotOutput(
     annotation_diagnostic_multiplot_UI_helper(
-      cpdNb = names(values$featNmeList)[values$featNmeList == input$plotFeatDiag],
+      cpdNb = as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]),
       annotation = values$annotation),
     height=input$plotHeightDiag
   )

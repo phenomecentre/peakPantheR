@@ -210,8 +210,6 @@ annotation_showText_UI_helper <- function(annotProp){
 #' @return (ggplotObject) Diagnostic multiplot for a feature
 annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
                                 sampleColour=NULL, ...) {
-    message(str(cpdNb))
-    message(show(annotation))
     # subset annotation to only 1 cpd
     tmp_annotation <- annotation[, cpdNb]
 
@@ -225,11 +223,11 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
 
     # something to plot
     if (length(tmp_multiPlot) != 0) {
-        return(tmp_multiplot)
+        return(tmp_multiPlot)
     # nothing to plot
     } else {
         # TODO: return NA? NULL?
         return(NULL)
     }
 }
-# TODO: unittest pumped from `annotationDiagnosticMultiplot`, maybe with a failed plot
+# TODO: unittest from `annotationDiagnosticMultiplot`, maybe with a failed plot
