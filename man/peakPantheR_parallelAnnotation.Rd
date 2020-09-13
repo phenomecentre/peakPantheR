@@ -4,8 +4,16 @@
 \alias{peakPantheR_parallelAnnotation}
 \title{Search, integrate and report targeted features in a multiple spectra}
 \usage{
-peakPantheR_parallelAnnotation(object, ncores = 0, getAcquTime = TRUE,
-    resetWorkers = 1, centroided = TRUE, verbose = TRUE, ...)
+peakPantheR_parallelAnnotation(
+  object,
+  ncores = 0,
+  getAcquTime = TRUE,
+  resetWorkers = 1,
+  centroided = TRUE,
+  curveModel = "skewedGaussian",
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Initialised peakPantheRAnnotation
@@ -30,6 +38,9 @@ more efficiently. For values >1, ensure sufficient system memory is available}
 
 \item{centroided}{(bool) use TRUE if the data is centroided, used by
 \code{\link[MSnbase]{readMSData}} when reading the raw data files}
+
+\item{curveModel}{(str) specify the peak-shape model to fit, by default \code{skewedGaussian}.
+Accepted values are \code{skewedGaussian} and \code{emgGaussian}}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken,
 number of features found (total and matched to targets) and failures}
