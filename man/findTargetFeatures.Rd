@@ -114,7 +114,7 @@ ROIsPt <- extractSignalRawData(raw_data,
                                 verbose=TRUE)
 # Reading data from 2 windows
 
-foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, verbose=TRUE)
+foundPeaks <- findTargetFeatures(ROIsPt, targetFeatTable, curveModel='skewedGaussian', verbose=TRUE)
 # Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for
 # mzMin/mzMax calculation,
 # approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1
