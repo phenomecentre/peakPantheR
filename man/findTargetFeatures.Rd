@@ -24,8 +24,8 @@ with signal as row and retention time ('rt'), mass ('mz') and intensity
 \code{rtMin} (float in seconds), \code{rtMax} (float in seconds),
 \code{mzMin} (float), \code{mzMax} (float)}
 
-\item{params}{curveModel}{(str) Name of the curve model to fit (currently
-\code{skewedGaussian} and \code{emGaussian)}
+\item{curveModel}{(str) Name of the curve model to fit (currently
+\code{skewedGaussian} and \code{emGaussian))}
 
 \item{params}{(list or str) Either 'guess' for automated parametrisation or
 list (one per ROI windows) of 'guess' or list of curve fit parameters}
