@@ -5,16 +5,16 @@
 \title{Search, integrate and report targeted features in a raw spectra}
 \usage{
 peakPantheR_singleFileSearch(
-  singleSpectraDataPath,
-  targetFeatTable,
-  peakStatistic = FALSE,
-  plotEICsPath = NA,
-  getAcquTime = FALSE,
-  FIR = NULL,
-  centroided = TRUE,
-  curveModel = "skewedGaussian",
-  verbose = TRUE,
-  ...
+    singleSpectraDataPath,
+    targetFeatTable,
+    peakStatistic = FALSE,
+    plotEICsPath = NA,
+    getAcquTime = FALSE,
+    FIR = NULL,
+    centroided = TRUE,
+    curveModel = "skewedGaussian",
+    verbose = TRUE,
+    ...
 )
 }
 \arguments{
@@ -45,7 +45,8 @@ Regions (FIR) when a feature is not found.  Compounds as row are identical to
 \item{centroided}{(bool) use TRUE if the data is centroided, used by
 \code{\link[MSnbase]{readMSData}} when reading the raw data file}
 
-\item{curveModel}{(str) specify the peak-shape model to fit, by default \code{skewedGaussian}.
+\item{curveModel}{(str) specify the peak-shape model to fit,
+by default \code{skewedGaussian}.
 Accepted values are \code{skewedGaussian} and \code{emgGaussian}}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken and

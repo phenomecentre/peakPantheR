@@ -7,18 +7,20 @@
 emgGaussian_minpack.lm_objectiveFun(params, observed, xx)
 }
 \arguments{
-\item{params}{(list) exponentially modified gaussian parameters (\code{params$gamma},
-\code{params$center}, \code{params$sigma}, \code{params$amplitude})}
+\item{params}{(list) exponentially modified gaussian parameters
+(\code{params$gamma}, \code{params$center}, \code{params$sigma},
+\code{params$amplitude})}
 
 \item{observed}{(numeric) observed y value at xx}
 
-\item{xx}{(numeric) value at which to evalute the exponentially modified gaussian}
+\item{xx}{(numeric) value at which to evalute the exponentially
+modified gaussian}
 }
 \value{
-difference between observed and expected exponentially modified gaussian value
-evaluated at xx
+difference between observed and expected exponentially modified
+gaussian value evaluated at xx
 }
 \description{
-Exponentially Modified Gaussian (EMG) minpack.lm objective function, calculates
-residuals using the EMG Peak Shape
+Exponentially Modified Gaussian (EMG) minpack.lm objective
+function, calculates residuals using the EMG Peak Shape
 }

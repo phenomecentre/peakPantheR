@@ -2,7 +2,8 @@
 % Please edit documentation in R/curveFit_utils.R
 \name{emgGaussian_guess}
 \alias{emgGaussian_guess}
-\title{Guess function for initial exponentially modified gaussian parameters and bounds}
+\title{Guess function for initial exponentially modified gaussian
+parameters and bounds}
 \usage{
 emgGaussian_guess(x, y)
 }
@@ -17,6 +18,6 @@ lower \code{list()$lower_bounds} and upper bounds \code{list()$upper_bounds}
 (\code{$gamma}, \code{$center}, \code{$sigma}, \code{$amplitude})
 }
 \description{
-Guess function for initial exponentially modified gaussian parameters and
-bounds, at the moment only checks the x position
+Guess function for initial exponentially modified gaussian
+parameters and bounds, at the moment only checks the x position
 }

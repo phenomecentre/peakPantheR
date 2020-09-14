@@ -32,7 +32,8 @@
 #' \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @param centroided (bool) use TRUE if the data is centroided, used by
 #' \code{\link[MSnbase]{readMSData}} when reading the raw data file
-#' @param curveModel (str) specify the peak-shape model to fit, by default \code{skewedGaussian}.
+#' @param curveModel (str) specify the peak-shape model to fit,
+#' by default \code{skewedGaussian}.
 #' Accepted values are \code{skewedGaussian} and \code{emgGaussian}
 #' @param verbose (bool) If TRUE message calculation progress, time taken and
 #' number of features found
@@ -256,7 +257,7 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     etime <- Sys.time()
     if (verbose) { message("Feature search done in: ",
                             round(as.double(difftime(etime, stime)), 2),
-                           " ", units(difftime(etime, stime))) }
+                            " ", units(difftime(etime, stime))) }
     
     # clear variables
     rm(raw_data)
@@ -313,6 +314,12 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
             stop('Check input, FIR must have \"mzMin\", \"mzMax\", ',
                         '\"rtMin\" and \"rtMax\" as columns') }
         useFIR <- TRUE
+    }
+    # known curveModel
+    known_curveModel <- c("skewedGaussian", "emgGaussian")
+    if (!(curveModel %in% known_curveModel)) {
+        stop(paste("Error: \"curveModel\" must be one of:",
+            paste(known_curveModel, collapse=', ')))
     }
     return(list(specPath=singleSpectraDataPath, plotPath=plotEICsPath,
                 useFIR=useFIR))

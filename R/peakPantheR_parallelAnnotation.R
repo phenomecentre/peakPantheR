@@ -27,7 +27,8 @@
 #' more efficiently. For values >1, ensure sufficient system memory is available
 #' @param centroided (bool) use TRUE if the data is centroided, used by
 #' \code{\link[MSnbase]{readMSData}} when reading the raw data files
-#' @param curveModel (str) specify the peak-shape model to fit, by default \code{skewedGaussian}.
+#' @param curveModel (str) specify the peak-shape model to fit,
+#' by default \code{skewedGaussian}.
 #' Accepted values are \code{skewedGaussian} and \code{emgGaussian}
 #' @param verbose (bool) If TRUE message calculation progress, time taken,
 #' number of features found (total and matched to targets) and failures
@@ -238,8 +239,8 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
         return(list(TIC = as.numeric(NA), peakTable = NULL,
-                    acquTime = as.character(NA), curveFit = NULL,
-                    ROIsDataPoint = NULL, failure = failureMsg)) }
+        acquTime = as.character(NA), curveFit = NULL,
+        ROIsDataPoint = NULL, failure = failureMsg)) }
     # Run singleFileSearch in try catch
     file_name <- tools::file_path_sans_ext(basename(singleSpectraDataPath))
     # progress
@@ -250,8 +251,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
         tmpResult <- peakPantheR_singleFileSearch(singleSpectraDataPath,
             targetFeatTable, peakStatistic = TRUE, plotEICsPath = NA,
             getAcquTime = inGetAcquTime, FIR = inFIR, centroided = centr,
-            curveModel = curveModel,
-            verbose = inVerbose, ...)
+            curveModel = curveModel, verbose = inVerbose, ...)
         # add failure status
         failureMsg <- NA
         names(failureMsg) <- singleSpectraDataPath
