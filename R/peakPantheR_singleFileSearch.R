@@ -277,16 +277,14 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
     singleSpectraDataPath <- normalizePath(singleSpectraDataPath,
                                             mustWork = FALSE)
     if (!file.exists(singleSpectraDataPath)) {
-        stop("Check input, file \"", singleSpectraDataPath, "\" does not exist")
-    }
+    stop("Check input, file \"", singleSpectraDataPath, "\" does not exist") }
 
     if (dim(targetFeatTable)[1] != 0) {
         # rtMin < rtMax and mzMin < mzMax
         if (!all(targetFeatTable[, "rtMax"] >= targetFeatTable[, "rtMin"])) {
             stop("Check input, \"rtMin\" must be <= to \"rtMax\"") }
         if (!all(targetFeatTable[, "mzMax"] >= targetFeatTable[, "mzMin"])) {
-            stop("Check input, \"mzMin\" must be <= to \"mzMax\"") }
-    }
+            stop("Check input, \"mzMin\" must be <= to \"mzMax\"") } }
 
     if (!is.na(plotEICsPath)) {
         plotEICsPath <- normalizePath(plotEICsPath, mustWork = FALSE)
@@ -297,8 +295,7 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
         # png extension
         if (stringr::str_sub(basename(plotEICsPath), start = -4) != ".png") {
             stop("Check input, plotEICsPath file name \"",
-                basename(plotEICsPath), "\" lacks a \".png\" extension") }
-    }
+                basename(plotEICsPath), "\" lacks a \".png\" extension") } }
 
     useFIR <- FALSE
     if (!is.null(FIR)) {
@@ -319,8 +316,8 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
     known_curveModel <- c("skewedGaussian", "emgGaussian")
     if (!(curveModel %in% known_curveModel)) {
         stop(paste("Error: \"curveModel\" must be one of:",
-            paste(known_curveModel, collapse=', ')))
-    }
+            paste(known_curveModel, collapse=', '))) }
+
     return(list(specPath=singleSpectraDataPath, plotPath=plotEICsPath,
                 useFIR=useFIR))
 }

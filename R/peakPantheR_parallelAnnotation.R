@@ -230,8 +230,7 @@ targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,
 curveModel='skewedGaussian', inVerbose=TRUE,...){
     # Check input path exist or exit with error message
     if (!file.exists(singleSpectraDataPath)) {
-        if (inVerbose) {
-            message(paste("Error file does not exist: ",
+        if (inVerbose) { message(paste("Error file does not exist: ",
                 singleSpectraDataPath, sep = "")) }
         # add error status
         failureMsg <- paste("Error file does not exist: ",
@@ -257,7 +256,6 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
         names(failureMsg) <- singleSpectraDataPath
         tmpResult$failure <- failureMsg
         # last evaluation of Try is returned
-
         return(tmpResult)
     }, error = function(err) {
         # message error
@@ -271,7 +269,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
         return(list(TIC = as.numeric(NA), peakTable = NULL,
-            acquTime = as.character(NA), curveFit = NULL,
+        acquTime = as.character(NA), curveFit = NULL,
             ROIsDataPoint = NULL, failure = failureMsg))  })
     gc(verbose = FALSE) # try clearing variables
     return(result)  # return singleFileSearch results with failure status
@@ -347,19 +345,17 @@ curveModel, verbose,...) {
                 idxEnd <- min((nFilesPerClust + iClust * nFilesPerClust),nFiles)
                     # to not overshoot the number of files
                 tmp_file_paths <- file_paths[idxStart:idxEnd]
-                # Open parallel interface
                 cl <- parallel::makeCluster(ncores)
                 doParallel::registerDoParallel(cl)
                 # Run
                 allFilesRes[idxStart:idxEnd] <- foreach::foreach(
-                    x = tmp_file_paths, .packages = c("MSnbase", "mzR"),
-                    .inorder=TRUE) %dopar% parallelAnnotation_parallelHelper(x,
-                    target_peak_table,inFIR=input_FIR,inGetAcquTime=getAcquTime,
-                    centr = centroided, curveModel=curveModel,
-                    inVerbose = verbose, ...)
+                x = tmp_file_paths, .packages = c("MSnbase", "mzR"),
+                .inorder=TRUE) %dopar% parallelAnnotation_parallelHelper(x,
+                target_peak_table,inFIR=input_FIR,inGetAcquTime=getAcquTime,
+                centr = centroided, curveModel=curveModel,
+                inVerbose = verbose, ...)
                 parallel::stopCluster(cl) } # Close
         } else { # Single cluster init (workload can be balanced across workers)
-            # Open parallel interface
             cl <- parallel::makeCluster(ncores)
             doParallel::registerDoParallel(cl)
             allFilesRes <- foreach::foreach(   # Run
