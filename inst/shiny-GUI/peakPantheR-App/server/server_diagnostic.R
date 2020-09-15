@@ -20,7 +20,7 @@ output$notAnnotForDiagUI <- renderUI ({
 ## show the status of the peakPantheRAnnotation (need to be separated from the previous panel so they can be hidden)
 output$showAnnotStatusDiag <- renderUI({
   # Capture the annotation shown and split by line into a list
-  tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(values$annotation))
+  tmp_text  <- peakPantheR::annotation_showText_UI_helper(peakPantheR::annotation_showMethod_UI_helper(values$annotation))
   fail_text <- paste(dim(values$failures)[1], 'annotation failure(s)')
   # render the panel
   wellPanel(
@@ -82,27 +82,42 @@ output$diagPlotControlUI <- renderUI({
       ) # end column
     ), # end fluidRow
     fluidRow(
-      column(6, offset=0,
+      column(4, offset=0,
         selectInput("plotFeatDiag", label="Feature", choices=unname(values$featNmeList))
       ), # end column
-      column(5, offset=1,
+      column(3, offset=1,
+        selectInput("plotMetaSplColr", label="Colour by Sample Metadata", choices=values$spectraMetadataCol)
+      ), # end column
+      column(3, offset=1,
         numericInput("plotHeightDiag", label = "Plot Height", value = 400, min = 0, step = 1)
       ) # end column
     ) # end fluidRow
   )   # end wellPanel
 })
 
-# TODO: /!\ hold off plotting until is annotated AND/OR cpdNb!=0
-# TODO: plot offline to test output
-# TODO: plot waiting message as it's pulling from disk
 # plot feature diagnostic
-output$diagPlotResultUI <- renderUI ({
+output$diagPlot <- renderPlot({
   # find the cpdNb corresponding to the cpdID + cpdName shown
-  plotOutput(
-    annotation_diagnostic_multiplot_UI_helper(
-      cpdNb = as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]),
-      annotation = values$annotation),
-    height=input$plotHeightDiag
-  )
+  peakPantheR::annotation_diagnostic_multiplot_UI_helper(
+    cpdNb = as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]),
+    annotation = values$annotation,
+    splColrColumn = input$plotMetaSplColr)
 })
 
+# UI block with plot feature diagnostic
+output$diagPlotResultUI <- renderUI ({
+  # must be annotated and a feature selected (make sure it doesn't throw an error for nothing)
+  if (is.null(input$plotFeatDiag)) {
+    h5('Nothing to plot!')
+  } else if (peakPantheR::isAnnotated(values$annotation) & (as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]) != 0) ){
+    shinycssloaders::withSpinner(
+      plotOutput("diagPlot", height=input$plotHeightDiag)
+    )
+  } else {
+    h5('Nothing to plot!')
+  }
+})
+
+
+## Show final parameters and modify --------------------------------------------
+# TODO: tab for uROI, FIR show and manually tweak

@@ -23,6 +23,7 @@ Imports:
 	scales(>= 0.5.0),
     shiny (>= 1.0.5),
     shinythemes (>= 1.1.1),
+    shinycssloaders (>= 1.0.0),
     utils
 biocViews: MassSpectrometry, Metabolomics, PeakDetection
 License: GPL-3

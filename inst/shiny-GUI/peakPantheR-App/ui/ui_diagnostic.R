@@ -56,13 +56,13 @@ tabPanel("Diagnostic: update and plots",
           tabPanel("Final parameters",
             wellPanel(
               fluidRow(
-                h3('Parameters!')
+                h3('! Under construction !')
               ) # end fluidRow
             )   # end wellPanel
           )     # end tabPanel
         )       # end tabsetPanels
 
-        # TODO: 3 tabs; auto-update params, diag plots, params update
+        # TODO: UI uROI & FIR show and tweaks
 
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)
