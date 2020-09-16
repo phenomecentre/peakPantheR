@@ -28,9 +28,6 @@
 #
 # A page is 12 columns wide
 #
-# uiOutput('nameUI') with 'nameUI' defined in server side, allow for ui blocks to be dynamically changed
-# see http://shiny.rstudio.com/gallery/dynamic-ui.html
-#
 # v2.0 with more tabs?
 # plot + update uROI on screen?
 # update + refit in UI?

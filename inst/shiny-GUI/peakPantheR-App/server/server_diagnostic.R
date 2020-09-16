@@ -3,6 +3,7 @@
 # - message if no import (conditional panel)
 # - status of the annotation (and failures) on the sidebar
 
+# - [TAB] fitting summary (%tage found, %tage filled)
 # - [TAB] automatic update uROI/FIR
 # - [TAB] show plots
 # - [TAB] show updated parameters + modify ?
@@ -36,6 +37,21 @@ output$showAnnotStatusDiag <- renderUI({
       helpText(fail_text,style="color:black")
     }
   )
+})
+
+
+## Annotation fitting statistics------------------------------------------------
+# render annotation fit statistic table
+output$table_fit_stat <- DT::renderDataTable ({
+  DT::datatable(data = data.frame(),
+                options  = list(orderClasses = TRUE),
+                rownames = TRUE)
+})
+# TODO: compute here the fit statistic summary table (from outputAnnotationResult_saveSummary())
+
+# UI block annotation fit statistic table
+output$AnnotationStatisticsTable <- renderUI ({
+    DT::dataTableOutput("table_fit_stat")
 })
 
 
@@ -98,7 +114,7 @@ output$diagPlotControlUI <- renderUI({
 # plot feature diagnostic
 output$diagPlot <- renderPlot({
   # find the cpdNb corresponding to the cpdID + cpdName shown
-  peakPantheR::annotation_diagnostic_multiplot_UI_helper(
+  annotation_diagnostic_multiplot_UI_helper(
     cpdNb = as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]),
     annotation = values$annotation,
     splColrColumn = input$plotMetaSplColr)

@@ -14,8 +14,6 @@
 #'
 #' @return (peakPantheRAnnotation) Object initialised with ROI, uROI and FIR
 #' read from the CSV file
-#'
-#' @export
 initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
                                                         spectraPaths,
                                                         cpdMetadataPath = NULL,
@@ -79,8 +77,6 @@ initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
 #'
 #' @return spectraPaths (str) and spectraMetadata (DataFrame or NULL) read from
 #' the CSV file
-#'
-#' @export
 spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
                                                 spectraMetadataPath = NULL) {
     # None are set
@@ -129,8 +125,6 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 #' peakPantheRAnnotation names `annotationObject`
 #'
 #' @return (peakPantheRAnnotation) Object loaded from file
-#'
-#' @export
 load_annotation_from_file_UI_helper <- function(annotationPath) {
     # Check file exist
     if (!file.exists(annotationPath)) {
@@ -163,8 +157,6 @@ load_annotation_from_file_UI_helper <- function(annotationPath) {
 #' @param annotation (peakPantherAnnotation) Object to describe
 #'
 #' @return (list) Named list of annotation properties
-#'
-#' @export
 annotation_showMethod_UI_helper <- function(annotation){
     properties <- list(nbCompounds = nbCompounds(annotation),
                         nbSamples = nbSamples(annotation),
@@ -186,8 +178,6 @@ annotation_showMethod_UI_helper <- function(annotation){
 #' created by \code{annotation_showMethod_UI_helper()}
 #'
 #' @return (str) Textual description of the annotation to show on UI
-#'
-#' @export
 annotation_showText_UI_helper <- function(annotProp){
     UI_string = list(
         if (annotProp$isAnnotated) {'Is annotated'} else {'Not annotated'},
@@ -211,13 +201,11 @@ annotation_showText_UI_helper <- function(annotProp){
 #'
 #' @param cpdNb (int) postion of the feature to extract (1 to nbCpd)
 #' @param annotation (peakPantheRAnnotation) Annotation object
-#' @param sampleColourColumn (str) NULL, None or a spectraMetadata column for
+#' @param splColrColumn (str) NULL, None or a spectraMetadata column for
 #' colouring each sample
 #' @param ... Additional parameters for plotting
 #'
 #' @return (ggplotObject) Diagnostic multiplot for a feature
-#'
-#' @export
 annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
                                 splColrColumn=NULL, ...) {
     # subset annotation to only 1 cpd
@@ -251,12 +239,12 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
     }
 
     # diagnostic plots
-    tmp_diagPlotList <- peakPantheR::annotationDiagnosticPlots(tmp_annotat,
+    tmp_diagPlotList <- annotationDiagnosticPlots(tmp_annotat,
         sampleColour = sampleColour, verbose = FALSE, ...)
 
     # multiplot
     suppressMessages(suppressWarnings(
-        tmp_multiPlot <- peakPantheR::annotationDiagnosticMultiplot(
+        tmp_multiPlot <- annotationDiagnosticMultiplot(
             tmp_diagPlotList)))
 
     # something to plot

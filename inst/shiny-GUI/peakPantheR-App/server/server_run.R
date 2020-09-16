@@ -22,7 +22,7 @@ output$noImportForFitUI <- renderUI ({
 ## show the status of the peakPantheRAnnotation
 output$showAnnotStatus <- renderUI({
   # Capture the annotation shown and split by line into a list
-  tmp_text <- peakPantheR::annotation_showText_UI_helper(peakPantheR::annotation_showMethod_UI_helper(values$annotation))
+  tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(values$annotation))
   fail_text <- paste(dim(values$failures)[1], 'annotation failure(s)')
   # render the panel
   wellPanel(
@@ -134,6 +134,8 @@ observeEvent(input$goAnnotation, {
   # Set a list of spectraMetadata columns (+ None)
   tmp_splCol                <- c(list('None'), colnames(peakPantheR::spectraMetadata(values$annotation)))
   values$spectraMetadataCol <- tmp_splCol
+  # Set a list of filename (sample list)
+  values$filename           <- peakPantheR::filename(values$annotation)
 })
 # TODO: CHECK the resulting annotation
 # TODO: CHECK that we can rerun

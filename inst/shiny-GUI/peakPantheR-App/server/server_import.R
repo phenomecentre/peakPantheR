@@ -19,14 +19,14 @@ observeEvent(input$triggerImportNewAnnotation, {
     # catch the errors in the import functions and kill the app
     res_data <- tryCatch({
       # deal with spectraPaths and spectraMetadata
-      spectraInfo <- peakPantheR::spectraPaths_and_metadata_UI_helper(spectraPaths = input$spectraPaths$datapath,
-                                                                      spectraMetadataPath = input$spectraPathsWithMetadata$datapath)
+      spectraInfo <- spectraPaths_and_metadata_UI_helper(spectraPaths = input$spectraPaths$datapath,
+                                                         spectraMetadataPath = input$spectraPathsWithMetadata$datapath)
       # create annotation
-      peakPantheR::initialise_annotation_from_files_UI_helper(CSVParamPath = input$CSVParamPath$datapath,
-                                                              spectraPaths = spectraInfo$spectra,
-                                                              cpdMetadataPath = input$cpdMetadataPath$datapath,
-                                                              spectraMetadata = spectraInfo$meta$datapath,
-                                                              verbose = FALSE)
+      initialise_annotation_from_files_UI_helper(CSVParamPath = input$CSVParamPath$datapath,
+                                                 spectraPaths = spectraInfo$spectra,
+                                                 cpdMetadataPath = input$cpdMetadataPath$datapath,
+                                                 spectraMetadata = spectraInfo$meta$datapath,
+                                                 verbose = FALSE)
     },
     error = function(e) {
       stopApp(e[[1]])
@@ -42,7 +42,7 @@ observeEvent(input$triggerLoadPreviousAnnotation, {
   if(input$triggerLoadPreviousAnnotation!=0) {
     # catch the errors in the import functions and kill the app
     res_data <- tryCatch({
-      peakPantheR::load_annotation_from_file_UI_helper(annotationPath = input$pathAnnotation$datapath)
+      load_annotation_from_file_UI_helper(annotationPath = input$pathAnnotation$datapath)
     },
     error = function(e) {
       stopApp(e[[1]])

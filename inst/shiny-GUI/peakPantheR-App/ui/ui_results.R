@@ -20,19 +20,16 @@ tabPanel("Integration results",
         h3('Results', style="color:#3e648d;font-weight:bold"),
 
         # Tabs
-        shiny::tabsetPanel( id="diagnosticTabs", type="pills",
+        shiny::tabsetPanel( id="ResultTabs", type="pills",
 
         # Overall results - TAB
           tabPanel("Overall results",
-            wellPanel(
-              fluidRow(
-                h3('all the results!')
-              ) # end fluidRow
-            )   # end wellPanel
+            uiOutput("peakTableControlUI"),
+            uiOutput("overallResultsUI")
           ),    # end tabPanel
 
         # Per feature - TAB
-          tabPanel("Values per Feature",
+          tabPanel("Results per targeted feature",
             wellPanel(
               fluidRow(
                 h3('feature valuuues!')
@@ -41,12 +38,9 @@ tabPanel("Integration results",
           ),    # end tabPanel
 
         # Per sample - TAB
-          tabPanel("Values per Sample",
-            wellPanel(
-              fluidRow(
-                h3('sample dataaaaa!')
-              ) # end fluidRow
-            )   # end wellPanel
+          tabPanel("Results per sample",
+            uiOutput("resPerSplControlUI"),
+            uiOutput("sampleResultsUI")
           )     # end tabPanel
         )       # end tabsetPanels
 

@@ -23,6 +23,21 @@ tabPanel("Diagnostic: update and plots",
         # Tabs
         shiny::tabsetPanel( id="diagnosticTabs", type="pills",
 
+        # Annotation success statistics - TAB
+          tabPanel("Annotation statistics",
+            wellPanel(
+              fluidRow(
+                column(11, offset=1,
+                  h4('Fitting results per targeted feature', style="color:#3e648d;font-weight:bold"),
+                  helpText('Summary of peaks found and Fallback Integration Regions', shiny::span(em('(FIR)')), 'filled per targeted feature (if applicable):', style="color:black"),
+                ) # end column
+              )   # end fluidRow
+            ),    # end wellPanel
+            fluidRow(
+              uiOutput("AnnotationStatisticsTable")
+            )     # end fluiRow (fit stat panel)
+          ),      # end tabPanel
+
         # Automatic update uROI/FIR - TAB
           tabPanel("Update uROI/FIR",
             wellPanel(
@@ -57,13 +72,11 @@ tabPanel("Diagnostic: update and plots",
             wellPanel(
               fluidRow(
                 h3('! Under construction !')
+                # TODO: UI uROI & FIR show and tweaks
               ) # end fluidRow
             )   # end wellPanel
           )     # end tabPanel
         )       # end tabsetPanels
-
-        # TODO: UI uROI & FIR show and tweaks
-
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)
   )       # end conditional panel
