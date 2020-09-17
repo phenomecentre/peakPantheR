@@ -1,6 +1,5 @@
 language: r
 cache: packages
-warnings_are_errors: true
 
 
 jobs:
@@ -19,9 +18,7 @@ jobs:
       - R CMD build .
       - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
       - R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
-      - export_rcheck_dir
       - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
-      - Rscript -e "message(devtools::check_failures(path = \"${RCHECK_DIR}\"))"
       - if [[ $CHECK_RET -ne 0 ]];
         then
           echo "R CMD check failed";
@@ -29,6 +26,7 @@ jobs:
           dump_logs;
           travis_terminate 1;
         fi
+        - check_warnings
   - r: bioc-release
     os: osx
     before_install:
@@ -49,12 +47,14 @@ jobs:
           dump_logs;
           travis_terminate 1;
         fi
+        - check_warnings
   allow_failures:
     - r: bioc-release
 
 
 bioc_required: true
 bioc_check: true
+warnings_are_errors: true
 
 r_packages:
   - covr
