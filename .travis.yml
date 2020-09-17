@@ -14,40 +14,55 @@ jobs:
       - brew install libgit2
   - r: bioc-release
     os: linux
+    before_install:
+      - cat DESCRIPTION
+      - export PACKAGE_NAME=`package_name`
+      - echo ${PACKAGE_NAME};
+      - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
     script:
       - R CMD build .
       - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
       - R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
       - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
+      - Rscript -e "message(devtools::check_failures(path = \"${RCHECK_DIR}\"))"
       - if [[ $CHECK_RET -ne 0 ]];
         then
           echo "R CMD check failed";
-          check_fail;
-          dump_logs;
           travis_terminate 1;
         fi
-        - check_warnings
+      - grep -q -R "WARNING" "${RCHECK_DIR}/00check.log";
+        if [[ $? -eq 0 ]];
+        then
+          echo "Found warnings, treating as errors (as requested).";
+          exit 1;
+        fi
   - r: bioc-release
     os: osx
     before_install:
       - brew update
       - rm '/usr/local/bin/gfortran'
       - brew install libgit2
+      - cat DESCRIPTION
+      - export PACKAGE_NAME=`package_name`
+      - echo ${PACKAGE_NAME};
+      - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
     script:
       - R CMD build .
       - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
       - R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
-      - export_rcheck_dir
       - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
       - Rscript -e "message(devtools::check_failures(path = \"${RCHECK_DIR}\"))"
       - if [[ $CHECK_RET -ne 0 ]];
         then
-          echo "R CMD check failed";
-          check_fail;
-          dump_logs;
-          travis_terminate 1;
+        echo "R CMD check failed";
+        travis_terminate 1;
         fi
-        - check_warnings
+      - grep -q -R "WARNING" "${RCHECK_DIR}/00check.log";
+        if [[ $? -eq 0 ]];
+        then
+        echo "Found warnings, treating as errors (as requested).";
+        exit 1;
+        fi
   allow_failures:
     - r: bioc-release
 
