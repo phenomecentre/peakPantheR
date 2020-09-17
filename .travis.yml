@@ -17,8 +17,8 @@ jobs:
     before_install:
       - cat DESCRIPTION
       - export PACKAGE_NAME='peakPantheR'
-      - echo ${PACKAGE_NAME}
       - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
+      - echo ${RCHECK_DIR}
     script:
       - R CMD build .
       - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
@@ -44,8 +44,8 @@ jobs:
       - brew install libgit2
       - cat DESCRIPTION
       - export PACKAGE_NAME='peakPantheR'
-      - echo ${PACKAGE_NAME}
       - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
+      - echo ${RCHECK_DIR}
     script:
       - R CMD build .
       - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
