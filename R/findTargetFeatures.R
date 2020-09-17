@@ -64,7 +64,7 @@
 #' }
 #' }
 #'
-#' @examples
+#' @details
 #' ## Examples cannot be computed as the function is not exported:
 #' ## Load data
 #' library(faahKO)
