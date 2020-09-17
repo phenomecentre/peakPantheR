@@ -324,7 +324,7 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
 # Integrate if there is at minimum 1 target feature
 singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
                         peakStatistic, useFIR, FIR, plotEICsPath,
-                        curveModel="skewedGaussian", verbose, ...){
+                        curveModel, verbose, ...){
     if (dim(targetFeatTable)[1] != 0) { #Only integrate if there is min 1 target
         # Integrate features using ROI
         foundPeaks <- findTargetFeatures(ROIsDataPoint, targetFeatTable,
