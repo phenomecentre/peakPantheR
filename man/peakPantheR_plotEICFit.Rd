@@ -16,7 +16,7 @@ points for each sample (retention time 'rt', mass 'mz' and intensity 'int'
 \item{curveFitSampleList}{(list) NULL or a list of
 \code{peakPantheR_curveFit} (or NA) for each sample}
 
-\item{rtMin}{(float) NULL or vector of detected peak minimum retention time
+\item{rtMinaaax}{(float) NULL or vector of detected peak minimum retention time
 (in sec)}
 
 \item{rtMax}{(float) NULL or vector ofdetected peak maximum retention time
