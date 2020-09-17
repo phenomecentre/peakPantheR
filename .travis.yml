@@ -10,8 +10,14 @@ r:
   - bioc-devel
 
 matrix:
+  include:
+  - r: bioc-release
+    script:
+      - ls -lah
+      - PKG_TAR=$(ls -1t *.tar.gz | head -n 1)
+      - R CMD BiocCheck ${PKG_TAR} --no-check-version-num
   allow_failures:
-    - r: bioc-devel
+    - r: bioc-release
 
 bioc_required: true
 bioc_check: true
@@ -29,6 +35,7 @@ addons:
 
 before_install:
   - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew update; fi"
+  - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then rm '/usr/local/bin/gfortran'; fi"
   - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew install libgit2; fi"
 
 after_success:
