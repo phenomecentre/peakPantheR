@@ -11,7 +11,7 @@ r:
 
 matrix:
   allow_failures:
-    - r: bioc-devel
+    - r: bioc-release
 
 bioc_required: true
 bioc_check: true
