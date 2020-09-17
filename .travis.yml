@@ -1,6 +1,10 @@
 language: r
 cache: packages
 
+os:
+  - linux
+  - osx
+
 jobs:
   include:
   - r: bioc-devel
@@ -15,7 +19,8 @@ jobs:
     os: linux
     script:
       - R CMD build .
-      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TARBALL", ""), 'no-check-version-num'=TRUE)"
+      - PKG_TBALL=$(ls -1t *.tar.gz | head -n 1)
+      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TBALL", ""), 'no-check-version-num'=TRUE)"
   - r: bioc-release
     os: osx
     before_install:
@@ -24,7 +29,8 @@ jobs:
       - brew install libgit2
     script:
       - R CMD build .
-      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TARBALL", ""), 'no-check-version-num'=TRUE)"
+      - PKG_TBALL=$(ls -1t *.tar.gz | head -n 1)
+      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TBALL", ""), 'no-check-version-num'=TRUE)"
   allow_failures:
     - r: bioc-release
 
