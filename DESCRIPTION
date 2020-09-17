@@ -7,7 +7,9 @@ Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("
 	person("Jake", "Pearce", email = "jake.pearce@gmail.com", role = "ctb"),
 	person("Caroline", "Sands", email = "caz119@hotmail.co.uk", role = "ctb"))
 Description: An automated pipeline for the detection, integration and reporting of predefined features across a large number of mass spectrometry data files.
-Depends: 
+    It enables the real time annotation of multiple compounds in a single file, or the parallel annotation of multiple compounds in multiple files.
+    A graphical user interface as well as command line functions will assist in assessing the quality of annotation and update fitting parameters until a satisfactory result is obtained.
+Depends:
 	R (>= 4.0)
 Imports: 
 	foreach (>= 1.4.4),

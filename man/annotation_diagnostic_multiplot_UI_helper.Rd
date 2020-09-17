@@ -7,7 +7,7 @@
 annotation_diagnostic_multiplot_UI_helper(
     cpdNb,
     annotation,
-    sampleColour = NULL,
+    splColrColumn = NULL,
     ...
 )
 }
@@ -16,10 +16,10 @@ annotation_diagnostic_multiplot_UI_helper(
 
 \item{annotation}{(peakPantheRAnnotation) Annotation object}
 
-\item{...}{Additional parameters for plotting}
-
-\item{sampleColourColumn}{(str) NULL, None or a spectraMetadata column for
+\item{splColrColumn}{(str) NULL, None or a spectraMetadata column for
 colouring each sample}
+
+\item{...}{Additional parameters for plotting}
 }
 \value{
 (ggplotObject) Diagnostic multiplot for a feature

@@ -5,17 +5,12 @@ os:
   - linux
   - osx
 
-r:
-  - bioc-release
-  - bioc-devel
-
-matrix:
+jobs:
   include:
-  - r: bioc-release
-    script:
-      - ls -lah
-      - PKG_TAR=$(ls -1t *.tar.gz | head -n 1)
-      - R CMD BiocCheck ${PKG_TAR} --no-check-version-num
+    - r: bioc-devel
+    - r: bioc-release
+      script:
+        - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
   allow_failures:
     - r: bioc-release
 
