@@ -75,8 +75,40 @@ output$overallResultsUI <- renderUI ({
 
 
 ## Results by Features ---------------------------------------------------------
+# UI to control the results per sample
+output$resPerFeatControlUI <- renderUI({
+  wellPanel(
+    fluidRow(
+      column(12, offset=1,
+        h4('Fitting results per feature:', style="color:#3e648d;font-weight:bold"),
+      ) # end column
+    ),  # end fluidRow
+    fluidRow(
+      column(6, offset=1,
+        selectInput("featResToShow", label="Feature", choices=unname(values$featNmeList))
+      ) # end column
+    )   # end fluidRow
+  )     # end wellPanel
+})
 
-# TODO: results per targeted features
+# render the results per sample (filter based on filename)
+output$feat_result_table <- DT::renderDataTable ({
+  tmp_annotation         <- values$annotation[, values$featNmeList == input$featResToShow]
+  tmp_feat_res           <- do.call(rbind, peakTables(tmp_annotation))
+  rownames(tmp_feat_res) <- values$filename
+  DT::datatable(data = tmp_feat_res,
+                options  = list(orderClasses = TRUE),
+                rownames = TRUE)
+})
+
+# UI block sample results
+output$featureResultsUI <- renderUI ({
+  fluidRow(
+    column(width = 12, offset = 0,
+      DT::dataTableOutput("feat_result_table")
+    )
+  )
+})
 
 
 ## Results by Samples ----------------------------------------------------------
@@ -98,7 +130,8 @@ output$resPerSplControlUI <- renderUI({
 
 # render the results per sample (filter based on filename)
 output$spl_result_table <- DT::renderDataTable ({
-  tmp_spl_res           <- peakTables(values$annotation)[values$filename == input$splResToShow][[1]]
+  tmp_annotation        <- values$annotation[values$filename == input$splResToShow, ]
+  tmp_spl_res           <- peakTables(tmp_annotation)[[1]]
   rownames(tmp_spl_res) <- values$featNmeList
   DT::datatable(data = tmp_spl_res,
                 options  = list(orderClasses = TRUE),

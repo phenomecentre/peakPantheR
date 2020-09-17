@@ -254,3 +254,44 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
     } else { return(ggplot2::ggplot() + ggplot2::theme_void()) }
 }
 
+
+#' UI diagnostic table - fit summary
+#'
+#' Return a table of fit statistic (ratio of peaks found, ratio of peaks filled,
+#' ppm error, RT deviation)
+#'
+#' @param annot (peakPantheRAnnotation) Annotation object
+#'
+#' @return (data.frame) Fit statistics
+annotation_fit_summary_UI_helper <- function(annot) {
+    summary <- data.frame(matrix(ncol = 0, nrow = nbCompounds(annot)),
+                                    stringsAsFactors = FALSE)
+    rownames(summary) <- paste(cpdID(annot), "-", cpdName(annot))
+
+    # used FIR (found = not filled, filled from is_filled)
+    if (annot@useFIR) {
+        summary$ratio_peaks_found  <- 1 - (colSums(
+            annotationTable(annot, column = "is_filled"))/nbSamples(annot))
+        summary$ratio_peaks_filled <- (colSums(
+            annotationTable(annot, column = "is_filled"))/nbSamples(annot))
+
+    # didn't use FIR (found from found, None are filled)
+    } else {
+        summary$ratio_peaks_found  <- colSums(
+            annotationTable(annot, column = "found"))/nbSamples(annot)
+        summary$ratio_peaks_filled <- 0
+    }
+
+    summary$ppm_error <-
+        colMeans(annotationTable(annot, column = "ppm_error"), na.rm = TRUE)
+    summary$rt_dev_sec <-
+        colMeans(annotationTable(annot, column = "rt_dev_sec"), na.rm = TRUE)
+
+    # nicer format for output
+    summary$ratio_peaks_found  <- round(summary$ratio_peaks_found*100,1)
+    summary$ratio_peaks_filled <- round(summary$ratio_peaks_filled*100,1)
+    colnames(summary) <- c('Ratio peaks found (%)','Ratio peaks filled (%)',
+                            'ppm error', 'RT deviation (s)')
+
+    return(summary)
+}

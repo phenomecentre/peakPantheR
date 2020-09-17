@@ -28,13 +28,14 @@ tabPanel("Diagnostic: update and plots",
             wellPanel(
               fluidRow(
                 column(11, offset=1,
-                  h4('Fitting results per targeted feature', style="color:#3e648d;font-weight:bold"),
-                  helpText('Summary of peaks found and Fallback Integration Regions', shiny::span(em('(FIR)')), 'filled per targeted feature (if applicable):', style="color:black"),
+                  h4('Fitting results across samples', style="color:#3e648d;font-weight:bold"),
+                  helpText('Summary of peaks found and Fallback Integration Regions', shiny::span(em('(FIR, if applicable)')), 'for each targeted feature across all samples:', style="color:black"),
+                  HTML("<p style='color:black'>Targeted features with a low <i>ratio of peaks found</i>, a large <i>ppm error</i> or a high <i>RT deviation</i> across samples, might benefit from a correction of the targeted <code>rt</code> and <code>m/z</code> used as <code>uROI</code> for example</p>"),
                 ) # end column
               )   # end fluidRow
             ),    # end wellPanel
             fluidRow(
-              uiOutput("AnnotationStatisticsTable")
+              uiOutput("annotationStatisticsTable")
             )     # end fluiRow (fit stat panel)
           ),      # end tabPanel
 
@@ -65,17 +66,17 @@ tabPanel("Diagnostic: update and plots",
             uiOutput("diagPlotControlUI"),
             # plot output
             uiOutput("diagPlotResultUI")
-          ),    # end tabPanel
+          )#,    # end tabPanel
 
         # Show/modify updated parameters - TAB
-          tabPanel("Final parameters",
-            wellPanel(
-              fluidRow(
-                h3('! Under construction !')
-                # TODO: UI uROI & FIR show and tweaks
-              ) # end fluidRow
-            )   # end wellPanel
-          )     # end tabPanel
+        #  tabPanel("Final parameters",
+        #    wellPanel(
+        #      fluidRow(
+        #        h3('! Under construction !')
+        #        # TODO: UI uROI & FIR show and tweaks
+        #      ) # end fluidRow
+        #    )   # end wellPanel
+        #  )     # end tabPanel
         )       # end tabsetPanels
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)

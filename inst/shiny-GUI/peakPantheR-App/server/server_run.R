@@ -71,7 +71,7 @@ output$useUROICheckbox <- renderUI({
                    label = lbl,
                     value = peakPantheR::useUROI(values$annotation))
   )
-})# TODO: CHECK uROI checkbox is striked-through and activated correctly
+})
 
 # Checkbox use FIR (set default to current annotation value)
 output$useFIRCheckbox <- renderUI({

@@ -18,6 +18,7 @@
 #' @import doParallel
 #' @import shiny
 #' @import shinythemes
+#' @import shinycssloaders
 #'
 #' @export
 peakPantheR_start_GUI <- function(browser=TRUE) {

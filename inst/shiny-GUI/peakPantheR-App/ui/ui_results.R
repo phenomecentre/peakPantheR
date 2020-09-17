@@ -30,11 +30,8 @@ tabPanel("Integration results",
 
         # Per feature - TAB
           tabPanel("Results per targeted feature",
-            wellPanel(
-              fluidRow(
-                h3('feature valuuues!')
-              ) # end fluidRow
-            )   # end wellPanel
+            uiOutput("resPerFeatControlUI"),
+            uiOutput("featureResultsUI")
           ),    # end tabPanel
 
         # Per sample - TAB
@@ -43,9 +40,6 @@ tabPanel("Integration results",
             uiOutput("sampleResultsUI")
           )     # end tabPanel
         )       # end tabsetPanels
-
-        # TODO: 3 tabs; overall, per cpd, per spl
-
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)
   )       # end conditional panel
