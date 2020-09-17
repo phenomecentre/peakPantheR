@@ -67,7 +67,9 @@ output$table_overall <- DT::renderDataTable ({
 # UI block peakTable
 output$overallResultsUI <- renderUI ({
   fluidRow(
-    DT::dataTableOutput("table_overall")
+    column(width = 12, offset = 0,
+      DT::dataTableOutput("table_overall")
+    )
   )
 })
 
@@ -106,6 +108,8 @@ output$spl_result_table <- DT::renderDataTable ({
 # UI block sample results
 output$sampleResultsUI <- renderUI ({
   fluidRow(
-    DT::dataTableOutput("spl_result_table")
+    column(width = 12, offset = 0,
+      DT::dataTableOutput("spl_result_table")
+    )
   )
 })
