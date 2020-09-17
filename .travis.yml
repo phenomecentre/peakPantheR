@@ -20,7 +20,7 @@ jobs:
     script:
       - R CMD build .
       - PKG_TBALL=$(ls -1t *.tar.gz | head -n 1)
-      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TBALL", ""), 'no-check-version-num'=TRUE)"
+      - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TBALL}\", 'no-check-version-num'=TRUE)"
   - r: bioc-release
     os: osx
     before_install:
@@ -30,7 +30,9 @@ jobs:
     script:
       - R CMD build .
       - PKG_TBALL=$(ls -1t *.tar.gz | head -n 1)
-      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TBALL", ""), 'no-check-version-num'=TRUE)"
+      - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TBALL}\", 'no-check-version-num'=TRUE)"
+  exclude:
+    - language: r
   allow_failures:
     - r: bioc-release
 
