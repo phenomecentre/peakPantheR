@@ -12,8 +12,7 @@ jobs:
       - brew install libgit2
   - r: bioc-release
     script:
-      - FILE = *tar.gz
-      - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
+      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TARBALL", ""), 'no-check-version-num'=TRUE)"
   - r: bioc-release
     os: osx
     before_install:
@@ -21,8 +20,7 @@ jobs:
       - rm '/usr/local/bin/gfortran'
       - brew install libgit2
     script:
-      - FILE = *tar.gz
-      - Rscript -e "library(BiocCheck); BiocCheck(\"${FILE}\", 'no-check-version-num'=TRUE)"
+      - Rscript -e "library(BiocCheck); BiocCheck(Sys.getenv("PKG_TARBALL", ""), 'no-check-version-num'=TRUE)"
   allow_failures:
     - r: bioc-release
 
