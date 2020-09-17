@@ -89,7 +89,7 @@ residuals at the apex (predicted apex fit intensity vs measured apex
 intensity: fit overshoots the apex), 2) ratio of predicted apex fit intensity
 vs maximum measured peak intensity (fit misses the real apex in the peak).
 }
-\examples{
+\details{
 ## Examples cannot be computed as the function is not exported:
 ## Load data
 library(faahKO)
