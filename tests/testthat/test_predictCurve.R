@@ -21,5 +21,5 @@ test_that('raises error()', {
   # fittedCurve is not a known model
   unknown_model         <- list(curveModel='not kown')
   class(unknown_model)  <- 'peakPantheR_curveFit'
-  expect_error(predictCurve(fittedCurve=unknown_model, x=numeric()), 'Error: "fittedCurve$curveModel" must be one of: skewedGaussian', fixed=TRUE) 
+  expect_error(predictCurve(fittedCurve=unknown_model, x=numeric()), 'Error: \"curveModel\" must be one of: skewedGaussian, emgGaussian', fixed=TRUE)
 })
