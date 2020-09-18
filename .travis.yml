@@ -84,5 +84,5 @@ addons:
       - libhdf5-dev
 
 after_success:
-  - Rscript -e 'library(covr); codecov(line_exclusions = list("R/zzz.R", "R/peakPantheR_start_GUI.R"))'
+  - "if [ ${TRAVIS_OS_NAME} != 'osx' ]; then Rscript -e 'library(covr); codecov(line_exclusions = list(\"R/zzz.R\", \"R/peakPantheR_start_GUI.R\"))'; fi"
   - echo 'Done !'
