@@ -19,6 +19,7 @@
 #' @import shiny
 #' @import shinythemes
 #' @import shinycssloaders
+#' @importFrom DT DTOutput renderDT datatable
 #'
 #' @export
 peakPantheR_start_GUI <- function(browser=TRUE) {

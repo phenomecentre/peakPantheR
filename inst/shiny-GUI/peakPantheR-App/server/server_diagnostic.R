@@ -42,7 +42,7 @@ output$showAnnotStatusDiag <- renderUI({
 
 ## Annotation fitting statistics------------------------------------------------
 # render annotation fit statistic table
-output$table_fit_stat <- DT::renderDataTable ({
+output$table_fit_stat <- DT::renderDT ({
   DT::datatable(data = annotation_fit_summary_UI_helper(values$annotation),
                 options  = list(orderClasses = TRUE),
                 rownames = TRUE)
@@ -50,7 +50,7 @@ output$table_fit_stat <- DT::renderDataTable ({
 
 # UI block annotation fit statistic table
 output$annotationStatisticsTable <- renderUI ({
-    DT::dataTableOutput("table_fit_stat")
+    DT::DTOutput("table_fit_stat")
 })
 
 

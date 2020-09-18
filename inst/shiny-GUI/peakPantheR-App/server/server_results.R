@@ -58,7 +58,7 @@ output$peakTableControlUI <- renderUI({
 })
 
 # render the peakTable
-output$table_overall <- DT::renderDataTable ({
+output$table_overall <- DT::renderDT ({
   DT::datatable(data = peakPantheR::annotationTable(values$annotation, column=input$peakTableColRes),
                 options  = list(orderClasses = TRUE),
                 rownames = TRUE)
@@ -68,7 +68,7 @@ output$table_overall <- DT::renderDataTable ({
 output$overallResultsUI <- renderUI ({
   fluidRow(
     column(width = 12, offset = 0,
-      DT::dataTableOutput("table_overall")
+      DT::DTOutput("table_overall")
     )
   )
 })
@@ -92,7 +92,7 @@ output$resPerFeatControlUI <- renderUI({
 })
 
 # render the results per sample (filter based on filename)
-output$feat_result_table <- DT::renderDataTable ({
+output$feat_result_table <- DT::renderDT ({
   tmp_annotation         <- values$annotation[, values$featNmeList == input$featResToShow]
   tmp_feat_res           <- do.call(rbind, peakTables(tmp_annotation))
   rownames(tmp_feat_res) <- values$filename
@@ -105,7 +105,7 @@ output$feat_result_table <- DT::renderDataTable ({
 output$featureResultsUI <- renderUI ({
   fluidRow(
     column(width = 12, offset = 0,
-      DT::dataTableOutput("feat_result_table")
+      DT::DTOutput("feat_result_table")
     )
   )
 })
@@ -129,7 +129,7 @@ output$resPerSplControlUI <- renderUI({
 })
 
 # render the results per sample (filter based on filename)
-output$spl_result_table <- DT::renderDataTable ({
+output$spl_result_table <- DT::renderDT ({
   tmp_annotation        <- values$annotation[values$filename == input$splResToShow, ]
   tmp_spl_res           <- peakTables(tmp_annotation)[[1]]
   rownames(tmp_spl_res) <- values$featNmeList
@@ -142,7 +142,7 @@ output$spl_result_table <- DT::renderDataTable ({
 output$sampleResultsUI <- renderUI ({
   fluidRow(
     column(width = 12, offset = 0,
-      DT::dataTableOutput("spl_result_table")
+      DT::DTOutput("spl_result_table")
     )
   )
 })

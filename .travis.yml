@@ -85,3 +85,4 @@ addons:
 
 after_success:
   - Rscript -e 'library(covr); codecov(line_exclusions = list("R/zzz.R", "R/peakPantheR_start_GUI.R"))'
+  - echo 'Done !'
