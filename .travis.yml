@@ -6,6 +6,9 @@ jobs:
   include:
   - r: bioc-devel
     os: linux
+    after_success:
+      - Rscript -e 'library(covr); codecov(line_exclusions = list("R/zzz.R", "R/peakPantheR_start_GUI.R"))'
+      - echo 'Done !'
   - r: bioc-devel
     os: osx
     before_install:
@@ -36,6 +39,9 @@ jobs:
           echo "Found warnings, treating as errors (as requested).";
           exit 1;
         fi
+      after_success:
+        - Rscript -e 'library(covr); codecov(line_exclusions = list("R/zzz.R", "R/peakPantheR_start_GUI.R"))'
+        - echo 'Done !'
   - r: bioc-release
     os: osx
     before_install:
@@ -83,6 +89,3 @@ addons:
       - netcdf-bin
       - libhdf5-dev
 
-after_success:
-  - Rscript -e 'library(covr); codecov(line_exclusions = list("R/zzz.R", "R/peakPantheR_start_GUI.R"))'
-  - echo 'Done !'
