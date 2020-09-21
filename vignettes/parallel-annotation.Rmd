@@ -219,7 +219,8 @@ parallel (if `ncores` >0) and return the successful annotations
 (`result$annotation`) and failures (`result$failures`):
 ```{r}
 # annotate files serially
-annotation_result <- peakPantheR_parallelAnnotation(init_annotation, ncores=0, curveModel='skewedGaussian',
+annotation_result <- peakPantheR_parallelAnnotation(init_annotation, ncores=0,
+                                                    curveModel='skewedGaussian',
                                                     verbose=TRUE)
 
 # successful fit
