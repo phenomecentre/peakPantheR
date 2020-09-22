@@ -679,11 +679,66 @@ test_that('curveModel emgGaussian: 3 files, 4 compounds, no uROI, no FIR, no get
   # Object fully initialised
   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
+  # Expected peakFit
+  # 1
+  cFit1.1emg         <- list(amplitude=22322950, center=3341.888, sigma=5, gamma=0.09934113, fitStatus=2, curveModel="emgGaussian")
+  class(cFit1.1emg)  <- 'peakPantheR_curveFit'
+  cFit1.2emg         <- list(amplitude=29181384, center=3382.577, sigma=5, gamma=0.08974434, fitStatus=2, curveModel="emgGaussian")
+  class(cFit1.2emg)  <- 'peakPantheR_curveFit'
+  cFit1.3emg         <- list(amplitude=9173607, center=3451.435, sigma=5, gamma=0.1071507, fitStatus=2, curveModel="emgGaussian")
+  class(cFit1.3emg)  <- 'peakPantheR_curveFit'
+  cFit1.4emg         <- list(amplitude=7719709, center=3698.697, sigma=5, gamma=0.1060304, fitStatus=2, curveModel="emgGaussian")
+  class(cFit1.4emg)  <- 'peakPantheR_curveFit'
+  # 2
+  cFit2.1emg         <- list(amplitude=22094946, center=3359.102, sigma=5, gamma=0.07724317, fitStatus=2, curveModel="emgGaussian")
+  class(cFit2.1emg)  <- 'peakPantheR_curveFit'
+  cFit2.2emg         <- list(amplitude=34397901, center=3399.791, sigma=5, gamma=0.0651969, fitStatus=2, curveModel="emgGaussian")
+  class(cFit2.2emg)  <- 'peakPantheR_curveFit'
+  cFit2.3emg         <- list(amplitude=9671145, center=3460.824, sigma=5, gamma=0.08864798, fitStatus=2, curveModel="emgGaussian")
+  class(cFit2.3emg)  <- 'peakPantheR_curveFit'
+  cFit2.4emg         <- list(amplitude=7296689, center=3714.347, sigma=5, gamma=0.06171862, fitStatus=2, curveModel="emgGaussian")
+  class(cFit2.4emg)  <- 'peakPantheR_curveFit'
+  # 3
+  cFit3.1emg         <- list(amplitude=20390552, center=3362.233, sigma=5, gamma=0.08186031, fitStatus=2, curveModel="emgGaussian")
+  class(cFit3.1emg)  <- 'peakPantheR_curveFit'
+  cFit3.2emg         <- list(amplitude=29719102, center=3409.182, sigma=5, gamma=0.09218107, fitStatus=2, curveModel="emgGaussian")
+  class(cFit3.2emg)  <- 'peakPantheR_curveFit'
+  cFit3.3emg         <- NA
+  cFit3.4emg         <- list(amplitude=5751872, center=3708.088, sigma=5, gamma=0.06964929, fitStatus=2, curveModel="emgGaussian")
+  class(cFit3.4emg)  <- 'peakPantheR_curveFit'
+  expected_peakFit_emg <- list(list(cFit1.1emg, cFit1.2emg, cFit1.3emg, cFit1.4emg), list(cFit2.1emg, cFit2.2emg, cFit2.3emg, cFit2.4emg), list(cFit3.1emg, cFit3.2emg, cFit3.3emg, cFit3.4emg))
+
+  # Expected peakTables
+  peakTable1emg     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  peakTable1emg[1,] <- c(TRUE, 3327.999, 3346.996, 3403.919, 522.1948, 522.2, 522.2052, 22261723, 889280,  1057506.5, FALSE, 0.02337616, 2.108434, 1.653451, 2.064384)
+  peakTable1emg[2,] <- c(TRUE, 3368.739, 3387.926, 3450.433, 496.1950, 496.2, 496.2050, 29098356, 1128960, 1313099.4, FALSE, 0.02460103, 2.349398, 1.745483, 2.219176)
+  peakTable1emg[3,] <- c(TRUE, 3437.496, 3456.351, 3509.499, 464.1954, 464.2, 464.2046, 9149178,  380736,  450748.4,  FALSE, 0.02629692, 1.915663, 1.592171, 1.962157)
+  peakTable1emg[4,] <- c(TRUE, 3684.765, 3703.637, 3757.294, 536.1946, 536.2, 536.2054, 7699066,  330176,  377425.9,  FALSE, 0.02276582, 1.939759, 1.600693, 1.976502)
+  peakTable1emg[,c(1,11)]       <- sapply(peakTable1emg[,c(1,11)], as.logical)
+  peakTable1emg[,c(2:10,12:15)] <- sapply(peakTable1emg[,c(2:10,12:15)], as.numeric)
+  # 2
+  peakTable2emg     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  peakTable2emg[1,] <- c(TRUE, 3345.357, 3364.813, 3436.703, 522.1948, 522.2, 522.2052, 22028618,  761664,  916975.6, FALSE, 0.02337616, 19.92484, 1.898412, 2.477039)
+  peakTable2emg[2,] <- c(TRUE, 3386.117, 3405.791, 3490.313, 496.1950, 496.2, 496.2050, 34288936, 1099264, 1293794.6, FALSE, 0.02460103, 20.21400, 2.116160, 2.850792)
+  peakTable2emg[3,] <- c(TRUE, 3447.002, 3466.197, 3529.422, 464.1954, 464.2, 464.2046, 9643477,   366720,  432400.6, FALSE, 0.02629692, 11.76249, 1.757855, 2.240265)
+  peakTable2emg[4,] <- c(TRUE, 3700.724, 3720.347, 3809.535, 536.1946, 536.2, 536.2054, 7273154,   220096,  265357.4, FALSE, 0.02276582, 18.65000, 2.207992, 3.012906)
+  peakTable2emg[,c(1,11)]       <- sapply(peakTable2emg[,c(1,11)], as.logical)
+  peakTable2emg[,c(2:10,12:15)] <- sapply(peakTable2emg[,c(2:10,12:15)], as.numeric)
+  # 3
+  peakTable3emg     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  peakTable3emg[1,] <- c(TRUE, 3348.458, 3367.799, 3435.888, 522.1948, 522.2, 522.2052, 20330539,  758336,  873749.6, FALSE, 0.02337616, 22.91127, 1.837158, 2.373902)
+  peakTable3emg[2,] <- c(TRUE, 3395.322, 3414.459, 3475.443, 496.1950, 496.2, 496.2050, 29635397, 1149440, 1355916.7, FALSE, 0.02460103, 28.88211, 1.721309, 2.178978)
+  peakTable3emg[3,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA)
+  peakTable3emg[4,] <- c(TRUE, 3694.401, 3714.064, 3793.313, 536.1946, 536.2, 536.2054,  5734001,  196160,  225006.2, FALSE, 0.02276582, 12.36690, 2.015364, 2.673714)
+  peakTable3emg[,c(1,11)]       <- sapply(peakTable3emg[,c(1,11)], as.logical)
+  peakTable3emg[,c(2:10,12:15)] <- sapply(peakTable3emg[,c(2:10,12:15)], as.numeric)
+  expected_peakTables_emg <- list(peakTable1emg, peakTable2emg, peakTable3emg)
+
   # Expected annotation
   expected_annotation             <- initAnnotation
   expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
-  expected_annotation@peakTables  <- expected_peakTables
-  expected_annotation@peakFit     <- expected_peakFit
+  expected_annotation@peakTables  <- expected_peakTables_emg
+  expected_annotation@peakFit     <- expected_peakFit_emg
   expected_annotation@dataPoints  <- expected_dataPoints
   expected_annotation@isAnnotated <- TRUE
   # Expected failures
@@ -693,17 +748,17 @@ test_that('curveModel emgGaussian: 3 files, 4 compounds, no uROI, no FIR, no get
   names(tmp_failures) <- NULL
   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
   # Expected message
-  expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
+  expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Fit of ROI #3 is unsuccessful (cannot determine rtMin/rtMax)\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE, curveModel='skewedGaussian'))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE, curveModel='emgGaussian'))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (centwave output)
-  expect_equal(length(result_parallelAnnotation$messages), 3)
+  expect_equal(length(result_parallelAnnotation$messages), 4)
   expect_equal(result_parallelAnnotation$messages, expected_message)
   })
 

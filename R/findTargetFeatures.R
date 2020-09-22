@@ -28,7 +28,7 @@
 #' \code{rtMin} (float in seconds), \code{rtMax} (float in seconds),
 #' \code{mzMin} (float), \code{mzMax} (float)
 #' @param curveModel (str) Name of the curve model to fit (currently
-#' \code{skewedGaussian} and \code{emGaussian})
+#' \code{skewedGaussian} and \code{emgGaussian})
 #' @param params (list or str) Either 'guess' for automated parametrisation or
 #' list (one per ROI windows) of 'guess' or list of curve fit parameters
 #' @param sampling (int) Number of points to employ when subsampling the
