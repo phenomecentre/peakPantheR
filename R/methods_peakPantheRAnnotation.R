@@ -2427,8 +2427,6 @@ setGeneric("retentionTimeCorrection",
 #' #  Scatterplot where x=`r` in the and y=`rt_dev_sec` from data_annotation
 #' #  Points colored depending on whether the reference was used to fit
 #' # the correction model
-#' #  uses updated ROI (uROI)
-#' #  uses fallback integration regions (FIR)
 #' }
 setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     function(annotationObject, rtCorrectionReferences, method, params, robust,

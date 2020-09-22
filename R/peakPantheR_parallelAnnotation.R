@@ -27,6 +27,9 @@
 #' more efficiently. For values >1, ensure sufficient system memory is available
 #' @param centroided (bool) use TRUE if the data is centroided, used by
 #' \code{\link[MSnbase]{readMSData}} when reading the raw data files
+#' @param curveModel (str) specify the peak-shape model to fit,
+#' by default \code{skewedGaussian}.
+#' Accepted values are \code{skewedGaussian} and \code{emgGaussian}
 #' @param verbose (bool) If TRUE message calculation progress, time taken,
 #' number of features found (total and matched to targets) and failures
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
@@ -153,7 +156,8 @@
 #'
 #' @export
 peakPantheR_parallelAnnotation <- function(object, ncores = 0,
-    getAcquTime = TRUE, resetWorkers = 1, centroided = TRUE, verbose=TRUE, ...){
+    getAcquTime = TRUE, resetWorkers = 1, centroided = TRUE,
+    curveModel='skewedGaussian', verbose=TRUE, ...){
 
     # Check inputs, Initialise variables and outputs
     initRes <- parallelAnnotation_init(object, resetWorkers, verbose)
@@ -166,7 +170,7 @@ peakPantheR_parallelAnnotation <- function(object, ncores = 0,
     # (list, each item is the result of a file, errors are passed into the list)
     allFilesRes <- parallelAnnotation_runSingleFileSearch(object, file_paths,
         target_peak_table, input_FIR, ncores, getAcquTime, resetWorkersMulti,
-        centroided, verbose,...)
+        centroided, curveModel, verbose,...)
 
     # Collect, process and reorder results
     res <- parallelAnnotation_process(allFilesRes, object, verbose)
@@ -222,11 +226,11 @@ peakPantheR_parallelAnnotation <- function(object, ncores = 0,
 #  or NULL)} a string detailing the error (named with the
 #  singleSpectraDataPath) or NA if the processing is successful.
 parallelAnnotation_parallelHelper <- function(singleSpectraDataPath,
-targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,inVerbose=TRUE,...){
+targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,
+curveModel='skewedGaussian', inVerbose=TRUE,...){
     # Check input path exist or exit with error message
     if (!file.exists(singleSpectraDataPath)) {
-        if (inVerbose) {
-            message(paste("Error file does not exist: ",
+        if (inVerbose) { message(paste("Error file does not exist: ",
                 singleSpectraDataPath, sep = "")) }
         # add error status
         failureMsg <- paste("Error file does not exist: ",
@@ -234,8 +238,8 @@ targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,inVerbose=TRUE,...){
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
         return(list(TIC = as.numeric(NA), peakTable = NULL,
-                    acquTime = as.character(NA), curveFit = NULL,
-                    ROIsDataPoint = NULL, failure = failureMsg)) }
+        acquTime = as.character(NA), curveFit = NULL,
+        ROIsDataPoint = NULL, failure = failureMsg)) }
     # Run singleFileSearch in try catch
     file_name <- tools::file_path_sans_ext(basename(singleSpectraDataPath))
     # progress
@@ -246,7 +250,7 @@ targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,inVerbose=TRUE,...){
         tmpResult <- peakPantheR_singleFileSearch(singleSpectraDataPath,
             targetFeatTable, peakStatistic = TRUE, plotEICsPath = NA,
             getAcquTime = inGetAcquTime, FIR = inFIR, centroided = centr,
-            verbose = inVerbose, ...)
+            curveModel = curveModel, verbose = inVerbose, ...)
         # add failure status
         failureMsg <- NA
         names(failureMsg) <- singleSpectraDataPath
@@ -265,7 +269,7 @@ targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,inVerbose=TRUE,...){
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
         return(list(TIC = as.numeric(NA), peakTable = NULL,
-            acquTime = as.character(NA), curveFit = NULL,
+        acquTime = as.character(NA), curveFit = NULL,
             ROIsDataPoint = NULL, failure = failureMsg))  })
     gc(verbose = FALSE) # try clearing variables
     return(result)  # return singleFileSearch results with failure status
@@ -320,7 +324,7 @@ parallelAnnotation_init <- function(object, resetWorkers, verbose) {
 # (list, each item is the result of a file, errors are passed into the list)
 parallelAnnotation_runSingleFileSearch <- function(object, file_paths,
 target_peak_table, input_FIR, ncores, getAcquTime, resetWorkersMulti,centroided,
-verbose,...) {
+curveModel, verbose,...) {
     if (ncores != 0) { # Parallel
         # Reinitialise the cluster after ncores files
         # (reset worker processes, freed memory can be reallocated by the OS)
@@ -341,32 +345,32 @@ verbose,...) {
                 idxEnd <- min((nFilesPerClust + iClust * nFilesPerClust),nFiles)
                     # to not overshoot the number of files
                 tmp_file_paths <- file_paths[idxStart:idxEnd]
-                # Open parallel interface
                 cl <- parallel::makeCluster(ncores)
                 doParallel::registerDoParallel(cl)
                 # Run
                 allFilesRes[idxStart:idxEnd] <- foreach::foreach(
-                    x = tmp_file_paths, .packages = c("MSnbase", "mzR"),
-                    .inorder=TRUE) %dopar% parallelAnnotation_parallelHelper(x,
-                    target_peak_table,inFIR=input_FIR,inGetAcquTime=getAcquTime,
-                    centr = centroided, inVerbose = verbose, ...)
+                x = tmp_file_paths, .packages = c("MSnbase", "mzR"),
+                .inorder=TRUE) %dopar% parallelAnnotation_parallelHelper(x,
+                target_peak_table,inFIR=input_FIR,inGetAcquTime=getAcquTime,
+                centr = centroided, curveModel=curveModel,
+                inVerbose = verbose, ...)
                 parallel::stopCluster(cl) } # Close
         } else { # Single cluster init (workload can be balanced across workers)
-            # Open parallel interface
             cl <- parallel::makeCluster(ncores)
             doParallel::registerDoParallel(cl)
             allFilesRes <- foreach::foreach(   # Run
                 x = file_paths, .packages = c("MSnbase", "mzR"),
                 .inorder = TRUE) %dopar% parallelAnnotation_parallelHelper(x,
                 target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime,
-                centr=centroided, inVerbose = verbose,...)#.errorhandling='pass'
+                centr=centroided, curveModel=curveModel,
+                inVerbose = verbose,...)#.errorhandling='pass'
                 # #.export=c('findTargetFeatures', 'getTargetFeatureStatistic')
             parallel::stopCluster(cl) } # Close
     } else { # Serial
         allFilesRes <- lapply(file_paths,
             function(x) parallelAnnotation_parallelHelper(x, target_peak_table,
                 inFIR=input_FIR, inGetAcquTime=getAcquTime, centr=centroided,
-                inVerbose=verbose, ...)) }
+                curveModel=curveModel, inVerbose=verbose, ...)) }
     return(allFilesRes) }
 
 

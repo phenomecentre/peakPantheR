@@ -4,9 +4,16 @@
 \alias{findTargetFeatures}
 \title{Find and integrate target features in each ROI}
 \usage{
-findTargetFeatures(ROIsDataPoints, ROI, curveModel = "skewedGaussian",
-    params = "guess", sampling = 250, maxApexResidualRatio = 0.2,
-    verbose = FALSE, ...)
+findTargetFeatures(
+    ROIsDataPoints,
+    ROI,
+    curveModel = "skewedGaussian",
+    params = "guess",
+    sampling = 250,
+    maxApexResidualRatio = 0.2,
+    verbose = FALSE,
+    ...
+)
 }
 \arguments{
 \item{ROIsDataPoints}{(list) A list (one entry per ROI window) of data.frame
@@ -18,7 +25,7 @@ with signal as row and retention time ('rt'), mass ('mz') and intensity
 \code{mzMin} (float), \code{mzMax} (float)}
 
 \item{curveModel}{(str) Name of the curve model to fit (currently
-\code{skewedGaussian})}
+\code{skewedGaussian} and \code{emGaussian})}
 
 \item{params}{(list or str) Either 'guess' for automated parametrisation or
 list (one per ROI windows) of 'guess' or list of curve fit parameters}

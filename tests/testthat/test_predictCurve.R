@@ -3,6 +3,9 @@ context('predictCurve()')
 ## Input and expected data
 input_fittedCurve         <- list(amplitude=275371.05624872464, center=3382.577, sigma=0.079046969170787212, gamma=0.0011476465885767637, fitStatus=2, curveModel="skewedGaussian")
 class(input_fittedCurve)  <- 'peakPantheR_curveFit'
+input_fittedCurve_emg         <- list(amplitude=275371.05624872464, center=3382.577, sigma=0.079046969170787212, gamma=0.0011476465885767637, fitStatus=2, curveModel="emgGaussian")
+class(input_fittedCurve_emg)  <- 'peakPantheR_curveFit'
+
 
 test_that('predict skewedGaussian', {
   # Input and expected results
@@ -14,6 +17,17 @@ test_that('predict skewedGaussian', {
   expect_equal(result_projection, expected_yy)
 })
 
+test_that('predict emgGaussian', {
+  # Input and expected results
+  expected_yy <- c(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 315.8753, 3.155130e+02, 3.151511e+02, 3.147896e+02, 3.144285e+02, 3.140679e+02, 3.137077e+02, 3.133478e+02, 3.129884e+02, 3.126294e+02, 3.122709e+02, 3.119127e+02, 3.115549e+02, 3.111976e+02, 3.108406e+02, 3.104841e+02, 3.101280e+02, 3.097723e+02, 3.094170e+02, 3.090621e+02, 3.087076e+02, 3.083535e+02, 3.079998e+02, 3.076466e+02, 3.072937e+02, 3.069412e+02, 3.065892e+02, 3.062375e+02)
+
+  result_projection <- predictCurve(fittedCurve=input_fittedCurve_emg, x=seq(3360,3410))
+
+  # Check results
+  expect_equal(result_projection, expected_yy, tolerance=1e-5)
+})
+
+
 test_that('raises error()', {
   # fittedCurve is not a peakPantheR_curveFit
   expect_error(predictCurve(fittedCurve='not a peakPantheR_curveFit', x=numeric()), 'Error: "fittedCurve" must be a peakPantheR_curveFit!', fixed=TRUE)
@@ -21,5 +35,5 @@ test_that('raises error()', {
   # fittedCurve is not a known model
   unknown_model         <- list(curveModel='not kown')
   class(unknown_model)  <- 'peakPantheR_curveFit'
-  expect_error(predictCurve(fittedCurve=unknown_model, x=numeric()), 'Error: "fittedCurve$curveModel" must be one of: skewedGaussian', fixed=TRUE) 
+  expect_error(predictCurve(fittedCurve=unknown_model, x=numeric()), 'Error: \"curveModel\" must be one of: skewedGaussian, emgGaussian', fixed=TRUE)
 })
