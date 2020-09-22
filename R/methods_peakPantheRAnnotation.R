@@ -2475,20 +2475,20 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
 rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
                                     rtWindowWidth) {
     if (isFALSE(annotation@isAnnotated)) {
-        stop('The retention time correction functionality requires an
-        annotated peakPantheRAnnotation object
-        (annotationObject@isAnnotated = TRUE)')
+        stop(paste('The retention time correction functionality requires an',
+        'annotated peakPantheRAnnotation object',
+        '(annotationObject@isAnnotated = TRUE)'))
     }
     if (is.null(rtCorrectionReferences)) {
         rtCorrectionReferences <- annotation@cpdID
     } else {
         if (!all(rtCorrectionReferences %in% annotation@cpdID)) {
-            stop("All compound IDs in rtCorrectionReferences must be present
-            on the annotationObject.")
+            stop(paste('All compound IDs in rtCorrectionReferences must be',
+                        'present on the annotationObject'))
         }
     }
     if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
-        stop("rtWindowWidth must be a positive number")
+        stop('rtWindowWidth must be a positive number')
     }
 
     return(rtCorrectionReferences)

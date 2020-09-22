@@ -675,6 +675,72 @@ test_that('catch file that doesnt exist, catch error processing, no file left', 
   expect_equal(result_parallelAnnotation$messages[c(1:7, 9, 10, 12, 13, 14, 16)], expected_message)
 })
 
+test_that('curveModel emgGaussian: 3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
+  # Object fully initialised
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
+
+  # Expected annotation
+  expected_annotation             <- initAnnotation
+  expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
+  expected_annotation@peakTables  <- expected_peakTables
+  expected_annotation@peakFit     <- expected_peakFit
+  expected_annotation@dataPoints  <- expected_dataPoints
+  expected_annotation@isAnnotated <- TRUE
+  # Expected failures
+  tmp_status          <- NA
+  names(tmp_status)   <- 'test'
+  tmp_failures        <- !is.na(tmp_status)
+  names(tmp_failures) <- NULL
+  expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
+  # Expected message
+  expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
+
+  # results (output, warnings and messages)
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE, curveModel='skewedGaussian'))
+
+  # Check results
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
+  expect_equal(result_parallelAnnotation$result$failures, expected_failures)
+
+  # Check messages (centwave output)
+  expect_equal(length(result_parallelAnnotation$messages), 3)
+  expect_equal(result_parallelAnnotation$messages, expected_message)
+  })
+
+test_that('curveModel unknown: 3 failures', {
+  # Object fully initialised
+  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
+
+  # Expected annotation
+  expected_annotation                 <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata)
+  expected_annotation@spectraMetadata <- data.frame(matrix(character(), ncol=2, byrow=FALSE, dimnames=list(c(), c('testcol1', 'testcol2'))), stringsAsFactors=FALSE)
+
+  #expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
+  #expected_annotation@peakTables  <- expected_peakTables
+  #expected_annotation@peakFit     <- expected_peakFit
+  #expected_annotation@dataPoints  <- expected_dataPoints
+  #expected_annotation@isAnnotated <- TRUE
+  # Expected failures
+  tmp_status          <- c('Error: "curveModel" must be one of: skewedGaussian, emgGaussian','Error: "curveModel" must be one of: skewedGaussian, emgGaussian','Error: "curveModel" must be one of: skewedGaussian, emgGaussian')
+  names(tmp_status)   <- input_spectraPaths
+  tmp_failures        <- !is.na(tmp_status)
+  names(tmp_failures) <- NULL
+  expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
+  # Expected message
+  expected_message    <- character(0)
+
+  # results (output, warnings and messages)
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE, curveModel='unknown_curveModel'))
+
+  # Check results (all failures)
+  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
+  expect_equal(result_parallelAnnotation$result$failures, expected_failures)
+
+  # Check messages (no fit, so no message)
+  expect_equal(length(result_parallelAnnotation$messages), 0)
+  expect_equal(result_parallelAnnotation$messages, expected_message)
+  })
+
 test_that('raise errors', {
   # Object fails validation on input check
   wrongInit       <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
