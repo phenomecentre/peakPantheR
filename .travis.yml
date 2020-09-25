@@ -75,6 +75,7 @@ r_packages:
   - devtools
   - covr
   - faahKO
+  - BiocStyle
 
 addons:
   apt:
