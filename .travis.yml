@@ -75,6 +75,11 @@ r_packages:
   - devtools
   - covr
   - faahKO
+  - testthat
+  - msdata
+  - knitr
+  - rmarkdown
+  - pander
   - BiocStyle
 
 addons:
