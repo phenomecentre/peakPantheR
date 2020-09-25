@@ -102,20 +102,31 @@ output$diagPlotControlUI <- renderUI({
       ), # end column
       column(3, offset=1,
         selectInput("plotMetaSplColr", label="Colour by Sample Metadata", choices=values$spectraMetadataCol)
-      ), # end column
+      ),
+      column(3, offset=1,
+        numericInput("plotSampleNumber", label = "Number of Samples",
+                     value = dim(spectraMetadata(values$annotation))[1], min = 1,
+                     max = dim(spectraMetadata(values$annotation))[1], step = 1)
+      ),# end column
       column(3, offset=1,
         numericInput("plotHeightDiag", label = "Plot Height", value = 400, min = 0, step = 1)
-      ) # end column
+                  # end column
+      )
     ) # end fluidRow
   )   # end wellPanel
 })
 
 # plot feature diagnostic
 output$diagPlot <- renderPlot({
+  nSampAnnotation <- dim(spectraMetadata(values$annotation))[1]
+  if (input$plotSampleNumber != nSampAnnotation) {
+      currentSampleChoice  <- sample(1:nSampAnnotation,
+                                input$plotSampleNumber, replace=F) }
+  else {currentSampleChoice  <- 1:nSampAnnotation}
   # find the cpdNb corresponding to the cpdID + cpdName shown
   annotation_diagnostic_multiplot_UI_helper(
     cpdNb = as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]),
-    annotation = values$annotation,
+    annotation = values$annotation[currentSampleChoice, ],
     splColrColumn = input$plotMetaSplColr)
 })
 
