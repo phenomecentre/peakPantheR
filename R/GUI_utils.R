@@ -194,23 +194,23 @@ annotation_showText_UI_helper <- function(annotProp){
     return(UI_string)
 }
 
-
 #' UI diagnostic plot helper - single feature multiplot
 #'
 #' Return a ggplot object of a feature diagnostic multiplot
 #'
 #' @param cpdNb (int) postion of the feature to extract (1 to nbCpd)
 #' @param annotation (peakPantheRAnnotation) Annotation object
+#' @param sampleNum (int) number of spectra to plot, chosen randomly
+#' randomly chosen spectra. If NULL or equal to total number of spectra
+#' plot all.
 #' @param splColrColumn (str) NULL, None or a spectraMetadata column for
 #' colouring each sample
 #' @param ... Additional parameters for plotting
 #'
 #' @return (ggplotObject) Diagnostic multiplot for a feature
 annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
-                                splColrColumn=NULL, ...) {
-    # subset annotation to only 1 cpd
-    tmp_annotat <- annotation[, cpdNb]
-
+                                  sampleNum=NULL, splColrColumn=NULL, ...) {
+   tmp_annotat <- subset_annotation_UI_helper(cpdNb, annotation, sampleNum)
     # convert sampleColourColumn to a colour scale to use
     if (is.null(splColrColumn)) {
         sampleColour <- NULL
@@ -254,6 +254,17 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
     } else { return(ggplot2::ggplot() + ggplot2::theme_void()) }
 }
 
+subset_annotation_UI_helper <- function(cpdNb, annotation,
+                                  sampleNum=NULL) {
+
+     nSampAnnotation <- dim(spectraMetadata(annotation))[1]
+    if (sampleNum != nSampAnnotation) {
+        currentSampleChoice  <- sample(1:nSampAnnotation, sampleNum, replace=F)}
+    else { currentSampleChoice  <- 1:nSampAnnotation }
+    # subset annotation to only 1 cpd and subset of samples
+    subsetAnnotation <- annotation[currentSampleChoice, cpdNb]
+    return(subsetAnnotation)
+}
 
 #' UI diagnostic table - fit summary
 #'

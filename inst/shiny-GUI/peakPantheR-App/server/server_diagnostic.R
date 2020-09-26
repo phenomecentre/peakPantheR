@@ -118,15 +118,10 @@ output$diagPlotControlUI <- renderUI({
 
 # plot feature diagnostic
 output$diagPlot <- renderPlot({
-  nSampAnnotation <- dim(spectraMetadata(values$annotation))[1]
-  if (input$plotSampleNumber != nSampAnnotation) {
-      currentSampleChoice  <- sample(1:nSampAnnotation,
-                                input$plotSampleNumber, replace=F) }
-  else {currentSampleChoice  <- 1:nSampAnnotation}
   # find the cpdNb corresponding to the cpdID + cpdName shown
   annotation_diagnostic_multiplot_UI_helper(
     cpdNb = as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]),
-    annotation = values$annotation[currentSampleChoice, ],
+    annotation = values$annotation, sampleN = input$plotSampleNumber,
     splColrColumn = input$plotMetaSplColr)
 })
 
