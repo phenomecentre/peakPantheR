@@ -28,7 +28,7 @@ All \code{cpdID} entries must be present in the object and previously
 annotated. If NULL, use all compounds.}
 
 \item{method}{(str) name of RT correction method to use (currently
-\code{polynomial})}
+\code{polynomial} or \code{constant}}
 
 \item{params}{(list) list of parameters to pass to each correction method.
 Currently allowed inputs are \code{polynomialOrder}

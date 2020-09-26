@@ -2358,7 +2358,7 @@ setGeneric("retentionTimeCorrection",
 #' All \code{cpdID} entries must be present in the object and previously
 #' annotated. If NULL, use all compounds.
 #' @param method (str) name of RT correction method to use (currently
-#' \code{polynomial})
+#' \code{polynomial} or \code{constant}
 #' @param params (list) list of parameters to pass to each correction method.
 #' Currently allowed inputs are \code{polynomialOrder}
 #' for \code{method='polynomial'}
@@ -2517,16 +2517,15 @@ rtCorrection_prepareTargetFeatTable <- function(newAnnotation,
     # Exclude features with mean rt_dev_sec = NA from the correction
     # function fitting
     if (any(is.na(referenceTable$rt_dev_sec))) {
-        warning(paste(c("The following references could not be integrated
-        previously and will be excluded: ",
-            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]),
-            collapse=", "))
+        warning(paste("The following references could not be integrated",
+            "previously and will be excluded:",
+            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]))
     }
     if (any(is.na(targetFeatTable$rt_dev_sec))) {
-        warning(paste(c("The following compounds could not be
-        integrated previously and will be not be corrected: ",
-        targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]),
-        collapse=", "))}
+        warning(paste("The following compounds could not be",
+            "integrated previously and will be not be corrected:",
+            targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]))
+    }
 
     return(list(targetFeatTable=targetFeatTable,
                 referenceTable=referenceTable))

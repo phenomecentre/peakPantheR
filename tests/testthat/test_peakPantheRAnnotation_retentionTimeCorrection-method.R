@@ -182,6 +182,63 @@ test_that('rt correction plot (uROI)', {
   expect_error(ggplot2::ggsave('./test_ggsave.png', resultCorrected$result$plot), NA)
 })
 
+test_that('rt correction no rtCorrectionReferences', {
+  # Test if all cpds are as rtCorrectionReferences if set to NULL, not interested in the values themselves
+
+  # input
+  annotation <- filledAnnotation[,1]
+
+  # expected ROI/uROI
+  expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_uROI[1,] <- list(rtMin=-5.999586, rt=1.5004137, rtMax=9.000414, mzMin=12, mz=13, mzMax=14)
+  expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_FIR[1,] <- list(rtMin=-5.999586, rtMax=9.000414, mzMin=3, mzMax=4)
+
+  # run RT correction
+  resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=NULL, method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
+
+  # check results (output, warnings and messages)
+  expect_equal(resultCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
+  expect_equal(resultCorrected$result$annotation@FIR,  expected_FIR, tolerance=1e-5)
+
+  # check no plot (only 'annotation' in return)
+  expect_equal(length(resultCorrected$result), 1)
+})
+
+test_that('rt correction referenceTable has NA and targetFeatTable has NA', {
+  # Test if compound is excluded due to compound not found in referenceTable
+
+  # input
+  annotation <- filledAnnotation
+  annotation@peakTables[[1]]$rt_dev_sec[1] <- NA
+  annotation@peakTables[[2]]$rt_dev_sec[1] <- NA
+  annotation@peakTables[[3]]$rt_dev_sec[1] <- NA
+
+  # expected ROI/uROI
+  expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_uROI[1,] <- list(rtMin=9., rt=10., rtMax=11., mzMin=12, mz=13, mzMax=14)
+  expected_uROI[2,] <- list(rtMi=-7.861353, rt=-0.3613534, rtMax=7.138647, mzMin=18, mz=19, mzMax=20)
+  expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_FIR[1,] <- list(rtMin=1., rtMax=2., mzMin=3, mzMax=4)
+  expected_FIR[2,] <- list(rtMin=-7.861353, rtMax=7.138647, mzMin=7, mzMax=8)
+
+  # expected warnings
+  expected_warn <- c('The following references could not be integrated previously and will be excluded: ID-1',
+                     'The following compounds could not be integrated previously and will be not be corrected: ID-1')
+
+  # run RT correction
+  resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1','ID-2'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
+
+  # check results (output, warnings and messages)
+  expect_equal(resultCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
+  expect_equal(resultCorrected$result$annotation@FIR,  expected_FIR, tolerance=1e-5)
+  # check warning
+  expect_equal(resultCorrected$warnings,  expected_warn)
+
+  # check no plot (only 'annotation' in return)
+  expect_equal(length(resultCorrected$result), 1)
+})
+
 test_that('rt correction raises errors', {
   # not annotated
   wrong1             <- filledAnnotation
