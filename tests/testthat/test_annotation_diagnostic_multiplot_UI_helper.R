@@ -107,6 +107,7 @@ test_that('default multiplot, splColrColum is NULL', {
   result_multiplot  <- evaluate_promise(
       annotation_diagnostic_multiplot_UI_helper(cpdNb = 2,
                                                 annotation = input_annotation,
+                                                splNum = NULL,
                                                 splColrColumn = NULL)
   )
 
@@ -234,3 +235,5 @@ test_that('12 unique colour (recycle colour palette)', {
   expect_equal(sort(class(result_multiplot$result[[1]])), gtable_class)
   expect_equal(length(result_multiplot$result[[1]]), 9)
 })
+
+# TODO: add NULL, test splNum works with warnings

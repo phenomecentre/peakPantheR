@@ -7,12 +7,13 @@
 annotation_diagnostic_multiplot_UI_helper(
     cpdNb,
     annotation,
+    splNum = NULL,
     splColrColumn = NULL,
     ...
 )
 }
 \arguments{
-\item{cpdNb}{(int) postion of the feature to extract (1 to nbCpd)}
+\item{cpdNb}{(int) position of the feature to extract (1 to nbCpd)}
 
 \item{annotation}{(peakPantheRAnnotation) Annotation object}
 
@@ -20,6 +21,10 @@ annotation_diagnostic_multiplot_UI_helper(
 colouring each sample}
 
 \item{...}{Additional parameters for plotting}
+
+\item{sampleNum}{(int) NULL or number of spectra to plot, chosen randomly
+from all spectra. If NULL or equal to the total number of spectra, plot all
+spectra}
 }
 \value{
 (ggplotObject) Diagnostic multiplot for a feature

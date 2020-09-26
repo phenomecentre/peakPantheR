@@ -94,26 +94,28 @@ output$diagPlotControlUI <- renderUI({
     fluidRow(
       column(12, offset=1,
         h4('Fit diagnostic plots', style="color:#3e648d;font-weight:bold"),
-      ) # end column
-    ), # end fluidRow
+      )  # end column
+    ),   # end fluidRow
     fluidRow(
-      column(4, offset=0,
+      column(3, offset=0,
         selectInput("plotFeatDiag", label="Feature", choices=unname(values$featNmeList))
       ), # end column
-      column(3, offset=1,
+      column(3, offset=0,
         selectInput("plotMetaSplColr", label="Colour by Sample Metadata", choices=values$spectraMetadataCol)
-      ),
-      column(3, offset=1,
-        numericInput("plotSampleNumber", label = "Number of Samples",
-                     value = dim(spectraMetadata(values$annotation))[1], min = 1,
-                     max = dim(spectraMetadata(values$annotation))[1], step = 1)
+      ), # end column
+      column(3, offset=0,
+        numericInput("plotSplNumber", label = paste0("Number of Samples to show (out of ",
+                                                     nbSamples(values$annotation), ")"),
+                     value = nbSamples(values$annotation),
+                     min = 1,
+                     max = nbSamples(values$annotation),
+                     step = 1)
       ),# end column
-      column(3, offset=1,
+      column(3, offset=0,
         numericInput("plotHeightDiag", label = "Plot Height", value = 400, min = 0, step = 1)
-                  # end column
-      )
-    ) # end fluidRow
-  )   # end wellPanel
+      ) # end column
+    )   # end fluidRow
+  )     # end wellPanel
 })
 
 # plot feature diagnostic
@@ -121,7 +123,8 @@ output$diagPlot <- renderPlot({
   # find the cpdNb corresponding to the cpdID + cpdName shown
   annotation_diagnostic_multiplot_UI_helper(
     cpdNb = as.numeric(names(values$featNmeList)[values$featNmeList == input$plotFeatDiag]),
-    annotation = values$annotation, sampleN = input$plotSampleNumber,
+    annotation = values$annotation,
+    splNum = input$plotSplNumber,
     splColrColumn = input$plotMetaSplColr)
 })
 

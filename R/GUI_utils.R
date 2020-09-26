@@ -198,19 +198,20 @@ annotation_showText_UI_helper <- function(annotProp){
 #'
 #' Return a ggplot object of a feature diagnostic multiplot
 #'
-#' @param cpdNb (int) postion of the feature to extract (1 to nbCpd)
+#' @param cpdNb (int) position of the feature to extract (1 to nbCpd)
 #' @param annotation (peakPantheRAnnotation) Annotation object
-#' @param sampleNum (int) number of spectra to plot, chosen randomly
-#' randomly chosen spectra. If NULL or equal to total number of spectra
-#' plot all.
+#' @param sampleNum (int) NULL or number of spectra to plot, chosen randomly
+#' from all spectra. If NULL or equal to the total number of spectra, plot all
+#' spectra
 #' @param splColrColumn (str) NULL, None or a spectraMetadata column for
 #' colouring each sample
 #' @param ... Additional parameters for plotting
 #'
 #' @return (ggplotObject) Diagnostic multiplot for a feature
 annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
-                                  sampleNum=NULL, splColrColumn=NULL, ...) {
-   tmp_annotat <- subset_annotation_UI_helper(cpdNb, annotation, sampleNum)
+                                        splNum=NULL, splColrColumn=NULL, ...) {
+    # subset the compound and sample according to inputs
+    tmp_annotat <- subset_annot_diag_plot_UI_helper(cpdNb, annotation, splNum)
     # convert sampleColourColumn to a colour scale to use
     if (is.null(splColrColumn)) {
         sampleColour <- NULL
@@ -254,15 +255,29 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
     } else { return(ggplot2::ggplot() + ggplot2::theme_void()) }
 }
 
-subset_annotation_UI_helper <- function(cpdNb, annotation,
-                                  sampleNum=NULL) {
+subset_annot_diag_plot_UI_helper <- function(cpdNb, annotation, splNum=NULL) {
+    # subset the compound and sample according to inputs
 
-     nSampAnnotation <- dim(spectraMetadata(annotation))[1]
-    if (sampleNum != nSampAnnotation) {
-        currentSampleChoice  <- sample(1:nSampAnnotation, sampleNum, replace=F)}
-    else { currentSampleChoice  <- 1:nSampAnnotation }
+    nSpl <- nbSamples(annotation)
+    if (is.null(splNum)) { splNum <- nSpl }
+
+    # fix extrem values allowed by UI
+    if (splNum < 1) {
+        splNum <- 1
+        warning("Negative number of samples to show, 1 spectra will be shown!")
+    }
+    if (splNum > nSpl) {
+        splNum <- nSpl
+        warning(paste("More samples to show than available,",
+                    "all spectra will be shown!"))
+    }
+
+    # appoximately equally spaced
+    currentSplChoice  <- round(seq(1, nSpl, length.out=splNum))
+
     # subset annotation to only 1 cpd and subset of samples
-    subsetAnnotation <- annotation[currentSampleChoice, cpdNb]
+    subsetAnnotation <- annotation[currentSplChoice, cpdNb]
+
     return(subsetAnnotation)
 }
 
