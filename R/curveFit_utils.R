@@ -16,7 +16,7 @@ is.peakPantheR_curveFit <- function(x) {
 #' @param x (numeric) x values (e.g. retention time)
 #' @param y (numeric) y observed values (e.g. spectra intensity)
 #' @param curveModel (str) name of the curve model to fit (currently
-#' \code{skewedGaussian})
+#' \code{skewedGaussian} and \code{emgGaussian})
 #' @param params (list or str) either 'guess' for automated parametrisation or
 #' list of initial parameters (\code{$init_params}), lower parameter bounds
 #' (\code{$lower_bounds}) and upper parameter bounds (\code{$upper_bounds})
@@ -77,17 +77,15 @@ is.peakPantheR_curveFit <- function(x) {
 fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
     # Check inputs x and y length
     if (length(x) != length(y)) {
-        stop("Error: length of \"x\" and \"y\" must match!")
-    }
+        stop("Error: length of \"x\" and \"y\" must match!") }
     # known curveModel
-    known_curveModel <- c("skewedGaussian")
+    known_curveModel <- c("skewedGaussian", "emgGaussian")
     if (!(curveModel %in% known_curveModel)) {
-        stop(paste("Error: \"curveModel\" must be one of:", known_curveModel))
-    }
+        stop(paste("Error: \"curveModel\" must be one of:",
+            paste(known_curveModel, collapse=', '))) }
     # params
     if (!(typeof(params) %in% c("list", "character"))) {
-        stop("Error: \"params\" must be a list or \"guess\"")
-    }
+        stop("Error: \"params\" must be a list or \"guess\"") }
 
     useGuess <- TRUE
     if (any(params != "guess")) {
@@ -113,16 +111,19 @@ fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
     
     # Init
     fittedCurve <- list()
-    
     # Run fitting skewed gaussian
     if (curveModel == "skewedGaussian") {
         fittedCurve <- fitCurve_skewedGaussian(x, y, useGuess, params,
                                                 curveModel)
     }
+    else if (curveModel == 'emgGaussian') {
+        fittedCurve <- fitCurve_emgGaussian(x, y, useGuess, params,
+                                                curveModel)
+    }
     # for future curve shapes } else if () { }
-    
     return(fittedCurve)
 }
+
 # fit skewedGaussian
 fitCurve_skewedGaussian <- function(x, y, useGuess, params, curveModel) {
     fittedCurve <- list()
@@ -165,6 +166,49 @@ fitCurve_skewedGaussian <- function(x, y, useGuess, params, curveModel) {
     return(fittedCurve)
 }
 
+# fit emgGaussian
+fitCurve_emgGaussian <- function(x, y, useGuess, params, curveModel) {
+    fittedCurve <- list()
+
+    # Guess parameters and bounds
+    if (useGuess) {
+        new_params <- emgGaussian_guess(x, y)
+    } else {
+        new_params <- params
+    }
+
+    # ensure order of init params and bounds (init is a list, lower and
+    # upper are ordered numeric vectors)
+    init    <- list(amplitude = new_params$init_params$amplitude,
+                    center = new_params$init_params$center,
+                    sigma = new_params$init_params$sigma,
+                    gamma = new_params$init_params$gamma)
+    lower   <- unlist(c(new_params$lower_bounds["amplitude"],
+                        new_params$lower_bounds["center"],
+                        new_params$lower_bounds["sigma"],
+                        new_params$lower_bounds["gamma"]))
+    upper   <- unlist(c(new_params$upper_bounds["amplitude"],
+                        new_params$upper_bounds["center"],
+                        new_params$upper_bounds["sigma"],
+                        new_params$upper_bounds["gamma"]))
+
+    # perform fit
+    resultFit <- minpack.lm::nls.lm(par = init,
+                                lower = lower,
+                                upper = upper,
+                                fn = emgGaussian_minpack.lm_objectiveFun,
+                                observed = y, xx = x)
+
+    # prepare output
+    fittedCurve <- resultFit$par
+    fittedCurve$fitStatus <- resultFit$info
+    fittedCurve$curveModel <- curveModel
+    class(fittedCurve) <- "peakPantheR_curveFit"
+
+    return(fittedCurve)
+}
+
+
 
 #' @title Predict curve values
 #'
@@ -199,19 +243,24 @@ predictCurve <- function(fittedCurve, x) {
     if (!is.peakPantheR_curveFit(fittedCurve)) {
         stop("Error: \"fittedCurve\" must be a peakPantheR_curveFit!")
     }
-    known_curveModel <- c("skewedGaussian")
+    # known curveModel
+    known_curveModel <- c("skewedGaussian", "emgGaussian")
     if (!(fittedCurve$curveModel %in% known_curveModel)) {
-        stop(paste("Error: \"fittedCurve$curveModel\" must be one of:",
-                    known_curveModel))
+        stop(paste("Error: \"curveModel\" must be one of:",
+            paste(known_curveModel, collapse=', ')))
     }
     
     # Select correct model
-    if (fittedCurve$curveModel == "skewedGaussian") 
+    if (fittedCurve$curveModel == "skewedGaussian")
         {
             yy <- skewedGaussian_minpack.lm(params = fittedCurve, xx = x)
-        }  # for future curve shapes
-    # } else if () { }
-    
+        }
+    else if (fittedCurve$curveModel == 'emgGaussian') {
+        yy <- emgGaussian_minpack.lm(params = fittedCurve, xx = x)
+        }
+    # for future curve shapes
+    # else if () {}
+
     return(yy)
 }
 
@@ -228,8 +277,20 @@ predictCurve <- function(fittedCurve, x) {
 #' @param x (numeric) value at which to evaluate the gaussian error function
 #' 
 #' @return Value of the gaussian error function evaluated at x
-skew_erf <- function(x) {
+gaussian_erf <- function(x) {
     return(2 * stats::pnorm(x * sqrt(2)) - 1)
+}
+
+
+#' @title Gaussian Error function
+#'
+#' @description Implementation of the gaussian error function
+#'
+#' @param x (numeric) value at which to evaluate the gaussian error function
+#'
+#' @return Value of the gaussian error function evaluated at x
+gaussian_cerf <- function(x) {
+    return(1 - (2 * stats::pnorm(x * sqrt(2)) - 1))
 }
 
 
@@ -245,14 +306,36 @@ skew_erf <- function(x) {
 #' 
 #' @return value of the skewed gaussian evaluated at xx
 skewedGaussian_minpack.lm <- function(params, xx) {
-    erf_term <- 1 + skew_erf((params$gamma * (xx-params$center))/params$sigma *
-        sqrt(2))
+    erf_term <- 1 + gaussian_erf((params$gamma * (xx-params$center))/
+            params$sigma * sqrt(2))
     yy <- (params$amplitude/(params$sigma * sqrt(2 * pi))) *
         exp(-(xx - params$center)^2/2 * params$sigma^2) * erf_term
     
     return(yy)
 }
 
+#' @title Implementation of the Exponentially Modified Gaussian (EMG) peak
+#' shape for use with minpack.lm
+#'
+#' @description Implementation of the  Exponentially Modified Gaussian
+#' (EMG) peak shape for use with minpack.lm
+#'
+#' @param params (list) exponentiall modified gaussian parameters
+#' (\code{params$gamma}, \code{params$center}, \code{params$sigma},
+#' \code{params$amplitude})
+#' @param xx (numeric) values at which to evalute the exponentially
+#' modified gaussian
+#'
+#' @return value of the exponentially modified gaussian evaluated at xx
+emgGaussian_minpack.lm <- function(params, xx) {
+    cerf_term <- gaussian_cerf((params$center + params$gamma *
+        (params$sigma^2) - xx)/(params$sigma * sqrt(2)))
+    yy <- (params$amplitude*params$gamma/2) *
+        exp(params$gamma*(params$center - xx +
+        (params$gamma * (params$sigma^2)/2))) * cerf_term
+
+    return(yy)
+}
 
 #' @title Skewed Gaussian minpack.lm objective function
 #'
@@ -270,6 +353,23 @@ skewedGaussian_minpack.lm_objectiveFun <- function(params, observed, xx) {
     return(observed - skewedGaussian_minpack.lm(params, xx))
 }
 
+#' @title Exponentially Modified Gaussian minpack.lm objective function
+#'
+#' @description Exponentially Modified Gaussian (EMG) minpack.lm objective
+#' function, calculates residuals using the EMG Peak Shape
+#'
+#' @param params (list) exponentially modified gaussian parameters
+#' (\code{params$gamma}, \code{params$center}, \code{params$sigma},
+#' \code{params$amplitude})
+#' @param observed (numeric) observed y value at xx
+#' @param xx (numeric) value at which to evalute the exponentially
+#' modified gaussian
+#'
+#' @return difference between observed and expected exponentially modified
+#' gaussian value evaluated at xx
+emgGaussian_minpack.lm_objectiveFun <- function(params, observed, xx) {
+    return(observed - emgGaussian_minpack.lm(params, xx))
+}
 
 #' @title Guess function for initial skewed gaussian parameters and bounds
 #'
@@ -293,6 +393,33 @@ skewedGaussian_guess <- function(x, y) {
     upper_bounds <- list(amplitude=1e+09, center=center_guess+3, sigma=5,
         gamma = 5)
     
+    return(list(init_params = init_params, lower_bounds = lower_bounds,
+                upper_bounds = upper_bounds))
+}
+
+#' @title Guess function for initial exponentially modified gaussian
+#' parameters and bounds
+#'
+#' @description Guess function for initial exponentially modified gaussian
+#' parameters and bounds, at the moment only checks the x position
+#'
+#' @param x (numeric) x values (e.g. retention time)
+#' @param y (numeric) y observed values (e.g. spectra intensity)
+#'
+#' @return A list of guessed starting parameters \code{list()$init_params},
+#' lower \code{list()$lower_bounds} and upper bounds \code{list()$upper_bounds}
+#' (\code{$gamma}, \code{$center}, \code{$sigma}, \code{$amplitude})
+emgGaussian_guess <- function(x, y) {
+    # set center as x position of max y value (e.g. highest spectra intensity)
+    center_guess <- x[which.max(y)]
+    # init_param
+    init_params <- list(amplitude=1e+07, center=center_guess, sigma=1, gamma=1)
+    # lower_bounds
+    lower_bounds <- list(amplitude=0, center=center_guess-3, sigma=0,gamma=-0.1)
+    # upper_bounds
+    upper_bounds <- list(amplitude=1e+09, center=center_guess+3, sigma=5,
+        gamma = 5)
+
     return(list(init_params = init_params, lower_bounds = lower_bounds,
                 upper_bounds = upper_bounds))
 }

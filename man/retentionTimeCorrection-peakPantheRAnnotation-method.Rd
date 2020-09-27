@@ -28,7 +28,7 @@ All \code{cpdID} entries must be present in the object and previously
 annotated. If NULL, use all compounds.}
 
 \item{method}{(str) name of RT correction method to use (currently
-\code{polynomial})}
+\code{polynomial} or \code{constant}}
 
 \item{params}{(list) list of parameters to pass to each correction method.
 Currently allowed inputs are \code{polynomialOrder}
@@ -109,7 +109,5 @@ rtCorrectionPlot <- rtCorrectionOutput$plot
 #  Scatterplot where x=`r` in the and y=`rt_dev_sec` from data_annotation
 #  Points colored depending on whether the reference was used to fit
 # the correction model
-#  uses updated ROI (uROI)
-#  uses fallback integration regions (FIR)
 }
 }

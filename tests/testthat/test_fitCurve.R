@@ -21,6 +21,18 @@ test_that('fit skewedGaussian, guess params, no lower, no upper', {
   expect_equal(result_fit, expected_fit)
 })
 
+test_that('fit emgGaussian, guess params, no lower, no upper', {
+  # Input and expected results
+  expected_fit        <- list(amplitude=33686977, center=3382.577, sigma=5, gamma=0.1126386, fitStatus=2, curveModel="emgGaussian")
+  class(expected_fit) <- 'peakPantheR_curveFit'
+
+  result_fit    <- fitCurve(x=EIC$rt, y=EIC$int, curveModel='emgGaussian', params='guess')
+
+  # Check results
+  expect_equal(result_fit, expected_fit, tolerance=1e-6)
+})
+
+
 test_that('fit skewedGaussian, input params', {
   # Input and expected results
   expected_fit        <- list(amplitude=13203571.527336178, center=3403, sigma=5, gamma=-0.1, fitStatus=1, curveModel="skewedGaussian")
@@ -31,6 +43,18 @@ test_that('fit skewedGaussian, input params', {
   # Check results
   expect_equal(result_fit, expected_fit)
 })
+
+test_that('fit emgGaussian, input params', {
+  # Input and expected results
+  expected_fit        <- list(amplitude=12968279, center=3398.492, sigma=5, gamma=1.339195, fitStatus=2, curveModel="emgGaussian")
+  class(expected_fit) <- 'peakPantheR_curveFit'
+
+  result_fit    <- fitCurve(x=EIC$rt, y=EIC$int, curveModel='emgGaussian', params=input_params)
+
+  # Check results
+  expect_equal(result_fit, expected_fit, tolerance=1e-6)
+})
+
 
 test_that('raises error()', {
   # length x y doesn't match

@@ -106,7 +106,7 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
         stop('Error: \"method\" must be one of: \"polynomial\", \"constant\"')}
     if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
         stop("No function can be fitted with a single reference. ",
-        "Use method=\`offset\` instead.") }
+        "Use method=\`constant\` instead.") }
 
     if (method == 'constant') {
         if (dim(referenceTable)[1] > 1) {
