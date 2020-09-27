@@ -160,6 +160,7 @@ annotation <- peakPantheR_singleFileSearch(
                                     singleSpectraDataPath = input_spectraPath,
                                     targetFeatTable = input_targetFeatTable,
                                     peakStatistic = TRUE,
+                                    curveModel = 'skewedGaussian',
                                     verbose = TRUE)
 ```
 ```{r}
@@ -197,6 +198,9 @@ saved
 The additional file access will impact run time
 * `FIR` if not `NULL`, defines the Fallback Integration Regions (**FIR**) to 
 integrate when a feature is not found.
+* `curveModel`, defines the peak-shape model to fit to each EIC. By default,
+a _'skewedGaussian'_ model is used. The other alternative is the exponentially
+modified gaussian _'emgGaussian'_ model.
 * `verbose` if `TRUE` messages calculation progress, time taken and number of 
 features found (_total and matched to targets_)
 * `...` passes arguments to `findTargetFeatures` to alter peak-picking 

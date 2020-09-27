@@ -83,8 +83,8 @@ test_that('raises error()', {
   expect_warning(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=4), robust=FALSE), '`polynomialOrder` is larger than the number of references passed. `polynomialOrder` will be set equal to number of reference compounds - 1', fixed=TRUE)
   expect_warning(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=4), robust=TRUE), '`polynomialOrder` is larger than the number of references passed. `polynomialOrder` will be set equal to number of reference compounds - 1', fixed=TRUE)
   # test sugestion of method=constant if ref = 1
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=FALSE), 'No function can be fitted with a single reference. Use method=\`offset\` instead.', fixed=TRUE)
-  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=TRUE), 'No function can be fitted with a single reference. Use method=\`offset\` instead.', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=FALSE), 'No function can be fitted with a single reference. Use method=\`constant\` instead.', fixed=TRUE)
+  expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable[1, ], method='polynomial', params=list(polynomialOrder=1), robust=TRUE), 'No function can be fitted with a single reference. Use method=\`constant\` instead.', fixed=TRUE)
   # test constant method throws error with multiple references
   expect_error(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='constant', params=list(polynomialOrder=1), robust=TRUE), "`constant` Rt correction can only use a single reference", fixed=TRUE)
 
@@ -260,7 +260,6 @@ test_that('RANSAC rt correction function', {
   expect_equal(polynomial_ransac_outlier_nd$result, expected_corrected_outlier_nd, tolerance=1e-5)
 
 })
-
 
 test_that('constant rt correction', {
   # Input

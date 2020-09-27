@@ -5,8 +5,6 @@
 #' parametrise the retention time correction method employed. When `robust`
 #' is set to TRUE, the RANSAC algorithm is used
 #' to automatically flag outliers and robustify the correction function fitting.
-#' If `diagnostic` is TRUE, RT correction diagnostic plots are
-#' returned (specific to each correction method).
 #'
 #' @param targetFeatTable a \code{\link{data.frame}} of compounds to target as
 #' rows and parameters as columns: \code{cpdID} (str), \code{cpdName} (str),
@@ -24,16 +22,13 @@
 #' \code{method='polynomial'}
 #' @param robust (bool) whether to use the RANSAC algorithm to flag and
 #' ignore outliers during retention time correction
-#' @param verbose (bool) If TRUE message progress of RT correction
-#' @param ... optional method specific parameters
 #' 
-#' @return a targetFeatTable with corrected RT, or diagnostic information
+#' @return a targetFeatTable with corrected RT
 peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
-    method='polynomial', params=list(polynomialOrder=3), robust=TRUE,
-    verbose=TRUE, ...) {
+    method='polynomial', params=list(polynomialOrder=3), robust=TRUE) {
     # Check inputs
     applyRTCorrection_checkInput(targetFeatTable, referenceTable,
-                                method, params, robust)
+                                method, robust)
     params <- applyRTCorrection_checkInputParams(params, method, referenceTable)
 
     if (dim(referenceTable)[1] == 1) {
@@ -96,7 +91,7 @@ applyRTCorrection_correctFeatTable <- function(targetFeatTable, referenceTable,
 
 # applyRTCorrection check input
 applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
-                                            method, params, robust) {
+                                            method, robust) {
     ## Check targetFeatTable and reference Table
     applyRTCorrection_checkTargetFeatTable(targetFeatTable)
     applyRTCorrection_checkInput_checkReferenceTable(referenceTable)
@@ -106,7 +101,7 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
         stop('Error: \"method\" must be one of: \"polynomial\", \"constant\"')}
     if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
         stop("No function can be fitted with a single reference. ",
-        "Use method=\`offset\` instead.") }
+        "Use method=\`constant\` instead.") }
 
     if (method == 'constant') {
         if (dim(referenceTable)[1] > 1) {
@@ -217,14 +212,6 @@ applyRTCorrection_checkInputParams <- function(params, method, referenceTable) {
 # All fitting functions should have the following argument:
 # of the kind x = theoretical rt, y= Deviation (Rt_{obs} - Rt{exp}}
 
-# LOESS placeholder.
-fit_LOESS <- function(x, y, ...) {
-
-    loess_fun <- stats::loess()
-
-    return (loess_fun)
-}
-
 # General purpose polynomial function - can be used for linear fits
 fit_polynomial <- function(x, y, polynomialOrder, returnFitted=FALSE) {
 
@@ -258,8 +245,6 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
     if (is.null(min_samples)) {
         min_samples <- max(polynomialOrder + 1 , ceiling(0.5*length(x)))
     }
-    # Generate array of indices for all samples to use later
-    all_samples_idx <- seq(1, length(x))
 
     ransacFit <- fit_RANSAC_coreOptimization(x, y,
     max_trials=max_trials, min_samples, polynomialOrder,
@@ -283,7 +268,7 @@ loss_absolute <- function(y_true, y_pred) {
 
 # Square loss function - part of RANSAC implementation
 loss_squared <- function(y_true, y_pred) {
-    loss_value <- (y_true - y_pred) ** 2
+    loss_value <- (y_true - y_pred) ^ 2
     return(loss_value)
 }
 
@@ -293,7 +278,7 @@ dynamic_max_trials <- function(n_inliers, n_samples, min_samples, probability) {
     inlier_ratio <- n_inliers / n_samples
 
     nom <- max(epsilon, 1 - probability)
-    denom <- max(epsilon, 1 - inlier_ratio ** min_samples)
+    denom <- max(epsilon, 1 - inlier_ratio ^ min_samples)
 
     if (nom == 1) {return(0)}
     if (denom == 1) {return(Inf)}

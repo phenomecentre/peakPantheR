@@ -91,55 +91,172 @@ ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTabl
 input_dataPoints  <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
+filledAnnotation  <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, FIR=input_FIR, uROI=input_uROI, useFIR=TRUE, uROIExist=TRUE, useUROI=TRUE, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
 
-test_that('retentionTimeCorrection-method', {
-  # Test if object is modified correctly
+test_that('rt correction on uROI, no plot', {
+  # Test if object is modified correctly using uROI (original RT based on useUROI)
+
   # input
-  constantCorrected <- evaluate_promise(retentionTimeCorrection(filledAnnotation, rtCorrectionReference=c('ID-1'),
-                                               method='constant', params=list(polynomialOrder=1), robust=TRUE))
-  filledAnnotation@useUROI <- FALSE
-  # test also if ROI vs uROI are used correctly as original RT value based on useUROI
-  constantCorrected_useROI <- evaluate_promise(retentionTimeCorrection(filledAnnotation, rtCorrectionReference=c('ID-1'),
-                                               method='constant', params=list(polynomialOrder=1), robust=TRUE))
+  annotation <- filledAnnotation
 
-  filledAnnotation@useUROI <- TRUE
   # expected ROI/uROI
-  expected_uROI <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_FIR <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_uROI_useROI <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_FIR_useROI <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
   expected_uROI[1,] <- list(rtMin=-5.9995863454, rt=1.500414, rtMax=9.000414, mzMin=12, mz=13, mzMax=14)
   expected_uROI[2,] <- list(rtMi=0.0004136546, rt=7.500414, rtMax=15.000414, mzMin=18, mz=19, mzMax=20)
+  expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
   expected_FIR[1,] <- list(rtMin=-5.9995863454, rtMax=9.000414, mzMin=3, mzMax=4)
   expected_FIR[2,] <- list(rtMin=0.0004136546, rtMax=15.000414, mzMin=7, mzMax=8)
 
+  # run RT correction
+  resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
+
+  # check results (output, warnings and messages)
+  expect_equal(resultCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
+  expect_equal(resultCorrected$result$annotation@FIR,  expected_FIR, tolerance=1e-5)
+
+  # check no plot (only 'annotation' in return)
+  expect_equal(length(resultCorrected$result), 1)
+})
+
+test_that('rt correction on ROI, no plot', {
+  # Test if object is modified correctly using ROI (original RT based on useUROI)
+
+  # input
+  annotation         <- filledAnnotation
+  annotation@useUROI <- FALSE
+
+  # expected ROI/uROI
+  expected_uROI_useROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
   expected_uROI_useROI[1,] <- list(rtMin=3328.888, rt=3336.388, rtMax=3343.888, mzMin=12, mz=13, mzMax=14)
   expected_uROI_useROI[2,] <- list(rtMin=3369.577, rt=3377.077, rtMax=3384.577, mzMin=18, mz=19, mzMax=20)
+  expected_FIR_useROI     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
   expected_FIR_useROI[1,] <- list(rtMin=3328.888, rtMax=3343.888, mzMin=3, mzMax=4)
   expected_FIR_useROI[2,] <- list(rtMin=3369.577, rtMax=3384.577, mzMin=7, mzMax=8)
 
-  # verify results (output, warnings and messages)
-  expect_equal(constantCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
-  expect_equal(constantCorrected$result$annotation@FIR, expected_FIR, tolerance=1e-5)
-  expect_equal(constantCorrected_useROI$result$annotation@uROI, expected_uROI_useROI, tolerance=1e-5)
-  expect_equal(constantCorrected_useROI$result$annotation@FIR, expected_FIR_useROI, tolerance=1e-5)
-  # Test plot
-  expected_plotFrame <- data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(),
-                                   isReference=character(), correctedRt=double(), predictedRtDrift=double(),
-                                   stringsAsFactors=FALSE)
+  # run RT correction
+  resultCorrected_useROI <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
 
-  expected_plotFrame[1, ] <- list(cpdID='ID-1', cpdName='Cpd 1', rt=10, rt_dev_sec=8.499586, isReference='Reference set',
-                                  correctedRt=1.500414, predictedRtDrift=8.499586)
-  expected_plotFrame[2, ] <- list(cpdID='ID-2', cpdName='Cpd 2', rt=16, rt_dev_sec=16.361353, isReference='External set',
-                                  correctedRt=7.500414, predictedRtDrift=8.499586)
-  expect_equal(constantCorrected$result$plot[[1]], expected_plotFrame, tolerance=1e-6)
-  expect_equal(length(constantCorrected$result$plot), 9)
-  expect_equal(constantCorrected$result$plot$labels$x, 'Retention time')
-  expect_equal(constantCorrected$result$plot$labels$y, 'Retention time deviation')
-  expect_is(constantCorrected$result$plot$layers[[1]]$geom, 'GeomPoint')
-  expect_is(constantCorrected$result$plot$layers[[2]]$geom, 'GeomLine')
-  expect_error(ggplot2::ggsave('./test_ggsave.png', constantCorrected$result$plot), NA)
+  # check results (output, warnings and messages)
+  expect_equal(resultCorrected_useROI$result$annotation@uROI, expected_uROI_useROI, tolerance=1e-5)
+  expect_equal(resultCorrected_useROI$result$annotation@FIR,  expected_FIR_useROI, tolerance=1e-5)
 
+  # check no plot (only 'annotation' in return)
+  expect_equal(length(resultCorrected_useROI$result), 1)
+})
+
+test_that('rt correction plot (uROI)', {
+  # test plot is correctly generated
+
+  # input
+  annotation <- filledAnnotation
+
+  # expected ROI/uROI
+  expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_uROI[1,] <- list(rtMin=-5.9995863454, rt=1.500414, rtMax=9.000414, mzMin=12, mz=13, mzMax=14)
+  expected_uROI[2,] <- list(rtMi=0.0004136546, rt=7.500414, rtMax=15.000414, mzMin=18, mz=19, mzMax=20)
+  expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_FIR[1,] <- list(rtMin=-5.9995863454, rtMax=9.000414, mzMin=3, mzMax=4)
+  expected_FIR[2,] <- list(rtMin=0.0004136546, rtMax=15.000414, mzMin=7, mzMax=8)
+  # expected plot properties
+  expected_plotFrame <- data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(), correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
+  expected_plotFrame[1, ] <- list(cpdID='ID-1', cpdName='Cpd 1', rt=10, rt_dev_sec=8.499586, isReference='Reference set', correctedRt=1.500414, predictedRtDrift=8.499586)
+  expected_plotFrame[2, ] <- list(cpdID='ID-2', cpdName='Cpd 2', rt=16, rt_dev_sec=16.361353, isReference='External set', correctedRt=7.500414, predictedRtDrift=8.499586)
+
+  # run RT correction
+  resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=TRUE))
+
+  # check results (output, warnings and messages)
+  expect_equal(resultCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
+  expect_equal(resultCorrected$result$annotation@FIR,  expected_FIR, tolerance=1e-5)
+
+  # check plot exist
+  expect_equal(length(resultCorrected$result), 2)
+  # plot values
+  expect_equal(resultCorrected$result$plot[[1]], expected_plotFrame, tolerance=1e-6)
+  expect_equal(length(resultCorrected$result$plot), 9)
+  expect_equal(resultCorrected$result$plot$labels$x, 'Retention time')
+  expect_equal(resultCorrected$result$plot$labels$y, 'Retention time deviation')
+  expect_is(resultCorrected$result$plot$layers[[1]]$geom, 'GeomPoint')
+  expect_is(resultCorrected$result$plot$layers[[2]]$geom, 'GeomLine')
+  expect_error(ggplot2::ggsave('./test_ggsave.png', resultCorrected$result$plot), NA)
+})
+
+test_that('rt correction no rtCorrectionReferences', {
+  # Test if all cpds are as rtCorrectionReferences if set to NULL, not interested in the values themselves
+
+  # input
+  annotation <- filledAnnotation[,1]
+
+  # expected ROI/uROI
+  expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_uROI[1,] <- list(rtMin=-5.999586, rt=1.5004137, rtMax=9.000414, mzMin=12, mz=13, mzMax=14)
+  expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_FIR[1,] <- list(rtMin=-5.999586, rtMax=9.000414, mzMin=3, mzMax=4)
+
+  # run RT correction
+  resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=NULL, method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
+
+  # check results (output, warnings and messages)
+  expect_equal(resultCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
+  expect_equal(resultCorrected$result$annotation@FIR,  expected_FIR, tolerance=1e-5)
+
+  # check no plot (only 'annotation' in return)
+  expect_equal(length(resultCorrected$result), 1)
+})
+
+test_that('rt correction referenceTable has NA and targetFeatTable has NA', {
+  # Test if compound is excluded due to compound not found in referenceTable
+
+  # input
+  annotation <- filledAnnotation
+  annotation@peakTables[[1]]$rt_dev_sec[1] <- NA
+  annotation@peakTables[[2]]$rt_dev_sec[1] <- NA
+  annotation@peakTables[[3]]$rt_dev_sec[1] <- NA
+
+  # expected ROI/uROI
+  expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_uROI[1,] <- list(rtMin=9., rt=10., rtMax=11., mzMin=12, mz=13, mzMax=14)
+  expected_uROI[2,] <- list(rtMi=-7.861353, rt=-0.3613534, rtMax=7.138647, mzMin=18, mz=19, mzMax=20)
+  expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
+  expected_FIR[1,] <- list(rtMin=1., rtMax=2., mzMin=3, mzMax=4)
+  expected_FIR[2,] <- list(rtMin=-7.861353, rtMax=7.138647, mzMin=7, mzMax=8)
+
+  # expected warnings
+  expected_warn <- c('The following references could not be integrated previously and will be excluded: ID-1',
+                     'The following compounds could not be integrated previously and will be not be corrected: ID-1')
+
+  # run RT correction
+  resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1','ID-2'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
+
+  # check results (output, warnings and messages)
+  expect_equal(resultCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
+  expect_equal(resultCorrected$result$annotation@FIR,  expected_FIR, tolerance=1e-5)
+  # check warning
+  expect_equal(resultCorrected$warnings,  expected_warn)
+
+  # check no plot (only 'annotation' in return)
+  expect_equal(length(resultCorrected$result), 1)
+})
+
+test_that('rt correction raises errors', {
+  # not annotated
+  wrong1             <- filledAnnotation
+  wrong1@isAnnotated <- FALSE
+  msg1               <- 'The retention time correction functionality requires an annotated peakPantheRAnnotation object (annotationObject@isAnnotated = TRUE)'
+  expect_error(retentionTimeCorrection(wrong1, rtCorrectionReference=c('ID-1')), msg1, fixed=TRUE)
+
+  # not a valid cpdID
+  wrong2             <- filledAnnotation
+  msg2               <- 'All compound IDs in rtCorrectionReferences must be present on the annotationObject'
+  expect_error(retentionTimeCorrection(wrong2, rtCorrectionReference=c('not a', 'correct cpdID')), msg2, fixed=TRUE)
+
+  # not numeric rtWindowWidth
+  wrong3             <- filledAnnotation
+  msg3               <- 'rtWindowWidth must be a positive number'
+  expect_error(retentionTimeCorrection(wrong3, rtCorrectionReference=c('ID-1'), rtWindowWidth='not a number'), msg3, fixed=TRUE)
+  # negative rtWindowWidth
+  wrong4             <- filledAnnotation
+  msg4               <- 'rtWindowWidth must be a positive number'
+  expect_error(retentionTimeCorrection(wrong3, rtCorrectionReference=c('ID-1'), rtWindowWidth=-5), msg4, fixed=TRUE)
 })

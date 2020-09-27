@@ -2358,7 +2358,7 @@ setGeneric("retentionTimeCorrection",
 #' All \code{cpdID} entries must be present in the object and previously
 #' annotated. If NULL, use all compounds.
 #' @param method (str) name of RT correction method to use (currently
-#' \code{polynomial})
+#' \code{polynomial} or \code{constant}
 #' @param params (list) list of parameters to pass to each correction method.
 #' Currently allowed inputs are \code{polynomialOrder}
 #' for \code{method='polynomial'}
@@ -2427,8 +2427,6 @@ setGeneric("retentionTimeCorrection",
 #' #  Scatterplot where x=`r` in the and y=`rt_dev_sec` from data_annotation
 #' #  Points colored depending on whether the reference was used to fit
 #' # the correction model
-#' #  uses updated ROI (uROI)
-#' #  uses fallback integration regions (FIR)
 #' }
 setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
     function(annotationObject, rtCorrectionReferences, method, params, robust,
@@ -2451,8 +2449,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         peakPantheR_applyRTCorrection(
             targetFeatTable[!is.na(targetFeatTable$rt_dev_sec), ],
             referenceTable, method,
-            params, robust,
-            diagnostic=diagnostic)
+            params, robust)
 
     # Only compounds with measured rt_dev_sec can be adjusted
     newAnnotation@uROI[!is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
@@ -2477,20 +2474,20 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
 rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
                                     rtWindowWidth) {
     if (isFALSE(annotation@isAnnotated)) {
-        stop('The retention time correction functionality requires an
-        annotated peakPantheRAnnotation object
-        (annotationObject@isAnnotated = TRUE)')
+        stop(paste('The retention time correction functionality requires an',
+        'annotated peakPantheRAnnotation object',
+        '(annotationObject@isAnnotated = TRUE)'))
     }
     if (is.null(rtCorrectionReferences)) {
         rtCorrectionReferences <- annotation@cpdID
     } else {
         if (!all(rtCorrectionReferences %in% annotation@cpdID)) {
-            stop("All compound IDs in rtCorrectionReferences must be present
-            on the annotationObject.")
+            stop(paste('All compound IDs in rtCorrectionReferences must be',
+                        'present on the annotationObject'))
         }
     }
     if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
-        stop("rtWindowWidth must be a positive number")
+        stop('rtWindowWidth must be a positive number')
     }
 
     return(rtCorrectionReferences)
@@ -2519,16 +2516,15 @@ rtCorrection_prepareTargetFeatTable <- function(newAnnotation,
     # Exclude features with mean rt_dev_sec = NA from the correction
     # function fitting
     if (any(is.na(referenceTable$rt_dev_sec))) {
-        warning(paste(c("The following references could not be integrated
-        previously and will be excluded: ",
-            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]),
-            collapse=", "))
+        warning(paste("The following references could not be integrated",
+            "previously and will be excluded:",
+            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]))
     }
     if (any(is.na(targetFeatTable$rt_dev_sec))) {
-        warning(paste(c("The following compounds could not be
-        integrated previously and will be not be corrected: ",
-        targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]),
-        collapse=", "))}
+        warning(paste("The following compounds could not be",
+            "integrated previously and will be not be corrected:",
+            targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]))
+    }
 
     return(list(targetFeatTable=targetFeatTable,
                 referenceTable=referenceTable))

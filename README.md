@@ -3,7 +3,7 @@
 # peakPantheR <img src="man/figures/peakPantheR-logo.png" align="right" />
 
 [![Build
-Status](https://travis-ci.org/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.org/phenomecentre/peakPantheR)
+Status](https://travis-ci.com/phenomecentre/peakPantheR.svg?branch=master)](https://travis-ci.com/phenomecentre/peakPantheR)
 [![codecov](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master/graph/badge.svg)](https://codecov.io/gh/phenomecentre/peakPantheR/branch/master)
 [![DOI](https://zenodo.org/badge/116680214.svg)](https://zenodo.org/badge/latestdoi/116680214)
 
