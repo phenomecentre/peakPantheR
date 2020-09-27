@@ -200,7 +200,7 @@ annotation_showText_UI_helper <- function(annotProp){
 #'
 #' @param cpdNb (int) position of the feature to extract (1 to nbCpd)
 #' @param annotation (peakPantheRAnnotation) Annotation object
-#' @param sampleNum (int) NULL or number of spectra to plot, chosen randomly
+#' @param splNum (int) NULL or number of spectra to plot, chosen randomly
 #' from all spectra. If NULL or equal to the total number of spectra, plot all
 #' spectra
 #' @param splColrColumn (str) NULL, None or a spectraMetadata column for

@@ -17,14 +17,14 @@ annotation_diagnostic_multiplot_UI_helper(
 
 \item{annotation}{(peakPantheRAnnotation) Annotation object}
 
+\item{splNum}{(int) NULL or number of spectra to plot, chosen randomly
+from all spectra. If NULL or equal to the total number of spectra, plot all
+spectra}
+
 \item{splColrColumn}{(str) NULL, None or a spectraMetadata column for
 colouring each sample}
 
 \item{...}{Additional parameters for plotting}
-
-\item{sampleNum}{(int) NULL or number of spectra to plot, chosen randomly
-from all spectra. If NULL or equal to the total number of spectra, plot all
-spectra}
 }
 \value{
 (ggplotObject) Diagnostic multiplot for a feature
