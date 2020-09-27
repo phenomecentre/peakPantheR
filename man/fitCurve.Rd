@@ -12,7 +12,7 @@ fitCurve(x, y, curveModel = "skewedGaussian", params = "guess")
 \item{y}{(numeric) y observed values (e.g. spectra intensity)}
 
 \item{curveModel}{(str) name of the curve model to fit (currently
-\code{skewedGaussian})}
+\code{skewedGaussian} and \code{emgGaussian})}
 
 \item{params}{(list or str) either 'guess' for automated parametrisation or
 list of initial parameters (\code{$init_params}), lower parameter bounds

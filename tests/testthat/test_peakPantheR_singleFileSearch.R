@@ -403,6 +403,8 @@ test_that('raise errors', {
   # save file is not a .png
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI, plotEICsPath=wrongOutputFormat), "Check input, plotEICsPath file name*")
 
+   # not implemented curveModel
+  expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI, curveModel='FakeModel'), "Error: \"curveModel\" must be one of: skewedGaussian, emgGaussian")
   # FIR is not a data.frame
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI, FIR=notADataFrame), "Check input, FIR must be a data.frame not character")
   # FIR has wrong number of rows

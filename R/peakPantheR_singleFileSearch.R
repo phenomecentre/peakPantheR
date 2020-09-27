@@ -32,6 +32,9 @@
 #' \code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
 #' @param centroided (bool) use TRUE if the data is centroided, used by
 #' \code{\link[MSnbase]{readMSData}} when reading the raw data file
+#' @param curveModel (str) specify the peak-shape model to fit,
+#' by default \code{skewedGaussian}.
+#' Accepted values are \code{skewedGaussian} and \code{emgGaussian}
 #' @param verbose (bool) If TRUE message calculation progress, time taken and
 #' number of features found
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
@@ -215,11 +218,11 @@
 #' @export
 peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL,
-    centroided = TRUE, verbose = TRUE, ...) {
+    centroided = TRUE, curveModel='skewedGaussian', verbose = TRUE, ...) {
     stime <- Sys.time()
     # Check input
     resInp <- singleFileSearch_checkInput(singleSpectraDataPath,targetFeatTable,
-                                            plotEICsPath, FIR)
+                                            plotEICsPath, FIR, curveModel)
     singleSpectraDataPath <- resInp$specPath
     plotEICsPath <- resInp$plotPath
     useFIR <- resInp$useFIR
@@ -246,14 +249,15 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
     # Integrate
     resInt <- singleFileSearch_integrate(raw_data, targetFeatTable,
-            ROIsDataPoint, peakStatistic, useFIR, FIR, plotEICsPath,verbose,...)
+            ROIsDataPoint, peakStatistic, useFIR, FIR, plotEICsPath,
+            curveModel, verbose,...)
     finalOutput <- resInt$finalOutput
     curveFit <- resInt$curveFit
 
     etime <- Sys.time()
     if (verbose) { message("Feature search done in: ",
-                            round(as.double(difftime(etime, stime)), 2), " ",
-                            units(difftime(etime, stime))) }
+                            round(as.double(difftime(etime, stime)), 2),
+                            " ", units(difftime(etime, stime))) }
     
     # clear variables
     rm(raw_data)
@@ -269,20 +273,18 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
 # Check inputs
 singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
-                                        plotEICsPath, FIR) {
+                                        plotEICsPath, FIR, curveModel) {
     singleSpectraDataPath <- normalizePath(singleSpectraDataPath,
                                             mustWork = FALSE)
     if (!file.exists(singleSpectraDataPath)) {
-        stop("Check input, file \"", singleSpectraDataPath, "\" does not exist")
-    }
+    stop("Check input, file \"", singleSpectraDataPath, "\" does not exist") }
 
     if (dim(targetFeatTable)[1] != 0) {
         # rtMin < rtMax and mzMin < mzMax
         if (!all(targetFeatTable[, "rtMax"] >= targetFeatTable[, "rtMin"])) {
             stop("Check input, \"rtMin\" must be <= to \"rtMax\"") }
         if (!all(targetFeatTable[, "mzMax"] >= targetFeatTable[, "mzMin"])) {
-            stop("Check input, \"mzMin\" must be <= to \"mzMax\"") }
-    }
+            stop("Check input, \"mzMin\" must be <= to \"mzMax\"") } }
 
     if (!is.na(plotEICsPath)) {
         plotEICsPath <- normalizePath(plotEICsPath, mustWork = FALSE)
@@ -293,8 +295,7 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
         # png extension
         if (stringr::str_sub(basename(plotEICsPath), start = -4) != ".png") {
             stop("Check input, plotEICsPath file name \"",
-                basename(plotEICsPath), "\" lacks a \".png\" extension") }
-    }
+                basename(plotEICsPath), "\" lacks a \".png\" extension") } }
 
     useFIR <- FALSE
     if (!is.null(FIR)) {
@@ -311,18 +312,24 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
                         '\"rtMin\" and \"rtMax\" as columns') }
         useFIR <- TRUE
     }
+    # known curveModel
+    known_curveModel <- c("skewedGaussian", "emgGaussian")
+    if (!(curveModel %in% known_curveModel)) {
+        stop(paste("Error: \"curveModel\" must be one of:",
+            paste(known_curveModel, collapse=', '))) }
+
     return(list(specPath=singleSpectraDataPath, plotPath=plotEICsPath,
                 useFIR=useFIR))
 }
 # Integrate if there is at minimum 1 target feature
 singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
-                        peakStatistic, useFIR, FIR, plotEICsPath, verbose, ...){
+                        peakStatistic, useFIR, FIR, plotEICsPath,
+                        curveModel, verbose, ...){
     if (dim(targetFeatTable)[1] != 0) { #Only integrate if there is min 1 target
         # Integrate features using ROI
-        foundPeaks <- findTargetFeatures(ROIsDataPoint,
-                                        targetFeatTable,
-                                        verbose = verbose,
-                                        ...)
+        foundPeaks <- findTargetFeatures(ROIsDataPoint, targetFeatTable,
+                                        curveModel=curveModel,
+                                        verbose = verbose, ...)
         foundPeakTable <- foundPeaks$peakTable
         curveFit <- foundPeaks$curveFit
         # Add compound information

@@ -1,24 +1,86 @@
 language: r
 cache: packages
 
-os:
-  - linux
-  - osx
 
-r:
-  - bioc-devel
-  - bioc-release
-
-matrix:
+jobs:
+  include:
+  - r: bioc-devel
+    os: linux
+  - r: bioc-devel
+    os: osx
+    before_install:
+      - brew update
+      - rm '/usr/local/bin/gfortran'
+      - brew install libgit2
+  - r: bioc-release
+    os: linux
+    before_install:
+      - cat DESCRIPTION
+      - export PACKAGE_NAME='peakPantheR'
+      - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
+      - echo ${RCHECK_DIR}
+    script:
+      - R CMD build .
+      - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
+      - R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
+      - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
+      - Rscript -e "message(devtools::check_failures(path = \"${RCHECK_DIR}\"))"
+      - if [[ $CHECK_RET -ne 0 ]];
+        then
+          echo "R CMD check failed";
+          travis_terminate 1;
+        fi
+      - grep -q -R "WARNING" "${RCHECK_DIR}/00check.log";
+        if [[ $? -eq 0 ]];
+        then
+          echo "Found warnings, treating as errors (as requested).";
+          exit 1;
+        fi
+  - r: bioc-release
+    os: osx
+    before_install:
+      - brew update
+      - rm '/usr/local/bin/gfortran'
+      - brew install libgit2
+      - cat DESCRIPTION
+      - export PACKAGE_NAME='peakPantheR'
+      - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
+      - echo ${RCHECK_DIR}
+    script:
+      - R CMD build .
+      - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
+      - R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
+      - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
+      - Rscript -e "message(devtools::check_failures(path = \"${RCHECK_DIR}\"))"
+      - if [[ $CHECK_RET -ne 0 ]];
+        then
+          echo "R CMD check failed";
+          travis_terminate 1;
+        fi
+      - grep -q -R "WARNING" "${RCHECK_DIR}/00check.log";
+        if [[ $? -eq 0 ]];
+        then
+          echo "Found warnings, treating as errors (as requested).";
+          exit 1;
+        fi
   allow_failures:
     - r: bioc-release
 
+
 bioc_required: true
 bioc_check: true
+warnings_are_errors: true
 
 r_packages:
+  - devtools
   - covr
   - faahKO
+  - testthat
+  - msdata
+  - knitr
+  - rmarkdown
+  - pander
+  - BiocStyle
 
 addons:
   apt:
@@ -27,9 +89,6 @@ addons:
       - netcdf-bin
       - libhdf5-dev
 
-before_install:
-  - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew update; fi"
-  - "if [ ${TRAVIS_OS_NAME} = 'osx' ]; then brew install libgit2; fi"
-
 after_success:
-  - Rscript -e 'library(covr); codecov(line_exclusions = "R/zzz.R")'
+  - "if [ ${TRAVIS_OS_NAME} != 'osx' ]; then Rscript -e 'library(covr); codecov(line_exclusions = list(\"R/zzz.R\", \"R/peakPantheR_start_GUI.R\"))'; fi"
+  - echo 'Done !'
