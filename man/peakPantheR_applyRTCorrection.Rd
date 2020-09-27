@@ -9,9 +9,7 @@ peakPantheR_applyRTCorrection(
     referenceTable,
     method = "polynomial",
     params = list(polynomialOrder = 3),
-    robust = TRUE,
-    verbose = TRUE,
-    ...
+    robust = TRUE
 )
 }
 \arguments{
@@ -35,13 +33,9 @@ Currently allowed inputs are \code{polynomialOrder} for
 
 \item{robust}{(bool) whether to use the RANSAC algorithm to flag and
 ignore outliers during retention time correction}
-
-\item{verbose}{(bool) If TRUE message progress of RT correction}
-
-\item{...}{optional method specific parameters}
 }
 \value{
-a targetFeatTable with corrected RT, or diagnostic information
+a targetFeatTable with corrected RT
 }
 \description{
 Correct targeted features retention time using the RT and RT deviation of
@@ -49,6 +43,4 @@ previously fitted compounds. The `method` and `params` are used to select and
 parametrise the retention time correction method employed. When `robust`
 is set to TRUE, the RANSAC algorithm is used
 to automatically flag outliers and robustify the correction function fitting.
-If `diagnostic` is TRUE, RT correction diagnostic plots are
-returned (specific to each correction method).
 }

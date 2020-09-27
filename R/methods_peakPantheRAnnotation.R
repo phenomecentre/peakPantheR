@@ -2449,8 +2449,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         peakPantheR_applyRTCorrection(
             targetFeatTable[!is.na(targetFeatTable$rt_dev_sec), ],
             referenceTable, method,
-            params, robust,
-            diagnostic=diagnostic)
+            params, robust)
 
     # Only compounds with measured rt_dev_sec can be adjusted
     newAnnotation@uROI[!is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-
