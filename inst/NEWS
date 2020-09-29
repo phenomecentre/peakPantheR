@@ -1,5 +1,7 @@
-Changes in version 1.3.2 (2020-09-27)
+Changes in version 1.3.3 (2020-09-30)
 + Shiny Graphical User Interface
+Changes in version 1.3.2 (2020-09-29)
++ Unittest numerical precision correction for Ubuntu 20.04.1 LTS
 Changes in version 1.3.1 (2020-09-21)
 + Retention time correction procedure based on reference compounds
 + Exponentially Modified Gaussian (EMG) peak fitting
