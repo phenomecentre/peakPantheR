@@ -29,7 +29,7 @@ test_that('fit emgGaussian, guess params, no lower, no upper', {
   result_fit    <- fitCurve(x=EIC$rt, y=EIC$int, curveModel='emgGaussian', params='guess')
 
   # Check results
-  expect_equal(result_fit, expected_fit, tolerance=1e-6)
+  expect_equal(result_fit, expected_fit, tolerance=1e-5)
 })
 
 
