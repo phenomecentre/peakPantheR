@@ -212,32 +212,10 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
                                         splNum=NULL, splColrColumn=NULL, ...) {
     # subset the compound and sample according to inputs
     tmp_annotat <- subset_annot_diag_plot_UI_helper(cpdNb, annotation, splNum)
-    # convert sampleColourColumn to a colour scale to use
-    if (is.null(splColrColumn)) {
-        sampleColour <- NULL
-    } else if (splColrColumn=='None') { # separate for case not set yet
-        sampleColour <- NULL
-    } else if (!(splColrColumn %in% colnames(
-        peakPantheR::spectraMetadata(tmp_annotat)))) {
-        sampleColour <- NULL
-    } else {
-        # extract metadata column of interest and unique colours needed
-        tmp_meta <- peakPantheR::spectraMetadata(tmp_annotat)[[splColrColumn]]
-        uniq_val <- unique(tmp_meta)
-        n_colr   <- length(uniq_val)
 
-        # known colors (repeat if more groups than colours available)
-        colorVect <- c("blue", "red", "green", "orange", "purple", "seagreen",
-                        "darkturquoise", "violetred", "saddlebrown", "black")
-        if (length(colorVect) < n_colr) {
-            colorVect <- rep(colorVect, ceiling(n_colr/length(colorVect)))
-        }
-        # iteratively replace values by colours
-        for (i in seq_len(n_colr)) {
-            tmp_meta <- replace(tmp_meta, tmp_meta==uniq_val[i], colorVect[i])
-        }
-        sampleColour <- tmp_meta
-    }
+    # convert sampleColourColumn to a colour scale to use
+    sampleColour <- spectra_metadata_colourScheme_UI_helper(tmp_annotat,
+                                                            splColrColumn)
 
     # diagnostic plots
     tmp_diagPlotList <- annotationDiagnosticPlots(tmp_annotat,
@@ -321,3 +299,79 @@ annotation_fit_summary_UI_helper <- function(annot) {
 
     return(summary)
 }
+
+
+#' UI export helper - spectra path and metadata
+#'
+#' Return a table with spectra as rows and filepath and all spectra metadata
+#' columns
+#'
+#' @param annot (peakPantheRAnnotation) Annotation object
+#'
+#' @return (data.frame) Spectra paths and metadata
+outputAnnotationSpectraMetadata_UI_helper <- function(annot) {
+    # collect the data
+    tmp_filepath        <- filepath(annot)
+    tmp_spectraMetadata <- spectraMetadata(annot)
+
+    # generate table
+    outSpecMeta <- data.frame(filepath = tmp_filepath)
+    outSpecMeta <- cbind(outSpecMeta, tmp_spectraMetadata)
+
+    return(outSpecMeta)
+}
+
+
+#' UI export helper - feature metadata
+#'
+#' Return a table with features as rows and all feature metadata as columns
+#'
+#' @param annot (peakPantheRAnnotation) Annotation object
+#'
+#' @return (data.frame) Features metadata
+outputAnnotationFeatureMetadata_UI_helper <- function(annot) {
+    # collect the data
+    outCpdMetadata <- cpdMetadata(annot)
+
+    return(outCpdMetadata)
+}
+
+#' UI export plot helper - sample colour
+#'
+#' Return a vector of spectra colours based on a metadata column
+#'
+#' @param annotation (peakPantheRAnnotation) Annotation object
+#' @param splColrColumn (str) NULL, None or a spectraMetadata column for
+#' colouring each sample
+#'
+#' @return (character) Vector of colours
+spectra_metadata_colourScheme_UI_helper <- function(annot,splColrColumn=NULL) {
+    # convert sampleColourColumn to a colour scale to use
+    if (is.null(splColrColumn)) {
+        sampleColour <- NULL
+    } else if (splColrColumn=='None') { # separate for case not set yet
+        sampleColour <- NULL
+    } else if (!(splColrColumn %in% colnames(
+        peakPantheR::spectraMetadata(annot)))) {
+        sampleColour <- NULL
+    } else {
+        # extract metadata column of interest and unique colours needed
+        tmp_meta <- peakPantheR::spectraMetadata(annot)[[splColrColumn]]
+        uniq_val <- unique(tmp_meta)
+        n_colr   <- length(uniq_val)
+
+        # known colors (repeat if more groups than colours available)
+        colorVect <- c("blue", "red", "green", "orange", "purple", "seagreen",
+                        "darkturquoise", "violetred", "saddlebrown", "black")
+        if (length(colorVect) < n_colr) {
+            colorVect <- rep(colorVect, ceiling(n_colr/length(colorVect)))
+        }
+        # iteratively replace values by colours
+        for (i in seq_len(n_colr)) {
+            tmp_meta <- replace(tmp_meta, tmp_meta==uniq_val[i], colorVect[i])
+        }
+        sampleColour <- tmp_meta
+    }
+
+    return(sampleColour)
+} # TODO: unittest, integrate into previous function

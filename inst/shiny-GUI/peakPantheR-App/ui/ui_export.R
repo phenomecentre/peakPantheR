@@ -21,40 +21,52 @@ tabPanel("Export results",
         # Row export inputs
         fluidRow(
           column(4,
-            # TODO: export .RData
-          ), # end column
-          column(4,
-            # TODO: export text .csv(s)
-          ), # end column
-          column(4,
-            # TODO: export .csv(s) boxes
-          ) # end column
+            wellPanel(
+              h4("Save annotation as .rData:"),
+              helpText("Create a .RData file containing the annotation results as a peakPantheRAnnotation named ",em("annotationObject")," for future importation and analysis.", style="color:#666666"),
+              uiOutput("dlRData")
+            )  # end wellPanel
+          ),   # end column
+          column(8,
+            wellPanel(
+              fluidRow(
+                column(5,
+                  h4("Save input parameters as .CSV:"),
+                  helpText("Save the ",
+                           em("fit parameters")," defining the targeted features, the ",
+                           em("files to process")," defining file paths and spectra metadata, as well as the",
+                           em("targeted features metadata"),
+                           ". These CSV files enable the reproduction of the current annotation, but does not contain annotation results", style="color:#666666"),
+                ), # end column
+                column(7,
+                  uiOutput("dlCSVs")
+                ) # end column
+              ) # end fluidRow
+            )   # end wellPanel
+          ),    # end column
+
         ),  # end fluidRow Export inputs
         tags$hr(),
         br(),
 
         h3("Export Annotation Results and Diagnostic Plots",style="color:#3e648d;font-weight:bold"),
-        helpText("Automated summarisation step, only possible if Shiny is running on a local machine.", style="color:#666666"), # See ",em("Code")," to run from the command line.
-        # TODO: fix the text for annotation result output
+        helpText("Automated summarisation step (diagnostic and results), only possible if Shiny is running on a local machine.", style="color:#666666"), # See ",em("Code")," to run from the command line.
 
         # Row export results
         fluidRow(
           column(6,
             h4("Save Diagnostic Plots:"),
-            helpText("Stores all P-values calculated in multiple ",em(".csv")," file. ( default",em("summary_pvalue-all.csv"),")", style="color:#666666")
-          # TODO: change Export Diagnostic plots text
+            helpText("Plots and save to disk a diagnotic plot for each targeted feature. Each spectra can be coloured based on one of the metadata column previously defined.", style="color:#666666")
           ), # end column
           column(6,
             h4("Save Annotation Values:"),
-            helpText("Plots and save to disk all variables with a P-value inferior to a given cut-off.", style="color:#666666")
-          # TODO: change Export Annotation Values text
+            helpText("Saves the annotation results to disk in multiple ",em(".csv")," files containing the compound metadata, spectra metadata and a table for each annotation (fit) property", em("(samples as rows and compounds as columns)"), ".", style="color:#666666")
           ) # end column
         ),  # end fluidRow Export results Text
 
         # The result export panel only exist if annotation took place
         column(12,
-          uiOutput("exportPvalFigUI"),
-          # TODO: a result export panel only appearing if is annotated!
+          uiOutput("exportDiagResUI"),
         tags$hr()
         )   # end column export results
 

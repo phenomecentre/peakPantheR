@@ -92,7 +92,7 @@ output$curveModelSelectInput <- renderUI({
                   selected = NULL, # will be peakPantheR::curveModel(values$annotation))
                   multiple = FALSE)
   )
-}) # TODO: curveModel selectInput selectis set correctly
+})
 
 # Cpu slider appears if parallelisation is selected
 output$cpuSlider <- renderUI({
@@ -122,9 +122,9 @@ observeEvent(input$goAnnotation, {
                                                  useUROI=tmp_useUROI,
                                                  useFIR=input$useFIR,
                                                  verbose=FALSE)
-  # TODO: add here the change of curveModel
   ## Annotate!
-  result <- peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), verbose=TRUE)
+  result <- peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), curveModel=input$curveModel, verbose=TRUE)
+
   # Store the annotation and failures into the reactiveValue
   values$annotation <- result$annotation
   values$failures   <- result$failures
