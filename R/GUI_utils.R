@@ -340,7 +340,7 @@ outputAnnotationFeatureMetadata_UI_helper <- function(annot) {
 #'
 #' Return a vector of spectra colours based on a metadata column
 #'
-#' @param annotation (peakPantheRAnnotation) Annotation object
+#' @param annot (peakPantheRAnnotation) Annotation object
 #' @param splColrColumn (str) NULL, None or a spectraMetadata column for
 #' colouring each sample
 #'

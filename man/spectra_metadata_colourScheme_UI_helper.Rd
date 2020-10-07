@@ -10,10 +10,10 @@ spectra_metadata_colourScheme_UI_helper(
 )
 }
 \arguments{
+\item{annot}{(peakPantheRAnnotation) Annotation object}
+
 \item{splColrColumn}{(str) NULL, None or a spectraMetadata column for
 colouring each sample}
-
-\item{annot}{(peakPantheRAnnotation) Annotation object}
 }
 \value{
 (character) Vector of colours

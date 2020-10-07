@@ -205,7 +205,7 @@ output$cpuSliderDiag <- renderUI({
   )
 })
 # correction when slider doesn't appear
-ncoresInputDiag <- reactive ({
+ncoresInputPlot <- reactive ({
   if( input$parallelisationDiag != 0 ) { input$ncoresDiag }
   else { return(0) }
 })
@@ -239,40 +239,40 @@ savePlotOnTrigger <- eventReactive( input$save_plot, {
                              saveFolder = input$targetFolderSave,
                              savePlots = TRUE,
                              sampleColour = spectra_metadata_colourScheme_UI_helper(values$annotation, input$plotMetaSplColrDiag),
-                             ncores = input$ncoresInputDiag,
+                             ncores = ncoresInputPlot(),
                              verbose = TRUE)
+  return(list('done'))
 })
 # TODO: trigger plots
 ## Save result csv
-saveReslOnTrigger <- eventReactive( input$save_resultCSV, {
+saveResOnTrigger <- eventReactive( input$save_resultCSV, {
   outputAnnotationResult(values$annotation,
                          saveFolder = input$targetFolderSave,
                          annotationName = input$projectName,
                          verbose = TRUE)
+  return(list('done'))
 })
 # TODO: trigger results
 
-
-# If save P-value is successful
+# If save Plot is successful
 output$successSavePlot <- renderUI({
-if( !is.null(savePlotOnTrigger()) ){
-  if( is.list(savePlotOnTrigger()) ){
-    return(
-      HTML("<div class=\"alert alert-dismissible alert-success\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4>Success</h4><p>Diagnostic plots saved to disk.</p></div>")
-    )
+  if( !is.null(savePlotOnTrigger()) ){
+    if( is.list(savePlotOnTrigger()) ){
+      return(
+        HTML("<div class=\"alert alert-dismissible alert-success\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4>Success</h4><p>Plots saved to disk.</p></div>")
+      )
+    }
   }
-}
-return(NULL)
-}) # TODO: Check message on success Plot
-
+  return(NULL)
+}) # TODO: Check message on success plot
 # If save Plot is successful
 output$successSaveCSV <- renderUI({
-if( !is.null(saveReslOnTrigger()) ){
-  if( is.list(saveReslOnTrigger()) ){
-    return(
-      HTML("<div class=\"alert alert-dismissible alert-success\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4>Success</h4><p>Results saved to disk.</p></div>")
-    )
+  if( !is.null(saveResOnTrigger()) ){
+    if( is.list(saveResOnTrigger()) ){
+      return(
+        HTML("<div class=\"alert alert-dismissible alert-success\"> <button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4>Success</h4><p>Results saved to disk.</p></div>")
+      )
+    }
   }
-}
-return(NULL)
+  return(NULL)
 }) # TODO: Check message on success CSV
