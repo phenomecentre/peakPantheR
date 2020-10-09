@@ -137,8 +137,6 @@ observeEvent(input$goAnnotation, {
   # Set a list of filename (sample list)
   values$filename           <- peakPantheR::filename(values$annotation)
 })
-# TODO: CHECK the resulting annotation
-# TODO: CHECK that we can rerun
 
 
 ## Progress bar

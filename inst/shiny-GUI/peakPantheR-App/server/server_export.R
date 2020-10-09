@@ -59,7 +59,6 @@ output$dlRData <- renderUI({
       )
   )
 })
-# TODO: Check exported rData
 
 # export inputs as CSVs
 output$downloadCSVFitParam <- downloadHandler(
@@ -243,7 +242,6 @@ savePlotOnTrigger <- eventReactive( input$save_plot, {
                              verbose = TRUE)
   return(list('done'))
 })
-# TODO: trigger plots
 ## Save result csv
 saveResOnTrigger <- eventReactive( input$save_resultCSV, {
   outputAnnotationResult(values$annotation,
@@ -252,7 +250,6 @@ saveResOnTrigger <- eventReactive( input$save_resultCSV, {
                          verbose = TRUE)
   return(list('done'))
 })
-# TODO: trigger results
 
 # If save Plot is successful
 output$successSavePlot <- renderUI({
@@ -264,7 +261,7 @@ output$successSavePlot <- renderUI({
     }
   }
   return(NULL)
-}) # TODO: Check message on success plot
+})
 # If save Plot is successful
 output$successSaveCSV <- renderUI({
   if( !is.null(saveResOnTrigger()) ){
@@ -275,4 +272,4 @@ output$successSaveCSV <- renderUI({
     }
   }
   return(NULL)
-}) # TODO: Check message on success CSV
+})

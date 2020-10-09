@@ -10,7 +10,7 @@
 # check input but doesn't validate inputs
 
 # Default annotation as reactiveValue
-values <- reactiveValues(annotation = NULL, failures = NULL, featNmeList = NULL)
+values <- reactiveValues(annotation = NULL, failures = NULL, featNmeList = NULL, spectraMetadataCol = NULL, filename = NULL)
 
 # New annotation
 observeEvent(input$triggerImportNewAnnotation, {
@@ -31,8 +31,20 @@ observeEvent(input$triggerImportNewAnnotation, {
     error = function(e) {
       stopApp(e[[1]])
     })
+
     # valid_peakPantheRAnnotation() is part of annotation creation
     values$annotation <- res_data
+
+    ## Need to add metadata needed later
+    # Set a list of feature name for later use
+    values$featNmeList        <- paste(cpdID(values$annotation), cpdName(values$annotation), sep=' - ')
+    names(values$featNmeList) <- seq_len(length(values$featNmeList))
+    # Set a list of spectraMetadata columns (+ None)
+    tmp_splCol                <- c(list('None'), colnames(peakPantheR::spectraMetadata(values$annotation)))
+    values$spectraMetadataCol <- tmp_splCol
+    # Set a list of filename (sample list)
+    values$filename           <- peakPantheR::filename(values$annotation)
+
   } # end if
 })  # end New Annotation
 
@@ -47,8 +59,20 @@ observeEvent(input$triggerLoadPreviousAnnotation, {
     error = function(e) {
       stopApp(e[[1]])
     })
+
     # no validation on load (cannot guarantee annotation is valid)
     values$annotation <- res_data
+
+    ## Need to add metadata needed later
+    # Set a list of feature name for later use
+    values$featNmeList        <- paste(cpdID(values$annotation), cpdName(values$annotation), sep=' - ')
+    names(values$featNmeList) <- seq_len(length(values$featNmeList))
+    # Set a list of spectraMetadata columns (+ None)
+    tmp_splCol                <- c(list('None'), colnames(peakPantheR::spectraMetadata(values$annotation)))
+    values$spectraMetadataCol <- tmp_splCol
+    # Set a list of filename (sample list)
+    values$filename           <- peakPantheR::filename(values$annotation)
+
   } # end if
 })  # end Load Annotation
 

@@ -336,6 +336,7 @@ outputAnnotationFeatureMetadata_UI_helper <- function(annot) {
     return(outCpdMetadata)
 }
 
+
 #' UI export plot helper - sample colour
 #'
 #' Return a vector of spectra colours based on a metadata column
@@ -374,4 +375,4 @@ spectra_metadata_colourScheme_UI_helper <- function(annot,splColrColumn=NULL) {
     }
 
     return(sampleColour)
-} # TODO: unittest, integrate into previous function
+} # TODO: unittest

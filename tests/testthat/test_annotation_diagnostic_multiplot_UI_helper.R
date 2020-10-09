@@ -155,25 +155,6 @@ test_that('splColrColum is not a spectraMetadata column name', {
   expect_equal(length(result_multiplot$result[[1]]), 9)
 })
 
-test_that('splColrColum is not a spectraMetadata column name', {
-  # input
-  input_annotation  <- filledAnnotation
-  # expected
-  gtable_class      <- sort(c("gtable", "gTree", "grob", "gDesc"))
-
-  # results (output, warnings and messages)
-  result_multiplot  <- evaluate_promise(
-      annotation_diagnostic_multiplot_UI_helper(cpdNb = 2,
-                                                annotation = input_annotation,
-                                                splColrColumn = 'notAColumn')
-  )
-
-  # Check plots generated
-  expect_equal(length(result_multiplot$result), 1)
-  expect_equal(sort(class(result_multiplot$result[[1]])), gtable_class)
-  expect_equal(length(result_multiplot$result[[1]]), 9)
-})
-
 test_that('splColrColum is a spectraMetadata column name', {
   # input
   input_annotation  <- filledAnnotation
@@ -236,4 +217,80 @@ test_that('12 unique colour (recycle colour palette)', {
   expect_equal(length(result_multiplot$result[[1]]), 9)
 })
 
-# TODO: add NULL, test splNum works with warnings
+test_that('splNum set a value', {
+  # input
+  input_annotation  <- filledAnnotation
+  # expected
+  gtable_class      <- sort(c("gtable", "gTree", "grob", "gDesc"))
+  expected_warn     <- character(0)
+  expected_msg      <- character(0)
+
+  # results (output, warnings and messages)
+  result_multiplot  <- evaluate_promise(
+      annotation_diagnostic_multiplot_UI_helper(cpdNb = 2,
+                                                annotation = input_annotation,
+                                                splNum = 2,
+                                                splColrColumn = NULL)
+  )
+
+  # check message
+  expect_equal(result_multiplot$warnings, expected_warn)
+  expect_equal(result_multiplot$messages, expected_msg)
+
+  # Check plots generated
+  expect_equal(length(result_multiplot$result), 1)
+  expect_equal(sort(class(result_multiplot$result[[1]])), gtable_class)
+  expect_equal(length(result_multiplot$result[[1]]), 9)
+})
+
+test_that('splNum negative value, warning', {
+  # input
+  input_annotation  <- filledAnnotation
+  # expected
+  gtable_class      <- sort(c("gtable", "gTree", "grob", "gDesc"))
+  expected_warn     <- "Negative number of samples to show, 1 spectra will be shown!"
+  expected_msg      <- character(0)
+
+  # results (output, warnings and messages)
+  result_multiplot  <- evaluate_promise(
+      annotation_diagnostic_multiplot_UI_helper(cpdNb = 2,
+                                                annotation = input_annotation,
+                                                splNum = -1,
+                                                splColrColumn = NULL)
+  )
+
+  # check message
+  expect_equal(result_multiplot$warnings, expected_warn)
+  expect_equal(result_multiplot$messages, expected_msg)
+
+  # Check plots generated
+  expect_equal(length(result_multiplot$result), 1)
+  expect_equal(sort(class(result_multiplot$result[[1]])), gtable_class)
+  expect_equal(length(result_multiplot$result[[1]]), 9)
+})
+
+test_that('splNum > nbSpl, warning', {
+  # input
+  input_annotation  <- filledAnnotation
+  # expected
+  gtable_class      <- sort(c("gtable", "gTree", "grob", "gDesc"))
+  expected_warn     <- "More samples to show than available, all spectra will be shown!"
+  expected_msg      <- character(0)
+
+  # results (output, warnings and messages)
+  result_multiplot  <- evaluate_promise(
+      annotation_diagnostic_multiplot_UI_helper(cpdNb = 2,
+                                                annotation = input_annotation,
+                                                splNum = 5,
+                                                splColrColumn = NULL)
+  )
+
+  # check message
+  expect_equal(result_multiplot$warnings, expected_warn)
+  expect_equal(result_multiplot$messages, expected_msg)
+
+  # Check plots generated
+  expect_equal(length(result_multiplot$result), 1)
+  expect_equal(sort(class(result_multiplot$result[[1]])), gtable_class)
+  expect_equal(length(result_multiplot$result[[1]]), 9)
+})
