@@ -170,7 +170,8 @@
 <ul>
   <li><b>Data Import:</b> Load a list of regions of interest and files to process.</li>
   <li><b>Detection and integration:</b> Detect features in each region of interest, integrate and calculate peak statistics</li>
-  <li><b>Diagnostic:</b> Update regions of interest, plot the resulting fits and return the corresponding statistics</li>
+  <li><b>Diagnostic:</b> Plot the resulting fits and update regions of interest,  and return the corresponding statistics</li>
+  <li><b>View results:</b> Explore the fitting results across samples or features</li>
   <li><b>Export:</b> Save the integration values and fit statistics, plot the extracted ion chromatograms</li>
 </ul>
 <p>Abbreviations:</p>
@@ -271,17 +272,22 @@
 </ul>
 <p>The output object will be initialised with the targeted ROI and file paths.</p>
 
-<h3 style="color:#3e648d;font-weight:bold">2 - Detection and Integration</h3>
+<h3 style="color:#3e648d;font-weight:bold">2 - Run annotation: detection and integration</h3>
 <p>Once the object is initialised, the data can be processed.</p>
 <p>For each file, features in each region of interest are detected, the highest intensity feature is integrated and peak statistics determined.</p>
 <p>Results and EICs for each ROI are stored in the output object.</p>
 
-<h3 style="color:#3e648d;font-weight:bold">3 - Diagnostic</h3>
-<p>Based on the results obtained, updated regions of interest (uROI) and fallback integration regions (FIR, <i>if no feature is detected (median <code>RT</code> / <code>m/z</code> start and end of found features</i>)) can be determined.</p>
-<p>The resulting fit can be visually inspected and diagnostic plots (all EICs, peak apex <code>RT</code> / <code>m/z</code> and peak width evolution) generated.</p>
+<h3 style="color:#3e648d;font-weight:bold">3 - Diagnostic: plot & update</h3>
+<p>Visually inspect the quality of fit for each features across all samples.</p>
+<p>Based on the results obtained, updated regions of interest (uROI) and fallback integration regions (FIR) an be determined. (<i>if no feature is detected the median <code>RT</code> / <code>m/z</code> start and end of the found features is set</i>)</p>
 
-<h3 style="color:#3e648d;font-weight:bold">4 - Export</h3>
-<p>The integration values (<i>row</i>: file, <i>col</i>: compound), fit statistics, EIC plots and resulting object can be saved.</p>
+<h3 style="color:#3e648d;font-weight:bold">4 - View results</h3>
+<p>Summarise all integration results across all samples and all features.</p>
+<p>Integration properties (e.g. peak found, peak area, peak apex <code>RT</code> / <code>m/z</code>) can be assessed individually.</p>
+
+<h3 style="color:#3e648d;font-weight:bold">5 - Export results</h3>
+<p>Export an annotation object or parameter files to reload the annotation at a later stage.</p>
+<p>Save integration values (<i>row</i>: file, <i>col</i>: compound), fit statistics, and EIC plots.</p>
 
 <h3 style="color:#3e648d;font-weight:bold">Copyright</h3>
 <p>The present software is licensed under GPLv3.<br/>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or

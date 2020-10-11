@@ -1,6 +1,6 @@
 # RUN - Tab panel  ----------------------------------------------------------- #
 
-tabPanel("Run",
+tabPanel("Run annotation",
   # Conditional UI based on import successfully initialised
   uiOutput("noImportForFitUI"),
   conditionalPanel(

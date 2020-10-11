@@ -1,6 +1,6 @@
 # Results - Tab panel  ---------------------------------------------------- #
 
-tabPanel("Integration results",
+tabPanel("View results",
 
   # Conditional UI based on import successfully initialised
   uiOutput("notAnnotForResUI"),

@@ -1,6 +1,6 @@
 # DIAGNOSTIC - Tab panel  ---------------------------------------------------- #
 
-tabPanel("Diagnostic: update and plots",
+tabPanel("Diagnostic: plot & update",
 
   # Conditional UI based on import successfully initialised
   uiOutput("notAnnotForDiagUI"),

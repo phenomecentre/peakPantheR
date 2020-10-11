@@ -25,7 +25,7 @@ observeEvent(input$triggerImportNewAnnotation, {
       initialise_annotation_from_files_UI_helper(CSVParamPath = input$CSVParamPath$datapath,
                                                  spectraPaths = spectraInfo$spectra,
                                                  cpdMetadataPath = input$cpdMetadataPath$datapath,
-                                                 spectraMetadata = spectraInfo$meta$datapath,
+                                                 spectraMetadata = spectraInfo$meta,
                                                  verbose = FALSE)
     },
     error = function(e) {
