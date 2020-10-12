@@ -152,7 +152,8 @@ $~$
 
 With all features integrated in all samples, **Diagnostic** provide tools to 
 assess the quality of the peak integration and refine integration boundaries by 
-setting `uROI` and `FIR` adapted to the
+setting `uROI` and `FIR` adapted to the specific chromatographic run being 
+processed.
 
 $~$
 
@@ -198,7 +199,7 @@ $~$
 
 ## View results
 
-If the features integrations are satisfactory, **View results** regroups all 
+If the features integration are satisfactory, **View results** regroups all 
 the integration results
 
 $~$
