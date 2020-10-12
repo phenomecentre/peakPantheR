@@ -10,7 +10,8 @@
 #' established depending on the uROI columns present in the CSV and will be set
 #' to \code{TRUE} only if no \code{NA} are present
 #' 
-#' @param CSVParamPath (str) Path to a CSV file of fit parameters
+#' @param CSVParamPath (str) Path to a CSV file of fit parameters (e.g. as
+#' saved by \code{outputAnnotationDiagnostic})
 #' @param verbose (bool) If TRUE message progress
 #' 
 #' @return (peakPantheRAnnotation) Object initialised with ROI, uROI and FIR

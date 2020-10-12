@@ -3,7 +3,7 @@
 # peakPantheR-App
 # Based on peakPantheR v1.3.0, R >= 4.0, shiny >= 1.0.5, shinythemes >= 1.1.1
 # National Phenome Centre
-# 24/05/2020
+# 11/10/2020
 # Licensed under GPLv3	
 #
 # Copyright (C) {2020}  {National Phenome Centre}
