@@ -7,8 +7,7 @@
 peakPantheR_loadAnnotationParamsCSV(CSVParamPath, verbose = TRUE)
 }
 \arguments{
-\item{CSVParamPath}{(str) Path to a CSV file of fit parameters as saved by
-\code{outputAnnotationDiagnostic}}
+\item{CSVParamPath}{(str) Path to a CSV file of fit parameters}
 
 \item{verbose}{(bool) If TRUE message progress}
 }

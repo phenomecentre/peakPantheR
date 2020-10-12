@@ -92,35 +92,68 @@ filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths
 
 
 
-test_that('csv output, verbose, no verbose', {
+test_that('csv output (default), verbose, no verbose', {
   # temporary file
   savePath1         <- tempdir()
-  
+
   # input
   input_annotation  <- filledAnnotation
-  
+
   # expected
   expected_path     <- file.path(savePath1, "annotationParameters_summary.csv")
   expected_CSV      <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
   expected_CSV[1,]  <- c('ID-1', 'Cpd 1', '|', 3344.888, 522.2, 3310., 3390., 522.194778, 522.205222, '|', 9., 11., 12., 14., 10., 13., '|',  1., 2., 3., 4.)
   expected_CSV[2,]  <- c('ID-2', 'Cpd 2', '|', 3385.577, 496.2, 3280., 3440., 496.195038, 496.204962, '|', 15., 17., 18., 20., 16., 19., '|', 5., 6., 7., 8.)
   expected_CSV[,-c(1,2,3,10,17)]  <- sapply(expected_CSV[,-c(1,2,3,10,17)], as.numeric)
-  
+
   # results (output, warnings and messages)
   result_save     <- evaluate_promise(outputAnnotationParamsCSV(input_annotation, saveFolder=savePath1, verbose=TRUE))
-  
+
   # Check CSV has been produced
   expect_true(file.exists(expected_path))
-  
+
   # Check values saved
   saved_CSV       <- read.csv(expected_path, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_CSV, expected_CSV)
-  
+
   # Check result messages (save path)
   expect_equal(length(result_save$messages), 1)
-  
+
   ## no verbose
   savePath2       <- tempdir()
   result_save2    <- evaluate_promise(outputAnnotationParamsCSV(input_annotation, saveFolder=savePath2, verbose=FALSE))
   expect_equal(length(result_save2$messages), 0)
 })
+
+test_that('return table but do not save to disk (noSave)', {
+  # should no save to disk, shouldn't have a verbose output of the save
+
+  # temporary file
+  savePath3         <- tempdir()
+  # clear temporary file
+  suppressWarnings(do.call(file.remove, list(list.files(savePath3, full.names = TRUE))))
+
+  # input
+  input_annotation  <- filledAnnotation
+
+  # expected
+  expected_CSV      <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
+  expected_CSV[1,]  <- c('ID-1', 'Cpd 1', '|', 3344.888, 522.2, 3310., 3390., 522.194778, 522.205222, '|', 9., 11., 12., 14., 10., 13., '|',  1., 2., 3., 4.)
+  expected_CSV[2,]  <- c('ID-2', 'Cpd 2', '|', 3385.577, 496.2, 3280., 3440., 496.195038, 496.204962, '|', 15., 17., 18., 20., 16., 19., '|', 5., 6., 7., 8.)
+  expected_CSV[,-c(1,2,3,10,17)]  <- sapply(expected_CSV[,-c(1,2,3,10,17)], as.numeric)
+  colnames(expected_CSV) <- c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax')
+
+  # results (output, warnings and messages)
+  result_save     <- evaluate_promise(outputAnnotationParamsCSV(input_annotation, saveFolder=savePath3, verbose=TRUE, noSave=TRUE))
+
+  # Check CSV has NOT been produced
+  expected_path   <- file.path(savePath3, "annotationParameters_summary.csv")
+  expect_false(file.exists(expected_path))
+
+  # Check values returned
+  expect_equal(result_save$result, expected_CSV)
+
+  # Check result messages (expect no save path)
+  expect_equal(length(result_save$messages), 0)
+})
+

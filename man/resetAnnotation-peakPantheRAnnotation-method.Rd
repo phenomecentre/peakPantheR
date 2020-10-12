@@ -7,11 +7,20 @@
 \title{Reset a peakPantheRAnnotation and alter samples and compounds
 information}
 \usage{
-\S4method{resetAnnotation}{peakPantheRAnnotation}(previousAnnotation,
-    spectraPaths = NULL, targetFeatTable = NULL, uROI = NULL,
-    FIR = NULL, cpdMetadata = NULL, spectraMetadata = NULL,
-    uROIExist = NULL, useUROI = NULL, useFIR = NULL, verbose = TRUE,
-    ...)
+\S4method{resetAnnotation}{peakPantheRAnnotation}(
+    previousAnnotation,
+    spectraPaths = NULL,
+    targetFeatTable = NULL,
+    uROI = NULL,
+    FIR = NULL,
+    cpdMetadata = NULL,
+    spectraMetadata = NULL,
+    uROIExist = NULL,
+    useUROI = NULL,
+    useFIR = NULL,
+    verbose = TRUE,
+    ...
+)
 }
 \arguments{
 \item{previousAnnotation}{(peakPantheRAnnotation) object to reset}

@@ -6,8 +6,12 @@
 \alias{outputAnnotationParamsCSV}
 \title{Save annotation parameters as CSV}
 \usage{
-\S4method{outputAnnotationParamsCSV}{peakPantheRAnnotation}(object,
-    saveFolder, verbose)
+\S4method{outputAnnotationParamsCSV}{peakPantheRAnnotation}(
+    object,
+    saveFolder,
+    verbose,
+    noSave
+)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}
@@ -16,6 +20,9 @@
 will be saved}
 
 \item{verbose}{(bool) If TRUE message progress}
+
+\item{noSave}{(bool) If TRUE the resulting table will be returned without
+saving to disk}
 }
 \value{
 None

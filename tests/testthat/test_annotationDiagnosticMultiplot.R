@@ -267,11 +267,11 @@ test_that('raise warnings/error', {
   expect_equal(length(result_warn8$result[[2]]), 9)
   
   # missing title for cpd 1
-  input_missareaHistogram      <- input_annotationDiagnosticPlotList
-  input_missareaHistogram[[1]] <- input_missareaHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram")]
-  result_warn8                <- evaluate_promise(annotationDiagnosticMultiplot(input_missareaHistogram))
-  expect_equal(result_warn8$message[[1]], expected_message)
-  expect_equal(result_warn8$result[[1]], NULL)
-  expect_equal(sort(class(result_warn8$result[[2]])), gtable_class)
-  expect_equal(length(result_warn8$result[[2]]), 9)
+  input_misstitleHistogram      <- input_annotationDiagnosticPlotList
+  input_misstitleHistogram[[1]] <- input_misstitleHistogram[[1]][c("EICFit", "rtPeakwidthVert", "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder", "areaRunOrder", "rtHistogram", "mzHistogram", "areaHistogram")]
+  result_warn9                <- evaluate_promise(annotationDiagnosticMultiplot(input_misstitleHistogram))
+  expect_equal(result_warn9$message[[1]], expected_message)
+  expect_equal(result_warn9$result[[1]], NULL)
+  expect_equal(sort(class(result_warn9$result[[2]])), gtable_class)
+  expect_equal(length(result_warn9$result[[2]]), 9)
 })
