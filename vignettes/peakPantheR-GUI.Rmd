@@ -82,6 +82,7 @@ peakPantheR_start_GUI(browser = TRUE)
 **Run annotation**, **Diagnostic: plot & update**, **View results** and 
 **Export results**.
 
+$~$
 
 # Graphical User Interface
 ## Import
@@ -95,6 +96,7 @@ section for more details_).
 knitr::include_graphics("../man/figures/01-import_RData.png")
 ```
 
+$~$
 
 The second input format consists of multiple `.csv` files describing the 
 targeted features, spectra to process and corresponding metadata (optional). 
@@ -104,7 +106,7 @@ Spectra can also be directly selected on disk.
 knitr::include_graphics("../man/figures/02-import_CSV.png")
 ```
 
-
+$~$
 
 ## Run Annotation
 
@@ -121,7 +123,7 @@ employ for parallel file access and processing.
 knitr::include_graphics("../man/figures/03-Run_annotation.png")
 ```
 
-
+$~$
 
 ## Diagnostic: plot & update
 
@@ -146,9 +148,13 @@ stretch further than the minimum and maximum bound (_RT_ / _m/z_) of all found
 peaks across all samples for a given feature: this way no excess signal will be 
 considered.
 
+$~$
+
 With all features integrated in all samples, **Diagnostic** provide tools to 
 assess the quality of the peak integration and refine integration boundaries by 
 setting `uROI` and `FIR` adapted to the
+
+$~$
 
 `Annotation statistics` summarises the success in integrating each targeted 
 feature. The `ratio of peaks found (%)`, `ratio of peaks filled (%)` and the 
@@ -161,6 +167,7 @@ integration of said feature.
 knitr::include_graphics("../man/figures/04-Diagnostic_statistics.png")
 ```
 
+$~$
 
 `Update uROI/FIR` automatically sets `uROI` and `FIR` for each feature based on
 the _RT_ / _m/z_ boundaries of the peaks successfully integrated.
@@ -169,6 +176,7 @@ the _RT_ / _m/z_ boundaries of the peaks successfully integrated.
 knitr::include_graphics("../man/figures/05-Diagnostic_updateUROIFIR.png")
 ```
 
+$~$
 
 `Diagnostic plot` offer a visualisation of a selected feature across all samples
 in order of analysis. This visualisation highlights the fitting of the feature 
@@ -180,15 +188,20 @@ _sample metadata_ column.
 knitr::include_graphics("../man/figures/06-Diagnostic_plot.png")
 ```
 
+$~$
+
 Once `uROI` and `FIR` are successfully set, it is possible to go back to the 
 **Run annotation** tab and refit all features in all samples (_Note: this will 
 overwrite the current results_).
 
+$~$
 
 ## View results
 
 If the features integrations are satisfactory, **View results** regroups all 
 the integration results
+
+$~$
 
 `Overall results` displays a fitting property for all targeted features (_as 
 columns_) and all spectra (_as rows_).
@@ -197,6 +210,7 @@ columns_) and all spectra (_as rows_).
 knitr::include_graphics("../man/figures/07-Results_Overall.png")
 ```
 
+$~$
 
 `Results per targeted feature` displays all fitting properties (_as columns_) 
 for all samples (_as rows_) for a selected targeted feature.
@@ -205,6 +219,7 @@ for all samples (_as rows_) for a selected targeted feature.
 knitr::include_graphics("../man/figures/08-Results_byFeature.png")
 ```
 
+$~$
 
 `Results per sample` displays all fitting properties (_as columns_) for all 
 targeted features (_as rows_) for a selected sample.
@@ -213,6 +228,7 @@ targeted features (_as rows_) for a selected sample.
 knitr::include_graphics("../man/figures/09-Results_bySample.png")
 ```
 
+$~$
 
 ## Export
 
@@ -235,12 +251,15 @@ will present the integration success rate for each targeted feature.
 knitr::include_graphics("../man/figures/10-Export.png")
 ```
 
+$~$
 
 # Final Note
 
 If a very high number of targeted features and samples are to be processed, 
 `peakPantheR`'s command line functions are more efficient, as they can be 
 integrated in scripts and the reporting automated.
+
+$~$
 
 # See Also
 
