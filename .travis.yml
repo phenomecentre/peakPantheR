@@ -11,7 +11,7 @@ jobs:
     before_install:
       - travis_wait brew update
       - rm '/usr/local/bin/gfortran'
-      - brew install libgit2
+      - travis_wait brew install libgit2
       - cat DESCRIPTION
       - export PACKAGE_NAME='peakPantheR'
       - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
@@ -27,7 +27,7 @@ jobs:
           echo "R CMD check failed";
           travis_terminate 1;
         fi
-        - grep -q -R "WARNING" "${RCHECK_DIR}/00check.log";
+      - grep -q -R "WARNING" "${RCHECK_DIR}/00check.log";
         if [[ $? -eq 0 ]];
         then
           echo "Found warnings, treating as errors (as requested).";
@@ -62,7 +62,7 @@ jobs:
     before_install:
       - travis_wait brew update
       - rm '/usr/local/bin/gfortran'
-      - brew install libgit2
+      - travis_wait brew install libgit2
       - cat DESCRIPTION
       - export PACKAGE_NAME='peakPantheR'
       - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
