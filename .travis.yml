@@ -9,9 +9,30 @@ jobs:
   - r: bioc-devel
     os: osx
     before_install:
-      - brew update
+      - travis_wait brew update
       - rm '/usr/local/bin/gfortran'
-      - brew install libgit2
+      - travis_wait brew install libgit2
+      - cat DESCRIPTION
+      - export PACKAGE_NAME='peakPantheR'
+      - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
+      - echo ${RCHECK_DIR}
+    script:
+      - R CMD build .
+      - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
+      - travis_wait R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
+      - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\")"
+      - Rscript -e "message(devtools::check_failures(path = \"${RCHECK_DIR}\"))"
+      - if [[ $CHECK_RET -ne 0 ]];
+        then
+          echo "R CMD check failed";
+          travis_terminate 1;
+        fi
+      - grep -q -R "WARNING" "${RCHECK_DIR}/00check.log";
+        if [[ $? -eq 0 ]];
+        then
+          echo "Found warnings, treating as errors (as requested).";
+          exit 1;
+        fi
   - r: bioc-release
     os: linux
     before_install:
@@ -39,9 +60,9 @@ jobs:
   - r: bioc-release
     os: osx
     before_install:
-      - brew update
+      - travis_wait brew update
       - rm '/usr/local/bin/gfortran'
-      - brew install libgit2
+      - travis_wait brew install libgit2
       - cat DESCRIPTION
       - export PACKAGE_NAME='peakPantheR'
       - export RCHECK_DIR=${PACKAGE_NAME}.Rcheck
@@ -49,7 +70,7 @@ jobs:
     script:
       - R CMD build .
       - PKG_TARBALL=$(ls -1t *.tar.gz | head -n 1)
-      - R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
+      - travis_wait R CMD check ${PKG_TARBALL} --as-cran; CHECK_RET=$? ;
       - Rscript -e "library(BiocCheck); BiocCheck(\"${PKG_TARBALL}\", 'no-check-version-num'=TRUE)"
       - Rscript -e "message(devtools::check_failures(path = \"${RCHECK_DIR}\"))"
       - if [[ $CHECK_RET -ne 0 ]];
@@ -90,5 +111,5 @@ addons:
       - libhdf5-dev
 
 after_success:
-  - "if [ ${TRAVIS_OS_NAME} != 'osx' ]; then Rscript -e 'library(covr); codecov(line_exclusions = list(\"R/zzz.R\", \"R/peakPantheR_start_GUI.R\"))'; fi"
+  - "if [ ${TRAVIS_OS_NAME} != 'osx' ]; then travis_wait Rscript -e 'library(covr); codecov(line_exclusions = list(\"R/zzz.R\", \"R/peakPantheR_start_GUI.R\"))'; fi"
   - echo 'Done !'

@@ -51,6 +51,7 @@ An overview of the package and detailed information on usage are available in th
   - [Getting Started with peakPantheR](https://phenomecentre.github.io/peakPantheR.github.io/articles/getting-started.html)
   - [Real Time Annotation](https://phenomecentre.github.io/peakPantheR.github.io/articles/real-time-annotation.html)
   - [Parallel Annotation](https://phenomecentre.github.io/peakPantheR.github.io/articles/parallel-annotation.html)
+  - [Graphical user interface use](https://phenomecentre.github.io/peakPantheR.github.io/articles/peakPantheR-GUI.html)
   
 ## Examples
 Besides the vignettes, more tutorials are available via github:

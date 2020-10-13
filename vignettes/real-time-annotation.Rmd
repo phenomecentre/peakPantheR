@@ -1,6 +1,6 @@
 ---
 title: "Real Time Annotation"
-date: "2020-09-07"
+date: "2020-10-11"
 package: peakPantheR
 output:
     BiocStyle::html_document:
@@ -224,3 +224,4 @@ red line highlights the RT peakwidth range found (`rtMin`, `rtMax`)
 
 * [Getting Started with peakPantheR](getting-started.html)
 * [Parallel Annotation](parallel-annotation.html)
+* [Graphical user interface use](peakPantheR-GUI.html)

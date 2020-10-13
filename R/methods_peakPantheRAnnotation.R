@@ -1376,7 +1376,7 @@ annotationParamsDiagnostic_FIR <- function(outAnnotation, verbose) {
 
 ## Save annotation parameters as CSV
 setGeneric("outputAnnotationParamsCSV",
-            function(object, saveFolder, verbose = TRUE, ...)
+            function(object, saveFolder, verbose = TRUE, noSave=FALSE,...)
             standardGeneric("outputAnnotationParamsCSV"))
 #' @title Save annotation parameters as CSV
 #' @description Save annotation parameters (ROI, uROI and FIR) to disk as a CSV
@@ -1385,11 +1385,13 @@ setGeneric("outputAnnotationParamsCSV",
 #' @param verbose (bool) If TRUE message progress
 #' @param saveFolder (str) Path of folder where annotationParameters_summary.csv
 #' will be saved
+#' @param noSave (bool) If TRUE the resulting table will be returned without
+#' saving to disk
 #' @return None
 #' @docType methods
 #' @aliases outputAnnotationParamsCSV
 setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
-            function(object, saveFolder, verbose) {
+            function(object, saveFolder, verbose, noSave) {
     # create table
     outTable <- data.frame(matrix(, nrow = nbCompounds(object), ncol = 0))
     outTable <- cbind(outTable, cpdID = cpdID(object), cpdName=cpdName(object))
@@ -1409,6 +1411,7 @@ setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
     outTable <- cbind(outTable, X = rep("|", nbCompounds(object)), tmp_FIR)
     
     # save table
+    if (!noSave){
     dir.create(saveFolder, recursive = TRUE, showWarnings = FALSE)
     targetFile <- paste(saveFolder, "/annotationParameters_summary.csv",sep="")
     if (verbose) {
@@ -1416,6 +1419,9 @@ setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
     }
     utils::write.csv(outTable, file = targetFile, row.names = FALSE,
                     fileEncoding = "UTF-8")
+    } else {
+        return(outTable)
+    }
 })
 
 
@@ -2449,8 +2455,7 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
         peakPantheR_applyRTCorrection(
             targetFeatTable[!is.na(targetFeatTable$rt_dev_sec), ],
             referenceTable, method,
-            params, robust,
-            diagnostic=diagnostic)
+            params, robust)
 
     # Only compounds with measured rt_dev_sec can be adjusted
     newAnnotation@uROI[!is.na(targetFeatTable$rt_dev_sec), "rtMin"] <-

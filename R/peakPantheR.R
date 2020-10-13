@@ -9,7 +9,7 @@
 # Licensed under GPLv3                                                         #
 ################################################################################
 #
-# Copyright (C) {2019}  {Arnaud M. Wolfer}
+# Copyright (C) {2020}  {Arnaud M. Wolfer}
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
 #' \code{\link{peakPantheR_singleFileSearch}} for realtime annotation, and
 #' \code{\link{peakPantheR_parallelAnnotation}} for parallel annotation. The
 #' \code{peakPantheRAnnotation} object stores parallel annotation results, while
-#' reporting functions help assess and the quality of annotation and update
+#' reporting functions help assess the quality of annotation and update
 #' fitting parameters. Refer to the vignettes for graphical user interface and
 #' command line tutorials.
 #'

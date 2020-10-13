@@ -31,3 +31,4 @@ Rplots.pdf
 tests/testthat/Rplots.pdf
 .idea
 docs
+inst/doc

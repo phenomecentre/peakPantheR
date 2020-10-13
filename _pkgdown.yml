@@ -43,6 +43,7 @@ reference:
       - outputAnnotationResult
       - resetAnnotation
       - resetFIR
+      - retentionTimeCorrection
   - title: Internals
     desc: Internal functions and helpers
     contents:
@@ -50,6 +51,8 @@ reference:
       - generateIonChromatogram
       - findTargetFeatures
       - fitCurve
+      - fit_RANSAC
+      - fit_polynomial
       - is.peakPantheR_curveFit
       - annotationDiagnosticMultiplot
       - getAcquisitionDatemzML
@@ -62,4 +65,13 @@ reference:
       - skewedGaussian_guess
       - skewedGaussian_minpack.lm
       - skewedGaussian_minpack.lm_objectiveFun
-      - skew_erf
+      - initialise_annotation_from_files_UI_helper
+      - spectraPaths_and_metadata_UI_helper
+      - load_annotation_from_file_UI_helper
+      - annotation_showMethod_UI_helper
+      - annotation_showText_UI_helper
+      - annotation_diagnostic_multiplot_UI_helper
+      - annotation_fit_summary_UI_helper
+      - outputAnnotationSpectraMetadata_UI_helper
+      - outputAnnotationFeatureMetadata_UI_helper
+      - spectra_metadata_colourScheme_UI_helper
