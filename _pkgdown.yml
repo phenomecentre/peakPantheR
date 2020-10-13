@@ -5,7 +5,13 @@ reference:
     desc: Functions exported by peakPantheR
     contents:
       - peakPantheR
-      - starts_with("peakPantheR_")
+      - peakPantheR_start_GUI
+      - peakPantheR_singleFileSearch
+      - peakPantheR_loadAnnotationParamsCSV
+      - peakPantheR_parallelAnnotation
+      - peakPantheR_plotEICFit
+      - peakPantheR_plotPeakwidth
+      - peakPantheR_ROIStatistics
   - title: peakPantheRAnnotation object Accessors
     desc: Accessors
     contents:
@@ -51,8 +57,6 @@ reference:
       - generateIonChromatogram
       - findTargetFeatures
       - fitCurve
-      - fit_RANSAC
-      - fit_polynomial
       - is.peakPantheR_curveFit
       - annotationDiagnosticMultiplot
       - getAcquisitionDatemzML
@@ -62,9 +66,17 @@ reference:
       - plotHistogram
       - predictCurve
       - saveSingleFileMultiEIC
+      - prepare_advanced_target_parameters
+      - prepare_basic_target_parameters
+      - peakPantheR_applyRTCorrection
       - skewedGaussian_guess
       - skewedGaussian_minpack.lm
       - skewedGaussian_minpack.lm_objectiveFun
+      - emgGaussian_guess
+      - emgGaussian_minpack.lm
+      - emgGaussian_minpack.lm_objectiveFun
+      - gaussian_cerf
+      - gaussian_erf
       - initialise_annotation_from_files_UI_helper
       - spectraPaths_and_metadata_UI_helper
       - load_annotation_from_file_UI_helper
