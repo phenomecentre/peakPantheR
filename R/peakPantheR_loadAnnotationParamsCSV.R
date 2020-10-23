@@ -102,7 +102,7 @@ prepare_basic_target_parameters <- function(paramTable){
     tmp_targetFeatTable <- paramTable[, c("cpdID", "cpdName", "rtMin", "rt",
                                             "rtMax", "mzMin", "mz", "mzMax")]
     tmp_targetFeatTable[,c(3:8)] <- vapply(tmp_targetFeatTable[,c(3:8)],
-                   as.numeric, FUN.VALUE=numeric(dim(tmp_targetFeatTable)[1]))
+                    as.numeric, FUN.VALUE=numeric(dim(tmp_targetFeatTable)[1]))
     # default values (empty)
     tmp_uROI <- data.frame(rtMin=numeric(), rt=numeric(), rtMax=numeric(),
                             mzMin=numeric(), mz=numeric(), mzMax=numeric(),
@@ -160,12 +160,12 @@ prepare_advanced_target_parameters <- function(paramTable, verbose) {
                                 "uROI_mzMin", "uROI_mz", "uROI_mzMax")]
     colnames(tmp_uROI) <- c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")
     tmp_uROI[,c(1,2:6)] <- vapply(tmp_uROI[,c(1,2:6)],
-                  as.numeric, FUN.VALUE=numeric(dim(tmp_targetFeatTable)[1]))
+                    as.numeric, FUN.VALUE=numeric(dim(tmp_targetFeatTable)[1]))
     tmp_FIR <- paramTable[,c("FIR_rtMin", "FIR_rtMax", "FIR_mzMin",
                             "FIR_mzMax")]
     colnames(tmp_FIR) <- c("rtMin", "rtMax", "mzMin", "mzMax")
     tmp_FIR[,c(1,2:4)] <- vapply(tmp_FIR[,c(1,2:4)],
-                     as.numeric, FUN.VALUE=numeric(dim(tmp_targetFeatTable)[1]))
+                    as.numeric, FUN.VALUE=numeric(dim(tmp_targetFeatTable)[1]))
     # establish if uROIExist
     tmp_uROIExist <- !any(is.na(tmp_uROI[,c("rtMin", "rtMax", "mzMin",
                                             "mzMax")]))

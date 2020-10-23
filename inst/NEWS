@@ -1,3 +1,5 @@
+Changes in version 1.3.4 (2020-10-23)
++ Add missing function export for GUI
 Changes in version 1.3.3 (2020-10-11)
 + Shiny Graphical User Interface
 Changes in version 1.3.2 (2020-09-29)
