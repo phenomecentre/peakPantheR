@@ -53,6 +53,7 @@ emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
                                         targetFeatTable=targetFeatTable)
 
 # temporary file
+savePath        <- tempdir()
 
 # statistics of an empty annotation
 outputAnnotationParamsCSV(emptyAnnotation, saveFolder=savePath, verbose=TRUE)

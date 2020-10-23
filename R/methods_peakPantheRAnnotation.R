@@ -1413,7 +1413,7 @@ setGeneric("outputAnnotationParamsCSV",
 #'                                         targetFeatTable=targetFeatTable)
 #'
 #' # temporary file
-#'  savePath        <- tempdir()
+#' savePath        <- tempdir()
 #'
 #' # statistics of an empty annotation
 #' outputAnnotationParamsCSV(emptyAnnotation, saveFolder=savePath, verbose=TRUE)
