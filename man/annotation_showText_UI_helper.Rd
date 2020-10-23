@@ -16,3 +16,32 @@ created by \code{annotation_showMethod_UI_helper()}}
 \description{
 Return a text description of an annotation for UI presentation
 }
+\examples{
+# Input
+properties_default <- list(nbCompounds = 0,
+                            nbSamples = 0,
+                            uROIExist = FALSE,
+                            useUROI = FALSE,
+                            useFIR = FALSE,
+                            isAnnotated = FALSE)
+
+# Generate description
+annotation_showText_UI_helper(properties_default)
+# [[1]]
+# [1] "Not annotated"
+#
+# [[2]]
+# [1] "0 compounds"
+#
+# [[3]]
+# [1] "0 samples"
+#
+# [[4]]
+# [1] "updated ROI do not exist (uROI)"
+#
+# [[5]]
+# [1] "does not use updated ROI (uROI)"
+#
+# [[6]]
+# [1] "does not use fallback integration regions (FIR)"
+}

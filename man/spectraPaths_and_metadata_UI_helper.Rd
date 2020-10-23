@@ -25,3 +25,25 @@ Return spectraPaths and spectraMetadata from a .csv file (if available).
 If reading from the spectraMetadata file, the spectraPaths are taken from
 the `filepath` column
 }
+\examples{
+## Input data
+# spectraPath
+input_spectraPaths    <- c('./path/file1', './path/file2', './path/file3')
+
+# spectraMetadata
+input_spectraMetadata <- data.frame(matrix(data=c(input_spectraPaths,
+                            c('a','b','c')), nrow=3, ncol=2,
+                            dimnames=list(c(),c('filepath', 'testcol')),
+                            byrow=FALSE), stringsAsFactors=FALSE)
+
+# temporary file location
+spectraMetaPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+# save csv
+utils::write.csv(input_spectraMetadata,
+                    file=spectraMetaPath,
+                    row.names=FALSE)
+
+# load data from CSV
+spectraPaths_and_metadata_UI_helper(spectraPaths = NULL,
+                                    spectraMetadataPath = spectraMetaPath)
+}

@@ -16,3 +16,27 @@ annotation_showMethod_UI_helper(annotation)
 show method specific to the UI, that returns each field in a named list to
 ease display
 }
+\examples{
+# Initialise an empty annotation, no uROI, no use of FIR
+annotInit     <- peakPantheRAnnotation()
+
+# return properties
+annotation_showMethod_UI_helper(annotInit)
+# $nbCompounds
+# [1] 0
+#
+# #$nbSamples
+# [1] 0
+#
+# #$uROIExist
+# [1] FALSE
+#
+# $useUROI
+# [1] FALSE
+#
+# $useFIR
+# [1] FALSE
+#
+# $isAnnotated
+# [1] FALSE
+}

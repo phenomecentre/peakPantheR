@@ -34,3 +34,35 @@ read from the CSV file
 Fully initialise a \code{peakPantheRAnnotation} using the target files path,
 CSV parameter path and metadata.
 }
+\examples{
+## Input data
+input_CSV <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(),
+    c('cpdID', 'cpdName',
+    'X','ROI_rt', 'ROI_mz', 'ROI_rtMin', 'ROI_rtMax','ROI_mzMin','ROI_mzMax',
+    'X','uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt',
+    'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
+input_CSV[1,]  <- c('ID-1', 'Cpd 1', '|', 1.,  2.,  3.,  4.,  5.,  6.,  '|',
+                    7.,  8.,  9.,  10., 11., 12., '|', 13., 14., 15., 16.)
+input_CSV[2,]  <- c('ID-2', 'Cpd 2', '|', 17., 18., 19., 20., 21., 22., '|',
+                    23., 24., 25., 26., 27., 28., '|', 29., 30., 31., 32.)
+input_CSV[,-c(1,2,3,10,17)]  <- vapply(input_CSV[,-c(1,2,3,10,17)],
+                                            as.numeric, FUN.VALUE=numeric(2))
+
+input_spectraPaths    <- c('./path/file1', './path/file2', './path/file3')
+
+# temporary file location
+savePath1      <- tempfile(pattern='file', tmpdir=tempdir(), fileext='.csv')
+# save csv
+utils::write.csv(input_CSV, file=savePath1, row.names=FALSE)
+
+# Load parameters from CSV
+loadedAnnotation <- initialise_annotation_from_files_UI_helper(savePath1,
+                                                        input_spectraPaths,
+                                                        verbose=TRUE)
+# An object of class peakPantheRAnnotation
+#   2 compounds in 3 samples.
+#   updated ROI exist (uROI)
+#   does not use updated ROI (uROI)
+#   does not use fallback integration regions (FIR)
+#   is not annotated
+}

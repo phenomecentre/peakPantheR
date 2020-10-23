@@ -14,6 +14,40 @@
 #'
 #' @return (peakPantheRAnnotation) Object initialised with ROI, uROI and FIR
 #' read from the CSV file
+#'
+#' @export
+#'
+#' @examples
+#' ## Input data
+#' input_CSV <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(),
+#'     c('cpdID', 'cpdName',
+#'     'X','ROI_rt', 'ROI_mz', 'ROI_rtMin', 'ROI_rtMax','ROI_mzMin','ROI_mzMax',
+#'     'X','uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt',
+#'     'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
+#' input_CSV[1,]  <- c('ID-1', 'Cpd 1', '|', 1.,  2.,  3.,  4.,  5.,  6.,  '|',
+#'                     7.,  8.,  9.,  10., 11., 12., '|', 13., 14., 15., 16.)
+#' input_CSV[2,]  <- c('ID-2', 'Cpd 2', '|', 17., 18., 19., 20., 21., 22., '|',
+#'                     23., 24., 25., 26., 27., 28., '|', 29., 30., 31., 32.)
+#' input_CSV[,-c(1,2,3,10,17)]  <- vapply(input_CSV[,-c(1,2,3,10,17)],
+#'                                             as.numeric, FUN.VALUE=numeric(2))
+#'
+#' input_spectraPaths    <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # temporary file location
+#' savePath1      <- tempfile(pattern='file', tmpdir=tempdir(), fileext='.csv')
+#' # save csv
+#' utils::write.csv(input_CSV, file=savePath1, row.names=FALSE)
+#'
+#' # Load parameters from CSV
+#' loadedAnnotation <- initialise_annotation_from_files_UI_helper(savePath1,
+#'                                                         input_spectraPaths,
+#'                                                         verbose=TRUE)
+#' # An object of class peakPantheRAnnotation
+#' #   2 compounds in 3 samples.
+#' #   updated ROI exist (uROI)
+#' #   does not use updated ROI (uROI)
+#' #   does not use fallback integration regions (FIR)
+#' #   is not annotated
 initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
                                                         spectraPaths,
                                                         cpdMetadataPath = NULL,
@@ -77,6 +111,30 @@ initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
 #'
 #' @return spectraPaths (str) and spectraMetadata (DataFrame or NULL) read from
 #' the CSV file
+#'
+#' @export
+#'
+#' @examples
+#' ## Input data
+#' # spectraPath
+#' input_spectraPaths    <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # spectraMetadata
+#' input_spectraMetadata <- data.frame(matrix(data=c(input_spectraPaths,
+#'                          c('a','b','c')), nrow=3, ncol=2,
+#'                          dimnames=list(c(),c('filepath', 'testcol')),
+#'                          byrow=FALSE), stringsAsFactors=FALSE)
+#'
+#' # temporary file location
+#' spectraMetaPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
+#' # save csv
+#' utils::write.csv(input_spectraMetadata,
+#'                  file=spectraMetaPath,
+#'                  row.names=FALSE)
+#'
+#' # load data from CSV
+#' spectraPaths_and_metadata_UI_helper(spectraPaths = NULL,
+#'                                      spectraMetadataPath = spectraMetaPath)
 spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
                                                 spectraMetadataPath = NULL) {
     # None are set
@@ -125,6 +183,42 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 #' peakPantheRAnnotation names `annotationObject`
 #'
 #' @return (peakPantheRAnnotation) Object loaded from file
+#'
+#' @export
+#'
+#' @examples
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 compounds
+#'
+#' ## Inputs
+#' # spectraPaths
+#' spectraPaths <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # targetFeatTable
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
+#'
+#' annotationObject <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
+#'
+#' # save annotation to disk
+#' annotPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+#' save(annotationObject, file=annotPath, compress=TRUE)
+#'
+#' # Load annotation
+#' load_annotation_from_file_UI_helper(annotationPath = annotPath)
+#' # An object of class peakPantheRAnnotation
+#' #   2 compounds in 3 samples.
+#' #   updated ROI do not exist (uROI)
+#' #   does not use updated ROI (uROI)
+#' #   does not use fallback integration regions (FIR)
+#' #   is not annotated
 load_annotation_from_file_UI_helper <- function(annotationPath) {
     # Check file exist
     if (!file.exists(annotationPath)) {
@@ -157,6 +251,32 @@ load_annotation_from_file_UI_helper <- function(annotationPath) {
 #' @param annotation (peakPantherAnnotation) Object to describe
 #'
 #' @return (list) Named list of annotation properties
+#'
+#' @export
+#'
+#' @examples
+#' # Initialise an empty annotation, no uROI, no use of FIR
+#' annotInit     <- peakPantheRAnnotation()
+#'
+#' # return properties
+#' annotation_showMethod_UI_helper(annotInit)
+#' # $nbCompounds
+#' # [1] 0
+#' #
+#' # #$nbSamples
+#' # [1] 0
+#' #
+#' # #$uROIExist
+#' # [1] FALSE
+#' #
+#' # $useUROI
+#' # [1] FALSE
+#' #
+#' # $useFIR
+#' # [1] FALSE
+#' #
+#' # $isAnnotated
+#' # [1] FALSE
 annotation_showMethod_UI_helper <- function(annotation){
     properties <- list(nbCompounds = nbCompounds(annotation),
                         nbSamples = nbSamples(annotation),
@@ -178,6 +298,37 @@ annotation_showMethod_UI_helper <- function(annotation){
 #' created by \code{annotation_showMethod_UI_helper()}
 #'
 #' @return (str) Textual description of the annotation to show on UI
+#'
+#' @export
+#'
+#' @examples
+#' # Input
+#' properties_default <- list(nbCompounds = 0,
+#'                            nbSamples = 0,
+#'                            uROIExist = FALSE,
+#'                            useUROI = FALSE,
+#'                            useFIR = FALSE,
+#'                            isAnnotated = FALSE)
+#'
+#' # Generate description
+#' annotation_showText_UI_helper(properties_default)
+#' # [[1]]
+#' # [1] "Not annotated"
+#' #
+#' # [[2]]
+#' # [1] "0 compounds"
+#' #
+#' # [[3]]
+#' # [1] "0 samples"
+#' #
+#' # [[4]]
+#' # [1] "updated ROI do not exist (uROI)"
+#' #
+#' # [[5]]
+#' # [1] "does not use updated ROI (uROI)"
+#' #
+#' # [[6]]
+#' # [1] "does not use fallback integration regions (FIR)"
 annotation_showText_UI_helper <- function(annotProp){
     UI_string = list(
         if (annotProp$isAnnotated) {'Is annotated'} else {'Not annotated'},
@@ -208,6 +359,37 @@ annotation_showText_UI_helper <- function(annotProp){
 #' @param ... Additional parameters for plotting
 #'
 #' @return (ggplotObject) Diagnostic multiplot for a feature
+#'
+#' @export
+#'
+#' @examples
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
+#'
+#' # Paths to spectra files
+#' spectraPaths <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # targetFeatTable
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
+#'
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
+#'
+#' # Plot of an empty annotation
+#' annotation_diagnostic_multiplot_UI_helper(cpdNb = 2,
+#'                                          annotation = emptyAnnotation,
+#'                                          splNum = NULL,
+#'                                          splColrColumn = NULL)
+#' # Warning: the object has not been annotated, return an empty diagnostic
+#' # plot list
 annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
                                         splNum=NULL, splColrColumn=NULL, ...) {
     # subset the compound and sample according to inputs
@@ -267,6 +449,38 @@ subset_annot_diag_plot_UI_helper <- function(cpdNb, annotation, splNum=NULL) {
 #' @param annot (peakPantheRAnnotation) Annotation object
 #'
 #' @return (data.frame) Fit statistics
+#'
+#' @export
+#'
+#' @examples
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
+#'
+#' # Paths to spectra files
+#' spectraPaths <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # targetFeatTable
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
+#'
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
+#'
+#' # statistics of an empty annotation
+#' annotation_fit_summary_UI_helper(emptyAnnotation)
+#' #              Ratio peaks found (%) Ratio peaks filled (%) ppm error
+#' # ID-1 - Cpd 1                    NA                      0       NaN
+#' # ID-2 - Cpd 2                    NA                      0       NaN
+#' #               RT deviation (s)
+#' # ID-1 - Cpd 1               NaN
+#' # ID-2 - Cpd 2               NaN
 annotation_fit_summary_UI_helper <- function(annot) {
     summary <- data.frame(matrix(ncol = 0, nrow = nbCompounds(annot)),
                                     stringsAsFactors = FALSE)
@@ -309,6 +523,36 @@ annotation_fit_summary_UI_helper <- function(annot) {
 #' @param annot (peakPantheRAnnotation) Annotation object
 #'
 #' @return (data.frame) Spectra paths and metadata
+#'
+#' @export
+#'
+#' @examples
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
+#'
+#' # Paths to spectra files
+#' spectraPaths <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # targetFeatTable
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
+#'
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
+#'
+#' # spectraMetada of an empty annotation
+#' outputAnnotationSpectraMetadata_UI_helper(emptyAnnotation)
+#' #       filepath
+#' # 1 ./path/file1
+#' # 2 ./path/file2
+#' # 3 ./path/file3
 outputAnnotationSpectraMetadata_UI_helper <- function(annot) {
     # collect the data
     tmp_filepath        <- filepath(annot)
@@ -329,6 +573,33 @@ outputAnnotationSpectraMetadata_UI_helper <- function(annot) {
 #' @param annot (peakPantheRAnnotation) Annotation object
 #'
 #' @return (data.frame) Features metadata
+#'
+#' @export
+#'
+#' @examples
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
+#'
+#' # Paths to spectra files
+#' spectraPaths <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # targetFeatTable
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
+#'
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
+#'
+#' # featureMetadata of an empty annotation
+#' outputAnnotationFeatureMetadata_UI_helper(emptyAnnotation)
+#' # data frame with 0 columns and 2 rows
 outputAnnotationFeatureMetadata_UI_helper <- function(annot) {
     # collect the data
     outCpdMetadata <- cpdMetadata(annot)
@@ -346,6 +617,33 @@ outputAnnotationFeatureMetadata_UI_helper <- function(annot) {
 #' colouring each sample
 #'
 #' @return (character) Vector of colours
+#'
+#' @export
+#'
+#' @examples
+#' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+#' ## compounds
+#'
+#' # Paths to spectra files
+#' spectraPaths <- c('./path/file1', './path/file2', './path/file3')
+#'
+#' # targetFeatTable
+#' targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+#'                     c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+#'                     'mzMax'))), stringsAsFactors=FALSE)
+#' targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+#'                         522.2, 522.205222)
+#' targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+#'                         496.2, 496.204962)
+#' targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+#'                                     FUN.VALUE=numeric(2))
+#'
+#' emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+#'                                         targetFeatTable=targetFeatTable)
+#'
+#' # colour scheme with no spectraMetadata
+#' outputAnnotationFeatureMetadata_UI_helper(emptyAnnotation)
+#' # NULL
 spectra_metadata_colourScheme_UI_helper <- function(annot,splColrColumn=NULL) {
     # convert sampleColourColumn to a colour scale to use
     if (is.null(splColrColumn)) {

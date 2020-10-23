@@ -16,3 +16,31 @@ outputAnnotationSpectraMetadata_UI_helper(annot)
 Return a table with spectra as rows and filepath and all spectra metadata
 columns
 }
+\examples{
+## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
+## compounds
+
+# Paths to spectra files
+spectraPaths <- c('./path/file1', './path/file2', './path/file3')
+
+# targetFeatTable
+targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+                    c('cpdID','cpdName','rtMin','rt','rtMax','mzMin','mz',
+                    'mzMax'))), stringsAsFactors=FALSE)
+targetFeatTable[1,] <- c('ID-1', 'Cpd 1', 3310., 3344.888, 3390., 522.194778,
+                        522.2, 522.205222)
+targetFeatTable[2,] <- c('ID-2', 'Cpd 2', 3280., 3385.577, 3440., 496.195038,
+                        496.2, 496.204962)
+targetFeatTable[,c(3:8)] <- vapply(targetFeatTable[,c(3:8)], as.numeric,
+                                    FUN.VALUE=numeric(2))
+
+emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
+                                        targetFeatTable=targetFeatTable)
+
+# spectraMetada of an empty annotation
+outputAnnotationSpectraMetadata_UI_helper(emptyAnnotation)
+#       filepath
+# 1 ./path/file1
+# 2 ./path/file2
+# 3 ./path/file3
+}
