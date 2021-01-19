@@ -151,9 +151,9 @@ test_that('default diagnostic plots, no sampleColour, default sampling, verbose/
   expect_equal(names(result_diagnosticPlot1$result[[1]]), expected_plotNames)
   expect_equal(length(result_diagnosticPlot1$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot1$result[[2]]), expected_plotNames)
-  expect_equal(result_diagnosticPlot1$result[[2]]$EICFit, expected_EICFit2v)
-  expect_equal(result_diagnosticPlot1$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2v)
-  expect_equal(result_diagnosticPlot1$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot1$result[[2]]$EICFit, expected_EICFit2v, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot1$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2v, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot1$result[[2]]$rtHistogram, expected_rtHistogram2, check.environment=FALSE)
   expect_equal(result_diagnosticPlot1$result[[2]]$title, 'ID-2 - Cpd 2')
   # no verbose
   expect_equal(length(result_diagnosticPlot2$result), 2)
@@ -161,9 +161,9 @@ test_that('default diagnostic plots, no sampleColour, default sampling, verbose/
   expect_equal(names(result_diagnosticPlot2$result[[1]]), expected_plotNames)
   expect_equal(length(result_diagnosticPlot2$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot2$result[[2]]), expected_plotNames)
-  expect_equal(result_diagnosticPlot2$result[[2]]$EICFit, expected_EICFit2nv)
-  expect_equal(result_diagnosticPlot2$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2nv)
-  expect_equal(result_diagnosticPlot2$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot2$result[[2]]$EICFit, expected_EICFit2nv, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot2$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2nv, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot2$result[[2]]$rtHistogram, expected_rtHistogram2, check.environment=FALSE)
   expect_equal(result_diagnosticPlot2$result[[2]]$title, 'ID-2 - Cpd 2')
   
   # Check result messages
@@ -231,9 +231,9 @@ test_that('default diagnostic plots, set sampleColour, change sampling, verbose/
   expect_equal(names(result_diagnosticPlot1$result[[1]]), expected_plotNames)
   expect_equal(length(result_diagnosticPlot1$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot1$result[[2]]), expected_plotNames)
-  expect_equal(result_diagnosticPlot1$result[[2]]$EICFit, expected_EICFit2v)
-  expect_equal(result_diagnosticPlot1$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2v)
-  expect_equal(result_diagnosticPlot1$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot1$result[[2]]$EICFit, expected_EICFit2v, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot1$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2v, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot1$result[[2]]$rtHistogram, expected_rtHistogram2, check.environment=FALSE)
   expect_equal(result_diagnosticPlot1$result[[2]]$title, 'ID-2 - Cpd 2')
   # no verbose
   expect_equal(length(result_diagnosticPlot2$result), 2)
@@ -241,9 +241,9 @@ test_that('default diagnostic plots, set sampleColour, change sampling, verbose/
   expect_equal(names(result_diagnosticPlot2$result[[1]]), expected_plotNames)
   expect_equal(length(result_diagnosticPlot2$result[[2]]), 9)
   expect_equal(names(result_diagnosticPlot2$result[[2]]), expected_plotNames)
-  expect_equal(result_diagnosticPlot2$result[[2]]$EICFit, expected_EICFit2nv)
-  expect_equal(result_diagnosticPlot2$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2nv)
-  expect_equal(result_diagnosticPlot2$result[[2]]$rtHistogram, expected_rtHistogram2)
+  expect_equal(result_diagnosticPlot2$result[[2]]$EICFit, expected_EICFit2nv, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot2$result[[2]]$rtPeakwidthVert, expected_rtPeakwidth2nv, check.environment=FALSE)
+  expect_equal(result_diagnosticPlot2$result[[2]]$rtHistogram, expected_rtHistogram2, check.environment=FALSE)
   expect_equal(result_diagnosticPlot2$result[[2]]$title, 'ID-2 - Cpd 2')
   
   # Check result messages
