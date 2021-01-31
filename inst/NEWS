@@ -1,2 +1,5 @@
+Changes in version 1.5.2 (2021-01-31)
++ Change package alias due to overwritten .rd file warning on Windows (non case-sensitive name and path)
+
 Changes in version 1.5.1 (2021-01-19)
 + Unittests updated to comply with new r-devel all.equal() environment checks behaviour

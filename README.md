@@ -58,10 +58,16 @@ Besides the vignettes, more tutorials are available via github:
   - [Targeted integration of metabolites from 3 LC-MS profiling dataset using peakPantheR](https://github.com/phenomecentre/metabotyping-dementia-urine): Application of peakpPantheR to extract features from 3 LC-MS assays from a human urine metabolic profiling study on cognitive decline and dementia.   
   - [Quality-Control of peakPantheR extracted using the nPYc-Toolbox](https://github.com/phenomecentre/nPYc-toolbox-tutorials): Tutorial on how to use the nPYC-Toolbox to perform QC on peakPanther extracted datasets.
   
+
+## Contributing
+
+Suggestions and contributions to `peakPantheR` are welcome, for more information please first refer to the [contribution guide and code of conduct](./CONTRIBUTIONS.md), or get in touch by opening a [Github issue](https://github.com/phenomecentre/peakPantheR/issues/).
+
+
 ## Copyright
 
 `peakPantheR` is licensed under the [GPLv3](http://choosealicense.com/licenses/gpl-3.0/)
 
 As a summary, the GPLv3 license requires attribution, inclusion of copyright and license information, disclosure of source code and changes. Derivative work must be available under the same terms.
 
-© National Phenome Centre (2020)
+© National Phenome Centre (2021)

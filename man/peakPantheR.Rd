@@ -4,7 +4,7 @@
 \name{peakPantheR}
 \alias{peakPantheR}
 \alias{_PACKAGE}
-\alias{peakpanther}
+\alias{peakPantheR-package}
 \title{peakPantheR: A package for Peak Picking and ANnoTation of High resolution
 Experiments}
 \description{
