@@ -5,7 +5,7 @@
 ^README\.Rmd$
 ^dev_peakPantheR.R
 ^.gitignore
-^.travis.yml
+^.covrignore
 LICENSE
 ^cran-comments.md
 tests\testthat\Rplots.pdf

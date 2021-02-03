@@ -190,7 +190,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Install covr
-        if: github.ref == 'refs/heads/master' && env.run_covr == 'true' && runner.os == 'Linux'
+        if: env.run_covr == 'true' && runner.os == 'Linux'
         run: |
           remotes::install_cran("covr")
         shell: Rscript {0}
@@ -245,7 +245,7 @@ jobs:
       - name: Test coverage
         if: env.run_covr == 'true' && runner.os == 'Linux'
         run: |
-          covr::codecov((line_exclusions = list(\"R/zzz.R\", \"R/peakPantheR_start_GUI.R\"))
+          covr::codecov()
         shell: Rscript {0}
 
       - name: Install package
