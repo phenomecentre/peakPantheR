@@ -42,7 +42,7 @@
 #' fitting parameters. Refer to the vignettes for graphical user interface and
 #' command line tutorials.
 #'
-#' @aliases peakpanther
+#' @aliases peakPantheR-package
 #'
 #' @docType package
 #' @name peakPantheR
