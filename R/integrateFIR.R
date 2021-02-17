@@ -31,7 +31,7 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
         if (verbose) {
             message(sum(needsFilling), " features to integrate with FIR") }
         # store results
-        tmpResult <- data.frame(matrix(vector(), sum(needsFilling), 9,
+        tmpResult <- data.frame(matrix(vector(), sum(needsFilling), 10,
                                 dimnames = list(c(),
                                                 c("mzMin", "mz", "mzMax",
                                                 "rtMin", "rt", "rtMax",
@@ -82,7 +82,6 @@ integrateFIR_features <- function(needsFilling_idx, all_peakData, FIR,
         if (dim(peakData)[1] != 0){ #Only continue if a scan is found in the box
             # scanDist is the mean distance in sec between scans(used for integ)
             rtRange <- unique(peakData$rt)
-            scanDist <- diff(c(min(rtRange), max(rtRange)))/length(rtRange)
             # mzMin, mzMax, rtMin, rtMax (values taken from input)
             tmpResult[i, c("mzMin", "mzMax", "rtMin", "rtMax")] <- FIR[i,
                 c("mzMin", "mzMax", "rtMin", "rtMax")]
@@ -104,9 +103,9 @@ integrateFIR_features <- function(needsFilling_idx, all_peakData, FIR,
                 max(peakData$i[peakData$rt == x])}, FUN.VALUE = numeric(1))
             # peakArea is the max intensities summed over (discrete) rt,
             # multiplied by the mean distance in sec between scans
-            tmpResult[i, "peakArea"] <- sum(rtMaxIntensity) * scanDist
-            rtBound <- (peakData$rt < rtMax) & (peakData > rtMin)
-            tmpResult[i, "peakAreaRaw"] <- sum(peakData$i[rtBound])
+            peakArea <- pracma::trapz(x=rtRange, y=rtMaxIntensity)
+            tmpResult[i, "peakArea"] <- peakArea
+            tmpResult[i, "peakAreaRaw"] <- peakArea
 
         } else { # If no scan found in that region, return default values
             if (verbose) { message('No scan present in the FIR # ', i,
