@@ -35,7 +35,8 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
                                 dimnames = list(c(),
                                                 c("mzMin", "mz", "mzMax",
                                                 "rtMin", "rt", "rtMax",
-                                                "peakArea", "maxIntMeasured",
+                                                "peakArea", "peakAreaRaw",
+                                                "maxIntMeasured",
                                                 "maxIntPredicted"))))
         # extract data for all fallback windows from raw (list of windows)
         all_peakData <- extractSignalRawData(rawSpec,
@@ -50,9 +51,10 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
         # Replace results with FIR integration
         outTable[needsFilling_idx,
             c("mzMin", "mz", "mzMax", "rtMin", "rt", "rtMax", "peakArea",
-            "maxIntMeasured", "maxIntPredicted")] <- tmpResult[needsFilling_idx,
+              "peakAreaRaw", "maxIntMeasured",
+              "maxIntPredicted")] <- tmpResult[needsFilling_idx,
             c("mzMin", "mz", "mzMax", "rtMin", "rt", "rtMax", "peakArea",
-            "maxIntMeasured",  "maxIntPredicted")]
+              "peakAreaRaw", "maxIntMeasured",  "maxIntPredicted")]
         outTable$is_filled[needsFilling_idx] <- TRUE
         outTable$found[needsFilling_idx] <- TRUE
     }
@@ -103,6 +105,8 @@ integrateFIR_features <- function(needsFilling_idx, all_peakData, FIR,
             # peakArea is the max intensities summed over (discrete) rt,
             # multiplied by the mean distance in sec between scans
             tmpResult[i, "peakArea"] <- sum(rtMaxIntensity) * scanDist
+            rtBound <- (peakData$rt < rtMax) & (peakData > rtMin)
+            tmpResult[i, "peakAreaRaw"] <- sum(peakData$i[rtBound])
 
         } else { # If no scan found in that region, return default values
             if (verbose) { message('No scan present in the FIR # ', i,
@@ -115,6 +119,7 @@ integrateFIR_features <- function(needsFilling_idx, all_peakData, FIR,
             tmpResult[i, "rt"] <- mean(c(FIR$rtMin[i], FIR$rtMax[i]))
             tmpResult[i, "mz"] <- mean(c(FIR$mzMin[i], FIR$mzMax[i]))
             tmpResult[i, "peakArea"] <- 0
+            tmpResult[i, "peakAreaRaw"] <- 0
             tmpResult[i, "maxIntMeasured"] <- 0
             tmpResult[i, "maxIntPredicted"] <- 0
         }
