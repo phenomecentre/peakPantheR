@@ -27,6 +27,7 @@ Imports:
 	shinythemes (>= 1.1.1),
 	shinycssloaders (>= 1.0.0),
 	DT (>= 0.15),
+	pracma (>= 2.2.3),
 	utils
 biocViews: MassSpectrometry, Metabolomics, PeakDetection
 License: GPL-3
