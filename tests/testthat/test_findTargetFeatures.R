@@ -21,11 +21,11 @@ input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(4))
 input_ROIsDataPoints <- extractSignalRawData(raw_data, rt=input_ROI[,c('rtMin','rtMax')], mz=input_ROI[,c('mzMin','mzMax')], verbose=FALSE)
 
 # found peaks
-found_peakTable     <- data.frame(matrix(vector(), 4, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
-found_peakTable[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747)
-found_peakTable[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298)
-found_peakTable[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412)
-found_peakTable[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 330176, 326763.87246511364)
+found_peakTable     <- data.frame(matrix(vector(), 4, 11, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
+found_peakTable[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 999, 901015.80529226747)
+found_peakTable[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 999, 1128960, 1113576.69008227298)
+found_peakTable[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 999, 380736, 389632.13549519412)
+found_peakTable[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 999, 330176, 326763.87246511364)
 found_peakTable[,1] <- vapply(found_peakTable[,c(1)], as.logical, FUN.VALUE=logical(1))
 
 cFit1           <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
@@ -62,7 +62,7 @@ test_that('trigger fitCurve TryCatch, with verbose', {
   
   # expected foundPeaks
   expected_foundPeaks               <- foundPeaks
-  expected_foundPeaks$peakTable[3,] <- c(FALSE, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  expected_foundPeaks$peakTable[3,] <- c(FALSE, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA),  as.numeric(NA), as.numeric(NA), as.numeric(NA))
   expected_foundPeaks$peakTable[,1] <- as.logical(expected_foundPeaks$peakTable[,1])
   expected_foundPeaks$curveFit[[3]] <- NA
   
@@ -87,7 +87,7 @@ test_that('failed fit (fitCurve status 0/5/-1), with verbose', {
   
   # expected foundPeaks
   expected_foundPeaks               <- foundPeaks
-  expected_foundPeaks$peakTable[3,] <- c(FALSE, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  expected_foundPeaks$peakTable[3,] <- c(FALSE, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   expected_foundPeaks$peakTable[,1] <- as.logical(expected_foundPeaks$peakTable[,1])
   expected_foundPeaks$curveFit[[3]] <- NA
   
@@ -137,8 +137,8 @@ test_that('rtMin rtMax cannot be found, fit is rejected, verbose', {
   tmp_DataPoints  <- list(data.frame(rt=rt, mz=mz, int=int))
   
   # expected foundPeaks
-  expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
-  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+  expected_peakTable      <- data.frame(matrix(vector(), 1, 11, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
+  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
   expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
   
   cFit                <- NA
@@ -172,8 +172,8 @@ test_that('mz cannot be calculated, fit is rejected, verbose', {
   tmp_DataPoints  <- list(data.frame(rt=rt, mz=mz, int=int))
   
   # expected foundPeaks
-  expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
-  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+  expected_peakTable      <- data.frame(matrix(vector(), 1, 11, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
+  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
   expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
   
   cFit                <- NA
@@ -206,11 +206,11 @@ test_that('ratio of fit residuals at apex or across maximum is superior to "maxA
   # ROIDataPoints for each window
   tmp_input_ROIsDataPoints  <- extractSignalRawData(tmp_raw_data, rt=input_ROI[,c('rtMin','rtMax')], mz=input_ROI[,c('mzMin','mzMax')], verbose=FALSE)
   # found peaks
-  tmp_found_peakTable                 <- data.frame(matrix(vector(), 4, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
-  tmp_found_peakTable[1,]             <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633)
-  tmp_found_peakTable[2,]             <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249)
-  tmp_found_peakTable[3,]             <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
-  tmp_found_peakTable[4,]             <- c(TRUE, 3672.3110625980275, 3714.088, 3761.43921706666, 536.194638, 536.20001220703125, 536.205362, 6467062.4309558524, 196160, 189416.24807174454)
+  tmp_found_peakTable                 <- data.frame(matrix(vector(), 4, 11, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
+  tmp_found_peakTable[1,]             <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 999, 758336, 765009.9805796633)
+  tmp_found_peakTable[2,]             <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 999, 1149440, 1145857.7611069249)
+  tmp_found_peakTable[3,]             <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+  tmp_found_peakTable[4,]             <- c(TRUE, 3672.3110625980275, 3714.088, 3761.43921706666, 536.194638, 536.20001220703125, 536.205362, 6467062.4309558524, 999, 196160, 189416.24807174454)
   tmp_found_peakTable[,c(1)]       <- sapply(tmp_found_peakTable[,c(1)], as.logical)
   tmp_found_peakTable[,c(2:10)] <- sapply(tmp_found_peakTable[,c(2:10)], as.numeric)
   # fit
@@ -270,11 +270,11 @@ test_that('change params for window #3', {
 
 test_that('change sampling', {
   # expected foundPeaks
-  expected_peakTable      <- data.frame(matrix(vector(), 4, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
-  expected_peakTable[1,]  <- c(TRUE, 3309.6884911519801, 3346.7859591836732, 3385.4800395368861, 522.194778, 522.20001220703125, 522.205222, 26133882.5658131838, 889280, 901012.10599065467)
-  expected_peakTable[2,]  <- c(TRUE, 3345.0894935650540, 3386.4953673469390, 3428.4561855932079, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35474025.5332010239, 1128960, 1113574.43999634334)
-  expected_peakTable[3,]  <- c(TRUE, 3450.0344897959185, 3451.5574489795918, 3501.7095764174951, 464.195358, 464.20001220703125, 464.204642, 7456470.7446634285, 380736, 389624.14409317775)
-  expected_peakTable[4,]  <- c(TRUE, 3670.8488688282255, 3704.0847551020411, 3740.0915161411931, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626359.7845999431, 330176, 326758.81671814714)
+  expected_peakTable      <- data.frame(matrix(vector(), 4, 11, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
+  expected_peakTable[1,]  <- c(TRUE, 3309.6884911519801, 3346.7859591836732, 3385.4800395368861, 522.194778, 522.20001220703125, 522.205222, 26133882.5658131838, 999, 889280, 901012.10599065467)
+  expected_peakTable[2,]  <- c(TRUE, 3345.0894935650540, 3386.4953673469390, 3428.4561855932079, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35474025.5332010239, 999, 1128960, 1113574.43999634334)
+  expected_peakTable[3,]  <- c(TRUE, 3450.0344897959185, 3451.5574489795918, 3501.7095764174951, 464.195358, 464.20001220703125, 464.204642, 7456470.7446634285, 999, 380736, 389624.14409317775)
+  expected_peakTable[4,]  <- c(TRUE, 3670.8488688282255, 3704.0847551020411, 3740.0915161411931, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626359.7845999431, 999, 330176, 326758.81671814714)
   expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
   expected_foundPeaks     <- list(peakTable=expected_peakTable, curveFit=found_curveFit)
   
@@ -302,8 +302,8 @@ test_that('In fit ratio calculation, special case when "IntRawApex" cannot be de
   tmp_DataPoints  <- list(data.frame(rt=rt, mz=mz, int=int))
   
   # expected foundPeaks
-  expected_peakTable      <- data.frame(matrix(vector(), 1, 10, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
-  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA)
+  expected_peakTable      <- data.frame(matrix(vector(), 1, 11, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),stringsAsFactors=FALSE)
+  expected_peakTable[1,]  <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA)
   expected_peakTable[,1]  <- sapply(expected_peakTable[,c(1)], as.logical)
   
   cFit                <- NA
