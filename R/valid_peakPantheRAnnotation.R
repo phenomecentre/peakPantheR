@@ -296,7 +296,7 @@ valid_ppR_peakTables <- function(object, valid, msg, nbCpd, nbSample) {
                         } else { # individual peakTable data.frame column names
                             if (!all(colnames(object@peakTables[[1]]) %in%
                             c("found", "rt", "rtMin", "rtMax", "mz", "mzMin",
-                            "mzMax", "peakArea", "maxIntMeasured",
+                            "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured",
                             "maxIntPredicted", "is_filled", "ppm_error",
                             "rt_dev_sec", "tailingFactor", "asymmetryFactor"))){
                                 valid <- FALSE

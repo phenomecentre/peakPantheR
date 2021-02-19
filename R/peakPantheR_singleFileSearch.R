@@ -359,15 +359,15 @@ singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
             finalOutput <- data.frame(matrix(vector(), 0, 17,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
                 "rtMin", "rtMax", "mz", "mzMin", "mzMax", "peakArea",
-                "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error",
-                "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),
-                stringsAsFactors = FALSE)
+                "peakAreaRaw", "maxIntMeasured", "maxIntPredicted",
+                "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor",
+                "asymmetryFactor"))), stringsAsFactors = FALSE)
         } else {
             finalOutput <- data.frame(matrix(vector(), 0, 13,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
                 "rtMin", "rtMax", "mz",  "mzMin",  "mzMax", "peakArea",
-                "maxIntMeasured", "maxIntPredicted", "is_filled"))),
-                stringsAsFactors = FALSE) }
+                "peakAreaRaw", "maxIntMeasured",
+                "maxIntPredicted", "is_filled"))), stringsAsFactors = FALSE)}
         curveFit <- list()
     }
     return(list(finalOutput=finalOutput, curveFit=curveFit))
