@@ -8,9 +8,11 @@
 #' established at 0.5% of apex intensity using a moving window from the apex
 #' outward (the window is the ROI width); if after 8 iterations \code{rtMin} or
 #' \code{rtMax} is not found, NA is returned and the peak fit rejected.
-#' \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}. \code{mz} is
-#' the weighted (by intensity) average mz of datapoints falling into the
-#' \code{rtMin} to \code{rtMax} range, \code{mzMin} and \code{mzMax} are the
+#' \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}.
+#' \code{peakAreaRaw} is calculated from \code{rtMin} to \code{rtMax} but
+#' using the raw data points. \code{mz} is the weighted (by intensity)
+#' average mz of datapoints falling into the \code{rtMin} to \code{rtMax}
+#' range, \code{mzMin} and \code{mzMax} are the
 #' minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax}
 #' falls outside of ROI (extracted scans), \code{mzMin} or \code{mzMax} are
 #' returned as the input ROI limits and \code{mz} is an approximation on the
@@ -184,6 +186,7 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
             outTable$mzMin[i]           <- fitRes$mzMin
             outTable$mzMax[i]           <- fitRes$mzMax
             outTable$peakArea[i]        <- fitRes$peakArea
+            outTable$peakAreaRaw[i]     <- fitRes$peakAreaRaw
             outTable$maxIntMeasured[i]  <- fitRes$maxIntMeasured
             outTable$maxIntPredicted[i] <- fitRes$maxIntPredicted
         }
@@ -245,9 +248,10 @@ findTargetFeatures_checkInput <- function(ROIsDataPoints, ROI, params) {
 findTargetFeatures_initOutput <- function(ROI, params, verbose) {
     nROI <- nrow(ROI)
 
-    outTable <- data.frame(matrix(vector(), nROI, 10, dimnames = list(c(),
+    outTable <- data.frame(matrix(vector(), nROI, 11, dimnames = list(c(),
         c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea",
-        "maxIntMeasured", "maxIntPredicted"))), stringsAsFactors = FALSE)
+        "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),
+                           stringsAsFactors = FALSE)
     outTable$found  <- rep(FALSE, nROI)  # set found to FALSE
     outCurveFit     <- rep(list(NA), nROI)
 
@@ -303,7 +307,11 @@ findTargetFeatures_fitFeature <- function(i, ROI, ROIsDataPoints, curveModel,
     mz <- mzRes$mz; mzMin <- mzRes$mzMin; mzMax <- mzRes$mzMax
 
     # integrate curve
+    #peakArea <- findTargetFeatures_integCurve(fittedCurve,rtMin,rtMax,sampling)
     peakArea <- findTargetFeatures_integCurve(fittedCurve,rtMin,rtMax,sampling)
+    # integrate curve - raw datapoints
+    rtBound <- (tmp_EIC$rt < rtMax) & (tmp_EIC$rt > rtMin)
+    peakAreaRaw <- pracma::trapz(x=tmp_EIC$rt[rtBound], y=tmp_EIC$int[rtBound])
 
     # Check quality of fit (residuals at apex,and max predicted to max measured)
     qcRes <- findTargetFeatures_fitQuality(i, tmp_EIC, rt, maxIntPredicted,
@@ -311,9 +319,9 @@ findTargetFeatures_fitFeature <- function(i, ROI, ROIsDataPoints, curveModel,
     if (!qcRes) { # move to next window (empty df row was already initialised)
         return(NULL) }
 
-    return(list(fittedCurve=fittedCurve,
-                rt=rt, rtMin=as.numeric(rtMin), rtMax=as.numeric(rtMax),
-                mz=mz, mzMin=mzMin, mzMax=mzMax, peakArea=peakArea,
+    return(list(fittedCurve=fittedCurve, rt=rt, rtMin=as.numeric(rtMin),
+                rtMax=as.numeric(rtMax), mz=mz, mzMin=mzMin, mzMax=mzMax,
+                peakArea=peakArea, peakAreaRaw=peakAreaRaw,
                 maxIntMeasured=maxIntMeasured, maxIntPredicted=maxIntPredicted))
 }
 ## Other EIC extraction ----
@@ -502,7 +510,6 @@ findTargetFeatures_findMZ <- function(i, ROI, rtMin, rtMax, ROIsDataPoints,
     return(list(mz=mz, mzMin=mzMin, mzMax=mzMax))
 }
 
-
 ## integrate a fittedCurve on the rtMin rtMax range
 findTargetFeatures_integCurve <- function(fittedCurve, rtMin, rtMax, sampling){
     ## integrate curve
@@ -518,9 +525,9 @@ findTargetFeatures_integCurve <- function(fittedCurve, rtMin, rtMax, sampling){
     h           <- (rtMax - rtMin)/(sampling - 1)
     grid_rt     <- seq(from = rtMin, to = rtMax, by = h)
     val_int     <- predictCurve(fittedCurve, x = grid_rt)
-    dist        <- sum(c(val_int, val_int[2:(sampling - 1)]))/2
-    peakArea    <- dist * h
+    peakArea    <- pracma::trapz(x=grid_rt, y=val_int)
 }
+
 
 ## ! Unused filtering based on residuals ! ----
 # @param maxResidualRatio (float) Ratio of maximum allowed residual
@@ -580,3 +587,24 @@ findTargetFeatures_fitQuality <- function(i, tmp_EIC, rt, maxIntPredicted,
     }
     return(TRUE)
 }
+
+## integrate a fittedCurve on the rtMin rtMax range
+# Previous version without pracma
+
+#findTargetFeatures_integCurve <- function(fittedCurve, rtMin, rtMax, sampling){
+#    ## integrate curve
+#    #       __a__
+    #      /|     \
+    #    /  h      \
+    #  /____|__b____\
+    # \     |      /
+    #  \    h     /
+    #   \___|__c_/
+    # Area  = (a+b)/2 * h + (b+c)/2 * h
+    #       = (a+2b+c)/2 * h
+#    h           <- (rtMax - rtMin)/(sampling - 1)
+#    grid_rt     <- seq(from = rtMin, to = rtMax, by = h)
+#    val_int     <- predictCurve(fittedCurve, x = grid_rt)
+#    dist        <- sum(c(val_int, val_int[2:(sampling - 1)]))/2
+#    peakArea    <- dist * h
+#}
