@@ -11,7 +11,8 @@
 #' \link{findTargetFeatures}, with features as rows and peak properties as
 #' columns. The following columns are mandatory: \code{found}, \code{is_filled},
 #' \code{mz}, \code{mzMin}, \code{mzMax}, \code{rt}, \code{rtMin}, \code{rtMax},
-#' \code{peakArea}, \code{maxIntMeasured}, \code{maxIntPredicted}.
+#' \code{peakArea}, \code{peakAreaRaw}, \code{maxIntMeasured},
+#' \code{maxIntPredicted}.
 #' @param verbose (bool) if TRUE message progress
 #'
 #' @return an updated foundPeakTable with FIR integration values
@@ -110,8 +111,8 @@ integrateFIR_features <- function(needsFilling_idx, all_peakData, FIR,
         } else { # If no scan found in that region, return default values
             if (verbose) { message('No scan present in the FIR # ', i,
                             ': rt and mz are set as the middle of the FIR box;',
-                            ' peakArea, maxIntMeasured and maxIntPredicted are',
-                            ' set to 0') }
+                            ' peakArea, peakAreaRaw, maxIntMeasured and
+                            maxIntPredicted are set to 0') }
 
             tmpResult[i, c("mzMin", "mzMax", "rtMin", "rtMax")] <- FIR[i,
                 c("mzMin", "mzMax", "rtMin", "rtMax")]
