@@ -356,14 +356,14 @@ singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
             message("- No target features passed in 'targetFeatTable', ",
                             "no integration, only TIC will be reported -") }
         if (peakStatistic) {
-            finalOutput <- data.frame(matrix(vector(), 0, 17,
+            finalOutput <- data.frame(matrix(vector(), 0, 18,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
                 "rtMin", "rtMax", "mz", "mzMin", "mzMax", "peakArea",
                 "peakAreaRaw", "maxIntMeasured", "maxIntPredicted",
                 "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor",
                 "asymmetryFactor"))), stringsAsFactors = FALSE)
         } else {
-            finalOutput <- data.frame(matrix(vector(), 0, 13,
+            finalOutput <- data.frame(matrix(vector(), 0, 14,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
                 "rtMin", "rtMax", "mz",  "mzMin",  "mzMax", "peakArea",
                 "peakAreaRaw", "maxIntMeasured",

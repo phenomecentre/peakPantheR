@@ -17,10 +17,10 @@ input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(1))
 
 ## Expected
 # found peakTable
-found_peakTable     <- data.frame(matrix(vector(), 1, 17, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-found_peakTable[1,] <- c(TRUE, 179.3141, 181.368, 184.3227, 106.0404, 106.0501, 106.0593, 490160.9, 255343, 262945.8, 'ID-1', 'Serine', FALSE, 1.952462, 0.3680482, 1.179395, 1.32217)
-found_peakTable[,c(1,13)]       <- vapply(found_peakTable[,c(1,13)], as.logical, FUN.VALUE=logical(1))
-found_peakTable[,c(2:10,14:17)] <- vapply(found_peakTable[,c(2:10,14:17)], as.numeric, FUN.VALUE=numeric(1))
+found_peakTable     <- data.frame(matrix(vector(), 1, 18, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+found_peakTable[1,] <- c(TRUE, 179.3141, 181.368, 184.3227, 106.0404, 106.0501, 106.0593, 490160.9, 491545.8, 255343, 262945.8, 'ID-1', 'Serine', FALSE, 1.952462, 0.3680482, 1.179395, 1.32217)
+found_peakTable[,c(1,14)]       <- vapply(found_peakTable[,c(1,14)], as.logical, FUN.VALUE=logical(1))
+found_peakTable[,c(2:11,15:18)] <- vapply(found_peakTable[,c(2:11,15:18)], as.numeric, FUN.VALUE=numeric(1))
 
 # found curveFit
 cFit1           <- list(amplitude=446548.3, center=180.7982, sigma=0.9538973, gamma=0.7536497, fitStatus=1, curveModel="skewedGaussian")
@@ -74,10 +74,10 @@ test_that('peakPantheR_singleFileSearch() continuum mode', {
     input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(1))
 
     # found peakTable
-    found_peakTable     <- data.frame(matrix(vector(), 1, 17, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-    found_peakTable[1,] <- c(TRUE, 179.3141, 181.368, 184.3227, 106.0404, 106.0501, 106.0593, 490160.9, 255343, 262945.8, 'ID-1', 'Serine', FALSE, 1.952462, 0.3680482, 1.179395, 1.32217)
-    found_peakTable[,c(1,13)]       <- vapply(found_peakTable[,c(1,13)], as.logical, FUN.VALUE=logical(1))
-    found_peakTable[,c(2:10,14:17)] <- vapply(found_peakTable[,c(2:10,14:17)], as.numeric, FUN.VALUE=numeric(1))
+    found_peakTable     <- data.frame(matrix(vector(), 1, 18, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+    found_peakTable[1,] <- c(TRUE, 179.3141, 181.368, 184.3227, 106.0404, 106.0501, 106.0593, 490160.9, 491545.8, 255343, 262945.8, 'ID-1', 'Serine', FALSE, 1.952462, 0.3680482, 1.179395, 1.32217)
+    found_peakTable[,c(1,14)]       <- vapply(found_peakTable[,c(1,14)], as.logical, FUN.VALUE=logical(1))
+    found_peakTable[,c(2:11,15:18)] <- vapply(found_peakTable[,c(2:11,15:18)], as.numeric, FUN.VALUE=numeric(1))
 
     # found curveFit
     cFit1           <- list(amplitude=446548.3, center=180.7982, sigma=0.9538973, gamma=0.7536497, fitStatus=1, curveModel="skewedGaussian")
@@ -146,15 +146,15 @@ test_that('peakPantheR_parallelAnnotation() continuum mode', {
 
 
     # Expected peakTables
-    peakTable1     <- data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-    peakTable1[1,] <- c(TRUE, 179.3141, 181.368, 184.3227, 106.0404, 106.0501, 106.0593, 490160.9, 255343, 262945.8, FALSE, 1.952462, 0.3680482, 1.179395, 1.32217)
-    peakTable1[,c(1,11)]       <- sapply(peakTable1[,c(1,11)], as.logical)
-    peakTable1[,c(2:10,12:15)] <- sapply(peakTable1[,c(2:10,12:15)], as.numeric)
+    peakTable1     <- data.frame(matrix(vector(), 1, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+    peakTable1[1,] <- c(TRUE, 179.3141, 181.368, 184.3227, 106.0404, 106.0501, 106.0593, 490160.9, 491545.8, 255343, 262945.8, FALSE, 1.952462, 0.3680482, 1.179395, 1.32217)
+    peakTable1[,c(1,12)]       <- sapply(peakTable1[,c(1,12)], as.logical)
+    peakTable1[,c(2:11,13:16)] <- sapply(peakTable1[,c(2:11,13:16)], as.numeric)
     # 2
-    peakTable2     <- data.frame(matrix(vector(), 1, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-    peakTable2[1,] <- c(TRUE, 179.0366, 180.9154, 183.7788, 106.0407, 106.0501, 106.0597, 461117.8, 265650, 262253.9, FALSE, 1.981645, -0.08462651, 1.215098, 1.386996)
-    peakTable2[,c(1,11)]       <- sapply(peakTable2[,c(1,11)], as.logical)
-    peakTable2[,c(2:10,12:15)] <- sapply(peakTable2[,c(2:10,12:15)], as.numeric)
+    peakTable2     <- data.frame(matrix(vector(), 1, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+    peakTable2[1,] <- c(TRUE, 179.0366, 180.9154, 183.7788, 106.0407, 106.0501, 106.0597, 461117.8, 466111.8, 265650, 262253.9, FALSE, 1.981645, -0.08462651, 1.215098, 1.386996)
+    peakTable2[,c(1,12)]       <- sapply(peakTable2[,c(1,12)], as.logical)
+    peakTable2[,c(2:11,13:16)] <- sapply(peakTable2[,c(2:11,13:16)], as.numeric)
     expected_peakTables <- list(peakTable1, peakTable2)
 
     # Expected peakFit

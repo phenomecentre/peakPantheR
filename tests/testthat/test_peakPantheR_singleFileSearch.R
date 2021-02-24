@@ -20,14 +20,14 @@ input_ROI[3,] 	<- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.195358, 464
 input_ROI[4,] 	<- c("ID-4", "testCpd 4", 3670., 3701.697, 3745., 536.194638, 536.2, 536.205362)
 input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(4))
 
-# found peakTable
-found_peakTable     <- data.frame(matrix(vector(), 4, 17, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-found_peakTable[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, 'ID-1', 'testCpd 1', FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
-found_peakTable[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, 'ID-2', 'testCpd 2', FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
-found_peakTable[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412, 'ID-3', 'testCpd 3', FALSE, 0.026296922148575364, -2.92771084337346110, 207.6939219686769036, 380.5019028782010082)
-found_peakTable[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 330176, 326763.87246511364, 'ID-4', 'testCpd 4', FALSE, 0.022765817240815486, 2.44578313253032320, 1.0305289730128095, 1.0536948855480386)
-found_peakTable[,c(1,12)]       <- vapply(found_peakTable[,c(1,12)], as.logical, FUN.VALUE=logical(4))
-found_peakTable[,c(2:11,13:16)] <- vapply(found_peakTable[,c(2:11,13:16)], as.numeric, FUN.VALUE=numeric(4))
+# Expected peakTables
+found_peakTable     <- data.frame(matrix(vector(), 4, 18, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "cpdID", "cpdName", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+found_peakTable[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 26071378, 889280, 901015.80529226747, 'ID-1', 'testCpd 1', FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
+found_peakTable[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 36498367, 1128960, 1113576.69008227298, 'ID-2', 'testCpd 2', FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
+found_peakTable[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 7608218, 380736, 389632.13549519412, 'ID-3', 'testCpd 3', FALSE, 0.026296922148575364, -2.92771084337346110, 207.6939219686769036, 380.5019028782010082)
+found_peakTable[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 8692184, 330176, 326763.87246511364, 'ID-4', 'testCpd 4', FALSE, 0.022765817240815486, 2.44578313253032320, 1.0305289730128095, 1.0536948855480386)
+found_peakTable[,c(1,14)]       <- vapply(found_peakTable[,c(1,14)], as.logical, FUN.VALUE=logical(4))
+found_peakTable[,c(2:11,15:18)] <- vapply(found_peakTable[,c(2:11,15:18)], as.numeric, FUN.VALUE=numeric(4))
 
 # found curveFit
 cFit1           <- list(amplitude=162404.8057918259, center=3341.888, sigma=0.078786133031045896, gamma=0.0018336101984172684, fitStatus=2, curveModel="skewedGaussian")
@@ -48,7 +48,7 @@ test_that('no peakStatistic, no plotEICsPath, no getAcquTime, no FIR, no verbose
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- found_peakTable[,1:13]
+  expected_peakTable      <- found_peakTable[,1:14]
   # Expected curveFit
   expected_curveFit       <- found_curveFit
   # Expected ROIsDataPoint
@@ -106,7 +106,7 @@ test_that('no peakStatistic, no plotEICsPath, with getAcquTime, no FIR, verbose'
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- found_peakTable[,1:13]
+  expected_peakTable      <- found_peakTable[,1:14]
   # Expected curveFit
   expected_curveFit       <- found_curveFit
   # Expected ROIsDataPoint
@@ -135,7 +135,7 @@ test_that('no peakStatistic, with plotEICsPath, no getAcquTime, no FIR, verbose'
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- found_peakTable[,1:13]
+  expected_peakTable      <- found_peakTable[,1:14]
   # Expected curveFit
   expected_curveFit       <- found_curveFit
   # Expected ROIsDataPoint
@@ -205,8 +205,8 @@ test_that('change peak fitting params with ..., no peakStatistic, no plotEICsPat
   # Expected TIC
   expected_TIC                      <- 2410533091
   # Expected peakTable
-  expected_peakTable                <- found_peakTable[,1:13]
-  expected_peakTable[3,2:10]        <- c(3418.0076795585401, 3455.6277710843374, 3495.4734240188186, 464.195358, 464.2000122, 464.204642, 11307215.264967661, 380736, 381327.26552768378)
+  expected_peakTable                <- found_peakTable[,1:14]
+  expected_peakTable[3,2:11]        <- c(3418.0076795585401, 3455.6277710843374, 3495.4734240188186, 464.195358, 464.2000122, 464.204642, 11307215.264967661, 11538988, 380736, 381327.26552768378)
   # Expected curveFit
   expected_curveFit                 <- found_curveFit
   expected_curveFit[[3]]$amplitude  <- 64246.052173667762
@@ -249,7 +249,7 @@ test_that('no targetFeatures on import, no peakStatistic', {
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- data.frame(matrix(vector(), 0, 13, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled'))), stringsAsFactors=FALSE)
+  expected_peakTable      <- data.frame(matrix(vector(), 0, 14, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'peakAreaRaw', 'maxIntMeasured', 'maxIntPredicted', 'is_filled'))), stringsAsFactors=FALSE)
   # Expected curveFit
   expected_curveFit       <- list()
   # Expected ROIsDataPoint
@@ -281,7 +281,7 @@ test_that('no targetFeatures on import, peakStatistic', {
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- data.frame(matrix(vector(), 0, 17, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=FALSE)
+  expected_peakTable      <- data.frame(matrix(vector(), 0, 18, dimnames=list(c(), c('cpdID', 'cpdName', 'found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'peakAreaRaw', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=FALSE)
   # Expected curveFit
   expected_curveFit       <- list()
   # Expected ROIsDataPoint
@@ -314,7 +314,7 @@ test_that('no features found, no FIR', {
   # Expected TIC
   expected_TIC                  <- 2410533091
   # Expected peakTable
-  expected_peakTable            <- data.frame(matrix(vector(), 1, 13, dimnames=list(c(), c('found', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'cpdID', 'cpdName', 'is_filled'))), stringsAsFactors=FALSE)
+  expected_peakTable            <- data.frame(matrix(vector(), 1, 14, dimnames=list(c(), c('found', 'rtMin', 'rt', 'rtMax', 'mzMin', 'mz', 'mzMax', 'peakArea', 'peakAreaRaw', 'maxIntMeasured', 'maxIntPredicted', 'cpdID', 'cpdName', 'is_filled'))), stringsAsFactors=FALSE)
   expected_peakTable$cpdID      <- "ID-1"
   expected_peakTable$cpdName    <- "testCpd 1"
   expected_peakTable$found      <- FALSE
@@ -355,8 +355,8 @@ test_that('one feature not found (#3), use FIR', {
   # Expected TIC
   expected_TIC            <- 2410533091
   # Expected peakTable
-  expected_peakTable      <- found_peakTable[,1:13]
-  expected_peakTable[3,c('rtMin','rt', 'rtMax', 'mzMin', 'mz', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted')] <- c(3451.20759036145, 3454.435, 3501.66975049245, 464.194858, 464.2, 464.205142, 7799325, 380736, as.numeric(NA))
+  expected_peakTable      <- found_peakTable[,1:14]
+  expected_peakTable[3,c('rtMin','rt', 'rtMax', 'mzMin', 'mz', 'mzMax', 'peakArea', 'peakAreaRaw', 'maxIntMeasured', 'maxIntPredicted')] <- c(3451.20759036145, 3454.435, 3501.66975049245, 464.194858, 464.2, 464.205142, 7744647, 7744647, 380736, as.numeric(NA))
   expected_peakTable$found[3]     <- TRUE
   expected_peakTable$is_filled[3] <- TRUE
   # Expected curveFit
