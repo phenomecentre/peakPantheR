@@ -10,7 +10,8 @@
 #' \code{rtMax} is not found, NA is returned and the peak fit rejected.
 #' \code{peakArea} is calculated from \code{rtMin} to \code{rtMax}.
 #' \code{peakAreaRaw} is calculated from \code{rtMin} to \code{rtMax} but
-#' using the raw data points. \code{mz} is the weighted (by intensity)
+#' using the raw data points instead of the modelled line-shape.
+#' \code{mz} is the weighted (by intensity)
 #' average mz of datapoints falling into the \code{rtMin} to \code{rtMax}
 #' range, \code{mzMin} and \code{mzMax} are the
 #' minimum and maxmimum mass in these range. If \code{rtMin} or \code{rtMax}
@@ -102,9 +103,9 @@
 #' #   found    rtMin       rt    rtMax    mzMin    mz    mzMax peakArea
 #' # 1  TRUE 3309.759 3346.828 3385.410 522.1948 522.2 522.2052 26133727
 #' # 2  TRUE 3345.377 3386.529 3428.279 496.2000 496.2 496.2000 35472141
-#' #   maxIntMeasured maxIntPredicted
-#' # 1         889280        901015.8
-#' # 2        1128960       1113576.7
+#' #   peakAreaRaw maxIntMeasured maxIntPredicted
+#' # 1    26071378         889280        901015.8
+#' # 2    36498367        1128960       1113576.7
 #' #
 #' # $curveFit
 #' # $curveFit[[1]]
