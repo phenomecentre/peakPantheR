@@ -262,8 +262,7 @@ valid_ppR_TIC <- function(object, valid, msg, nbSample) {
 ## peakTables (nb, type, nb of rows, nb columns, column names)
 valid_ppR_peakTables <- function(object, valid, msg, nbCpd, nbSample) {
     # number of peakTables
-    if (length(object@peakTables) != nbSample) {
-        valid <- FALSE
+    if (length(object@peakTables) != nbSample) { valid <- FALSE
         msg <- c(msg, paste0("peakTables has ", length(object@peakTables),
                             " elements (samples). Should be ", nbSample))
     } else { # only check peakTables if min 1 sample and not NULL
@@ -272,13 +271,11 @@ valid_ppR_peakTables <- function(object, valid, msg, nbCpd, nbSample) {
                                         FUN.VALUE = logical(1))
             if (!all(peakTables_isNULL)) {
                 # if one peakTable is NULL but not all, raise an error
-                if (any(peakTables_isNULL)) {
-                    valid <- FALSE
+                if (any(peakTables_isNULL)) { valid <- FALSE
                     msg <- c(msg, paste0('peakTables must all either be ',
                                         'data.frame or NULL'))
                 } else { # individual peakTable is data.frame
-                    if (!is.data.frame(object@peakTables[[1]])) {
-                        valid <- FALSE
+                    if (!is.data.frame(object@peakTables[[1]])) { valid <- FALSE
                         msg <- c(msg, paste0('peakTables must be data.frame or',
                                 ' NULL not ', typeof(object@peakTables[[1]])))
                     } else { # individual peakTable data.frame number of rows
@@ -296,7 +293,7 @@ valid_ppR_peakTables <- function(object, valid, msg, nbCpd, nbSample) {
                         } else { # individual peakTable data.frame column names
                             if (!all(colnames(object@peakTables[[1]]) %in%
                             c("found", "rt", "rtMin", "rtMax", "mz", "mzMin",
-                            "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured",
+                            "mzMax", "peakArea","peakAreaRaw", "maxIntMeasured",
                             "maxIntPredicted", "is_filled", "ppm_error",
                             "rt_dev_sec", "tailingFactor", "asymmetryFactor"))){
                                 valid <- FALSE

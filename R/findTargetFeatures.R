@@ -199,8 +199,7 @@ findTargetFeatures  <- function(ROIsDataPoints, ROI,
     if (verbose) {
         message("Found ", sum(outTable$found), "/", nROI, " features in ",
                 round(as.double(difftime(etime, stime)), 2), " ",
-                units(difftime(etime, stime)))
-    }
+                units(difftime(etime, stime))) }
     return(list(peakTable = outTable, curveFit = outCurveFit))
 }
 
@@ -252,8 +251,8 @@ findTargetFeatures_initOutput <- function(ROI, params, verbose) {
 
     outTable <- data.frame(matrix(vector(), nROI, 11, dimnames = list(c(),
         c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea",
-        "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),
-                           stringsAsFactors = FALSE)
+        "peakAreaRaw", "maxIntMeasured", "maxIntPredicted")),
+    stringsAsFactors = FALSE))
     outTable$found  <- rep(FALSE, nROI)  # set found to FALSE
     outCurveFit     <- rep(list(NA), nROI)
 
@@ -279,7 +278,6 @@ findTargetFeatures_fitFeature <- function(i, ROI, ROIsDataPoints, curveModel,
     # set params for fitting
     new_params <- "guess"
     if (useParams) { new_params <- params[[i]] }
-
     # extract EIC to fit
     tmp_EIC <- generateIonChromatogram(ROIDataPoint = ROIsDataPoints[[i]],
                                         aggregationFunction = "sum")
@@ -287,14 +285,12 @@ findTargetFeatures_fitFeature <- function(i, ROI, ROIsDataPoints, curveModel,
     # fit curve to EIC, in case of failure move to next window
     fittedCurve <- findTargetFeatures_fitcurve(i, tmp_EIC, curveModel,
                                                 new_params, verbose, ...)
-    if (is.null(fittedCurve)){ # move to next window
-        return(NULL) }
+    if (is.null(fittedCurve)){ return(NULL) }
 
     # find rt, rtMin, rtMax and maxIntPredicted for a fitted curve
     rtRes <- findTargetFeatures_findRTproperties(i, ROI, tmp_EIC, fittedCurve,
                                                 sampling, verbose)
-    if (is.null(rtRes)){ # move to next window
-        return(NULL) }
+    if (is.null(rtRes)){ return(NULL) }
     rt <- rtRes$rt; rtMin <- rtRes$rtMin; rtMax <- rtRes$rtMax
     maxIntPredicted <- rtRes$maxIntPredicted
 
@@ -309,7 +305,6 @@ findTargetFeatures_fitFeature <- function(i, ROI, ROIsDataPoints, curveModel,
     mz <- mzRes$mz; mzMin <- mzRes$mzMin; mzMax <- mzRes$mzMax
 
     # integrate curve
-    #peakArea <- findTargetFeatures_integCurve(fittedCurve,rtMin,rtMax,sampling)
     peakArea <- findTargetFeatures_integCurve(fittedCurve,rtMin,rtMax,sampling)
     # integrate curve - raw datapoints
     rtBound <- (tmp_EIC$rt < rtMax) & (tmp_EIC$rt > rtMin)
@@ -318,8 +313,7 @@ findTargetFeatures_fitFeature <- function(i, ROI, ROIsDataPoints, curveModel,
     # Check quality of fit (residuals at apex,and max predicted to max measured)
     qcRes <- findTargetFeatures_fitQuality(i, tmp_EIC, rt, maxIntPredicted,
                                 maxIntMeasured, maxApexResidualRatio, verbose)
-    if (!qcRes) { # move to next window (empty df row was already initialised)
-        return(NULL) }
+    if (!qcRes) { return(NULL) }
 
     return(list(fittedCurve=fittedCurve, rt=rt, rtMin=as.numeric(rtMin),
                 rtMax=as.numeric(rtMax), mz=mz, mzMin=mzMin, mzMax=mzMax,
