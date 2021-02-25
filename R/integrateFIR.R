@@ -51,10 +51,10 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
         # Replace results with FIR integration
         outTable[needsFilling_idx,
             c("mzMin", "mz", "mzMax", "rtMin", "rt", "rtMax", "peakArea",
-              "peakAreaRaw", "maxIntMeasured", "maxIntPredicted")] <-
-          tmpResult[needsFilling_idx,
-            c("mzMin", "mz", "mzMax", "rtMin", "rt", "rtMax", "peakArea",
-              "peakAreaRaw", "maxIntMeasured",  "maxIntPredicted")]
+            "peakAreaRaw", "maxIntMeasured", "maxIntPredicted")] <-
+            tmpResult[needsFilling_idx, c("mzMin", "mz", "mzMax", "rtMin", "rt",
+            "rtMax", "peakArea", "peakAreaRaw", "maxIntMeasured",
+            "maxIntPredicted")]
         outTable$is_filled[needsFilling_idx] <- TRUE
         outTable$found[needsFilling_idx] <- TRUE }
 
