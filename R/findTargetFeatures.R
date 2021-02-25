@@ -251,8 +251,8 @@ findTargetFeatures_initOutput <- function(ROI, params, verbose) {
 
     outTable <- data.frame(matrix(vector(), nROI, 11, dimnames = list(c(),
         c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea",
-        "peakAreaRaw", "maxIntMeasured", "maxIntPredicted")),
-    stringsAsFactors = FALSE))
+        "peakAreaRaw", "maxIntMeasured", "maxIntPredicted"))),
+    stringsAsFactors = FALSE)
     outTable$found  <- rep(FALSE, nROI)  # set found to FALSE
     outCurveFit     <- rep(list(NA), nROI)
 
