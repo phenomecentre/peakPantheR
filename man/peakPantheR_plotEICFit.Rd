@@ -25,7 +25,7 @@ points for each sample (retention time 'rt', mass 'mz' and intensity 'int'
 \item{rtMin}{(float) NULL or vector of detected peak minimum retention time
 (in sec)}
 
-\item{rtMax}{(float) NULL or vector ofdetected peak maximum retention time
+\item{rtMax}{(float) NULL or vector of detected peak maximum retention time
 (in sec)}
 
 \item{sampling}{(int) Number of points to employ when plotting fittedCurve}

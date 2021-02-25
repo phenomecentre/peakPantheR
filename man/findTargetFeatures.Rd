@@ -62,6 +62,7 @@ mz \tab weighted (by intensity) mean of peak m/z across scans\cr
 mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
 mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
 peakArea \tab integrated peak area\cr
+peakAreaRaw \tab integrated peak area from raw data points\cr
 maxIntMeasured \tab maximum peak intensity in raw data\cr
 maxIntPredicted \tab maximum peak intensity based on curve fit (at apex)\cr
 }
@@ -125,9 +126,9 @@ foundPeaks
 #   found    rtMin       rt    rtMax    mzMin    mz    mzMax peakArea
 # 1  TRUE 3309.759 3346.828 3385.410 522.1948 522.2 522.2052 26133727
 # 2  TRUE 3345.377 3386.529 3428.279 496.2000 496.2 496.2000 35472141
-#   maxIntMeasured maxIntPredicted
-# 1         889280        901015.8
-# 2        1128960       1113576.7
+#   peakAreaRaw maxIntMeasured maxIntPredicted
+# 1    26071378         889280        901015.8
+# 2    36498367        1128960       1113576.7
 #
 # $curveFit
 # $curveFit[[1]]
