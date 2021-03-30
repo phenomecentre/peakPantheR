@@ -65,6 +65,7 @@
 #' mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
 #' mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
 #' peakArea \tab integrated peak area\cr
+#' peakAreaRaw \tab integrated peak area from raw data points\cr
 #' maxIntMeasured \tab maximum peak intensity in raw data\cr
 #' maxIntPredicted \tab maximum peak intensity based on curve fit\cr
 #' is_filled \tab Logical indicate if the feature was integrated using FIR
@@ -124,12 +125,12 @@
 #' #   found    rtMin       rt    rtMax    mzMin    mz    mzMax peakArea
 #' # 1  TRUE 3309.759 3346.828 3385.410 522.1948 522.2 522.2052 26133727
 #' # 2  TRUE 3345.377 3386.529 3428.279 496.2000 496.2 496.2000 35472141
-#' #   maxIntMeasured maxIntPredicted cpdID cpdName is_filled  ppm_error
-#' # 1         889280        901015.8  ID-1   Cpd 1     FALSE 0.02337616
-#' # 2        1128960       1113576.7  ID-2   Cpd 2     FALSE 0.02460103
-#' #   rt_dev_sec  tailingFactor  asymmetryFactor
-#' # 1  1.9397590       1.015357         1.026824
-#' # 2  0.9518072       1.005378         1.009318
+#' #   peakAreaRaw maxIntMeasured maxIntPredicted cpdID cpdName is_filled
+#' # 1    26071378         889280        901015.8  ID-1   Cpd 1     FALSE
+#' # 2    36498367        1128960       1113576.7  ID-2   Cpd 2     FALSE
+#' #    ppm_error   rt_dev_sec  tailingFactor  asymmetryFactor
+#' # 1 0.02337616    1.9397590       1.015357         1.026824
+#' # 2 0.02460103    0.9518072       1.005378         1.009318
 #' #
 #' # $acquTime
 #' # [1] NA
@@ -356,18 +357,18 @@ singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
             message("- No target features passed in 'targetFeatTable', ",
                             "no integration, only TIC will be reported -") }
         if (peakStatistic) {
-            finalOutput <- data.frame(matrix(vector(), 0, 17,
+            finalOutput <- data.frame(matrix(vector(), 0, 18,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
                 "rtMin", "rtMax", "mz", "mzMin", "mzMax", "peakArea",
-                "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error",
-                "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),
-                stringsAsFactors = FALSE)
+                "peakAreaRaw", "maxIntMeasured", "maxIntPredicted",
+                "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor",
+                "asymmetryFactor"))), stringsAsFactors = FALSE)
         } else {
-            finalOutput <- data.frame(matrix(vector(), 0, 13,
+            finalOutput <- data.frame(matrix(vector(), 0, 14,
                 dimnames = list(c(), c("cpdID", "cpdName", "found", "rt",
                 "rtMin", "rtMax", "mz",  "mzMin",  "mzMax", "peakArea",
-                "maxIntMeasured", "maxIntPredicted", "is_filled"))),
-                stringsAsFactors = FALSE) }
+                "peakAreaRaw", "maxIntMeasured",
+                "maxIntPredicted", "is_filled"))), stringsAsFactors = FALSE)}
         curveFit <- list()
     }
     return(list(finalOutput=finalOutput, curveFit=curveFit))

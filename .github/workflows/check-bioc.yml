@@ -40,7 +40,7 @@ env:
   run_covr: 'true'
   run_pkgdown: 'false'
   has_RUnit: 'false'
-  cache-version: 'cache-v1'
+  cache-version: 'cache-v2'
 
 jobs:
   build-check:
@@ -167,6 +167,7 @@ jobs:
           ## Pass #1 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 1 at installing dependencies: local dependencies ****'))
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = TRUE, upgrade = TRUE)
+          remotes::install_cran("pracma")
         continue-on-error: true
         shell: Rscript {0}
 

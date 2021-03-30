@@ -41,23 +41,23 @@ input_acquisitionTime <- c(as.character(Sys.time()), as.character(Sys.time()+900
 
 # peakTables
 # 1
-peakTable1     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
-peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
-peakTable1[,c(1,11)]       <- sapply(peakTable1[,c(1,11)], as.logical)
-peakTable1[,c(2:10,12:15)] <- sapply(peakTable1[,c(2:10,12:15)], as.numeric)
+peakTable1     <- data.frame(matrix(vector(), 2, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 26133726, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
+peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 35472141, 1128960, 1113576.69008227298, FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
+peakTable1[,c(1,12)]       <- sapply(peakTable1[,c(1,12)], as.logical)
+peakTable1[,c(2:11,13:16)] <- sapply(peakTable1[,c(2:11,13:16)], as.numeric)
 # 2
-peakTable2     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 0.2139999999999, 1.0339153786516375, 1.0630802030537212)
-peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
-peakTable2[,c(1,11)]       <- sapply(peakTable2[,c(1,11)], as.logical)
-peakTable2[,c(2:10,12:15)] <- sapply(peakTable2[,c(2:10,12:15)], as.numeric)
+peakTable2     <- data.frame(matrix(vector(), 2, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 24545301, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 0.2139999999999, 1.0339153786516375, 1.0630802030537212)
+peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 37207579, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
+peakTable2[,c(1,12)]       <- sapply(peakTable2[,c(1,12)], as.logical)
+peakTable2[,c(2:11,13:16)] <- sapply(peakTable2[,c(2:11,13:16)], as.numeric)
 # 3
-peakTable3     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
-peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, TRUE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
-peakTable3[,c(1,11)]       <- sapply(peakTable3[,c(1,11)], as.logical)
-peakTable3[,c(2:10,12:15)] <- sapply(peakTable3[,c(2:10,12:15)], as.numeric)
+peakTable3     <- data.frame(matrix(vector(), 2, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 21447174, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
+peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 35659353, 1149440, 1145857.7611069249, TRUE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
+peakTable3[,c(1,12)]       <- sapply(peakTable3[,c(1,12)], as.logical)
+peakTable3[,c(2:11, 13:16)] <- sapply(peakTable3[,c(2:11,13:16)], as.numeric)
 input_peakTables <- list(peakTable1, peakTable2, peakTable3)
 
 # peakFit
@@ -112,6 +112,7 @@ test_that('csv output with FIR, verbose, no verbose', {
   expected_path_mzMax       <- file.path(savePath1, "testProject_mzMax.csv")
   expected_path_mzMin       <- file.path(savePath1, "testProject_mzMin.csv")
   expected_path_peakArea    <- file.path(savePath1, "testProject_peakArea.csv")
+  expected_path_peakAreaRaw <- file.path(savePath1, "testProject_peakAreaRaw.csv")
   expected_path_ppmErr      <- file.path(savePath1, "testProject_ppm_error.csv")
   expected_path_rt          <- file.path(savePath1, "testProject_rt.csv")
   expected_path_rtDev       <- file.path(savePath1, "testProject_rt_dev_sec.csv")
@@ -147,6 +148,8 @@ test_that('csv output with FIR, verbose, no verbose', {
   expected_mzMin        <- data.frame(X=rownames(expected_mzMin), ID.1=expected_mzMin$`ID-1`, ID.2=expected_mzMin$`ID-2`, stringsAsFactors=FALSE)
   expected_peakArea     <- annotationTable(input_annotation, column='peakArea')
   expected_peakArea     <- data.frame(X=rownames(expected_peakArea), ID.1=expected_peakArea$`ID-1`, ID.2=expected_peakArea$`ID-2`, stringsAsFactors=FALSE)
+  expected_peakAreaRaw  <- annotationTable(input_annotation, column='peakAreaRaw')
+  expected_peakAreaRaw  <- data.frame(X=rownames(expected_peakAreaRaw), ID.1=expected_peakAreaRaw$`ID-1`, ID.2=expected_peakAreaRaw$`ID-2`, stringsAsFactors=FALSE)
   expected_ppmErr       <- annotationTable(input_annotation, column='ppm_error')
   expected_ppmErr       <- data.frame(X=rownames(expected_ppmErr), ID.1=expected_ppmErr$`ID-1`, ID.2=expected_ppmErr$`ID-2`, stringsAsFactors=FALSE)
   expected_rt           <- annotationTable(input_annotation, column='rt')
@@ -164,7 +167,7 @@ test_that('csv output with FIR, verbose, no verbose', {
   result_save     <- evaluate_promise(outputAnnotationResult(input_annotation, saveFolder=savePath1, annotationName='testProject', verbose=TRUE))
   
   # Check CSV has been produced
-  expect_true(all(file.exists(expected_path_cpdMeta, expected_path_specMeta, expected_path_summary, expected_path_asym, expected_path_found, expected_path_is_filled,  expected_path_maxIntMeas,  expected_path_maxIntPred, expected_path_mz, expected_path_mzMax, expected_path_mzMin, expected_path_peakArea, expected_path_ppmErr, expected_path_rt, expected_path_rtDev, expected_path_rtMax, expected_path_rtMin, expected_path_tailfact)))
+  expect_true(all(file.exists(expected_path_cpdMeta, expected_path_specMeta, expected_path_summary, expected_path_asym, expected_path_found, expected_path_is_filled,  expected_path_maxIntMeas,  expected_path_maxIntPred, expected_path_mz, expected_path_mzMax, expected_path_mzMin, expected_path_peakArea, expected_path_peakAreaRaw, expected_path_ppmErr, expected_path_rt, expected_path_rtDev, expected_path_rtMax, expected_path_rtMin, expected_path_tailfact)))
   
   # Check values saved
   saved_cpdMeta     <- read.csv(expected_path_cpdMeta, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
@@ -191,6 +194,8 @@ test_that('csv output with FIR, verbose, no verbose', {
   expect_equal(saved_mzMin, expected_mzMin)
   saved_peakArea    <- read.csv(expected_path_peakArea, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_peakArea, expected_peakArea)
+  saved_peakAreaRaw    <- read.csv(expected_path_peakAreaRaw, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_peakAreaRaw, expected_peakAreaRaw)
   saved_ppmErr      <- read.csv(expected_path_ppmErr, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_ppmErr, expected_ppmErr)
   saved_rt          <- read.csv(expected_path_rt, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
@@ -205,7 +210,7 @@ test_that('csv output with FIR, verbose, no verbose', {
   expect_equal(saved_tailfact, expected_tailfact)
   
   # Check result messages (save path)
-  expect_equal(length(result_save$messages), 18)
+  expect_equal(length(result_save$messages), 19)
   
   
   ## no verbose
@@ -237,6 +242,7 @@ test_that('csv output without FIR, verbose, no verbose', {
   expected_path_mzMax       <- file.path(savePath3, "testProject_mzMax.csv")
   expected_path_mzMin       <- file.path(savePath3, "testProject_mzMin.csv")
   expected_path_peakArea    <- file.path(savePath3, "testProject_peakArea.csv")
+  expected_path_peakAreaRaw <- file.path(savePath3, "testProject_peakAreaRaw.csv")
   expected_path_ppmErr      <- file.path(savePath3, "testProject_ppm_error.csv")
   expected_path_rt          <- file.path(savePath3, "testProject_rt.csv")
   expected_path_rtDev       <- file.path(savePath3, "testProject_rt_dev_sec.csv")
@@ -272,6 +278,8 @@ test_that('csv output without FIR, verbose, no verbose', {
   expected_mzMin        <- data.frame(X=rownames(expected_mzMin), ID.1=expected_mzMin$`ID-1`, ID.2=expected_mzMin$`ID-2`, stringsAsFactors=FALSE)
   expected_peakArea     <- annotationTable(input_annotation, column='peakArea')
   expected_peakArea     <- data.frame(X=rownames(expected_peakArea), ID.1=expected_peakArea$`ID-1`, ID.2=expected_peakArea$`ID-2`, stringsAsFactors=FALSE)
+  expected_peakAreaRaw  <- annotationTable(input_annotation, column='peakAreaRaw')
+  expected_peakAreaRaw  <- data.frame(X=rownames(expected_peakAreaRaw), ID.1=expected_peakAreaRaw$`ID-1`, ID.2=expected_peakAreaRaw$`ID-2`, stringsAsFactors=FALSE)
   expected_ppmErr       <- annotationTable(input_annotation, column='ppm_error')
   expected_ppmErr       <- data.frame(X=rownames(expected_ppmErr), ID.1=expected_ppmErr$`ID-1`, ID.2=expected_ppmErr$`ID-2`, stringsAsFactors=FALSE)
   expected_rt           <- annotationTable(input_annotation, column='rt')
@@ -316,6 +324,8 @@ test_that('csv output without FIR, verbose, no verbose', {
   expect_equal(saved_mzMin, expected_mzMin)
   saved_peakArea    <- read.csv(expected_path_peakArea, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_peakArea, expected_peakArea)
+  saved_peakAreaRaw    <- read.csv(expected_path_peakAreaRaw, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
+  expect_equal(saved_peakAreaRaw, expected_peakAreaRaw)
   saved_ppmErr      <- read.csv(expected_path_ppmErr, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_ppmErr, expected_ppmErr)
   saved_rt          <- read.csv(expected_path_rt, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
@@ -330,7 +340,7 @@ test_that('csv output without FIR, verbose, no verbose', {
   expect_equal(saved_tailfact, expected_tailfact)
   
   # Check result messages (save path)
-  expect_equal(length(result_save$messages), 18)
+  expect_equal(length(result_save$messages), 19)
   
   ## no verbose
   savePath4       <- tempdir()
@@ -351,21 +361,21 @@ test_that('cpdMetadata mean rt mz calculation with and without filled, verbose, 
   # cpd 2 (FIR used) sample 1 found (filled), sample 2-3 found, (not filled) 
   # peakTables
   # sample 1
-  tmp_peakTable1     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-  tmp_peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.21, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
-  tmp_peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, TRUE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
+  tmp_peakTable1     <- data.frame(matrix(vector(), 2, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  tmp_peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.21, 522.205222, 26133726.6811244078, 26133726, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
+  tmp_peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 35472141, 1128960, 1113576.69008227298, TRUE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
   tmp_peakTable1[,c(1,11)]       <- sapply(tmp_peakTable1[,c(1,11)], as.logical)
   tmp_peakTable1[,c(2:10,12:15)] <- sapply(tmp_peakTable1[,c(2:10,12:15)], as.numeric)
   # sample 2
-  tmp_peakTable2     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-  tmp_peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 0.2139999999999, 1.0339153786516375, 1.0630802030537212)
-  tmp_peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
+  tmp_peakTable2     <- data.frame(matrix(vector(), 2, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  tmp_peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 24545301, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 0.2139999999999, 1.0339153786516375, 1.0630802030537212)
+  tmp_peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 37207579, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
   tmp_peakTable2[,c(1,11)]       <- sapply(tmp_peakTable2[,c(1,11)], as.logical)
   tmp_peakTable2[,c(2:10,12:15)] <- sapply(tmp_peakTable2[,c(2:10,12:15)], as.numeric)
   # sample 3
-  tmp_peakTable3     <- data.frame(matrix(vector(), 2, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-  tmp_peakTable3[1,] <- c(FALSE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
-  tmp_peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.21, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
+  tmp_peakTable3     <- data.frame(matrix(vector(), 2, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  tmp_peakTable3[1,] <- c(FALSE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 21447174, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
+  tmp_peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.21, 496.204962, 35659353.614476241, 35659353, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
   tmp_peakTable3[,c(1,11)]       <- sapply(tmp_peakTable3[,c(1,11)], as.logical)
   tmp_peakTable3[,c(2:10,12:15)] <- sapply(tmp_peakTable3[,c(2:10,12:15)], as.numeric)
   tmp_peakTables <- list(tmp_peakTable1, tmp_peakTable2, tmp_peakTable3)

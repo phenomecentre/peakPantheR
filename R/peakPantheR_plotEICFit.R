@@ -11,7 +11,7 @@
 #' \code{peakPantheR_curveFit} (or NA) for each sample
 #' @param rtMin (float) NULL or vector of detected peak minimum retention time
 #' (in sec)
-#' @param rtMax (float) NULL or vector ofdetected peak maximum retention time
+#' @param rtMax (float) NULL or vector of detected peak maximum retention time
 #' (in sec)
 #' @param sampling (int) Number of points to employ when plotting fittedCurve
 #' @param sampleColour (str) NULL or vector colour for each sample (same length
