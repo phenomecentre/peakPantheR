@@ -32,6 +32,7 @@
 #' mzMin \tab m/z peak minimum (between rtMin, rtMax)\cr
 #' mzMax \tab m/z peak maximum (between rtMin, rtMax)\cr
 #' peakArea \tab integrated peak area\cr
+#' peakAreaRaw \tab integrated peak area from raw data points\cr
 #' maxIntMeasured \tab maximum peak intensity in raw data\cr
 #' maxIntPredicted \tab maximum peak intensity based on curve fit\cr
 #' ppm_error \tab difference in ppm between the expected and measured m/z\cr

@@ -101,7 +101,7 @@ test_that('slot types are set in class definition', {
 
 test_that('initialize with spectraPaths', {
   # Input and expected values
-  tmp_peakTables            <-  data.frame(matrix(vector(), 0, 15, dimnames=list(c(), c('found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=FALSE)
+  tmp_peakTables            <-  data.frame(matrix(vector(), 0, 16, dimnames=list(c(), c('found', 'rt', 'rtMin', 'rtMax', 'mz', 'mzMin', 'mzMax', 'peakArea', 'peakAreaRaw', 'maxIntMeasured', 'maxIntPredicted', 'is_filled', 'ppm_error', 'rt_dev_sec', 'tailingFactor', 'asymmetryFactor'))), stringsAsFactors=FALSE)
   input_spectraPaths        <- c('./path/file1', './path/file2', './path/file3')
   input_spectraMetadata     <- data.frame(matrix(data=c('a','b','c'), nrow=3, ncol=1, dimnames=list(c(),c('testcol')), byrow=TRUE), stringsAsFactors=FALSE)
   input_acquisitionTime     <- c(as.character(Sys.time()), as.character(Sys.time()+900), as.character(Sys.time()+1800))

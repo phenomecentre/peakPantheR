@@ -18,7 +18,8 @@ seconds), \code{mzMin} (float), \code{mzMax} (float)}
 \link{findTargetFeatures}, with features as rows and peak properties as
 columns. The following columns are mandatory: \code{found}, \code{is_filled},
 \code{mz}, \code{mzMin}, \code{mzMax}, \code{rt}, \code{rtMin}, \code{rtMax},
-\code{peakArea}, \code{maxIntMeasured}, \code{maxIntPredicted}.}
+\code{peakArea}, \code{peakAreaRaw}, \code{maxIntMeasured},
+\code{maxIntPredicted}.}
 
 \item{verbose}{(bool) if TRUE message progress}
 }

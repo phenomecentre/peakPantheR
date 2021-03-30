@@ -46,29 +46,29 @@ input_spectraMetadata <- data.frame(matrix(data=c('e','f','g',5,6,7), nrow=3, nc
 
 
 # Expected peakTables
-peakTable1     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
-peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 1128960, 1113576.69008227298, FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
-peakTable1[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 380736, 389632.13549519412, FALSE, 0.026296922148575364, -2.92771084337346110, 207.6939219686769036, 380.5019028782010082)
-peakTable1[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 330176, 326763.87246511364, FALSE, 0.022765817240815486, 2.44578313253032320, 1.0305289730128095, 1.0536948855480386)
-peakTable1[,c(1,11)]       <- sapply(peakTable1[,c(1,11)], as.logical)
-peakTable1[,c(2:10,12:15)] <- sapply(peakTable1[,c(2:10,12:15)], as.numeric)
+peakTable1     <- data.frame(matrix(vector(), 4, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+peakTable1[1,] <- c(TRUE, 3309.7589296586070, 3346.8277590361445, 3385.4098874628098, 522.194778, 522.20001220703125, 522.205222, 26133726.6811244078,  26071378, 889280, 901015.80529226747, FALSE, 0.023376160866574614, 1.93975903614455092, 1.0153573486330891, 1.0268238825675249)
+peakTable1[2,] <- c(TRUE, 3345.3766648628907, 3386.5288072289159, 3428.2788374983961, 496.20001220703125, 496.20001220703125, 496.20001220703125, 35472141.3330242932, 36498367, 1128960, 1113576.69008227298, FALSE, 0.024601030353423384, 0.95180722891564074, 1.0053782620427065, 1.0093180792278085)
+peakTable1[3,] <- c(TRUE, 3451.2075903614455, 3451.5072891566265, 3501.6697504924518, 464.195358, 464.20001220703125, 464.204642, 7498427.1583901159, 7608218, 380736, 389632.13549519412, FALSE, 0.026296922148575364, -2.92771084337346110, 207.6939219686769036, 380.5019028782010082)
+peakTable1[4,] <- c(TRUE, 3670.9201232710743, 3704.1427831325304, 3740.0172511251831, 536.20001220703125, 536.20001220703125, 536.20001220703125, 8626279.9788195733, 8692184, 330176, 326763.87246511364, FALSE, 0.022765817240815486, 2.44578313253032320, 1.0305289730128095, 1.0536948855480386)
+peakTable1[,c(1,12)]       <- sapply(peakTable1[,c(1,12)], as.logical)
+peakTable1[,c(2:11,13:16)] <- sapply(peakTable1[,c(2:11,13:16)], as.numeric)
 # 2
-peakTable2     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 20.2139999999999, 1.0339153786516375, 1.0630802030537212)
-peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
-peakTable2[3,] <- c(TRUE, 3425.9772908380342, 3466.1733975903617, 3508.0320324994614, 464.195358, 464.20001220703125, 464.204642, 11512269.4488430563, 366720, 365928.64209905855, FALSE, 0.026296922148575364, 11.738397590361728, 1.0157024674594695, 1.0275996777323413)
-peakTable2[4,] <- c(TRUE, 3678.1204484629088, 3720.347, 3768.8011145239534, 536.194638, 536.20001220703125, 536.205362, 7983406.0412310315, 220096, 229651.947643013, FALSE, 0.022765817240815486, 18.65, 1.0738577621711971, 1.1514233243540024)
-peakTable2[,c(1,11)]       <- sapply(peakTable2[,c(1,11)], as.logical)
-peakTable2[,c(2:10,12:15)] <- sapply(peakTable2[,c(2:10,12:15)], as.numeric)
+peakTable2     <- data.frame(matrix(vector(), 4, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+peakTable2[1,] <- c(TRUE, 3326.1063495851854, 3365.102, 3407.2726475892355, 522.194778, 522.20001220703125, 522.205222, 24545301.622835573, 23367885, 761664, 790802.2209998488, FALSE, 0.023376160866574614, 20.2139999999999, 1.0339153786516375, 1.0630802030537212)
+peakTable2[2,] <- c(TRUE, 3365.0238566258713, 3405.791, 3453.4049569205681, 496.195038, 496.20001220703125, 496.204962, 37207579.286265120, 36858762, 1099264, 1098720.2929832144, FALSE, 0.024601030353423384, 20.2139999999999, 1.0839602450900523, 1.1717845972583161)
+peakTable2[3,] <- c(TRUE, 3425.9772908380342, 3466.1733975903617, 3508.0320324994614, 464.195358, 464.20001220703125, 464.204642, 11512269.4488430563, 11245667, 366720, 365928.64209905855, FALSE, 0.026296922148575364, 11.738397590361728, 1.0157024674594695, 1.0275996777323413)
+peakTable2[4,] <- c(TRUE, 3678.1204484629088, 3720.347, 3768.8011145239534, 536.194638, 536.20001220703125, 536.205362, 7983406.0412310315, 7383963, 220096, 229651.947643013, FALSE, 0.022765817240815486, 18.65, 1.0738577621711971, 1.1514233243540024)
+peakTable2[,c(1,12)]       <- sapply(peakTable2[,c(1,12)], as.logical)
+peakTable2[,c(2:11,13:16)] <- sapply(peakTable2[,c(2:11,13:16)], as.numeric)
 # 3
-peakTable3     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
-peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
-peakTable3[3,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA)
-peakTable3[4,] <- c(TRUE, 3672.3110625980275, 3714.088, 3761.43921706666, 536.194638, 536.20001220703125, 536.205362, 6467062.4309558524, 196160, 189416.24807174454, FALSE, 0.022765817240815486, 12.391, 1.0656000616594850, 1.1333185588985102)
-peakTable3[,c(1,11)]       <- sapply(peakTable3[,c(1,11)], as.logical)
-peakTable3[,c(2:10,12:15)] <- sapply(peakTable3[,c(2:10,12:15)], as.numeric)
+peakTable3     <- data.frame(matrix(vector(), 4, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+peakTable3[1,] <- c(TRUE, 3333.8625894557053, 3368.233, 3407.4362838927614, 522.194778, 522.20001220703125, 522.205222, 21447174.404490683, 20364558, 758336, 765009.9805796633, FALSE, 0.023376160866574614, 23.345000000000255, 1.0609102044546637, 1.1155310457756928)
+peakTable3[2,] <- c(TRUE, 3373.3998828113113, 3413.4952530120481, 3454.4490330927388, 496.195038, 496.20001220703125, 496.204962, 35659353.614476241, 34792490, 1149440, 1145857.7611069249, FALSE, 0.024601030353423384, 27.918253012047899, 1.0081407426394933, 1.0143315197994494)
+peakTable3[3,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA)
+peakTable3[4,] <- c(TRUE, 3672.3110625980275, 3714.088, 3761.43921706666, 536.194638, 536.20001220703125, 536.205362, 6467062.4309558524, 6360742, 196160, 189416.24807174454, FALSE, 0.022765817240815486, 12.391, 1.0656000616594850, 1.1333185588985102)
+peakTable3[,c(1,12)]       <- sapply(peakTable3[,c(1,12)], as.logical)
+peakTable3[,c(2:11,13:16)] <- sapply(peakTable3[,c(2:11,13:16)], as.numeric)
 expected_peakTables <- list(peakTable1, peakTable2, peakTable3)
 
 # Expected peakFit
@@ -192,11 +192,11 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, mo
   expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
   # modify peakTable
   tmp_peakTable1                  <- expected_peakTables[[1]]
-  tmp_peakTable1[3,c(2:10,12:15)] <- c(3418.0076795585401, 3455.6277710843374, 3495.4734240188186, 464.195358, 464.2000122, 464.204642, 11307215.264967661, 380736, 381327.26552768378, 0.026296922148575364, 1.1927710843374371, 1.0223856861398346, 1.0391667928715738)
+  tmp_peakTable1[3,c(2:11,13:16)] <- c(3418.0076795585401, 3455.6277710843374, 3495.4734240188186, 464.195358, 464.2000122, 464.204642, 11307215.264967661, 11538988, 380736, 381327.26552768378,  0.026296922148575364, 1.1927710843374371, 1.0223856861398346, 1.0391667928715738)
   tmp_peakTable2                  <- expected_peakTables[[2]]
-  tmp_peakTable2[3,c(2:10,12:15)] <- c(3433.0520428402692, 3464.1974939759039, 3518.3673814020449, 464.195358, 464.2000122, 464.204642, 11632481.39997852, 366720, 370275.43095360085, 0.026296922148575364, 9.762493975903908, 1.3108566292516153, 1.566712445298531)
+  tmp_peakTable2[3,c(2:11,13:16)] <- c(3433.0520428402692, 3464.1974939759039, 3518.3673814020449, 464.195358, 464.2000122, 464.204642, 11632481.39997852, 11167979, 366720, 370275.43095360085,  0.026296922148575364, 9.762493975903908, 1.3108566292516153, 1.566712445298531)
   tmp_peakTable3                  <- expected_peakTables[[3]]
-  tmp_peakTable3[3,c(2:10,12:15)] <- c(3428.5236305028589, 3459.5514216867468, 3510.3107983995801, 464.195358, 464.2000122, 464.204642, 9697604.1795769241, 319488, 321005.94361925457, 0.026296922148575364, 5.1164216867468895, 1.2652077714541707, 1.4814479150398188)
+  tmp_peakTable3[3,c(2:11,13:16)] <- c(3428.5236305028589, 3459.5514216867468, 3510.3107983995801, 464.195358, 464.2000122, 464.204642, 9697604.1795769241, 9501971, 319488, 321005.94361925457,  0.026296922148575364, 5.1164216867468895, 1.2652077714541707, 1.4814479150398188)
   tmp_peakTable3$found[3]         <- TRUE
   expected_annotation@peakTables  <- list(tmp_peakTable1, tmp_peakTable2, tmp_peakTable3)
   # modify curveFit
@@ -245,11 +245,11 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, pe
   expected_annotation             <- initAnnotation
   expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
   tmp_peakTables                        <- expected_peakTables
-  tmp_peakTables[[1]][3,c(2:10,12:15)]  <- as.numeric(NA)
+  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- as.numeric(NA)
   tmp_peakTables[[1]]$found[3]          <- FALSE
-  tmp_peakTables[[2]][3,c(2:10,12:15)]  <- as.numeric(NA)
+  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- as.numeric(NA)
   tmp_peakTables[[2]]$found[3]          <- FALSE
-  tmp_peakTables[[3]][3,c(2:10,12:15)]  <- as.numeric(NA)
+  tmp_peakTables[[3]][3,c(2:11,13:16)]  <- as.numeric(NA)
   tmp_peakTables[[3]]$found[3]          <- FALSE
   expected_annotation@peakTables        <- tmp_peakTables
   tmp_peakFit                     <- expected_peakFit
@@ -296,11 +296,11 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
   expected_annotation             <- initAnnotation
   expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
   tmp_peakTables                        <- expected_peakTables
-  tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3463.824, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8675223.6101818271, 366720, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3463.824, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8863585, 8863585, 366720, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[3]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[3]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488,  as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[3]]$found[3]      <- TRUE
   tmp_peakTables[[3]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
@@ -382,9 +382,9 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   expected_annotation             <- initAnnotation[c(1,3),]
   expected_annotation@TIC         <- c(2410533091, 2332817115)
   tmp_peakTables                        <- expected_peakTables[c(1,3)]
-  tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
@@ -431,9 +431,9 @@ test_that('parallel (with cluster reset): 3 files, (1 missing), 4 compounds, uRO
   expected_annotation             <- initAnnotation[c(1,3),]
   expected_annotation@TIC         <- c(2410533091, 2332817115)
   tmp_peakTables                        <- expected_peakTables[c(1,3)]
-  tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
@@ -480,9 +480,9 @@ test_that('parallel (without cluster reset): 3 files, (1 missing), 4 compounds, 
   expected_annotation             <- initAnnotation[c(1,3),]
   expected_annotation@TIC         <- c(2410533091, 2332817115)
   tmp_peakTables                        <- expected_peakTables[c(1,3)]
-  tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
@@ -563,9 +563,9 @@ test_that('change to resetWorkers alters the number of parallel cluster reset', 
   expected_annotation             <- initAnnotation[c(1,3),]
   expected_annotation@TIC         <- c(2410533091, 2332817115)
   tmp_peakTables                        <- expected_peakTables[c(1,3)]
-  tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
@@ -614,9 +614,9 @@ test_that('already annotated message in verbose', {
   expected_annotation             <- initAnnotation[c(1,3),]
   expected_annotation@TIC         <- c(2410533091, 2332817115)
   tmp_peakTables                        <- expected_peakTables[c(1,3)]
-  tmp_peakTables[[1]][3,c(2:10,12:15)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8801660.3810909167, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:10,12:15)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 6564791.4560000831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
+  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   tmp_peakTables[[2]]$found[3]          <- TRUE
   tmp_peakTables[[2]]$is_filled[3]      <- TRUE
   expected_annotation@peakTables        <- tmp_peakTables
@@ -709,29 +709,29 @@ test_that('curveModel emgGaussian: 3 files, 4 compounds, no uROI, no FIR, no get
   expected_peakFit_emg <- list(list(cFit1.1emg, cFit1.2emg, cFit1.3emg, cFit1.4emg), list(cFit2.1emg, cFit2.2emg, cFit2.3emg, cFit2.4emg), list(cFit3.1emg, cFit3.2emg, cFit3.3emg, cFit3.4emg))
 
   # Expected peakTables
-  peakTable1emg     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-  peakTable1emg[1,] <- c(TRUE, 3327.999, 3346.996, 3403.919, 522.1948, 522.2, 522.2052, 22261723, 889280,  1057506.5, FALSE, 0.02337616, 2.108434, 1.653451, 2.064384)
-  peakTable1emg[2,] <- c(TRUE, 3368.739, 3387.926, 3450.433, 496.1950, 496.2, 496.2050, 29098356, 1128960, 1313099.4, FALSE, 0.02460103, 2.349398, 1.745483, 2.219176)
-  peakTable1emg[3,] <- c(TRUE, 3437.496, 3456.351, 3509.499, 464.1954, 464.2, 464.2046, 9149178,  380736,  450748.4,  FALSE, 0.02629692, 1.915663, 1.592171, 1.962157)
-  peakTable1emg[4,] <- c(TRUE, 3684.765, 3703.637, 3757.294, 536.1946, 536.2, 536.2054, 7699066,  330176,  377425.9,  FALSE, 0.02276582, 1.939759, 1.600693, 1.976502)
-  peakTable1emg[,c(1,11)]       <- sapply(peakTable1emg[,c(1,11)], as.logical)
-  peakTable1emg[,c(2:10,12:15)] <- sapply(peakTable1emg[,c(2:10,12:15)], as.numeric)
+  peakTable1emg     <- data.frame(matrix(vector(), 4, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  peakTable1emg[1,] <- c(TRUE, 3327.999, 3346.996, 3403.919, 522.1948, 522.2, 522.2052, 22261723, 25713232, 889280,  1057506.5, FALSE, 0.02337616, 2.108434, 1.653451, 2.064384)
+  peakTable1emg[2,] <- c(TRUE, 3368.739, 3387.926, 3450.433, 496.1950, 496.2, 496.2050, 29098356, 35721108, 1128960, 1313099.4, FALSE, 0.02460103, 2.349398, 1.745483, 2.219176)
+  peakTable1emg[3,] <- c(TRUE, 3437.496, 3456.351, 3509.499, 464.1954, 464.2, 464.2046, 9149178, 10905635, 380736,  450748.4,  FALSE, 0.02629692, 1.915663, 1.592171, 1.962157)
+  peakTable1emg[4,] <- c(TRUE, 3684.765, 3703.637, 3757.294, 536.1946, 536.2, 536.2054, 7699066, 8612410, 330176,  377425.9,  FALSE, 0.02276582, 1.939759, 1.600693, 1.976502)
+  peakTable1emg[,c(1,12)]       <- sapply(peakTable1emg[,c(1,12)], as.logical)
+  peakTable1emg[,c(2:11,13:16)] <- sapply(peakTable1emg[,c(2:11,13:16)], as.numeric)
   # 2
-  peakTable2emg     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-  peakTable2emg[1,] <- c(TRUE, 3345.357, 3364.813, 3436.703, 522.1948, 522.2, 522.2052, 22028618,  761664,  916975.6, FALSE, 0.02337616, 19.92484, 1.898412, 2.477039)
-  peakTable2emg[2,] <- c(TRUE, 3386.117, 3405.791, 3490.313, 496.1950, 496.2, 496.2050, 34288936, 1099264, 1293794.6, FALSE, 0.02460103, 20.21400, 2.116160, 2.850792)
-  peakTable2emg[3,] <- c(TRUE, 3447.002, 3466.197, 3529.422, 464.1954, 464.2, 464.2046, 9643477,   366720,  432400.6, FALSE, 0.02629692, 11.76249, 1.757855, 2.240265)
-  peakTable2emg[4,] <- c(TRUE, 3700.724, 3720.347, 3809.535, 536.1946, 536.2, 536.2054, 7273154,   220096,  265357.4, FALSE, 0.02276582, 18.65000, 2.207992, 3.012906)
-  peakTable2emg[,c(1,11)]       <- sapply(peakTable2emg[,c(1,11)], as.logical)
-  peakTable2emg[,c(2:10,12:15)] <- sapply(peakTable2emg[,c(2:10,12:15)], as.numeric)
+  peakTable2emg     <- data.frame(matrix(vector(), 4, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  peakTable2emg[1,] <- c(TRUE, 3345.357, 3364.813, 3436.703, 522.1948, 522.2, 522.2052, 22028618, 22658480, 761664,  916975.6, FALSE, 0.02337616, 19.92484, 1.898412, 2.477039)
+  peakTable2emg[2,] <- c(TRUE, 3386.117, 3405.791, 3490.313, 496.1950, 496.2, 496.2050, 34288936, 35743000, 1099264, 1293794.6, FALSE, 0.02460103, 20.21400, 2.116160, 2.850792)
+  peakTable2emg[3,] <- c(TRUE, 3447.002, 3466.197, 3529.422, 464.1954, 464.2, 464.2046, 9643477, 10659308, 366720,  432400.6, FALSE, 0.02629692, 11.76249, 1.757855, 2.240265)
+  peakTable2emg[4,] <- c(TRUE, 3700.724, 3720.347, 3809.535, 536.1946, 536.2, 536.2054, 7273154,  7093526, 220096,  265357.4, FALSE, 0.02276582, 18.65000, 2.207992, 3.012906)
+  peakTable2emg[,c(1,12)]       <- sapply(peakTable2emg[,c(1,12)], as.logical)
+  peakTable2emg[,c(2:11,13:16)] <- sapply(peakTable2emg[,c(2:11,13:16)], as.numeric)
   # 3
-  peakTable3emg     <- data.frame(matrix(vector(), 4, 15, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
-  peakTable3emg[1,] <- c(TRUE, 3348.458, 3367.799, 3435.888, 522.1948, 522.2, 522.2052, 20330539,  758336,  873749.6, FALSE, 0.02337616, 22.91127, 1.837158, 2.373902)
-  peakTable3emg[2,] <- c(TRUE, 3395.322, 3414.459, 3475.443, 496.1950, 496.2, 496.2050, 29635397, 1149440, 1355916.7, FALSE, 0.02460103, 28.88211, 1.721309, 2.178978)
-  peakTable3emg[3,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA)
-  peakTable3emg[4,] <- c(TRUE, 3694.401, 3714.064, 3793.313, 536.1946, 536.2, 536.2054,  5734001,  196160,  225006.2, FALSE, 0.02276582, 12.36690, 2.015364, 2.673714)
-  peakTable3emg[,c(1,11)]       <- sapply(peakTable3emg[,c(1,11)], as.logical)
-  peakTable3emg[,c(2:10,12:15)] <- sapply(peakTable3emg[,c(2:10,12:15)], as.numeric)
+  peakTable3emg     <- data.frame(matrix(vector(), 4, 16, dimnames=list(c(), c("found", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", "peakArea", "peakAreaRaw", "maxIntMeasured", "maxIntPredicted", "is_filled", "ppm_error", "rt_dev_sec", "tailingFactor", "asymmetryFactor"))),stringsAsFactors=FALSE)
+  peakTable3emg[1,] <- c(TRUE, 3348.458, 3367.799, 3435.888, 522.1948, 522.2, 522.2052, 20330539, 19833736, 758336,  873749.6, FALSE, 0.02337616, 22.91127, 1.837158, 2.373902)
+  peakTable3emg[2,] <- c(TRUE, 3395.322, 3414.459, 3475.443, 496.1950, 496.2, 496.2050, 29635397, 32843420, 1149440, 1355916.7, FALSE, 0.02460103, 28.88211, 1.721309, 2.178978)
+  peakTable3emg[3,] <- c(FALSE, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA)
+  peakTable3emg[4,] <- c(TRUE, 3694.401, 3714.064, 3793.313, 536.1946, 536.2, 536.2054, 5734001, 6062535, 196160,  225006.2, FALSE, 0.02276582, 12.36690, 2.015364, 2.673714)
+  peakTable3emg[,c(1,12)]       <- sapply(peakTable3emg[,c(1,12)], as.logical)
+  peakTable3emg[,c(2:11,13:16)] <- sapply(peakTable3emg[,c(2:11,13:16)], as.numeric)
   expected_peakTables_emg <- list(peakTable1emg, peakTable2emg, peakTable3emg)
 
   # Expected annotation
