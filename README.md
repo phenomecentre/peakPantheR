@@ -21,7 +21,7 @@ Package for *Peak Picking and ANnoTation of High resolution Experiments in R*, i
   - **Post-acquisition** feature detection, integration and reporting (see [Parallel Annotation](https://phenomecentre.github.io/peakPantheR.github.io/articles/parallel-annotation.html))
       - process `multiple` compounds in `multiple` files in `parallel`, store results in a `single` object
 
-`peakPantheR` can process LC/MS data files in *NetCDF*, *mzML*/*mzXML* and *mzData* format as data import is achieved using Bioconductor’s [`mzR`](https://bioconductor.org/packages/3.10/mzR) package.
+`peakPantheR` can process LC/MS data files in *NetCDF*, *mzML*/*mzXML* and *mzData* format as data import is achieved using Bioconductor’s [`mzR`](https://bioconductor.org/packages/release/bioc/html/mzR.html) package.
 
 The reference versions of `peakPantheR` is available on the corresponding Bioconductor page ([release](https://bioconductor.org/packages/release/bioc/html/peakPantheR.html) or [dev](https://bioconductor.org/packages/devel/bioc/html/peakPantheR.html) version).
 
