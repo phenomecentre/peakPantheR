@@ -1,3 +1,7 @@
+Changes in version 1.5.3 (2021-03-30)
++ Additional calculation of raw peak area without smoothing (peakArea Raw)
++ Alignment of peak integration algo across functions, integrateFIR() is now resilient to missing scans
+
 Changes in version 1.5.2 (2021-01-31)
 + Change package alias due to overwritten .rd file warning on Windows (non case-sensitive name and path)
 + Move to Github Actions continuous integration
