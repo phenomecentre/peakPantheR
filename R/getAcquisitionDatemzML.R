@@ -24,19 +24,24 @@ getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
     ## Parse XML
     acqTime <- tryCatch({
         ## try
-        xmlfile <- XML::xmlParse(mzMLPath)
-        xmltop <- XML::xmlRoot(xmlfile)
-        # check top level structure
-        if (XML::xmlName(xmltop) != "indexedmzML") {
-            if (verbose) {
-                message("Check input, mzMLPath is not a valid mzML file")
+        nLinesRead <- 1
+        mzMLFile <- file(mzMLPath, "r")
+        while (TRUE) {
+            currentLine <- readLines(mzMLFile, n = 1)
+            if (nLinesRead == 2) {
+                if ( grep("indexedmzML", currentLine, fixed=TRUE)) {
+                    if (verbose) {
+                        message("Check input, mzMLPath is not a valid mzML file")
+                    }
+                    return(NA)
+                }
             }
-            return(NA)
-        } else {
-            acqTime <- strptime(XML::xmlGetAttr(xmltop[["mzML"]][["run"]],
-                                                "startTimeStamp"),
-                                format = "%Y-%m-%dT%H:%M:%S")
-        }
+
+            regex1 <-  stringr::str_extract(string = currentLine, pattern = "(?<=startTimeStamp=\")(.*?)(?=\")")
+            if (!is.na(regex1)){
+                acqTime <- strptime(regex1, format = "%Y-%m-%dT%H:%M:%S")
+                break }
+            }
     }, error = function(cond) {
         ## catch
         if (verbose) {
@@ -51,6 +56,6 @@ getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
                 round(as.double(difftime(etime, stime)), 2),
                 " ", units(difftime(etime, stime)))
     }
-    
     return(acqTime)
+
 }
