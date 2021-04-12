@@ -9,7 +9,7 @@ test_that('get Acquisition date from real mzML, verbose', {
 
   # results (output, warnings and messages)
   result  <- evaluate_promise(getAcquisitionDatemzML(realmzML, verbose=TRUE))
-
+  print(result$result)
   # Check result
   expect_equal(result$result, expected_date)
 
@@ -113,7 +113,7 @@ test_that('try catch failure mzML, verbose', {
   expect_equal(result$result, expected_date)
 
   # Check message (cannot match execution time)
-  expect_equal(length(result$messages), 2)
+  expect_equal(length(result$messages), 1)
   expect_equal(result$messages[1], msg)
 })
 

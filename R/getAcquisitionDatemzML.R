@@ -29,33 +29,28 @@ getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
         while (TRUE) {
             currentLine <- readLines(mzMLFile, n = 1)
             if (nLinesRead == 2) {
-                if ( grep("indexedmzML", currentLine, fixed=TRUE)) {
+                if (isFALSE(grepl("<indexedmzML", currentLine, fixed=TRUE))) {
                     if (verbose) {
                         message("Check input, mzMLPath is not a valid mzML file")
                     }
                     return(NA)
                 }
             }
-
             regex1 <-  stringr::str_extract(string = currentLine, pattern = "(?<=startTimeStamp=\")(.*?)(?=\")")
-            if (!is.na(regex1)){
+            if (isFALSE(is.na(regex1))) {
                 acqTime <- strptime(regex1, format = "%Y-%m-%dT%H:%M:%S")
-                break }
-            }
+                ## Output
+                etime <- Sys.time()
+                if (verbose) {
+                    message("Acquisition date parsed in: ",
+                            round(as.double(difftime(etime, stime)), 2),
+                    " ", units(difftime(etime, stime)))}
+                return(acqTime) }
+            nLinesRead <- nLinesRead + 1 }
     }, error = function(cond) {
         ## catch
         if (verbose) {
             message("Check input, failure while parsing mzMLPath")}
         return(NA)
     })
-    
-    ## Output
-    etime <- Sys.time()
-    if (verbose) {
-        message("Acquisition date parsed in: ",
-                round(as.double(difftime(etime, stime)), 2),
-                " ", units(difftime(etime, stime)))
-    }
-    return(acqTime)
-
 }
