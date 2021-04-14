@@ -1,3 +1,6 @@
+Changes in version 1.5.4 (2021-04-15)
++ mzML parameter parsing optimized
+
 Changes in version 1.5.3 (2021-03-30)
 + Additional calculation of raw peak area without smoothing (peakArea Raw)
 + Alignment of peak integration algo across functions, integrateFIR() is now resilient to missing scans

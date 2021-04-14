@@ -31,12 +31,13 @@ getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
             if (nLinesRead == 2) {
                 if (isFALSE(grepl("<indexedmzML", currentLine, fixed=TRUE))) {
                     if (verbose) {
-                        message("Check input, mzMLPath is not a valid mzML file")
+                    message("Check input, mzMLPath is not a valid mzML file")
                     }
                     return(NA)
                 }
             }
-            regex1 <-  stringr::str_extract(string = currentLine, pattern = "(?<=startTimeStamp=\")(.*?)(?=\")")
+            regex1 <-  stringr::str_extract(string = currentLine,
+                    pattern = "(?<=startTimeStamp=\")(.*?)(?=\")")
             if (isFALSE(is.na(regex1))) {
                 acqTime <- strptime(regex1, format = "%Y-%m-%dT%H:%M:%S")
                 ## Output
