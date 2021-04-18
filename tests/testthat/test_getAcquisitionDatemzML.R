@@ -9,7 +9,7 @@ test_that('get Acquisition date from real mzML, verbose', {
 
   # results (output, warnings and messages)
   result  <- evaluate_promise(getAcquisitionDatemzML(realmzML, verbose=TRUE))
-  print(result$result)
+  
   # Check result
   expect_equal(result$result, expected_date)
 

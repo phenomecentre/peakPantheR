@@ -7,6 +7,8 @@
 #' @param verbose (bool) if TRUE message progress
 #'
 #' @return POSIXct or NA
+#' 
+#' @import XML
 getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
     
     ## Check input
