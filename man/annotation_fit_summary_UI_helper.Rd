@@ -39,7 +39,7 @@ emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
 
 # statistics of an empty annotation
 annotation_fit_summary_UI_helper(emptyAnnotation)
-#             Ratio peaks found (\%) Ratio peaks filled (\%) ppm error
+#              Ratio peaks found (\%) Ratio peaks filled (\%) ppm error
 # ID-1 - Cpd 1                    NA                      0       NaN
 # ID-2 - Cpd 2                    NA                      0       NaN
 #               RT deviation (s)

@@ -48,7 +48,7 @@ test_that('histogram without density', {
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_histoNoDensity))
   expect_equal(result_histoNoDensity$labels$x, "Test variable 2")
-  expect_equal(result_histoNoDensity$labels$y, "count")
+  expect_equal(result_histoNoDensity$labels$y[1], "count")
   expect_equal(result_histoNoDensity$data, expected_data)
   expect_equal(length(result_histoNoDensity), 9)
 })

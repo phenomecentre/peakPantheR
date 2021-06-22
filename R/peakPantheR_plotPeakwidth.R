@@ -74,8 +74,8 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
         ggplot2::ylab(varName)
     
     # set fill and colour scale, with one color per sample ID
-    p <- p + ggplot2::scale_colour_manual(values = colourSpl, guide = FALSE)
-    p <- p + ggplot2::scale_fill_manual(values = colourSpl, guide = FALSE)
+    p <- p + ggplot2::scale_colour_manual(values = colourSpl, guide = "none")
+    p <- p + ggplot2::scale_fill_manual(values = colourSpl, guide = "none")
 
     # tmp x axis
     if (useRunOrder) {
