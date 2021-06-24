@@ -144,8 +144,8 @@ plotEICFit_checkInput <- function(ROIDataPointSampleList, curveFitSampleList,
             colourSpl <- sampleColour
         } else {
             if (verbose) {
-                message(paste0('Warning: sampleColour length must match the ',
-                                'number of samples; default colour used'))
+                message('Warning: sampleColour length must match the ',
+                        'number of samples; default colour used')
             }
         }
     }

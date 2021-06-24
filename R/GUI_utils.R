@@ -428,8 +428,8 @@ subset_annot_diag_plot_UI_helper <- function(cpdNb, annotation, splNum=NULL) {
     }
     if (splNum > nSpl) {
         splNum <- nSpl
-        warning(paste("More samples to show than available,",
-                    "all spectra will be shown!"))
+        warning("More samples to show than available,",
+                " all spectra will be shown!")
     }
 
     # appoximately equally spaced
