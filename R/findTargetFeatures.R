@@ -354,7 +354,7 @@ findTargetFeatures_fitcurve <- function(i, tmp_EIC, curveModel,
     # catch fit failure
     if (all(is.na(fittedCurve))) {
         if (verbose) {
-            message("Fit of ROI #", i, " is unsuccessful (try error)")}
+            message("Fit of ROI #", i, " is unsuccessful (try err)")}
         # indicate failure
         return(NULL)
     }
@@ -449,7 +449,7 @@ findTargetFeatures_findRTMinMax <- function(min, i, ROI, fittedCurve, rt,
     }
     if (is.na(rtMinMax) & verbose) {
         if (min) { txt <- 'rtMin' } else { txt <- 'rtMax' }
-        message("Warning: ", txt, " cannot be determined for ROI #", i)}
+        message("War","ning: ", txt, " cannot be determined for ROI #", i)}
 
     return(rtMinMax)
 }
@@ -468,7 +468,7 @@ findTargetFeatures_findMZ <- function(i, ROI, rtMin, rtMax, ROIsDataPoints,
     if ((rtMin < ROI$rtMin[i]) | (rtMax > ROI$rtMax[i])) {
         isValid <- FALSE
         if (verbose) {
-            message('Warning: rtMin/rtMax outside of ROI; datapoints ',
+            message('War','ning: rtMin/rtMax outside of ROI; datapoints ',
                     'cannot be used for mzMin/mzMax calculation, ',
                     'approximate mz and returning ROI$mzMin and ROI$mzMax ',
                     'for ROI #', i)

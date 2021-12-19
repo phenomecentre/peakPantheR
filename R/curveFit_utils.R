@@ -77,15 +77,15 @@ is.peakPantheR_curveFit <- function(x) {
 fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
     # Check inputs x and y length
     if (length(x) != length(y)) {
-        stop("Error: length of \"x\" and \"y\" must match!") }
+        stop("Err","or: length of \"x\" and \"y\" must match!") }
     # known curveModel
     known_curveModel <- c("skewedGaussian", "emgGaussian")
     if (!(curveModel %in% known_curveModel)) {
-        stop(paste("Error: \"curveModel\" must be one of:",
+        stop(paste0("Err","or: \"curveModel\" must be one of: ",
             paste(known_curveModel, collapse=', '))) }
     # params
     if (!(typeof(params) %in% c("list", "character"))) {
-        stop("Error: \"params\" must be a list or \"guess\"") }
+        stop("Err","or: \"params\" must be a list or \"guess\"") }
 
     useGuess <- TRUE
     if (any(params != "guess")) {
@@ -93,20 +93,20 @@ fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
         # check init_params, lower and upper bounds are defined
         if (!all(c("init_params", "lower_bounds", "upper_bounds") %in%
             names(params))) {
-            stop("Error: \"params must be a list of \"init_params\", ",
+            stop("Err","or: \"params must be a list of \"init_params\", ",
                 "\"lower_bounds\" and \"upper_bounds\"") }
         # init_params is list
         if (typeof(params$init_params) != "list") {
-            stop("Error: \"params$init_params\" must be a list of parameters")
-        }
+            stop("Err", "or: \"params$init_params\" must be ",
+            "a list of parameters") }
         # lower_bounds is list
         if (typeof(params$lower_bounds) != "list") {
-            stop("Error: \"params$lower_bounds\" must be a list of parameters")
-        }
+            stop("Err", "or: \"params$lower_bounds\" must be ",
+            "a list of parameters") }
         # upper_bounds is list
         if (typeof(params$upper_bounds) != "list") {
-            stop("Error: \"params$upper_bounds\" must be a list of parameters")
-        }
+            stop("Err", "or: \"params$upper_bounds\" must be ",
+            "a list of parameters") }
     }
     
     # Init
@@ -241,12 +241,12 @@ predictCurve <- function(fittedCurve, x) {
     
     # Check input
     if (!is.peakPantheR_curveFit(fittedCurve)) {
-        stop("Error: \"fittedCurve\" must be a peakPantheR_curveFit!")
+        stop("Err","or: \"fittedCurve\" must be a peakPantheR_curveFit!")
     }
     # known curveModel
     known_curveModel <- c("skewedGaussian", "emgGaussian")
     if (!(fittedCurve$curveModel %in% known_curveModel)) {
-        stop(paste("Error: \"curveModel\" must be one of:",
+        stop(paste0("Err","or: \"curveModel\" must be one of: ",
             paste(known_curveModel, collapse=', ')))
     }
     

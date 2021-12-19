@@ -1248,7 +1248,7 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
     # not annotated, pass
     if (!outAnnotation@isAnnotated) {
         if (verbose) {
-            message('Warning: the object has not been annotated, return',
+            message('War','ning: the object has not been annotated, return',
                             ' the object untouched') }
         return(outAnnotation) }
     
@@ -1522,7 +1522,7 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
 
     # Check object was annotated
     if (!object@isAnnotated) {
-        message('Warning: the object has not been annotated, return an',
+        message('War','ning: the object has not been annotated, return an',
                         ' empty diagnostic plot list')
         return(outList)
     }
@@ -2507,16 +2507,16 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
 rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
                                     rtWindowWidth) {
     if (isFALSE(annotation@isAnnotated)) {
-        stop('The retention time correction functionality requires an',
-        ' annotated peakPantheRAnnotation object',
-        ' (annotationObject@isAnnotated = TRUE)')
+        stop('The retention time correction functionality requires an ',
+        'annotated peakPantheRAnnotation object ',
+        '(annotationObject@isAnnotated = TRUE)')
     }
     if (is.null(rtCorrectionReferences)) {
         rtCorrectionReferences <- annotation@cpdID
     } else {
         if (!all(rtCorrectionReferences %in% annotation@cpdID)) {
             stop('All compound IDs in rtCorrectionReferences must be ',
-                'present on the annotationObject')
+                        'present on the annotationObject')
         }
     }
     if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
@@ -2549,13 +2549,13 @@ rtCorrection_prepareTargetFeatTable <- function(newAnnotation,
     # Exclude features with mean rt_dev_sec = NA from the correction
     # function fitting
     if (any(is.na(referenceTable$rt_dev_sec))) {
-        warning("The following references could not be integrated",
-            " previously and will be excluded: ",
+        warning("The following references could not be integrated ",
+            "previously and will be excluded: ",
             referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"])
     }
     if (any(is.na(targetFeatTable$rt_dev_sec))) {
-        warning("The following compounds could not be",
-            " integrated previously and will be not be corrected: ",
+        warning("The following compounds could not be ",
+            "integrated previously and will be not be corrected: ",
             targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"])
     }
 

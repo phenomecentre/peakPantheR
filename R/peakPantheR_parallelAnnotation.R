@@ -230,10 +230,10 @@ targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,
 curveModel='skewedGaussian', inVerbose=TRUE,...){
     # Check input path exist or exit with error message
     if (!file.exists(singleSpectraDataPath)) {
-        if (inVerbose) { message("Error file does not exist: ",
+        if (inVerbose) { message("Err","or file does not exist: ",
                 singleSpectraDataPath) }
         # add error status
-        failureMsg <- paste("Error file does not exist: ",
+        failureMsg <- paste("Err","or file does not exist: ",
             singleSpectraDataPath, sep = "")
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
@@ -261,7 +261,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
         # message error
         if (inVerbose) {
             message("-----")
-            message("Error processing file: ", file_name)
+            message("Err","or processing file: ", file_name)
             message(err$message)
             message("\n-----") }
         # add error status
@@ -387,8 +387,8 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
     # message failures
     if ((sum(failures) != 0) & verbose) {
         message("----------------")
-        message(paste(sum(failures), "file(s) failed to process:\n",
-            paste0(capture.output(fail_table), collapse = "\n"))) }
+        message(sum(failures), " file(s) failed to process:\n",
+            paste0(capture.output(fail_table), collapse = "\n")) }
     # remove failures
     allFilesRes <- allFilesRes[!failures]
     # reshape the output object to match (remove failed samples)

@@ -67,7 +67,7 @@ test_that('trigger fitCurve TryCatch, with verbose', {
   expected_foundPeaks$curveFit[[3]] <- NA
   
   # expected messages
-  expected_messages <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try error)\n")
+  expected_messages <- c("Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n")
     
   # results (output, warnings and messages)
   result_foundPeaks   <- evaluate_promise(findTargetFeatures(tmpDPoints, input_ROI, curveModel='skewedGaussian', params='guess', sampling=250, verbose=TRUE))
