@@ -90,8 +90,8 @@ plotEICDetectedPeakwidth_checkInp <- function(ROIDataPointSampleList, rt, ratio,
     # ratio must be between 0 and 1
     if ((ratio < 0) | (ratio > 1)) {
         if (verbose) {
-            message("Error: ratio must be between 0 and 1, replaced by default",
-                    " value")
+            message("Err","or: ratio must be between 0 and 1, ",
+                    "replaced by default value")
         }
         ratio <- 0.85
     }

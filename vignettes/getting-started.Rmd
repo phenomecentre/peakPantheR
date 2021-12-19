@@ -367,3 +367,8 @@ pander::pandoc.table(input_featMeta, digits = 0)
 
 # References
 
+
+# Session Information
+```{r, results = "asis", echo = FALSE}
+devtools::session_info()
+```

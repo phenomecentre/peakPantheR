@@ -111,18 +111,18 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
     if (!is.null(acquTime)) {
         # acquTime is not a POSIXct
         if (!is(acquTime, "POSIXct")) {
-            stop("Error: \"acquTime\" must be a vector of POSIXct") }
+            stop("Err","or: \"acquTime\" must be a vector of POSIXct") }
         # NA in acquTime
         if (any(is.na(acquTime))) {
             if (verbose) {
-                message('Warning: \"acquTime\" contains NA, run order ',
+                message('War','ning: \"acquTime\" contains NA, run order ',
                                 'will not be plotted') }
             acquTime <- NULL  # helps with unittesting as dates in $plot_env
                                 # introduce OS differences
         } else {
             # check acquTime length
             if (nbSpl != length(acquTime)) {
-                stop('Error: \"apexValue\" and \"acquTime\" must be the',
+                stop('Err','or: \"apexValue\" and \"acquTime\" must be the',
                             ' same length')
             } else { useRunOrder <- TRUE }
         }
@@ -143,7 +143,7 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
             colourSpl <- sampleColour
         } else {
             if (verbose) {
-                message('Warning: sampleColour length must match the ',
+                message('War','ning: sampleColour length must match the ',
                                 'number of samples; default colour used') }
         }
     }

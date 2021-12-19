@@ -64,22 +64,23 @@ initialise_annotation_from_files_UI_helper <- function(CSVParamPath,
     cpdMetadata     <- NULL
     if (!is.null(cpdMetadataPath)) {
         if (!file.exists(cpdMetadataPath)) {
-            stop('Error: cpdMetadata file does not exist') }
+            stop('Err','or: cpdMetadata file does not exist') }
         tmp_cpdMeta <- read.csv(cpdMetadataPath, header=TRUE, sep=",",
                                 quote="\"", stringsAsFactors=FALSE)
         # check nb rows match the nb of cpd
         if (dim(tmp_cpdMeta)[1] != nbCompounds(init_annotation)) {
-            message('Warning: cpdMetadata number of rows (',dim(tmp_cpdMeta)[1],
+            message('War','ning: cpdMetadata number of rows (',
+                    dim(tmp_cpdMeta)[1],
                     ') does not match the number of compounds targeted (',
                     nbCompounds(init_annotation), ')')
         } else { cpdMetadata <- tmp_cpdMeta }
     }
     if (!is.null(spectraMetadata)) {
         if (!is.data.frame(spectraMetadata)) {
-            stop('Error: spectraMetadata is not a DataFrame') }
+            stop('Err','or: spectraMetadata is not a DataFrame') }
         # check nb of rows match the nb of spectra
         if (dim(spectraMetadata)[1] != nbSamples(init_annotation)) {
-            message('Warning: spectraMetadata number of rows (',
+            message('War','ning: spectraMetadata number of rows (',
                     dim(spectraMetadata)[1],
                     ') does not match the number of compounds targeted (',
                     nbSamples(init_annotation), ')')
@@ -139,7 +140,7 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
                                                 spectraMetadataPath = NULL) {
     # None are set
     if (is.null(spectraPaths) & is.null(spectraMetadataPath)) {
-        stop('Error: spectraPaths and spectraMetadataPath are not set')
+        stop('Err','or: spectraPaths and spectraMetadataPath are not set')
     }
 
     # Only spectraPaths are set
@@ -153,13 +154,13 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 
         # load file
         if (!file.exists(spectraMetadataPath)) {
-                stop('Error: spectraMetadata file does not exist') }
+                stop('Err','or: spectraMetadata file does not exist') }
         tmp_spectraMeta <- read.csv(spectraMetadataPath, header=TRUE, sep=",",
                                     quote="\"", stringsAsFactors=FALSE)
 
         # check 'filepath' is in columns
         if (!('filepath' %in% colnames(tmp_spectraMeta))) {
-            stop("Error: the column 'filepath' must be present in the ",
+            stop("Err","or: the column 'filepath' must be present in the ",
                 "spectraMetadata")
         }
 
@@ -222,22 +223,22 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 load_annotation_from_file_UI_helper <- function(annotationPath) {
     # Check file exist
     if (!file.exists(annotationPath)) {
-        stop('Error: annotation file does not exist') }
+        stop('Err','or: annotation file does not exist') }
 
     # load file content
     load(annotationPath)
 
     # check it exist and is named correctly
     if (length(ls()[ls() == 'annotationObject']) !=1) {
-        stop("Error: annotation file must contain a `peakPantheRAnnotation` ",
-            "named 'annotationObject'") }
+        stop("Err","or: annotation file must contain a ",
+            "`peakPantheRAnnotation` named 'annotationObject'") }
     # dummy initialisation to pass BiocCheck. In no case would the code reach
     # this section if `annotationObject` wasn't present in the environment
     if (0) {annotationObject <- NULL}
 
     # check it's a peakPantheRAnnotation
     if (!is(annotationObject, "peakPantheRAnnotation")) {
-        stop("Error: the variable loaded is not a `peakPantheRAnnotation`") }
+        stop("Err","or: the variable loaded is not a `peakPantheRAnnotation`") }
 
     return(annotationObject)
 }
@@ -428,8 +429,8 @@ subset_annot_diag_plot_UI_helper <- function(cpdNb, annotation, splNum=NULL) {
     }
     if (splNum > nSpl) {
         splNum <- nSpl
-        warning(paste("More samples to show than available,",
-                    "all spectra will be shown!"))
+        warning("More samples to show than available,",
+                " all spectra will be shown!")
     }
 
     # appoximately equally spaced

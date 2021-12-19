@@ -326,7 +326,7 @@ test_that('no features found, no FIR', {
   # Expected acquTime
   expected_acquTime             <- NA
   # Expected messages
-  expected_messages             <- c( "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 1 windows\n", "Fit of ROI #1 is unsuccessful (try error)\n")
+  expected_messages             <- c( "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 1 windows\n", "Fit of ROI #1 is unsuccessful (try err)\n")
 
   # results (output, warnings and messages)
   result_singleFileSearch       <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, noMatch_ROI, peakStatistic=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=NULL, verbose=TRUE))
@@ -368,7 +368,7 @@ test_that('one feature not found (#3), use FIR', {
   # Expected acquTime
   expected_acquTime       <- NA
   # Expected messages
-  expected_messages       <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try error)\n", "1 features to integrate with FIR\n", "Reading data from 1 windows\n")
+  expected_messages       <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "1 features to integrate with FIR\n", "Reading data from 1 windows\n")
   
   # results (output, warnings and messages)
   result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, tmp_ROI, peakStatistic=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=input_FIR, verbose=TRUE))
@@ -403,7 +403,7 @@ test_that('raise errors', {
   # save file is not a .png
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI, plotEICsPath=wrongOutputFormat), "Check input, plotEICsPath file name*")
 
-   # not implemented curveModel
+  # not implemented curveModel
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI, curveModel='FakeModel'), "Error: \"curveModel\" must be one of: skewedGaussian, emgGaussian")
   # FIR is not a data.frame
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI, FIR=notADataFrame), "Check input, FIR must be a data.frame not character")

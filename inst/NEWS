@@ -1,3 +1,2 @@
-Changes in version 1.7.1 (2021-06-21)
-+ Error due to change in behavior for default axis label in ggplot2 histogram
-+ GGplot2 'guide' depreciation warning
+Changes in version 1.9.1 (2021-12-18)
++ BiocCheck format update

@@ -1103,9 +1103,9 @@ setMethod("[", "peakPantheRAnnotation",
     if (missing(j)) { j <- seq_len(nbCompounds(x)) }
     # check dim size
     if (max(i) > nbSamples(x)) {
-        stop(paste("i index out of bound: maximum", nbSamples(x))) }
+        stop("i index out of bound: maximum ", nbSamples(x)) }
     if (max(j) > nbCompounds(x)) {
-        stop(paste("j index out of bound: maximum", nbCompounds(x))) }
+        stop("j index out of bound: maximum ", nbCompounds(x)) }
     
     # sub-setting
     .cpdID <- x@cpdID[j]
@@ -1248,7 +1248,7 @@ setMethod("annotationParamsDiagnostic", "peakPantheRAnnotation",
     # not annotated, pass
     if (!outAnnotation@isAnnotated) {
         if (verbose) {
-            message('Warning: the object has not been annotated, return',
+            message('War','ning: the object has not been annotated, return',
                             ' the object untouched') }
         return(outAnnotation) }
     
@@ -1522,7 +1522,7 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
 
     # Check object was annotated
     if (!object@isAnnotated) {
-        message('Warning: the object has not been annotated, return an',
+        message('War','ning: the object has not been annotated, return an',
                         ' empty diagnostic plot list')
         return(outList)
     }
@@ -1728,7 +1728,7 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
         if (verbose) {
             message("  Compound ", cpdNb, "/", nbCpd,
                     " diagnostic plot saved at ",
-                    paste(saveFolder, "/", tmp_targetFile, sep = "")) }
+                    saveFolder, "/", tmp_targetFile) }
 
     # no plot to save
     } else {
@@ -2507,16 +2507,16 @@ setMethod("retentionTimeCorrection", "peakPantheRAnnotation",
 rtCorrection_checkInput <- function(annotation, rtCorrectionReferences,
                                     rtWindowWidth) {
     if (isFALSE(annotation@isAnnotated)) {
-        stop(paste('The retention time correction functionality requires an',
-        'annotated peakPantheRAnnotation object',
-        '(annotationObject@isAnnotated = TRUE)'))
+        stop('The retention time correction functionality requires an ',
+        'annotated peakPantheRAnnotation object ',
+        '(annotationObject@isAnnotated = TRUE)')
     }
     if (is.null(rtCorrectionReferences)) {
         rtCorrectionReferences <- annotation@cpdID
     } else {
         if (!all(rtCorrectionReferences %in% annotation@cpdID)) {
-            stop(paste('All compound IDs in rtCorrectionReferences must be',
-                        'present on the annotationObject'))
+            stop('All compound IDs in rtCorrectionReferences must be ',
+                        'present on the annotationObject')
         }
     }
     if (isFALSE(is.numeric(rtWindowWidth)) | rtWindowWidth <= 0) {
@@ -2549,14 +2549,14 @@ rtCorrection_prepareTargetFeatTable <- function(newAnnotation,
     # Exclude features with mean rt_dev_sec = NA from the correction
     # function fitting
     if (any(is.na(referenceTable$rt_dev_sec))) {
-        warning(paste("The following references could not be integrated",
-            "previously and will be excluded:",
-            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"]))
+        warning("The following references could not be integrated ",
+            "previously and will be excluded: ",
+            referenceTable[is.na(referenceTable$rt_dev_sec), "cpdID"])
     }
     if (any(is.na(targetFeatTable$rt_dev_sec))) {
-        warning(paste("The following compounds could not be",
-            "integrated previously and will be not be corrected:",
-            targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"]))
+        warning("The following compounds could not be ",
+            "integrated previously and will be not be corrected: ",
+            targetFeatTable[is.na(targetFeatTable$rt_dev_sec), "cpdID"])
     }
 
     return(list(targetFeatTable=targetFeatTable,
