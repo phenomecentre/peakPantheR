@@ -271,6 +271,6 @@ $~$
 $~$
 
 # Session Information
-```{r, results = "asis", echo = FALSE}
+```{r, echo = FALSE}
 devtools::session_info()
 ```
