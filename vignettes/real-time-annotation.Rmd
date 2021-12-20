@@ -228,6 +228,6 @@ red line highlights the RT peakwidth range found (`rtMin`, `rtMax`)
 
 
 # Session Information
-```{r, results = "asis", echo = FALSE}
+```{r, echo = FALSE}
 devtools::session_info()
 ```

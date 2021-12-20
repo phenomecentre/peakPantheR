@@ -580,6 +580,6 @@ outputAnnotationResult(final_annotation, saveFolder=final_output_folder,
 
 
 # Session Information
-```{r, results = "asis", echo = FALSE}
+```{r, echo = FALSE}
 devtools::session_info()
 ```
