@@ -34,9 +34,10 @@
 
 
 shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPantheR',
-  navbarPage(textOutput("peakPantheR_ver"),
+  navbarPage(title = textOutput("peakPantheR_ver"),
     inverse = TRUE,
     collapsible = TRUE,
+    windowTitle = textOutput("peakPantheR_ver"),
 
     # -- About Tab --
     source(file.path("ui", "ui_about.R"),  local = TRUE)$value,
