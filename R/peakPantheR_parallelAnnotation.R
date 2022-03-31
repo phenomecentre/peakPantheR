@@ -155,21 +155,22 @@
 #' @import mzR
 #'
 #' @export
-peakPantheR_parallelAnnotation <- function(object, ncores = 0,
+peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, ncores = 0,
     getAcquTime = TRUE, resetWorkers = 1, centroided = TRUE,
     curveModel='skewedGaussian', verbose=TRUE, ...){
 
     # Check inputs, Initialise variables and outputs
-    initRes <- parallelAnnotation_init(object, resetWorkers, verbose)
+    initRes <- parallelAnnotation_init(object, BPPARAM, ncores, resetWorkers, verbose)
     file_paths = initRes$file_paths; target_peak_table=initRes$target_peak_table
     input_FIR = initRes$input_FIR; resetWorkersMulti = initRes$resetWorkersMulti
+    BPPARAMObject <- initRes$BPPARAMObject
 
     stime <- Sys.time()
-    
+
     # Run singleFileSearch
     # (list, each item is the result of a file, errors are passed into the list)
     allFilesRes <- parallelAnnotation_runSingleFileSearch(object, file_paths,
-        target_peak_table, input_FIR, ncores, getAcquTime, resetWorkersMulti,
+        target_peak_table, input_FIR, BPPARAM = BPPARAMObject, ncores, getAcquTime, resetWorkersMulti,
         centroided, curveModel, verbose,...)
 
     # Collect, process and reorder results
@@ -277,7 +278,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
 
 
 ## Check inputs, Initialise variables and outputs
-parallelAnnotation_init <- function(object, resetWorkers, verbose) {
+parallelAnnotation_init <- function(object, BPPARAM, nCores, resetWorkers, verbose) {
     # check validity of object
     validObject(object)
     # check resetWorkers value
@@ -287,6 +288,23 @@ parallelAnnotation_init <- function(object, resetWorkers, verbose) {
     resetWorkersMulti <- as.integer(resetWorkers)
     if (resetWorkersMulti < 0) {
         stop("Check input, resetWorkers must be a positive integer")
+    }
+    nCores <- as.integer(nCores)
+    if (nCores < 0) {
+        stop("Check input, nCores must be a positive integer")
+    }
+
+    # Handle default BPParams
+    if (is.null(BPPARAM)) {
+        if (.Platform$OS.type == 'windows') {
+            BPPARAM <- BiocParallel::SnowParam(workers = nCores)
+        }
+        else {
+            BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
+        }
+    }
+    else if (!is(BPPARAM, 'BiocParallelParam')) {
+        stop("Check input, BPPARAM must be a BiocParallel Param object")
     }
 
     # Initialise parameters from object
@@ -316,14 +334,14 @@ parallelAnnotation_init <- function(object, resetWorkers, verbose) {
     }
 
     return(list(file_paths=file_paths, target_peak_table=target_peak_table,
-                input_FIR=input_FIR, resetWorkersMulti=resetWorkersMulti))
+                input_FIR=input_FIR, resetWorkersMulti=resetWorkersMulti, BPPARAMObject=BPPARAM))
 }
 
 
 ## Run singleFileSearch
 # (list, each item is the result of a file, errors are passed into the list)
 parallelAnnotation_runSingleFileSearch <- function(object, file_paths,
-target_peak_table, input_FIR, ncores, getAcquTime, resetWorkersMulti,centroided,
+target_peak_table, input_FIR, BPPARAM, ncores, getAcquTime, resetWorkersMulti,centroided,
 curveModel, verbose,...) {
     if (ncores != 0) { # Parallel
         # Reinitialise the cluster after ncores files
@@ -355,17 +373,27 @@ curveModel, verbose,...) {
                 centr = centroided, curveModel=curveModel,
                 inVerbose = verbose, ...)
                 parallel::stopCluster(cl) } # Close
-        } else { # Single cluster init (workload can be balanced across workers)
-            cl <- parallel::makeCluster(ncores)
-            doParallel::registerDoParallel(cl)
-            allFilesRes <- foreach::foreach(   # Run
-                x = file_paths, .packages = c("MSnbase", "mzR"),
-                .inorder = TRUE) %dopar% parallelAnnotation_parallelHelper(x,
-                target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime,
-                centr=centroided, curveModel=curveModel,
-                inVerbose = verbose,...)#.errorhandling='pass'
+
+        } else {
+            # Single cluster init (workload can be balanced across workers)
+            # cl <- parallel::makeCluster(ncores)
+            BiocParallel::register(BPPARAM)
+            BiocParallel::bpstart(BPPARAM)
+            allFilesRes <- BiocParallel::bplapply(X=file_paths, FUN = parallelAnnotation_parallelHelper,
+                           targetFeatTable=input_targetFeatTable,
+                           inGetAcquTime=getAcquTime, inFIR=input_FIR,
+                           centr=centroided, curveModel=curveModel, inVerbose = verbose,
+                           BPPARAM = BPPARAM)
+            #allFilesRes <- BiocParallel:::foreach(   # Run
+            #    x = file_paths, .packages = c("MSnbase", "mzR"),
+            #    .inorder = TRUE) %dopar% parallelAnnotation_parallelHelper(x,
+            #    target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime,
+            #    centr=centroided, curveModel=curveModel,
+            #    inVerbose = verbose,...)
+            #.errorhandling='pass'
                 # #.export=c('findTargetFeatures', 'getTargetFeatureStatistic')
-            parallel::stopCluster(cl) } # Close
+            BiocParallel::bpstop(BPPARAM)
+ } # Close
     } else { # Serial
         allFilesRes <- lapply(file_paths,
             function(x) parallelAnnotation_parallelHelper(x, target_peak_table,
