@@ -380,7 +380,7 @@ curveModel, verbose,...) {
             BiocParallel::register(BPPARAM)
             BiocParallel::bpstart(BPPARAM)
             allFilesRes <- BiocParallel::bplapply(X=file_paths, FUN = parallelAnnotation_parallelHelper,
-                           targetFeatTable=input_targetFeatTable,
+                           targetFeatTable=target_peak_table,
                            inGetAcquTime=getAcquTime, inFIR=input_FIR,
                            centr=centroided, curveModel=curveModel, inVerbose = verbose,
                            BPPARAM = BPPARAM)
