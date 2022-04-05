@@ -1,6 +1,6 @@
 ---
 title: "Parallel Annotation"
-date: "2020-10-11"
+date: "2022-04-1"
 package: peakPantheR
 output:
     BiocStyle::html_document:
@@ -9,7 +9,7 @@ vignette: >
     %\VignetteIndexEntry{Parallel Annotation}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
-    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle,foreach,doParallel}
+    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle,BiocParallel}
     %\VignettePackage{peakPantheR}
     %\VignetteKeywords{mass spectrometry, metabolomics}
 ---
@@ -33,8 +33,7 @@ library(BiocStyle)
 library(peakPantheR)
 library(faahKO)
 library(pander)
-library(doParallel)
-library(foreach)
+library(BiocParallel)
 ```
 
 # Introduction
@@ -215,11 +214,11 @@ init_annotation
 ```
 
 `peakPantheR_parallelAnnotation()` will run the annotation across files in 
-parallel (if `ncores` >0) and return the successful annotations 
+parallel (if `nCores` > 1) and return the successful annotations
 (`result$annotation`) and failures (`result$failures`):
 ```{r}
 # annotate files serially
-annotation_result <- peakPantheR_parallelAnnotation(init_annotation, ncores=0,
+annotation_result <- peakPantheR_parallelAnnotation(init_annotation, nCores=1,
                                                     curveModel='skewedGaussian',
                                                     verbose=TRUE)
 
@@ -232,6 +231,20 @@ data_annotation
 annotation_result$failures
 ```
 
+`peakPantheR_parallelAnnotation()` will run the annotation across files in
+parallel (if `nCores` > 1) and return the successful annotations
+(`result$annotation`) and failures (`result$failures`):
+```{r}
+# annotate files in parallel using two workers
+annotation_result <- peakPantheR_parallelAnnotation(init_annotation, nCores=2,
+                                                    curveModel='skewedGaussian',
+                                                    verbose=TRUE)
+
+# successful fit
+nbSamples(annotation_result$annotation)
+data_annotation   <- annotation_result$annotation
+data_annotation
+```
 
 ## Process Parallel Annotation Results
 
@@ -254,7 +267,7 @@ updated_annotation
 `annotationParameters_summary.csv` containing the original `ROI` and newly 
 determined `uROI` and `FIR` for manual validation. Additionnaly a diagnostic 
 plot for each compound is saved for reference and can be generated in parallel 
-with the argument `ncores`:
+with the argument `nCores`:
 ```{r, eval=FALSE}
 # create a colourScale based on the sampleType
 uniq_sType <- sort(unique(spectraMetadata(updated_annotation)$sampleType),
@@ -269,7 +282,7 @@ output_folder <- tempdir()
 # output fit diagnostic to disk
 outputAnnotationDiagnostic(updated_annotation, saveFolder=output_folder, 
                             savePlots=TRUE, sampleColour=col_sType, 
-                            verbose=TRUE, ncores=2)
+                            verbose=TRUE, nCores=2)
 ```
 
 The data saved in `annotationParameters_summary.csv` is as follow:

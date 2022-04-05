@@ -132,7 +132,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=0, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
@@ -165,7 +165,7 @@ test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=0, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
@@ -222,7 +222,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, mo
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE, params=new_params))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=0, getAcquTime=FALSE, verbose=FALSE, params=new_params))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
@@ -273,7 +273,7 @@ test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, pe
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
   
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=0, getAcquTime=FALSE, verbose=FALSE))
   
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
@@ -325,7 +325,7 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
   
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=0, getAcquTime=FALSE, verbose=FALSE))
   
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
@@ -358,7 +358,7 @@ test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no v
   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=0, getAcquTime=FALSE, verbose=FALSE))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
@@ -407,7 +407,7 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "1 features to integrate with FIR\n", "Reading data from 1 windows\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4\n", "1 features to integrate with FIR\n", "Reading data from 1 windows\n", "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=TRUE, verbose=TRUE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=1, getAcquTime=TRUE, verbose=TRUE))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
@@ -418,7 +418,7 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   expect_equal(result_parallelAnnotation$messages[c(1:7,9,10,13,14,18:22,24:27,30,31,35,36,37,38,40)], expected_message)
 })
 
-test_that('parallel (with cluster reset): 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
+test_that('parallel: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
   # sample 2 is missing
   # Cpd #3 will not give results
   noMatch_uROI3        <- input_uROI
@@ -453,10 +453,10 @@ test_that('parallel (with cluster reset): 3 files, (1 missing), 4 compounds, uRO
   names(tmp_failures) <- NULL
   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
   # Expected message
-  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "Running 3 clusters of 1 files over 1 cores:\n", "  starting cluster 1/3\n", "  starting cluster 2/3\n", "  starting cluster 3/3\n", "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
+  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
   
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=1, verbose=TRUE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=1, BPPARAM=SnowParam(1), getAcquTime=TRUE, verbose=TRUE))
   
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
@@ -467,56 +467,7 @@ test_that('parallel (with cluster reset): 3 files, (1 missing), 4 compounds, uRO
   expect_equal(result_parallelAnnotation$messages[c(1:11,13)], expected_message)
 })
 
-test_that('parallel (without cluster reset): 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
-  # sample 2 is missing
-  # Cpd #3 will not give results
-  noMatch_uROI3        <- input_uROI
-  noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
-  
-  # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
-  
-  # Expected annotation
-  expected_annotation             <- initAnnotation[c(1,3),]
-  expected_annotation@TIC         <- c(2410533091, 2332817115)
-  tmp_peakTables                        <- expected_peakTables[c(1,3)]
-  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
-  tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
-  tmp_peakTables[[2]]$found[3]          <- TRUE
-  tmp_peakTables[[2]]$is_filled[3]      <- TRUE
-  expected_annotation@peakTables        <- tmp_peakTables
-  tmp_peakFit                     <- expected_peakFit[c(1,3)]
-  tmp_peakFit[[1]][[3]]           <- NA
-  tmp_peakFit[[2]][[3]]           <- NA
-  expected_annotation@peakFit     <- tmp_peakFit
-  tmp_dataPoints                  <- expected_dataPoints[c(1,3)]
-  tmp_dataPoints[[1]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
-  tmp_dataPoints[[2]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
-  expected_annotation@dataPoints  <- tmp_dataPoints
-  expected_annotation@isAnnotated <- TRUE
-  # Expected failures
-  tmp_status          <- 'Error file does not exist: aaa/bbb.cdf'
-  names(tmp_status)   <- 'aaa/bbb.cdf'
-  tmp_failures        <- !is.na(tmp_status)
-  names(tmp_failures) <- NULL
-  expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
-  # Expected message
-  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n",  "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
-  
-  # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=0, verbose=TRUE))
-  
-  # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
-  expect_equal(result_parallelAnnotation$result$failures, expected_failures)
-  
-  # Check messages (no timing)
-  expect_equal(length(result_parallelAnnotation$messages), 9)
-  expect_equal(result_parallelAnnotation$messages[c(1:7,9)], expected_message)
-})
-
-test_that('serial and parallel (with cluster reset) give the same result: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
+test_that('serial and parallel  give the same result: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
   # sample 2 is missing
   # Cpd #3 will not give results
   noMatch_uROI3        <- input_uROI
@@ -548,55 +499,6 @@ test_that('serial and parallel (without cluster reset) give the same result: 3 f
   
   # Check results
   expect_equal(result_serial$result, result_parallel$result, tolerance=1e-6)
-})
-
-test_that('change to resetWorkers alters the number of parallel cluster reset', {
-  # sample 2 is missing
-  # Cpd #3 will not give results
-  noMatch_uROI3        <- input_uROI
-  noMatch_uROI3[3,4:6] <- c(52.194778, 52.2, 52.205222)
-  
-  # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=noMatch_uROI3, useFIR=TRUE, FIR=input_FIR, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
-  
-  # Expected annotation
-  expected_annotation             <- initAnnotation[c(1,3),]
-  expected_annotation@TIC         <- c(2410533091, 2332817115)
-  tmp_peakTables                        <- expected_peakTables[c(1,3)]
-  tmp_peakTables[[1]][3,c(2:11,13:16)]  <- c(3444.524, 3454.435, 3478.431, 464.1995, 464.20001220703125, 464.2005, 8939889, 8939889, 380736, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
-  tmp_peakTables[[1]]$is_filled[3]      <- TRUE
-  tmp_peakTables[[2]][3,c(2:11,13:16)]  <- c(3444.524, 3460.696, 3478.431, 464.1995, 464.20001220703125, 464.2005, 7414831, 7414831, 319488, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
-  tmp_peakTables[[2]]$found[3]          <- TRUE
-  tmp_peakTables[[2]]$is_filled[3]      <- TRUE
-  expected_annotation@peakTables        <- tmp_peakTables
-  tmp_peakFit                     <- expected_peakFit[c(1,3)]
-  tmp_peakFit[[1]][[3]]           <- NA
-  tmp_peakFit[[2]][[3]]           <- NA
-  expected_annotation@peakFit     <- tmp_peakFit
-  tmp_dataPoints                  <- expected_dataPoints[c(1,3)]
-  tmp_dataPoints[[1]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
-  tmp_dataPoints[[2]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
-  expected_annotation@dataPoints  <- tmp_dataPoints
-  expected_annotation@isAnnotated <- TRUE
-  # Expected failures
-  tmp_status          <- 'Error file does not exist: aaa/bbb.cdf'
-  names(tmp_status)   <- 'aaa/bbb.cdf'
-  tmp_failures        <- !is.na(tmp_status)
-  names(tmp_failures) <- NULL
-  expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
-  # Expected message
-  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "Running 2 clusters of 2 files over 1 cores:\n", "  starting cluster 1/2\n", "  starting cluster 2/2\n", "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
-  
-  # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=1, getAcquTime=TRUE, resetWorkers=2, verbose=TRUE))
-  
-  # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
-  expect_equal(result_parallelAnnotation$result$failures, expected_failures)
-  
-  # Check messages (no timing)
-  expect_equal(length(result_parallelAnnotation$messages), 12)
-  expect_equal(result_parallelAnnotation$messages[c(1:10,12)], expected_message)
 })
 
 test_that('already annotated message in verbose', {
