@@ -1696,7 +1696,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd), FUN =  outputAnnotationDiagnostic_saveSingleMultiPlot,
                 annotation = object, saveFolder = saveFolder,
                 sampleColour = sampleColour, nbCpd = nbCpd,
-                verbose = verbose, BPPARAM = BPPARAM)
+                verbose = verbose, BPPARAM = BPPARAM, ...)
         # Close parallel interface
         BiocParallel::bpstop(BPPARAM)
         if (verbose) { message("All plots saved") }

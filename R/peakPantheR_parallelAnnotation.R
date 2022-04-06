@@ -330,7 +330,7 @@ parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
 # (list, each item is the result of a file, errors are passed into the list)
 parallelAnnotation_runSingleFileSearch <- function(file_paths,
 target_peak_table, input_FIR, BPPARAM, getAcquTime, centroided,
-curveModel, verbose,...) {
+curveModel, verbose, ...) {
 
     BiocParallel::register(BPPARAM)
     BiocParallel::bpstart(BPPARAM)
@@ -338,7 +338,7 @@ curveModel, verbose,...) {
                    targetFeatTable=target_peak_table,
                    inGetAcquTime=getAcquTime, inFIR=input_FIR,
                    centr=centroided, curveModel=curveModel, inVerbose = verbose,
-                   BPPARAM = BPPARAM)
+                   BPPARAM = BPPARAM, ...)
 
     BiocParallel::bpstop(BPPARAM)
     return(allFilesRes) }
