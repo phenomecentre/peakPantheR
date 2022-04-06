@@ -123,7 +123,7 @@ observeEvent(input$goAnnotation, {
                                                  useFIR=input$useFIR,
                                                  verbose=FALSE)
   ## Annotate!
-  result <- peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), curveModel=input$curveModel, verbose=TRUE)
+  result <- peakPantheR_parallelAnnotation(tmp_annotation, nCores=ncoresInput(), curveModel=input$curveModel, verbose=TRUE)
 
   # Store the annotation and failures into the reactiveValue
   values$annotation <- result$annotation
