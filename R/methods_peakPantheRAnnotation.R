@@ -1646,7 +1646,7 @@ setGeneric("outputAnnotationDiagnostic",
 #'                                         targetFeatTable=targetFeatTable)
 #'
 #' # Calculate annotation
-#' annotation <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
+#' annotation <- peakPantheR_parallelAnnotation(emptyAnnotation, nCores=1,
 #'                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 #'
 #' # temporary location
@@ -1670,7 +1670,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         if (nCores < 0) {
             stop("Check input, nCores must be a positive integer")
         }
-        # Handle default BPParams
+        # Handle default BPParam
         if (is.null(BPPARAM)) {
             if (nCores > 1) {
                 if (.Platform$OS.type == 'windows') {
@@ -1797,7 +1797,7 @@ setGeneric("outputAnnotationResult",
 #'                                         targetFeatTable=targetFeatTable)
 #'
 #' # Calculate annotation
-#' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
+#' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, nCores=1,
 #'                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 #'
 #' # temporary location
@@ -2440,7 +2440,7 @@ setGeneric("retentionTimeCorrection",
 #'                                         targetFeatTable=targetFeatTable)
 #' # annotate files serially
 #' annotation_result <- peakPantheR_parallelAnnotation(smallAnnotation,
-#'                                          ncores=0, verbose=TRUE)
+#'                                          nCores=1, verbose=TRUE)
 #' data_annotation   <- annotation_result$annotation
 #'
 #' # Example with constant correction

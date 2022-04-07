@@ -13,6 +13,7 @@
 #' object defining the samples to process and compounds to target. The slots
 #' \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR
 #' integrated if a feature is not found
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel processing. Must be a BiocParallelParam object
 #' @param nCores (int) Number of cores to use for parallelisation. Default 1 for
 #' no parallelisation.
 #' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time
@@ -142,9 +143,8 @@
 #' @family peakPantheR
 #' @family parallelAnnotation
 #'
-#' @import foreach
-#' @import doParallel
 #' @import mzR
+#' @import BiocParallel
 #'
 #' @export
 peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,

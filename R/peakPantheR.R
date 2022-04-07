@@ -47,8 +47,7 @@
 #' @docType package
 #' @name peakPantheR
 #'
-#' @import foreach
-#' @import doParallel
+#' @import BiocParallel
 #'
 "_PACKAGE"
 #> [1] "_PACKAGE"

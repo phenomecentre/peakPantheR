@@ -14,8 +14,7 @@
 #' print("Start graphical interface, press 'ESC' in the command line to stop")
 #' # peakPantheR_start_GUI()
 #'
-#' @import foreach
-#' @import doParallel
+#' @import BiocParallel
 #' @import shiny
 #' @import shinythemes
 #' @import shinycssloaders
