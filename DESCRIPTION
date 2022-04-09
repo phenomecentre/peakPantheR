@@ -22,7 +22,7 @@ Imports:
 	minpack.lm (>= 1.2.1),
 	scales(>= 0.5.0),
 	shiny (>= 1.0.5),
-	shinythemes (>= 1.1.1),
+	bslib,
 	shinycssloaders (>= 1.0.0),
 	DT (>= 0.15),
 	pracma (>= 2.2.3),

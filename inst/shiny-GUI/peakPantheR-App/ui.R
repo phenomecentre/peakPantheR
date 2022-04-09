@@ -1,7 +1,7 @@
 # server.R
 
 # peakPantheR-App
-# Based on peakPantheR v1.9.2, R >= 4.1, shiny >= 1.0.5, shinythemes >= 1.1.1
+# Based on peakPantheR v1.9.2, R >= 4.1, shiny >= 1.0.5, bslib
 # National Phenome Centre
 # 05/04/2022
 # Licensed under GPLv3
@@ -22,7 +22,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #require(shiny)
-#require(shinythemes)
+#require(bslib)
 
 # NOTE:
 #
@@ -33,9 +33,9 @@
 # update + refit in UI?
 
 
-shinyUI(fluidPage(theme = shinythemes::shinytheme("spacelab"), title='peakPantheR',
+shinyUI(fluidPage(theme = bslib::bs_theme(bootswatch = "spacelab"), title='peakPantheR',
   navbarPage(title = textOutput("peakPantheR_ver"),
-    inverse = TRUE,
+    inverse = FALSE,
     collapsible = TRUE,
     windowTitle = textOutput("peakPantheR_ver"),
 

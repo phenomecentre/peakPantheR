@@ -1,7 +1,7 @@
 # server.R
 
 # peakPantheR-App
-# Based on peakPantheR v1.9.2, R >= 4.1, shiny >= 1.0.5, shinythemes >= 1.1.1
+# Based on peakPantheR v1.9.2, R >= 4.1, shiny >= 1.0.5, bslib
 # National Phenome Centre
 # 05/04/2022
 # Licensed under GPLv3	

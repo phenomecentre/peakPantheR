@@ -16,7 +16,7 @@
 #'
 #' @import BiocParallel
 #' @import shiny
-#' @import shinythemes
+#' @import bslib
 #' @import shinycssloaders
 #' @importFrom DT DTOutput renderDT datatable
 #'
