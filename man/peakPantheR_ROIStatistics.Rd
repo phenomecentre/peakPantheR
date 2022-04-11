@@ -44,7 +44,8 @@ mean RT is not calculated and saved in \code{IS_mean_RT.csv})}
 
 \item{verbose}{(bool) If TRUE message progress}
 
-\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel processing. Must be a BiocParallelParam object}
+\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel 
+processing. Must be a BiocParallelParam object}
 }
 \value{
 None

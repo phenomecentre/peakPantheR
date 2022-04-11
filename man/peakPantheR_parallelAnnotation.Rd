@@ -21,7 +21,8 @@ object defining the samples to process and compounds to target. The slots
 \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR
 integrated if a feature is not found}
 
-\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel processing. Must be a BiocParallelParam object}
+\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel 
+processing. Must be a BiocParallelParam object}
 
 \item{nCores}{(int) Number of cores to use for parallelisation. Default 1 for
 no parallelisation.}
