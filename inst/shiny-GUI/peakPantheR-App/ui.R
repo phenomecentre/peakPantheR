@@ -33,8 +33,8 @@
 # update + refit in UI?
 
 
-shinyUI(fluidPage(theme = bslib::bs_theme(bootswatch = "spacelab"), title='peakPantheR',
-  navbarPage(title = textOutput("peakPantheR_ver"),
+shinyUI(fluidPage(theme = bslib::bs_theme(), title='peakPantheR',
+  navbarPage(theme = bslib::bs_theme(), title = textOutput("peakPantheR_ver"),
     inverse = FALSE,
     collapsible = TRUE,
     windowTitle = textOutput("peakPantheR_ver"),
