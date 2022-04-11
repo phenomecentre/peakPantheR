@@ -18,7 +18,8 @@
 #' mean RT is not calculated and saved in \code{IS_mean_RT.csv})
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param nCores (int) Number of cores to use to integrate IS in parallel
-#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel processing. Must be a BiocParallelParam object
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel 
+#' processing. Must be a BiocParallelParam object
 #' @param saveISPlots (bool) If TRUE save a diagnostic plot for each IS to
 #' \code{saveFolder/IS_search} compound
 #' @param verbose (bool) If TRUE message progress
@@ -60,7 +61,8 @@
 peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
                                         ROI = NULL, IS_ROI = NULL,
                                         sampleColour = NULL, nCores = 1,
-                                        saveISPlots = TRUE, verbose = TRUE, BPPARAM=NULL) {
+                                        saveISPlots = TRUE, verbose = TRUE, 
+                                        BPPARAM=NULL) {
     # Check and process input parameters
     resInit <- ROIStatistics_init_checks(referenceSpectraFiles, saveFolder, ROI,
                                         IS_ROI, sampleColour, verbose)
@@ -78,7 +80,7 @@ peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
     # calculate mean IS for each RT
     if (calculateMeanISRT) {
         ROIStatistics_calculateMeanISRT(referenceSpectraFiles, saveFolder,
-                            IS_ROI, saveISPlots, nCores, sampleColour, verbose, BPPARAM)
+                IS_ROI, saveISPlots, nCores, sampleColour, verbose, BPPARAM)
     }
 }
 
@@ -240,7 +242,7 @@ ROIStatistics_saveEICsROI <- function(referenceSpectraFiles, saveFolder, ROI,
 }
 # Calculate mean RT for each IS
 ROIStatistics_calculateMeanISRT <- function(referenceSpectraFiles, saveFolder,
-                            IS_ROI, saveISPlots, nCores, sampleColour, verbose, BPPARAM){
+                IS_ROI, saveISPlots, nCores, sampleColour, verbose, BPPARAM){
     if (verbose) {
         message("\n-- Calculating mean RT for each IS --")
     }

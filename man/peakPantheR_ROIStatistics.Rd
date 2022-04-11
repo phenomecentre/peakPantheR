@@ -5,15 +5,15 @@
 \title{Save to disk each ROI EIC and mean IS RT}
 \usage{
 peakPantheR_ROIStatistics(
-  referenceSpectraFiles,
-  saveFolder,
-  ROI = NULL,
-  IS_ROI = NULL,
-  sampleColour = NULL,
-  nCores = 1,
-  saveISPlots = TRUE,
-  verbose = TRUE,
-  BPPARAM = NULL
+    referenceSpectraFiles,
+    saveFolder,
+    ROI = NULL,
+    IS_ROI = NULL,
+    sampleColour = NULL,
+    nCores = 1,
+    saveISPlots = TRUE,
+    verbose = TRUE,
+    BPPARAM = NULL
 )
 }
 \arguments{

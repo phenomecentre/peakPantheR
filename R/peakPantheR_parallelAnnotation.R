@@ -13,7 +13,8 @@
 #' object defining the samples to process and compounds to target. The slots
 #' \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR
 #' integrated if a feature is not found
-#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel processing. Must be a BiocParallelParam object
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel 
+#' processing. Must be a BiocParallelParam object
 #' @param nCores (int) Number of cores to use for parallelisation. Default 1 for
 #' no parallelisation.
 #' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time
@@ -152,9 +153,9 @@ peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
     curveModel='skewedGaussian', verbose=TRUE, ...){
 
     # Check inputs, Initialise variables and outputs
-    initRes <- parallelAnnotation_init(object, BPPARAM, nCores, verbose)
-    file_paths = initRes$file_paths; target_peak_table=initRes$target_peak_table
-    input_FIR = initRes$input_FIR; BPPARAMObject <- initRes$BPPARAMObject
+    initRes    <- parallelAnnotation_init(object, BPPARAM, nCores, verbose)
+    file_paths<-initRes$file_paths; target_peak_table<-initRes$target_peak_table
+    input_FIR  <- initRes$input_FIR; BPPARAMObject <- initRes$BPPARAMObject
 
     stime <- Sys.time()
 
@@ -334,11 +335,12 @@ curveModel, verbose, ...) {
 
     BiocParallel::register(BPPARAM)
     BiocParallel::bpstart(BPPARAM)
-    allFilesRes <- BiocParallel::bplapply(X=file_paths, FUN = parallelAnnotation_parallelHelper,
-                   targetFeatTable=target_peak_table,
-                   inGetAcquTime=getAcquTime, inFIR=input_FIR,
-                   centr=centroided, curveModel=curveModel, inVerbose = verbose,
-                   BPPARAM = BPPARAM, ...)
+    allFilesRes <- BiocParallel::bplapply(X=file_paths, 
+                    FUN=parallelAnnotation_parallelHelper,
+                    targetFeatTable=target_peak_table,
+                    inGetAcquTime=getAcquTime, inFIR=input_FIR,
+                    centr=centroided, curveModel=curveModel, inVerbose=verbose,
+                    BPPARAM = BPPARAM, ...)
 
     BiocParallel::bpstop(BPPARAM)
     return(allFilesRes) }

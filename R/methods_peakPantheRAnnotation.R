@@ -1613,7 +1613,8 @@ setGeneric("outputAnnotationDiagnostic",
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param verbose (bool) If TRUE message progress
 #' @param nCores (int) Number of cores to use to save plots in parallel
-#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel processing. Must be a BiocParallelParam object
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel 
+#' processing. Must be a BiocParallelParam object
 #' @param ... Additional parameters for plotting i.e. \code{sampling} for the
 #' number of points to employ when plotting fittedCurve
 #' @return None
@@ -1655,7 +1656,8 @@ setGeneric("outputAnnotationDiagnostic",
 #'                             verbose=TRUE)
 #' }
 setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
-    function(object, saveFolder, savePlots, sampleColour, verbose, nCores, BPPARAM, ...) {
+    function(object, saveFolder, savePlots, sampleColour, verbose, nCores, 
+            BPPARAM, ...) {
     # Save standardised csv
     outputAnnotationParamsCSV(object, saveFolder = saveFolder,verbose = verbose)
     
@@ -1693,7 +1695,8 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         BiocParallel::register(BPPARAM)
         BiocParallel::bpstart(BPPARAM)
         # Run
-        savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd), FUN =  outputAnnotationDiagnostic_saveSingleMultiPlot,
+        savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd), 
+                FUN = outputAnnotationDiagnostic_saveSingleMultiPlot,
                 annotation = object, saveFolder = saveFolder,
                 sampleColour = sampleColour, nbCpd = nbCpd,
                 verbose = verbose, BPPARAM = BPPARAM, ...)
