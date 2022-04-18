@@ -86,6 +86,6 @@ saveFolder1   <- tempdir()
 # Calculate ROI statiscs
 peakPantheR_ROIStatistics(refSpecFiles, saveFolder1, ROI=input_ROI,
                             IS_ROI=input_IS_ROI, sampleColour=sampleColour,
-                            nCores=0, saveISPlots=TRUE, verbose=TRUE)
+                            nCores=1, saveISPlots=TRUE, verbose=TRUE)
 }
 }

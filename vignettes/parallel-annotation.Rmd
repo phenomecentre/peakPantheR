@@ -492,7 +492,7 @@ features:
 ```{r}
 # annotate files serially
 new_annotation_result <- peakPantheR_parallelAnnotation(new_annotation, 
-                                                        ncores=0, verbose=FALSE)
+                                                        nCores=1, verbose=FALSE)
 
 # successful fit
 nbSamples(new_annotation_result$annotation)

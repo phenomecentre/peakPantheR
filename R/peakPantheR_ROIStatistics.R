@@ -56,7 +56,7 @@
 #' # Calculate ROI statiscs
 #' peakPantheR_ROIStatistics(refSpecFiles, saveFolder1, ROI=input_ROI,
 #'                             IS_ROI=input_IS_ROI, sampleColour=sampleColour,
-#'                             nCores=0, saveISPlots=TRUE, verbose=TRUE)
+#'                             nCores=1, saveISPlots=TRUE, verbose=TRUE)
 #' }
 peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
                                         ROI = NULL, IS_ROI = NULL,

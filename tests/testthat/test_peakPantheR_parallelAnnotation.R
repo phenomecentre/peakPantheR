@@ -558,7 +558,7 @@ test_that('catch file that doesnt exist, catch error processing, no file left', 
   expected_message    <- c("Processing 4 compounds in 2 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "Error file does not exist: aaa/bbb.cdf\n", "----- test_fakemzML -----\n", "-----\n", "Error processing file: test_fakemzML\n", "\n-----\n", "----------------\n", "No file left in the object!\n", "Annotation object reordered by sample acquisition date\n", "----------------\n", "  2 failure(s)\n")
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=TRUE))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=1, getAcquTime=FALSE, verbose=TRUE))
 
   # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
@@ -681,7 +681,7 @@ test_that('curveModel unknown: 3 failures', {
   expected_message    <- character(0)
 
   # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE, curveModel='unknown_curveModel'))
+  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=1, getAcquTime=FALSE, verbose=FALSE, curveModel='unknown_curveModel'))
 
   # Check results (all failures)
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
