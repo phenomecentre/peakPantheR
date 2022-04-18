@@ -275,7 +275,7 @@ parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
     validObject(object)
 
     nCores <- as.integer(nCores)
-    if (nCores < 0) {
+    if (nCores < 1) {
         stop("Check input, nCores must be a positive integer")
     }
 
@@ -359,7 +359,7 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
     if ((sum(failures) != 0) & verbose) {
         message("----------------")
         message(sum(failures), " file(s) failed to process:\n",
-            paste0(capture.output(fail_table), collapse = "\n")) }
+            paste0(utils::capture.output(fail_table), collapse = "\n")) }
     # remove failures
     allFilesRes <- allFilesRes[!failures]
     # reshape the output object to match (remove failed samples)

@@ -34,7 +34,7 @@ tabPanel("Run annotation",
             # nCores cpuslider
             column(4, offset=1,
 			  checkboxInput("parallelisation",
-                label = p("Parallelisation", style="color:#3e648d;font-weight:bold"),
+                label = span("Parallelisation", style="color:#3e648d;font-weight:bold"),
 				value = FALSE
               ),
               uiOutput("cpuSlider")
@@ -54,7 +54,9 @@ tabPanel("Run annotation",
 
         # Success (green) / fail (red) row
         fluidRow(
-          uiOutput("successAnnotationUI") # error/success message
+          column(12, 
+            uiOutput("successAnnotationUI") # error/success message
+          )
         ) # end fluiRow (success panel)
       )   # end Main panel column
     )     # end fluidRow (sidebar + menu)

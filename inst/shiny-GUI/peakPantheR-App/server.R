@@ -32,8 +32,6 @@ knownCurveModel <- c("skewedGaussian", "emgGaussian")
 
 
 shinyServer( function(input, output, session){
-  bs_themer()
-
   # -- General Initialisation --
 
   # close app if tab is shut
