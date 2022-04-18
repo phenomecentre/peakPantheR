@@ -134,7 +134,7 @@ output$showImportResult <- renderUI({
   # import is successful
   } else if(importSuccess()=='yes') {
     # Capture the annotation shown and split by line into a list
-    tmp_text <- capture.output(show(values$annotation))
+    tmp_text <- utils::capture.output(show(values$annotation))
     tmp_text <- strsplit(tmp_text, '\n')
     # render the panel
     wellPanel(

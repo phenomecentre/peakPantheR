@@ -17,7 +17,7 @@
 #' @import foreach
 #' @import doParallel
 #' @import shiny
-#' @import shinythemes
+#' @importFrom bslib bs_theme
 #' @import shinycssloaders
 #' @importFrom DT DTOutput renderDT datatable
 #'

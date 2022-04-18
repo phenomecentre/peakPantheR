@@ -16,4 +16,5 @@ docs
 ^_pkgdown\.yml$
 ^pkgdown$
 ^\.github$
+^\.vscode$
 CONTRIBUTIONS.md

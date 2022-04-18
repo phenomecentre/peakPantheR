@@ -50,7 +50,11 @@ output$table_fit_stat <- DT::renderDT ({
 
 # UI block annotation fit statistic table
 output$annotationStatisticsTable <- renderUI ({
-    DT::DTOutput("table_fit_stat")
+  fluidRow(
+    column(width = 12, offset = 0,
+      DT::DTOutput("table_fit_stat")
+    )
+  )
 })
 
 
