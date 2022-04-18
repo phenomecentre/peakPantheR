@@ -1,10 +1,10 @@
 # server.R
 
 # peakPantheR-App
-# Based on peakPantheR v1.9.2, R >= 4.1, shiny >= 1.0.5, bslib
+# Based on peakPantheR v1.3.0, R >= 4.0, shiny >= 1.0.5, bslib
 # National Phenome Centre
-# 05/04/2022
-# Licensed under GPLv3
+# 18/04/2022
+# Licensed under GPLv3	
 #
 # Copyright (C) {2022}  {National Phenome Centre}
 #
@@ -33,8 +33,8 @@
 # update + refit in UI?
 
 
-shinyUI(fluidPage(theme = bslib::bs_theme(), title='peakPantheR',
-  navbarPage(theme = bslib::bs_theme(), title = textOutput("peakPantheR_ver"),
+shinyUI(fluidPage(theme = bslib::bs_theme(bootswatch = "yeti"), title='peakPantheR',
+  navbarPage(title = textOutput("peakPantheR_ver"),
     inverse = FALSE,
     collapsible = TRUE,
     windowTitle = textOutput("peakPantheR_ver"),

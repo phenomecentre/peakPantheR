@@ -1,7 +1,7 @@
-Changes in version 1.9.3 (2022-04-12)
+Changes in version 1.9.3 (2022-04-18)
 + Move to `BiocParallel`
 
-Changes in version 1.9.2 (2022-02-22)
+Changes in version 1.9.2 (2022-04-18)
 + GUI corrections and improvements (use of `bslib`)
 
 Changes in version 1.9.1 (2021-12-18)
