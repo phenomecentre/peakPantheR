@@ -161,8 +161,8 @@ peakPantheR_parallelAnnotation <- function(object, ncores = 0,
 
     # Check inputs, Initialise variables and outputs
     initRes <- parallelAnnotation_init(object, resetWorkers, verbose)
-    file_paths = initRes$file_paths; target_peak_table=initRes$target_peak_table
-    input_FIR = initRes$input_FIR; resetWorkersMulti = initRes$resetWorkersMulti
+    file_paths<-initRes$file_paths; target_peak_table<-initRes$target_peak_table
+    input_FIR<-initRes$input_FIR; resetWorkersMulti<-initRes$resetWorkersMulti
 
     stime <- Sys.time()
     
