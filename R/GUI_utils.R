@@ -331,7 +331,7 @@ annotation_showMethod_UI_helper <- function(annotation){
 #' # [[6]]
 #' # [1] "does not use fallback integration regions (FIR)"
 annotation_showText_UI_helper <- function(annotProp){
-    UI_string = list(
+    UI_string <- list(
         if (annotProp$isAnnotated) {'Is annotated'} else {'Not annotated'},
         paste0(annotProp$nbCompounds, ' compounds'),
         paste0(annotProp$nbSamples, ' samples'),
