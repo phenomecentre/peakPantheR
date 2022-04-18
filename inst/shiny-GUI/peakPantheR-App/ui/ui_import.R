@@ -12,35 +12,43 @@ tabPanel("Import Data",
       h4(HTML("Create a new <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
       wellPanel(
         fluidRow(
-          h5(HTML("Targeted features"), style="color:#3e648d;font-weight:bold"),
-          helpText("Select a .CSV file containing the ", shiny::span(strong("fit parameters")), shiny::span(em('with targeted features as rows and target windows as columns (at minimum: "cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")')),style="color:black"),
-          fileInput('CSVParamPath', 'Choose a .CSV File',
-                    accept=c('text/csv','text/comma-separated-values,text/plain','.csv','.tsv')),
-        tags$hr()
+          column(12,
+            h5(HTML("Targeted features"), style="color:#3e648d;font-weight:bold")),
+          column(12,
+            span("Select a .CSV file containing the ", shiny::span(strong("fit parameters")), shiny::span(em('with targeted features as rows and target windows as columns (at minimum: "cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")')),style="color:black")),
+          column(12,
+            fileInput('CSVParamPath', 'Choose a .CSV File',
+                      accept=c('text/csv','text/comma-separated-values,text/plain','.csv','.tsv'))),
+          tags$hr()
         ), # end fluidRow Fit params
 
         fluidRow(
-          h5(HTML("Files to process (choose one of two)"), style="color:#3e648d;font-weight:bold"),
-          column(width=6,
-        h6(HTML("File path only"), style="color:#3e648d;font-weight:bold"),
-            helpText("Select the ", shiny::span(strong("files to process")),style="color:black"),
+          column(12,
+            h5(HTML("Files to process (choose one of two)"), style="color:#3e648d;font-weight:bold")
+          ), #end title column
+          column(6,
+            h6(HTML("File path only"), style="color:#3e648d;font-weight:bold"),
+            span("Select the ", shiny::span(strong("files to process")),style="color:black"),
             fileInput('spectraPaths', 'Choose files to process',
                       multiple=TRUE)
           ), # end left files selector column (only files)
-          column(width=6,
-        h6(HTML("File paths and metadata"), style="color:#3e648d;font-weight:bold"),
-            helpText(" Select a .CSV file containing the ", shiny::span(strong("file paths "), em("(column `filepath`)"), strong(" and metadata")), style="color:black"),
+          column(6,
+            h6(HTML("File paths and metadata"), style="color:#3e648d;font-weight:bold"),
+            span(" Select a .CSV file containing the ", shiny::span(strong("file paths "), em("(column `filepath`)"), strong(" and metadata")), style="color:black"),
             fileInput('spectraPathsWithMetadata', 'Choose a .CSV File',
                       accept=c('text/csv','text/comma-separated-values,text/plain','.csv','.tsv'))
-          ) # end right file selector column (files + metadata)
+          ), # end right file selector column (files + metadata)
+          tags$hr()
         ), # end fluidRow File paths (either without or with metadata)
 
         fluidRow(
-          tags$hr(),
-          h5(HTML("Targeted features metadata (Optional)"), style="color:#3e648d;font-weight:bold"),
-          helpText("Select a .CSV file containing the ", shiny::span(strong("targeted features metadata")), style="color:black"),
-          fileInput('cpdMetadataPath', 'Choose a .CSV File',
-                    accept=c('text/csv','text/comma-separated-values,text/plain','.csv','.tsv'))
+          column(12,
+            h5(HTML("Targeted features metadata (Optional)"), style="color:#3e648d;font-weight:bold")),
+          column(12,
+            span("Select a .CSV file containing the ", shiny::span(strong("targeted features metadata")), style="color:black")),
+          column(12,
+            fileInput('cpdMetadataPath', 'Choose a .CSV File',
+                      accept=c('text/csv','text/comma-separated-values,text/plain','.csv','.tsv')))
         ), # end FluidRow feature metadata
 
         fluidRow(
@@ -57,7 +65,7 @@ tabPanel("Import Data",
       h4(HTML("Load a <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
       wellPanel(
         h5(HTML("Annotation"), style="color:#3e648d;font-weight:bold"),
-        helpText("Select a .RData file containing a ", shiny::span(strong("peakPantheRAnnotation")), " named", shiny::span(em("annotationObject")),style="color:black"),
+        span("Select a .RData file containing a ", shiny::span(strong("peakPantheRAnnotation")), " named", shiny::span(em("annotationObject")),style="color:black"),
         fluidRow(
           fileInput('pathAnnotation', 'Choose a .RData File',
                     accept=c('application/octet-stream','.RData','.rdata'))

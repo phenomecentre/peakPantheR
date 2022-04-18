@@ -23,7 +23,7 @@ tabPanel("Export results",
           column(4,
             wellPanel(
               h4("Save annotation as .rData:"),
-              helpText("Create a .RData file containing the annotation results as a peakPantheRAnnotation named ",em("annotationObject")," for future importation and analysis.", style="color:#666666"),
+              span("Create a .RData file containing the annotation results as a peakPantheRAnnotation named ",em("annotationObject")," for future importation and analysis.", style="color:#666666"),
               uiOutput("dlRData")
             )  # end wellPanel
           ),   # end column
@@ -32,7 +32,7 @@ tabPanel("Export results",
               fluidRow(
                 column(5,
                   h4("Save input parameters as .CSV:"),
-                  helpText("Save the ",
+                  span("Save the ",
                            em("fit parameters")," defining the targeted features, the ",
                            em("files to process")," defining file paths and spectra metadata, as well as the",
                            em("targeted features metadata"),
@@ -50,17 +50,17 @@ tabPanel("Export results",
         br(),
 
         h3("Export Annotation Results and Diagnostic Plots",style="color:#3e648d;font-weight:bold"),
-        helpText("Automated summarisation step (diagnostic and results), only possible if Shiny is running on a local machine.", style="color:#666666"), # See ",em("Code")," to run from the command line.
+        span("Automated summarisation step (diagnostic and results), only possible if Shiny is running on a local machine.", style="color:#666666"), # See ",em("Code")," to run from the command line.
 
         # Row export results
         fluidRow(
           column(6,
             h4("Save Diagnostic Plots:"),
-            helpText("Plots and save to disk a diagnotic plot for each targeted feature. Each spectra can be coloured based on one of the metadata column previously defined.", style="color:#666666")
+            span("Plots and save to disk a diagnotic plot for each targeted feature. Each spectra can be coloured based on one of the metadata column previously defined.", style="color:#666666")
           ), # end column
           column(6,
             h4("Save Annotation Values:"),
-            helpText("Saves the annotation results to disk in multiple ",em(".csv")," files containing the compound metadata, spectra metadata and a table for each annotation (fit) property", em("(samples as rows and compounds as columns)"), ".", style="color:#666666")
+            span("Saves the annotation results to disk in multiple ",em(".csv")," files containing the compound metadata, spectra metadata and a table for each annotation (fit) property", em("(samples as rows and compounds as columns)"), ".", style="color:#666666")
           ) # end column
         ),  # end fluidRow Export results Text
 
