@@ -143,6 +143,7 @@ test_that('default output, with plots and colours, serial, verbose, no verbose',
   expect_equal(length(result_save2$messages), 0)
 })
 
+if (.Platform$OS.type != "windows") {
 test_that('default output, with plots and colours, parallel, verbose, no verbose', {
   # temporary file
   savePath3         <- tempdir()
@@ -189,7 +190,7 @@ test_that('default output, with plots and colours, parallel, verbose, no verbose
                                                                  sampleColour=input_colour, verbose=FALSE, nCores=1, BPPARAM=BPParam)
   )
   expect_equal(length(result_save4$messages), 0)
-})
+}) }
 
 test_that('no plot saved, verbose', {
   # temporary file

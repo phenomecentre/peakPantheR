@@ -288,7 +288,9 @@ test_that('parallel give the same result: 3 files, no save EICs, mean IS RT, sav
   # results (output, warnings and messages)
   if (.Platform$OS.type == "windows") {
     BPParam <- BiocParallel::SnowParam(1)
-  } else {BPParam <- BiocParallel::MulticoreParam(1) }
+  } else {
+    BPParam <- BiocParallel::MulticoreParam(1)
+  }
   result_ROIstats_parallel <- evaluate_promise(peakPantheR_ROIStatistics(refSpecFiles, saveFolder6, ROI=NULL, IS_ROI=input_IS_ROI,
                                                                          sampleColour=sampleColour, nCores=1, BPPARAM=BPParam,
                                                                          saveISPlots=TRUE, verbose=TRUE))
@@ -298,13 +300,20 @@ test_that('parallel give the same result: 3 files, no save EICs, mean IS RT, sav
   expect_true(file.exists(expected_path_IS_plot2))
   expect_true(file.exists(expected_path_IS_plot3))
   expect_true(file.exists(expected_path_IS_plot4))
+  
   # Check mean IS RT
   expect_true(file.exists(expected_path_CSV))
   saved_CSV       <- read.csv(expected_path_CSV, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_CSV, expected_meanIS, tolerance=1e-4)
+
   # Check messages (no filepaths)
-  expect_equal(length(result_ROIstats_parallel$messages), 20)
+  if (.Platform$OS.type == 'windows') {
+    expect_equal(length(result_ROIstats_parallel$messages), 21)
+  expect_equal(result_ROIstats_parallel$messages[c(1,2,4:8, 10,11, 13,20)], expected_message_parallel)
+  } else {
+    expect_equal(length(result_ROIstats_parallel$messages), 20)
   expect_equal(result_ROIstats_parallel$messages[c(1,2,4:10,12,19)], expected_message_parallel)
+  }
 })
 
 test_that('raise errors', {
