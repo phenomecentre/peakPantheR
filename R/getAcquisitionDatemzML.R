@@ -30,6 +30,11 @@ getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
         mzMLFile <- file(mzMLPath, "r")
         while (TRUE) {
             currentLine <- readLines(mzMLFile, n = 1)
+            if (length(currentLine) == 0) {
+                if (verbose) {
+                    message("startTimeStamp tag not found, mzMLPath is not a valid mzML file") }
+                return(NA)
+            }
             if (nLinesRead == 2) {
                 if (isFALSE(grepl("<indexedmzML", currentLine, fixed=TRUE))) {
                     if (verbose) {
