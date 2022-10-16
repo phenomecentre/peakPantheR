@@ -10,17 +10,13 @@
 #' 
 #' @import XML
 getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
-    
     ## Check input
     mzMLPath <- normalizePath(mzMLPath, mustWork = FALSE)
     # not a mzML extension
     if (tolower(stringr::str_sub(basename(mzMLPath), start = -5)) != ".mzml") {
-        if (verbose) {
-            message("Check input, mzMLPath must be a .mzML")
-        }
+        if (verbose) { message("Check input, mzMLPath must be a .mzML") }
         return(NA)
     }
-    
     stime <- Sys.time()
     
     ## Parse XML
@@ -32,7 +28,8 @@ getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
             currentLine <- readLines(mzMLFile, n = 1)
             if (length(currentLine) == 0) {
                 if (verbose) {
-                    message("startTimeStamp tag not found, mzMLPath is not a valid mzML file") }
+                    message("startTimeStamp tag not found, mzMLPath is not a",
+                            " valid mzML file") }
                 return(NA)
             }
             if (nLinesRead == 2) {
