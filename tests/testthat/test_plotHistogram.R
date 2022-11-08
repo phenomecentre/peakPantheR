@@ -18,7 +18,7 @@ test_that('histogram and density, with NA in input', {
   # input
   tmp_input <- c(NA, input_val, NA)
   # expected message   
-  expected_message <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.\n"
+  expected_message <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
   # expected values
   expected_data <- data.frame(x=input_val)
   
