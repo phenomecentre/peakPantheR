@@ -60,11 +60,6 @@
 peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
     acquTime=NULL, varName="variable", sampleColour = NULL, rotateAxis = FALSE,
     verbose = TRUE) {
-    
-    coord_y_datetime <- function(xlim = NULL, ylim = NULL, expand = TRUE) {
-        if (!is.null(ylim)) { ylim <- lubridate::as_datetime(ylim) }
-        ggplot2::coord_cartesian(xlim = xlim, ylim = ylim, expand = expand)
-    }
 
     ## Check input
     resInp <- plotPeakwidth_checkInput(apexValue, widthMin, widthMax, acquTime,
@@ -100,8 +95,8 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
     }
 
     ## final ordering and axis labelling
-    p <- plotPeakwidth_rotateAxis_setLabels <- function(p, rotateAxis,
-                                                useRunOrder, acquTime, verbose)
+    p <- plotPeakwidth_rotateAxis_setLabels(p, rotateAxis, useRunOrder, 
+                                            x_axis, acquTime, varName, verbose)
 
     return(p)
 }
@@ -209,7 +204,11 @@ plotPeakwidth_plotWidthApex <- function(p, useWidth, rotateAxis,
 }
 # Set labels and rotate axis if necessary
 plotPeakwidth_rotateAxis_setLabels <- function(p, rotateAxis, useRunOrder, 
-                                                acquTime, verbose) {
+                                        x_axis, acquTime, varName, verbose) {
+    coord_y_datetime <- function(xlim = NULL, ylim = NULL, expand = TRUE) {
+        if (!is.null(ylim)) { ylim <- lubridate::as_datetime(ylim) }
+        ggplot2::coord_cartesian(xlim = xlim, ylim = ylim, expand = expand)
+    }
     ## Ordering of values and axis labelling
     if (useRunOrder) {
         if (rotateAxis) { # date axis rotated (+ flipped)
