@@ -19,7 +19,7 @@ plotHistogram <- function(var, varName = "Variable", density = TRUE, ...) {
     # with density
     if (density) {
         p_hist <- p_hist +
-                    ggplot2::geom_histogram(ggplot2::aes(y = ..density..),
+                    ggplot2::geom_histogram(ggplot2::aes(y=ggplot2::after_stat(density)),
                         colour = "black", fill = "white", ...) +
                     ggplot2::geom_density(alpha = 0.1, fill = "blue")
         # without density
