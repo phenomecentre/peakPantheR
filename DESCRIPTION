@@ -28,7 +28,8 @@ Imports:
 	shinycssloaders (>= 1.0.0),
 	DT (>= 0.15),
 	pracma (>= 2.2.3),
-	utils
+	utils,
+	lubridate
 biocViews: MassSpectrometry, Metabolomics, PeakDetection
 License: GPL-3
 BugReports: https://github.com/phenomecentre/peakPantheR/issues/new
