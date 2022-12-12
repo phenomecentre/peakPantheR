@@ -57,7 +57,7 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
     maxX <- max(ggplot2::layer_scales(p_spec)$x$range$range[2],
         ggplot2::layer_scales(p_peakwidth)$y$range$range[2])
     p_spec <- p_spec + ggplot2::xlim(minX, maxX)
-    p_peakwidth <- p_peakwidth + ggplot2::ylim(minX, maxX)
+    suppressMessages(p_peakwidth <- p_peakwidth + ggplot2::ylim(minX, maxX))
     # convert to gtables
     p_spec <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_spec))
     p_peakwidth <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_peakwidth))
