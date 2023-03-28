@@ -57,6 +57,7 @@ An overview of the package and detailed information on usage are available in th
   
 ## Examples
 Besides the vignettes, more tutorials are available via github:
+
   - [Targeted integration of metabolites from 3 LC-MS profiling dataset using peakPantheR](https://github.com/phenomecentre/metabotyping-dementia-urine): Application of peakpPantheR to extract features from 3 LC-MS assays from a human urine metabolic profiling study on cognitive decline and dementia.   
   - [Quality-Control of peakPantheR extracted using the nPYc-Toolbox](https://github.com/phenomecentre/nPYc-toolbox-tutorials): Tutorial on how to use the nPYC-Toolbox to perform QC on peakPanther extracted datasets.
   

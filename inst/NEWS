@@ -1,3 +1,5 @@
+Changes in version 1.13.21 (2023-03-28)
+- Update for next Bioc release 
 Changes in version 1.13.1 (2022-12-11)
 - Bugfix: plotHistogram changing warning message
 - Bugfix: peakPantheR_plotPeakwidth issue due to ggplot2 behaviour changes for
