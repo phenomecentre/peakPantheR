@@ -1,7 +1,7 @@
 Package: peakPantheR
 Title: Peak Picking and Annotation of High Resolution Experiments
 Version: 1.13.2
-Date: 2022-12-12
+Date: 2023-03-28
 Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-5856-3218")),
 	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "aut", comment = c(ORCID = "0000-0001-8271-9294")),
 	person("Jake", "Pearce", email = "jake.pearce@gmail.com", role = "ctb"),
@@ -10,7 +10,7 @@ Description: An automated pipeline for the detection, integration and reporting 
     It enables the real time annotation of multiple compounds in a single file, or the parallel annotation of multiple compounds in multiple files.
     A graphical user interface as well as command line functions will assist in assessing the quality of annotation and update fitting parameters until a satisfactory result is obtained.
 Depends:
-	R (>= 4.2)
+	R (>= 4.3)
 Imports: 
 	foreach (>= 1.4.4),
 	doParallel (>= 1.0.11),
@@ -36,7 +36,7 @@ BugReports: https://github.com/phenomecentre/peakPantheR/issues/new
 URL: https://github.com/phenomecentre/peakPantheR
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: testthat,
     devtools,
 	faahKO,
