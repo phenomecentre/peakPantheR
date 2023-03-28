@@ -1,2 +1,5 @@
-Changes in version 1.11.1 (2022-  -  )
-+ Move to `BiocParallel`
+Changes in version 1.13.1 (2022-12-11)
+- Bugfix: plotHistogram changing warning message
+- Bugfix: peakPantheR_plotPeakwidth issue due to ggplot2 behaviour changes for
+    date axis
+- Depreciation warning from ggplot2 `..density..` to `after_stat()`

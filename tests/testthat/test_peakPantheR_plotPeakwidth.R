@@ -46,8 +46,8 @@ test_that('plot 3 samples, no color, rotate axis', {
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_3splNoColRot))
-  expect_equal(result_3splNoColRot$labels$x, "x") #after rotations axis still have the previous name
-  expect_equal(result_3splNoColRot$labels$y, "Test variable 3")
+  expect_equal(result_3splNoColRot$labels$x, "Test variable 3")
+  expect_equal(result_3splNoColRot$labels$y, "x")
   expect_equal(length(result_3splNoColRot), 9)
 })
 
@@ -59,8 +59,8 @@ test_that('plot 3 samples, no color, acquisition time, rotate axis', {
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_3splNoColRotRunOrder))
-  expect_equal(result_3splNoColRotRunOrder$labels$x, "Acquisition Time") #after rotations axis still have the previous name
-  expect_equal(result_3splNoColRotRunOrder$labels$y, "Test variable 4")
+  expect_equal(result_3splNoColRotRunOrder$labels$x, "Test variable 4")
+  expect_equal(result_3splNoColRotRunOrder$labels$y, "Acquisition Time")
   expect_equal(length(result_3splNoColRotRunOrder), 9)
 })
 
@@ -98,8 +98,8 @@ test_that('plot 4 samples with color, rotate axis', {
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_4splWithColRot))
-  expect_equal(result_4splWithColRot$labels$x, "x") #after rotations axis still have the previous name
-  expect_equal(result_4splWithColRot$labels$y, "Test variable 7")
+  expect_equal(result_4splWithColRot$labels$x, "Test variable 7")
+  expect_equal(result_4splWithColRot$labels$y, "x")
   expect_equal(length(result_4splWithColRot), 9)
 })
 
@@ -111,7 +111,7 @@ test_that('plot 4 samples with color, acquisition time, rotate axis', {
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_4splWithColRotRunOrder))
-  expect_equal(result_4splWithColRotRunOrder$labels$x, "Acquisition Time") #after rotations axis still have the previous name
+  expect_equal(result_4splWithColRotRunOrder$labels$x, "Acquisition Time")
   expect_equal(result_4splWithColRotRunOrder$labels$y, "Test variable 8")
   expect_equal(length(result_4splWithColRotRunOrder), 9)
 })
@@ -130,8 +130,8 @@ test_that('sampleColour length warning, peakwidth and rotate and input order mes
   
   # Check plot properties
   expect_true(ggplot2::is.ggplot(result_plotColourWarning$result))
-  expect_equal(result_plotColourWarning$result$labels$x, "x")
-  expect_equal(result_plotColourWarning$result$labels$y, "Test variable 9")
+  expect_equal(result_plotColourWarning$result$labels$x, "Test variable 9")
+  expect_equal(result_plotColourWarning$result$labels$y, "x")
   expect_equal(length(result_plotColourWarning$result), 9)
 })
 

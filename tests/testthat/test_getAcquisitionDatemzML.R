@@ -101,6 +101,48 @@ test_that('detect wrong XML, no verbose', {
   expect_equal(length(result$messages), 0)
 })
 
+test_that('detect mzML without startTimeStamp, verbose', {
+  # create wrong XML file
+  xmlfile               <- XML::xmlParse(system.file("extdata/test_fakemzML.mzML", package = "peakPantheR"))
+  xmltop                <- XML::xmlRoot(xmlfile)
+  XML::removeAttributes(xmltop[[1]][[6]], .attrs=c("startTimeStamp"))
+  wrongmzML             <- file.path(tempdir(),'notValidXML.mzML')
+  XML::saveXML(xmlfile, file=wrongmzML)
+  # expected
+  expected_date <- NA
+  msg           <- "startTimeStamp tag not found, mzMLPath is not a valid mzML file\n"
+
+  # results (output, warnings and messages)
+  result  <- evaluate_promise(getAcquisitionDatemzML(wrongmzML, verbose=FALSE))
+
+  # Check result
+  expect_equal(result$result, expected_date)
+
+  # Check message (cannot match execution time)
+  expect_equal(length(result$messages), 0)
+})
+
+test_that('detect mzML without startTimeStamp, no verbose', {
+  # create wrong XML file
+  xmlfile               <- XML::xmlParse(system.file("extdata/test_fakemzML.mzML", package = "peakPantheR"))
+  xmltop                <- XML::xmlRoot(xmlfile)
+  XML::removeAttributes(xmltop[[1]][[6]], .attrs=c("startTimeStamp"))
+  wrongmzML             <- file.path(tempdir(),'notValidXML.mzML')
+  XML::saveXML(xmlfile, file=wrongmzML)
+  # expected
+  expected_date <- NA
+  msg           <- "startTimeStamp tag not found, mzMLPath is not a valid mzML file\n"
+
+  # results (output, warnings and messages)
+  result  <- evaluate_promise(getAcquisitionDatemzML(wrongmzML, verbose=TRUE))
+
+  # Check result
+  expect_equal(result$result, expected_date)
+
+  # Check message (cannot match execution time)
+  expect_equal(result$messages[1], msg)
+})
+
 test_that('try catch failure mzML, verbose', {
   wrongmzML     <- './path/notAmzML.mzML'
   expected_date <- NA
