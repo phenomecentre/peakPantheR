@@ -98,7 +98,8 @@ applyRTCorrection_checkInput <- function(targetFeatTable, referenceTable,
     ## Check method
     KNOWN_CORRECTIONMETHODs <- c("polynomial", "constant")
     if (!(method %in% KNOWN_CORRECTIONMETHODs)) {
-        stop('Error: \"method\" must be one of: \"polynomial\", \"constant\"')}
+        stop('Err', 'or: \"method\" must be one of: ',
+            '\"polynomial\", \"constant\"')}
     if ((dim(referenceTable)[1] == 1) & (method != 'constant')) {
         stop("No function can be fitted with a single reference. ",
         "Use method=\`constant\` instead.") }

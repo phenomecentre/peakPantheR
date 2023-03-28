@@ -577,3 +577,9 @@ outputAnnotationResult(final_annotation, saveFolder=final_output_folder,
 * [Getting Started with peakPantheR](getting-started.html)
 * [Real Time Annotation](real-time-annotation.html)
 * [Graphical user interface use](peakPantheR-GUI.html)
+
+
+# Session Information
+```{r, echo = FALSE}
+devtools::session_info()
+```

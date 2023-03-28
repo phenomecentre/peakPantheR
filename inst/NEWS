@@ -1,10 +1,5 @@
-Changes in version 1.5.3 (2021-03-30)
-+ Additional calculation of raw peak area without smoothing (peakArea Raw)
-+ Alignment of peak integration algo across functions, integrateFIR() is now resilient to missing scans
-
-Changes in version 1.5.2 (2021-01-31)
-+ Change package alias due to overwritten .rd file warning on Windows (non case-sensitive name and path)
-+ Move to Github Actions continuous integration
-
-Changes in version 1.5.1 (2021-01-19)
-+ Unittests updated to comply with new r-devel all.equal() environment checks behaviour
+Changes in version 1.13.1 (2022-12-11)
+- Bugfix: plotHistogram changing warning message
+- Bugfix: peakPantheR_plotPeakwidth issue due to ggplot2 behaviour changes for
+    date axis
+- Depreciation warning from ggplot2 `..density..` to `after_stat()`

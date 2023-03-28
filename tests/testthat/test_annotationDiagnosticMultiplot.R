@@ -22,7 +22,7 @@ input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.1950
 input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 
 # acquisitionTime
-input_acquisitionTime <- c(Sys.time(), Sys.time()+900, Sys.time()+1800)
+input_acquisitionTime <- as.POSIXct(c(Sys.time(), Sys.time()+900, Sys.time()+1800))
 
 # peakFit
 # 1

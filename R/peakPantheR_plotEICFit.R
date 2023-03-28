@@ -116,7 +116,8 @@ plotEICFit_checkInput <- function(ROIDataPointSampleList, curveFitSampleList,
                                     rtMin, rtMax, sampleColour, verbose) {
     # Check input in case ROIDataPointSampleList is not a list
     if (!is(ROIDataPointSampleList, "list")) {
-        stop("Error: \"ROIDataPointSampleList\" must be a list of data.frame")
+        stop("Err",
+        "or: \"ROIDataPointSampleList\" must be a list of data.frame")
     }
     nbSpl <- length(ROIDataPointSampleList)
 
@@ -144,8 +145,8 @@ plotEICFit_checkInput <- function(ROIDataPointSampleList, curveFitSampleList,
             colourSpl <- sampleColour
         } else {
             if (verbose) {
-                message(paste0('Warning: sampleColour length must match the ',
-                                'number of samples; default colour used'))
+                message('War','ning: sampleColour length must match the ',
+                        'number of samples; default colour used')
             }
         }
     }

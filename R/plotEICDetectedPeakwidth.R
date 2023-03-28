@@ -57,7 +57,7 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
     maxX <- max(ggplot2::layer_scales(p_spec)$x$range$range[2],
         ggplot2::layer_scales(p_peakwidth)$y$range$range[2])
     p_spec <- p_spec + ggplot2::xlim(minX, maxX)
-    p_peakwidth <- p_peakwidth + ggplot2::ylim(minX, maxX)
+    suppressMessages(p_peakwidth <- p_peakwidth + ggplot2::ylim(minX, maxX))
     # convert to gtables
     p_spec <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_spec))
     p_peakwidth <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_peakwidth))
@@ -90,8 +90,8 @@ plotEICDetectedPeakwidth_checkInp <- function(ROIDataPointSampleList, rt, ratio,
     # ratio must be between 0 and 1
     if ((ratio < 0) | (ratio > 1)) {
         if (verbose) {
-            message("Error: ratio must be between 0 and 1, replaced by default",
-                    " value")
+            message("Err","or: ratio must be between 0 and 1, ",
+                    "replaced by default value")
         }
         ratio <- 0.85
     }

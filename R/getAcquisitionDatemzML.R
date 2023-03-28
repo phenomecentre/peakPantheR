@@ -7,50 +7,55 @@
 #' @param verbose (bool) if TRUE message progress
 #'
 #' @return POSIXct or NA
+#' 
+#' @import XML
 getAcquisitionDatemzML <- function(mzMLPath, verbose = TRUE) {
-    
     ## Check input
     mzMLPath <- normalizePath(mzMLPath, mustWork = FALSE)
     # not a mzML extension
     if (tolower(stringr::str_sub(basename(mzMLPath), start = -5)) != ".mzml") {
-        if (verbose) {
-            message("Check input, mzMLPath must be a .mzML")
-        }
+        if (verbose) { message("Check input, mzMLPath must be a .mzML") }
         return(NA)
     }
-    
     stime <- Sys.time()
     
     ## Parse XML
     acqTime <- tryCatch({
         ## try
-        xmlfile <- XML::xmlParse(mzMLPath)
-        xmltop <- XML::xmlRoot(xmlfile)
-        # check top level structure
-        if (XML::xmlName(xmltop) != "indexedmzML") {
-            if (verbose) {
-                message("Check input, mzMLPath is not a valid mzML file")
+        nLinesRead <- 1
+        mzMLFile <- file(mzMLPath, "r")
+        while (TRUE) {
+            currentLine <- readLines(mzMLFile, n = 1)
+            if (length(currentLine) == 0) {
+                if (verbose) {
+                    message("startTimeStamp tag not found, mzMLPath is not a",
+                            " valid mzML file") }
+                return(NA)
             }
-            return(NA)
-        } else {
-            acqTime <- strptime(XML::xmlGetAttr(xmltop[["mzML"]][["run"]],
-                                                "startTimeStamp"),
-                                format = "%Y-%m-%dT%H:%M:%S")
-        }
+            if (nLinesRead == 2) {
+                if (isFALSE(grepl("<indexedmzML", currentLine, fixed=TRUE))) {
+                    if (verbose) {
+                    message("Check input, mzMLPath is not a valid mzML file")
+                    }
+                    return(NA)
+                }
+            }
+            regex1 <-  stringr::str_extract(string = currentLine,
+                    pattern = "(?<=startTimeStamp=\")(.*?)(?=\")")
+            if (isFALSE(is.na(regex1))) {
+                acqTime <- strptime(regex1, format = "%Y-%m-%dT%H:%M:%S")
+                ## Output
+                etime <- Sys.time()
+                if (verbose) {
+                    message("Acquisition date parsed in: ",
+                            round(as.double(difftime(etime, stime)), 2),
+                    " ", units(difftime(etime, stime)))}
+                return(acqTime) }
+            nLinesRead <- nLinesRead + 1 }
     }, error = function(cond) {
         ## catch
         if (verbose) {
             message("Check input, failure while parsing mzMLPath")}
         return(NA)
     })
-    
-    ## Output
-    etime <- Sys.time()
-    if (verbose) {
-        message("Acquisition date parsed in: ",
-                round(as.double(difftime(etime, stime)), 2),
-                " ", units(difftime(etime, stime)))
-    }
-    
-    return(acqTime)
 }

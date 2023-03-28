@@ -60,9 +60,9 @@ output$alreadyAnnotatedUI <- renderUI({
 output$useUROICheckbox <- renderUI({
   # if uROI does not exist, strikethrough the label
   if (peakPantheR::uROIExist(values$annotation)) {
-    lbl <- p("use ", shiny::span(em("updated Regions of Interest")))
+    lbl <- span("use ", shiny::span(em("updated Regions of Interest")))
   } else {
-    lbl <- p(shiny::tags$s("use "), shiny::span(em(shiny::tags$s("updated Regions of Interest"))))
+    lbl <- span(shiny::tags$s("use "), shiny::span(em(shiny::tags$s("updated Regions of Interest"))))
   }
   # set the default value based on the annotation status
   tagList(
@@ -78,7 +78,7 @@ output$useFIRCheckbox <- renderUI({
   tagList(
     h5(HTML("FIR"), style="color:#3e648d;font-weight:bold"),
     checkboxInput("useFIR",
-                  label = p("use ", shiny::span(em("Fallback Integration Regions"))),
+                  label = span("use ", shiny::span(em("Fallback Integration Regions"))),
                   value = peakPantheR::useFIR(values$annotation))
   )
 }) # TODO: CHECK FIR checkbox is activated correctly [cannot do the strikethrough]

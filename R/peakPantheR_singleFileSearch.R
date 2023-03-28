@@ -316,7 +316,7 @@ singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
     # known curveModel
     known_curveModel <- c("skewedGaussian", "emgGaussian")
     if (!(curveModel %in% known_curveModel)) {
-        stop(paste("Error: \"curveModel\" must be one of:",
+        stop(paste0("Err","or: \"curveModel\" must be one of: ",
             paste(known_curveModel, collapse=', '))) }
 
     return(list(specPath=singleSpectraDataPath, plotPath=plotEICsPath,

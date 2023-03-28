@@ -365,5 +365,11 @@ pander::pandoc.table(input_featMeta, digits = 0)
 * [Parallel Annotation](parallel-annotation.html)
 * [Graphical user interface use](peakPantheR-GUI.html)
 
+# Session Information
+
+```{r, echo = FALSE}
+devtools::session_info()
+```
+
 # References
 

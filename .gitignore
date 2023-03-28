@@ -30,5 +30,6 @@ doc/*.Rmd
 Rplots.pdf
 tests/testthat/Rplots.pdf
 .idea
+.vscode
 docs
 inst/doc

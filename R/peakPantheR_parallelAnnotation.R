@@ -161,8 +161,8 @@ peakPantheR_parallelAnnotation <- function(object, ncores = 0,
 
     # Check inputs, Initialise variables and outputs
     initRes <- parallelAnnotation_init(object, resetWorkers, verbose)
-    file_paths = initRes$file_paths; target_peak_table=initRes$target_peak_table
-    input_FIR = initRes$input_FIR; resetWorkersMulti = initRes$resetWorkersMulti
+    file_paths<-initRes$file_paths; target_peak_table<-initRes$target_peak_table
+    input_FIR<-initRes$input_FIR; resetWorkersMulti<-initRes$resetWorkersMulti
 
     stime <- Sys.time()
     
@@ -230,10 +230,10 @@ targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,
 curveModel='skewedGaussian', inVerbose=TRUE,...){
     # Check input path exist or exit with error message
     if (!file.exists(singleSpectraDataPath)) {
-        if (inVerbose) { message(paste("Error file does not exist: ",
-                singleSpectraDataPath, sep = "")) }
+        if (inVerbose) { message("Err","or file does not exist: ",
+                singleSpectraDataPath) }
         # add error status
-        failureMsg <- paste("Error file does not exist: ",
+        failureMsg <- paste("Err","or file does not exist: ",
             singleSpectraDataPath, sep = "")
         names(failureMsg) <- singleSpectraDataPath
         # return basic values and failure message
@@ -243,7 +243,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
     # Run singleFileSearch in try catch
     file_name <- tools::file_path_sans_ext(basename(singleSpectraDataPath))
     # progress
-    if (inVerbose) { message(paste("-----", file_name, "-----")) }
+    if (inVerbose) { message("----- ", file_name, " -----") }
     # try catch
     result <- tryCatch({
         # singleFileSearch
@@ -261,7 +261,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
         # message error
         if (inVerbose) {
             message("-----")
-            message(paste("Error processing file:", file_name))
+            message("Err","or processing file: ", file_name)
             message(err$message)
             message("\n-----") }
         # add error status
@@ -387,8 +387,8 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
     # message failures
     if ((sum(failures) != 0) & verbose) {
         message("----------------")
-        message(paste(sum(failures), "file(s) failed to process:\n",
-            paste0(capture.output(fail_table), collapse = "\n"))) }
+        message(sum(failures), " file(s) failed to process:\n",
+            paste0(capture.output(fail_table), collapse = "\n")) }
     # remove failures
     allFilesRes <- allFilesRes[!failures]
     # reshape the output object to match (remove failed samples)
@@ -421,7 +421,7 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
         outObject <- outObject[order(acquisitionTime(outObject)), ]
     } else {
         if (verbose) {
-            message(paste0('Annotation object cannot be reordered by sample ',
-                            'acquisition date')) }
+            message('Annotation object cannot be reordered by sample ',
+                    'acquisition date') }
     }
     return(list(outObject=outObject, fail_table=fail_table)) }

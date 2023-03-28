@@ -60,41 +60,44 @@
 peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
     acquTime=NULL, varName="variable", sampleColour = NULL, rotateAxis = FALSE,
     verbose = TRUE) {
-    
-    # Check input
+
+    ## Check input
     resInp <- plotPeakwidth_checkInput(apexValue, widthMin, widthMax, acquTime,
                                         sampleColour, verbose)
     nbSpl <- resInp$nbSpl; useRunOrder <- resInp$useRunOrder
     useWidth <- resInp$useWidth; colourSpl <- resInp$colourSpl
     sampleIDColour <- resInp$sampleIDColour
 
-    # Init plot draw default x/y with y the variable, rotate later if required
+    ## Init plot draw default x/y will fill depending on rotation
     p <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) +
-        ggplot2::theme_bw() +
-        ggplot2::ylab(varName)
-    
+        ggplot2::theme_bw()
     # set fill and colour scale, with one color per sample ID
-    p <- p + ggplot2::scale_colour_manual(values = colourSpl, guide = FALSE)
-    p <- p + ggplot2::scale_fill_manual(values = colourSpl, guide = FALSE)
+    p <- p + ggplot2::scale_colour_manual(values = colourSpl, guide = "none")
+    p <- p + ggplot2::scale_fill_manual(values = colourSpl, guide = "none")
 
-    # tmp x axis
+    ## tmp main axis 
     if (useRunOrder) {
         x_axis <- acquTime
     } else {
-        if (rotateAxis) {
-            x_axis <- seq(nbSpl - 1, 0)  #first spectra on top
-        } else {
-            x_axis <- seq(0, nbSpl - 1)  #first spectra on left
-        }
+        x_axis <- seq(0, nbSpl - 1)  #first spectra on left
     }
-    
-    # Plot peakwidth, apex values and apex points
-    p <- plotPeakwidth_plotWidthApex(p, useWidth, useRunOrder, x_axis, widthMin,
-                        widthMax, sampleIDColour, apexValue, acquTime, verbose)
 
-    # Rotate axis
-    p <- plotPeakwidth_rotateAxis(p, rotateAxis, useRunOrder, verbose)
-    
+    ## Plot peakwidth, apex values and apex points (flip x/y if rotateAxis)
+    # must rotateAxis inside the function otherwise the checks for NA wouldn't 
+    # work with flipped inputs
+    p <- plotPeakwidth_plotWidthApex(p, useWidth, rotateAxis, x_axis,
+                    widthMin, widthMax, sampleIDColour, apexValue, verbose)
+
+    # some expected messages
+    if (verbose) {
+        if (useRunOrder) { message("Values plotted by run order")
+        } else {           message("Values plotted by input order") }
+    }
+
+    ## final ordering and axis labelling
+    p <- plotPeakwidth_rotateAxis_setLabels(p, rotateAxis, useRunOrder, 
+                                            x_axis, acquTime, varName, verbose)
+
     return(p)
 }
 
@@ -111,18 +114,18 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
     if (!is.null(acquTime)) {
         # acquTime is not a POSIXct
         if (!is(acquTime, "POSIXct")) {
-            stop("Error: \"acquTime\" must be a vector of POSIXct") }
+            stop("Err","or: \"acquTime\" must be a vector of POSIXct") }
         # NA in acquTime
         if (any(is.na(acquTime))) {
             if (verbose) {
-                message('Warning: \"acquTime\" contains NA, run order ',
+                message('War','ning: \"acquTime\" contains NA, run order ',
                                 'will not be plotted') }
             acquTime <- NULL  # helps with unittesting as dates in $plot_env
                                 # introduce OS differences
         } else {
             # check acquTime length
             if (nbSpl != length(acquTime)) {
-                stop('Error: \"apexValue\" and \"acquTime\" must be the',
+                stop('Err','or: \"apexValue\" and \"acquTime\" must be the',
                             ' same length')
             } else { useRunOrder <- TRUE }
         }
@@ -143,7 +146,7 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
             colourSpl <- sampleColour
         } else {
             if (verbose) {
-                message('Warning: sampleColour length must match the ',
+                message('War','ning: sampleColour length must match the ',
                                 'number of samples; default colour used') }
         }
     }
@@ -153,98 +156,94 @@ plotPeakwidth_checkInput <- function(apexValue, widthMin, widthMax, acquTime,
     return(list(nbSpl=nbSpl, useRunOrder=useRunOrder, useWidth=useWidth,
                 colourSpl=colourSpl, sampleIDColour=sampleIDColour))
 }
-# Plot peakwidth, apex values and apex points
-plotPeakwidth_plotWidthApex <- function(p, useWidth, useRunOrder, x_axis,
-            widthMin, widthMax, sampleIDColour, apexValue, acquTime, verbose) {
-    # peak width (must go first to be the bottom most layer)
+# Plot peakwidth, apex values and apex points (flip x/y if rotateAxis)
+plotPeakwidth_plotWidthApex <- function(p, useWidth, rotateAxis, 
+            x_axis, widthMin, widthMax, sampleIDColour, apexValue, verbose) {
+
+    ## Apex value
+    # add apex point (add the color ID to each point, and an ID pointing to the 
+    # black stroke)
+    tmp_pt <- data.frame(x = x_axis, y = apexValue, colr = sampleIDColour,
+                        stringsAsFactors = FALSE)
+    tmp_pt <- tmp_pt[!is.na(tmp_pt$y), ]
+
+    # with peakwidth and black stroke
     if (useWidth) {
-        # value peakwidth (add color ID to each point)
+        ## Prepare peakWidth (must go first to be the bottom most layer)
         tmp_pwidth <- data.frame(x = c(x_axis, x_axis),
                                 y = c(widthMin, widthMax),
                                 colr = c(sampleIDColour, sampleIDColour),
                                 stringsAsFactors = FALSE)
-        tmp_pwidth <- tmp_pwidth[!is.na(tmp_pwidth$y), ]
-        p <- p + ggplot2::geom_line(data = tmp_pwidth,
-                    ggplot2::aes(x = x, y = y, group = x, colour=colr), size=1)
+        tmp_pwidth <- tmp_pwidth[!is.na(tmp_pwidth$y),]#remove val without pkwdt
+        if (rotateAxis) { #flip x and y
+            p <- p + ggplot2::geom_line(data=tmp_pwidth,
+                ggplot2::aes(x=y, y=x, group=x, colour=colr), linewidth=1)
+            p <- p + ggplot2::geom_point(data = tmp_pt, 
+                ggplot2::aes(x=y, y=x, fill=colr), 
+                colour="black", shape=21, stroke=1, size=2)
+        } else {
+            p <- p + ggplot2::geom_line(data = tmp_pwidth, 
+                ggplot2::aes(x=x, y=y, group=x, colour=colr), linewidth=1)
+            p <- p + ggplot2::geom_point(data = tmp_pt, 
+                ggplot2::aes(x=x, y=y, fill=colr), 
+                colour="black", shape=21, stroke=1, size=2)
+        }
         if (verbose) { message("Peakwidth values plotted") }
-    }
 
-
-    # apex value
-    if (useRunOrder) {
-        p <- p + ggplot2::xlab("Acquisition Time")
-                #labels are flipped, themes are not
-        tmp_pt <- data.frame(x = acquTime, y = apexValue, colr = sampleIDColour,
-            stringsAsFactors = FALSE)
-        if (verbose) { message("Values plotted by run order") }
+    # without peakwidth and black stroke
     } else {
-        # labels are flipped, themes are not
-        # add apex point (add the color ID to each point, and an ID pointing to
-        # the black stroke)
-        tmp_pt <- data.frame(x = x_axis, y = apexValue, colr = sampleIDColour,
-                            stringsAsFactors = FALSE)
-        if (verbose) { message("Values plotted by input order") }
+        if (rotateAxis) { #flip x and y
+            p <- p + ggplot2::geom_point(data=tmp_pt,
+                ggplot2::aes(x=y, y=x, colour=colr))
+        } else {
+            p <- p + ggplot2::geom_point(data = tmp_pt, 
+                ggplot2::aes(x=x, y=y, colour=colr))
+        }
     }
-    # add apex points
-    tmp_pt <- tmp_pt[!is.na(tmp_pt$y), ]
-    # with black stroke
-    if (useWidth) {
-        p <- p + ggplot2::geom_point(data = tmp_pt,
-                    ggplot2::aes(x = x, y = y, fill = colr), colour = "black",
-                                shape = 21, stroke = 1, size = 2)
-        # without black stroke
-    } else {
-        p <- p + ggplot2::geom_point(data = tmp_pt,
-                    ggplot2::aes(x = x, y = y, colour = colr))
-    }
-
     return(p)
 }
-# Rotate axis
-plotPeakwidth_rotateAxis <- function(p, rotateAxis, useRunOrder, verbose) {
-    # rotate axis (labels are carried with the flip, but themes are applied
-    # afterwards)
-    if (rotateAxis) {
-        p <- p + ggplot2::coord_flip()
-
-        if (useRunOrder) { # Run order
-            # if date axis vertical, put dates in order from top to bottom
-            # function to reverse date axis
-            c_trans <- function(a, b, breaks = b$breaks, format = b$format) {
-                a <- scales::as.trans(a)
-                b <- scales::as.trans(b)
-                name <- paste(a$name, b$name, sep = "-")
-                trans <- function(x) a$trans(b$trans(x))
-                inv <- function(x) b$inverse(a$inverse(x))
-                scales::trans_new(name = name, transform = trans, inverse = inv,
-                                breaks = breaks, format = format)
-            }
-            rev_date <- c_trans("reverse", "time")
-
-            p <- p + ggplot2::theme(
-                axis.text.y = ggplot2::element_text(angle = 45, hjust = 1)) +
-                ggplot2::scale_x_continuous(trans = rev_date,
-                                            expand = c(0.007, 0.007))
-        } else { # no run order
-            p <- p + ggplot2::theme(axis.title.y = ggplot2::element_blank(),
-                                    axis.text.y = ggplot2::element_blank(),
-                                    axis.ticks.x = ggplot2::element_blank()) +
-                ggplot2::scale_x_continuous(breaks = NULL,
-                                            expand = c(0.007, 0.007))
-        }
-        if (verbose) { message("x and y axis rotated") }
-
-    } else { # no rotation
-        if (useRunOrder) {
-            p <- p + ggplot2::theme(
-                axis.text.x = ggplot2::element_text(angle = 45, hjust = 1)) +
+# Set labels and rotate axis if necessary
+plotPeakwidth_rotateAxis_setLabels <- function(p, rotateAxis, useRunOrder, 
+                                        x_axis, acquTime, varName, verbose) {
+    coord_y_datetime <- function(xlim = NULL, ylim = NULL, expand = TRUE) {
+        if (!is.null(ylim)) { ylim <- lubridate::as_datetime(ylim) }
+        ggplot2::coord_cartesian(xlim = xlim, ylim = ylim, expand = expand)
+    }
+    ## Ordering of values and axis labelling
+    if (useRunOrder) {
+        if (rotateAxis) { # date axis rotated (+ flipped)
+            p <- p + coord_y_datetime(ylim = c(max(acquTime), min(acquTime))) +
+                ggplot2::xlab(varName) + 
+                ggplot2::ylab("Acquisition Time") +
+                ggplot2::theme(
+                        axis.text.y=ggplot2::element_text(angle=45, hjust=1)) +
+                ggplot2::scale_y_datetime(expand = c(0.007, 0.007))
+            if (verbose) { message("x and y axis rotated") }
+        } else {          # date axis not rotated
+            p <- p + ggplot2::xlab("Acquisition Time") +
+                ggplot2::ylab(varName) + 
+                ggplot2::theme(
+                        axis.text.x=ggplot2::element_text(angle=45, hjust=1)) +
                 ggplot2::scale_x_datetime(expand = c(0.007, 0.007))
-        } else {
-            p <- p + ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-                                    axis.text.x = ggplot2::element_blank(),
-                                    axis.ticks.x = ggplot2::element_blank()) +
-                ggplot2::scale_x_continuous(breaks = NULL,
-                                            expand = c(0.007, 0.007))
+        }
+    } else {
+        if (rotateAxis) { # input order axis rotated (+ flipped)
+            suppressMessages(
+            p <- p +  #needs to go first
+                ggplot2::scale_y_continuous(breaks=NULL, expand=c(0.007,0.007))+
+                ggplot2::ylim(max(x_axis), min(x_axis)) +
+                ggplot2::xlab(varName) + 
+                ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                                axis.text.y = ggplot2::element_blank(),
+                                axis.ticks.y = ggplot2::element_blank())
+            )
+            if (verbose) { message("x and y axis rotated") }
+        } else {          # input order axis not rotated
+            p <- p + ggplot2::ylab(varName) + 
+                ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                                axis.text.x = ggplot2::element_blank(),
+                                axis.ticks.x = ggplot2::element_blank()) +
+                ggplot2::scale_x_continuous(breaks=NULL, expand=c(0.007,0.007))
         }
     }
     return(p)

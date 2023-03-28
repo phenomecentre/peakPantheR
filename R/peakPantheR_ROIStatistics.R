@@ -119,17 +119,17 @@ ROIStatistics_init_checks <- function(referenceSpectraFiles, saveFolder, ROI,
     if (verbose) {
         # save ROI EICs
         if (saveEICsROI) {
-            message(paste("- EICs for each ROI windows will be saved to:",
-                saveFolder))
-            message(paste("    ", dim(ROI)[1], " ROI in ",
-                length(referenceSpectraFiles), " reference samples", sep = ""))
+            message("- EICs for each ROI windows will be saved to: ",
+                saveFolder)
+            message("    ", dim(ROI)[1], " ROI in ",
+                length(referenceSpectraFiles), " reference samples")
         } else { message("- EICs of ROI windows will not be saved") }
         # calculate IS mean RT
         if (calculateMeanISRT) {
-            message(paste("- Mean RT of IS across reference samples will be",
-                            "saved to:", saveFolder))
-            message(paste("    ", dim(IS_ROI)[1], " IS in ",
-            length(referenceSpectraFiles), " reference samples", sep = ""))
+            message("- Mean RT of IS across reference samples will be ",
+                    "saved to: ", saveFolder)
+            message("    ", dim(IS_ROI)[1], " IS in ",
+            length(referenceSpectraFiles), " reference samples")
         } else { message("- Mean RT of IS will not be calculated") }
     }
     return(list(saveFolder=saveFolder, sampleColour=sampleColour,
@@ -235,7 +235,7 @@ ROIStatistics_saveEICsROI <- function(referenceSpectraFiles, saveFolder, ROI,
         ggplot2::ggsave(file=saveFileName, plot=tmp_EIC_plot, device="png",
             path = saveFolder, dpi=100, width=25, height=25, units="cm",
             limitsize = FALSE) }
-    if (verbose) { message(paste(nbROI, "ROIs saved to", saveFolder)) }
+    if (verbose) { message(nbROI, " ROIs saved to ", saveFolder) }
 }
 # Calculate mean RT for each IS
 ROIStatistics_calculateMeanISRT <- function(referenceSpectraFiles, saveFolder,

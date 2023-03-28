@@ -1,0 +1,13 @@
+citHeader("To cite peakPantheR in publications, please use:")
+
+citEntry(entry="article",
+  author="Arnaud M Wolfer, Gonçalo DS Correia, Caroline J Sands, Stephane Camuzeaux, Ada HY Yuen, Elena Chekmeneva, Zoltán Takáts, Jake TM Pearce, Matthew R Lewis",
+  title="peakPantheR, an R package for large-scale targeted extraction and integration of annotated metabolic features in LC-MS profiling datasets",
+  journal="BIOINFORMATICS",
+  year="2021",
+  issn = "1367-4803",
+  doi = "10.1093/bioinformatics/btab433",
+  url = "https://doi.org/10.1093/bioinformatics/btab433",
+  textVersion = paste("Arnaud M Wolfer, Gonçalo D S Correia, Caroline J Sands, Stephane Camuzeaux, Ada H Y Yuen, Elena Chekmeneva, Zoltán Takáts, Jake T M Pearce, Matthew R Lewis;",
+  "peakPantheR, an R package for large-scale targeted extraction and integration of annotated metabolic features in LC-MS profiling datasets",
+  "Bioinformatics, 2021; https://doi.org/10.1093/bioinformatics/btab433"))

@@ -8,7 +8,6 @@
 ^.covrignore
 LICENSE
 ^cran-comments.md
-tests\testthat\Rplots.pdf
 ^Rplots.pdf
 ^.idea
 ^.git
@@ -17,3 +16,5 @@ docs
 ^_pkgdown\.yml$
 ^pkgdown$
 ^\.github$
+^\.vscode$
+CONTRIBUTIONS.md

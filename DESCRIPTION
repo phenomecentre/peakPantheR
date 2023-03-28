@@ -1,7 +1,7 @@
 Package: peakPantheR
 Title: Peak Picking and Annotation of High Resolution Experiments
-Version: 1.5.4
-Date: 2021-03-30
+Version: 1.13.1
+Date: 2022-11-06
 Authors@R: c(person("Arnaud", "Wolfer", email = "adwolfer@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-5856-3218")),
 	person("Goncalo", "Correia", email = "gscorreia89@gmail.com", role = "aut", comment = c(ORCID = "0000-0001-8271-9294")),
 	person("Jake", "Pearce", email = "jake.pearce@gmail.com", role = "ctb"),
@@ -10,11 +10,11 @@ Description: An automated pipeline for the detection, integration and reporting 
     It enables the real time annotation of multiple compounds in a single file, or the parallel annotation of multiple compounds in multiple files.
     A graphical user interface as well as command line functions will assist in assessing the quality of annotation and update fitting parameters until a satisfactory result is obtained.
 Depends:
-	R (>= 4.0)
+	R (>= 4.2)
 Imports: 
 	foreach (>= 1.4.4),
 	doParallel (>= 1.0.11),
-	ggplot2 (>= 2.2.1),
+	ggplot2 (>= 3.3.0),
 	gridExtra (>= 2.3),
 	MSnbase (>= 2.4.0),
 	mzR (>= 2.12.0),
@@ -24,19 +24,21 @@ Imports:
 	minpack.lm (>= 1.2.1),
 	scales(>= 0.5.0),
 	shiny (>= 1.0.5),
-	shinythemes (>= 1.1.1),
+	bslib,
 	shinycssloaders (>= 1.0.0),
 	DT (>= 0.15),
 	pracma (>= 2.2.3),
-	utils
+	utils,
+	lubridate
 biocViews: MassSpectrometry, Metabolomics, PeakDetection
 License: GPL-3
 BugReports: https://github.com/phenomecentre/peakPantheR/issues/new
 URL: https://github.com/phenomecentre/peakPantheR
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Suggests: testthat,
+    devtools,
 	faahKO,
 	msdata,
 	knitr,
