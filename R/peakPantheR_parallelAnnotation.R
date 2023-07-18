@@ -4,8 +4,8 @@
 #' initialised input object and store results. The use of updated ROI and the
 #' integration of FIR are controled by the input object slots \code{useUROI} and
 #' \code{useFIR}. Files are processed in parallel using
-#' \link{peakPantheR_singleFileSearch}; \code{ncores} controls the number of
-#' cores used for parallelisation, with \code{ncores=0} corresponding to serial
+#' \link{peakPantheR_singleFileSearch}; \code{nCores} controls the number of
+#' cores used for parallelisation, with \code{nCores=1} corresponding to serial
 #' processing. If the processing of a file fails (file does not exist or error
 #' during execution) the sample is removed from the outputed object.
 #'
@@ -13,18 +13,12 @@
 #' object defining the samples to process and compounds to target. The slots
 #' \code{useUROI} and \code{useFIR} controls if uROI must be used and FIR
 #' integrated if a feature is not found
-#' @param ncores (int) Number of cores to use for parallelisation. Default 0 for
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel 
+#' processing. Must be a BiocParallelParam object
+#' @param nCores (int) Number of cores to use for parallelisation. Default 1 for
 #' no parallelisation.
 #' @param getAcquTime (bool) If TRUE will extract sample acquisition date-time
 #' from the mzML metadata (the additional file access will impact run time)
-#' @param resetWorkers (int) If 0, the parallel cluster is only initiated once.
-#' If >0 the cluster will be reset (and the memory of each worker freed) once
-#' \code{ncores * resetWorkers} files have been processed. Default value is 1,
-#' the cluster is reset once \code{ncores} files have been processed. While
-#' potentially impacting performance (need to wait until all \code{ncores *
-#' resetWorkers} files are processed before restarting the cluster), shutting
-#' down the workers processes regularly will ensure the OS can reallocate memory
-#' more efficiently. For values >1, ensure sufficient system memory is available
 #' @param centroided (bool) use TRUE if the data is centroided, used by
 #' \code{\link[MSnbase]{readMSData}} when reading the raw data files
 #' @param curveModel (str) specify the peak-shape model to fit,
@@ -75,7 +69,7 @@
 #' 
 #' # Run serially
 #' result_parallelAnnotation <- peakPantheR_parallelAnnotation(initAnnotation,
-#'                                                         ncores=0,
+#'                                                         nCores=1,
 #'                                                         getAcquTime=FALSE,
 #'                                                         verbose=TRUE)
 #' # Processing 4 compounds in 3 samples:
@@ -150,26 +144,25 @@
 #' @family peakPantheR
 #' @family parallelAnnotation
 #'
-#' @import foreach
-#' @import doParallel
 #' @import mzR
+#' @import BiocParallel
 #'
 #' @export
-peakPantheR_parallelAnnotation <- function(object, ncores = 0,
-    getAcquTime = TRUE, resetWorkers = 1, centroided = TRUE,
+peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
+    getAcquTime = TRUE, centroided = TRUE,
     curveModel='skewedGaussian', verbose=TRUE, ...){
 
     # Check inputs, Initialise variables and outputs
-    initRes <- parallelAnnotation_init(object, resetWorkers, verbose)
+    initRes    <- parallelAnnotation_init(object, BPPARAM, nCores, verbose)
     file_paths<-initRes$file_paths; target_peak_table<-initRes$target_peak_table
-    input_FIR<-initRes$input_FIR; resetWorkersMulti<-initRes$resetWorkersMulti
+    input_FIR  <- initRes$input_FIR; BPPARAMObject <- initRes$BPPARAMObject
 
     stime <- Sys.time()
-    
+
     # Run singleFileSearch
     # (list, each item is the result of a file, errors are passed into the list)
-    allFilesRes <- parallelAnnotation_runSingleFileSearch(object, file_paths,
-        target_peak_table, input_FIR, ncores, getAcquTime, resetWorkersMulti,
+    allFilesRes <- parallelAnnotation_runSingleFileSearch(file_paths,
+        target_peak_table, input_FIR, BPPARAM = BPPARAMObject, getAcquTime,
         centroided, curveModel, verbose,...)
 
     # Collect, process and reorder results
@@ -277,16 +270,30 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
 
 
 ## Check inputs, Initialise variables and outputs
-parallelAnnotation_init <- function(object, resetWorkers, verbose) {
+parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
     # check validity of object
     validObject(object)
-    # check resetWorkers value
-    if (!is.numeric(resetWorkers)) {
-        stop("Check input, resetWorkers must be an integer")
+
+    nCores <- as.integer(nCores)
+    if (nCores < 1) {
+        stop("Check input, nCores must be a positive integer")
     }
-    resetWorkersMulti <- as.integer(resetWorkers)
-    if (resetWorkersMulti < 0) {
-        stop("Check input, resetWorkers must be a positive integer")
+
+    # Handle default BPParams
+    if (is.null(BPPARAM)) {
+        if (nCores > 1) {
+            if (.Platform$OS.type == 'windows') {
+            BPPARAM <- BiocParallel::SnowParam(workers = nCores)
+            }
+            else {
+            BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
+            }
+
+        } else {
+            BPPARAM <- BiocParallel::SerialParam()}
+    }
+    else if (!is(BPPARAM, 'BiocParallelParam')) {
+        stop("Check input, BPPARAM must be a BiocParallel Param object")
     }
 
     # Initialise parameters from object
@@ -316,63 +323,27 @@ parallelAnnotation_init <- function(object, resetWorkers, verbose) {
     }
 
     return(list(file_paths=file_paths, target_peak_table=target_peak_table,
-                input_FIR=input_FIR, resetWorkersMulti=resetWorkersMulti))
+                input_FIR=input_FIR, BPPARAMObject=BPPARAM))
 }
 
 
 ## Run singleFileSearch
 # (list, each item is the result of a file, errors are passed into the list)
-parallelAnnotation_runSingleFileSearch <- function(object, file_paths,
-target_peak_table, input_FIR, ncores, getAcquTime, resetWorkersMulti,centroided,
-curveModel, verbose,...) {
-    if (ncores != 0) { # Parallel
-        # Reinitialise the cluster after ncores files
-        # (reset worker processes, freed memory can be reallocated by the OS)
-        if (resetWorkersMulti != 0) {
-            # Init
-            nFiles <- nbSamples(object)
-            allFilesRes <- vector("list", nFiles)
-            nFilesPerClust <- (ncores * resetWorkersMulti)
-            nClust <- ceiling(nFiles/nFilesPerClust)
-            if (verbose) { message("Running ", nClust, " clusters of ",
-                    nFilesPerClust, " files over ", ncores, " cores:") }
-            # in each round start a new cluster and store results
-            for (iClust in seq(0, nClust - 1, 1)) {
-                if (verbose) {
-                    message("  starting cluster ", iClust + 1, "/", nClust) }
-                # init
-                idxStart <- 1 + iClust * nFilesPerClust
-                idxEnd <- min((nFilesPerClust + iClust * nFilesPerClust),nFiles)
-                    # to not overshoot the number of files
-                tmp_file_paths <- file_paths[idxStart:idxEnd]
-                cl <- parallel::makeCluster(ncores)
-                doParallel::registerDoParallel(cl)
-                # Run
-                allFilesRes[idxStart:idxEnd] <- foreach::foreach(
-                x = tmp_file_paths, .packages = c("MSnbase", "mzR"),
-                .inorder=TRUE) %dopar% parallelAnnotation_parallelHelper(x,
-                target_peak_table,inFIR=input_FIR,inGetAcquTime=getAcquTime,
-                centr = centroided, curveModel=curveModel,
-                inVerbose = verbose, ...)
-                parallel::stopCluster(cl) } # Close
-        } else { # Single cluster init (workload can be balanced across workers)
-            cl <- parallel::makeCluster(ncores)
-            doParallel::registerDoParallel(cl)
-            allFilesRes <- foreach::foreach(   # Run
-                x = file_paths, .packages = c("MSnbase", "mzR"),
-                .inorder = TRUE) %dopar% parallelAnnotation_parallelHelper(x,
-                target_peak_table, inFIR=input_FIR, inGetAcquTime=getAcquTime,
-                centr=centroided, curveModel=curveModel,
-                inVerbose = verbose,...)#.errorhandling='pass'
-                # #.export=c('findTargetFeatures', 'getTargetFeatureStatistic')
-            parallel::stopCluster(cl) } # Close
-    } else { # Serial
-        allFilesRes <- lapply(file_paths,
-            function(x) parallelAnnotation_parallelHelper(x, target_peak_table,
-                inFIR=input_FIR, inGetAcquTime=getAcquTime, centr=centroided,
-                curveModel=curveModel, inVerbose=verbose, ...)) }
-    return(allFilesRes) }
+parallelAnnotation_runSingleFileSearch <- function(file_paths,
+target_peak_table, input_FIR, BPPARAM, getAcquTime, centroided,
+curveModel, verbose, ...) {
 
+    BiocParallel::register(BPPARAM)
+    BiocParallel::bpstart(BPPARAM)
+    allFilesRes <- BiocParallel::bplapply(X=file_paths, 
+                    FUN=parallelAnnotation_parallelHelper,
+                    targetFeatTable=target_peak_table,
+                    inGetAcquTime=getAcquTime, inFIR=input_FIR,
+                    centr=centroided, curveModel=curveModel, inVerbose=verbose,
+                    BPPARAM = BPPARAM, ...)
+
+    BiocParallel::bpstop(BPPARAM)
+    return(allFilesRes) }
 
 ## Collect, process and reorder results
 parallelAnnotation_process <- function(allFilesRes, object, verbose) {
@@ -388,7 +359,7 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
     if ((sum(failures) != 0) & verbose) {
         message("----------------")
         message(sum(failures), " file(s) failed to process:\n",
-            paste0(capture.output(fail_table), collapse = "\n")) }
+            paste0(utils::capture.output(fail_table), collapse = "\n")) }
     # remove failures
     allFilesRes <- allFilesRes[!failures]
     # reshape the output object to match (remove failed samples)

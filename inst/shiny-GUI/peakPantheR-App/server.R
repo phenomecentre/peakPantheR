@@ -23,7 +23,6 @@
 
 #require(shiny)
 
-
 # increase upload size to 500MB
 options(shiny.maxRequestSize=500*1024^2)
 # define max number of parallel cores
@@ -33,7 +32,6 @@ knownCurveModel <- c("skewedGaussian", "emgGaussian")
 
 
 shinyServer( function(input, output, session){
-
   # -- General Initialisation --
 
   # close app if tab is shut

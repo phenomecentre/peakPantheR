@@ -13,7 +13,8 @@ per fitted compound}
     savePlots = TRUE,
     sampleColour = NULL,
     verbose = TRUE,
-    ncores = 0,
+    nCores = 1,
+    BPPARAM = NULL,
     ...
 )
 }
@@ -29,7 +30,10 @@ and plots will be saved}
 
 \item{verbose}{(bool) If TRUE message progress}
 
-\item{ncores}{(int) Number of cores to use to save plots in parallel}
+\item{nCores}{(int) Number of cores to use to save plots in parallel}
+
+\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel 
+processing. Must be a BiocParallelParam object}
 
 \item{...}{Additional parameters for plotting i.e. \code{sampling} for the
 number of points to employ when plotting fittedCurve}
@@ -69,7 +73,7 @@ emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
                                         targetFeatTable=targetFeatTable)
 
 # Calculate annotation
-annotation <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
+annotation <- peakPantheR_parallelAnnotation(emptyAnnotation, nCores=1,
                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 
 # temporary location

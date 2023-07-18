@@ -1598,7 +1598,7 @@ singleDiagnosticPlots <- function(tmp_annotation,sampleColour,sampling,verbose){
 ## fitted compound
 setGeneric("outputAnnotationDiagnostic",
     function(object, saveFolder, savePlots = TRUE, sampleColour = NULL,
-            verbose = TRUE, ncores = 0, ...)
+            verbose = TRUE, nCores = 1, BPPARAM=NULL, ...)
     standardGeneric("outputAnnotationDiagnostic"))
 #' @title Save to disk the annotation parameters as CSV and a diagnostic plot
 #' per fitted compound
@@ -1612,7 +1612,9 @@ setGeneric("outputAnnotationDiagnostic",
 #' @param savePlots (bool) If TRUE save a diagnostic plot for each compound
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param verbose (bool) If TRUE message progress
-#' @param ncores (int) Number of cores to use to save plots in parallel
+#' @param nCores (int) Number of cores to use to save plots in parallel
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel 
+#' processing. Must be a BiocParallelParam object
 #' @param ... Additional parameters for plotting i.e. \code{sampling} for the
 #' number of points to employ when plotting fittedCurve
 #' @return None
@@ -1645,7 +1647,7 @@ setGeneric("outputAnnotationDiagnostic",
 #'                                         targetFeatTable=targetFeatTable)
 #'
 #' # Calculate annotation
-#' annotation <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
+#' annotation <- peakPantheR_parallelAnnotation(emptyAnnotation, nCores=1,
 #'                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 #'
 #' # temporary location
@@ -1654,7 +1656,8 @@ setGeneric("outputAnnotationDiagnostic",
 #'                             verbose=TRUE)
 #' }
 setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
-    function(object, saveFolder, savePlots, sampleColour, verbose, ncores,...) {
+    function(object, saveFolder, savePlots, sampleColour, verbose, nCores, 
+            BPPARAM, ...) {
     # Save standardised csv
     outputAnnotationParamsCSV(object, saveFolder = saveFolder,verbose = verbose)
     
@@ -1665,34 +1668,42 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         nbCpd <- nbCompounds(object)
         
         # run in parallel
-        if (ncores > 0) {
-            if (verbose) {
-                message("Saving ", nbCpd, " diagnostic plots in ", saveFolder) }
-            
-            # Open parallel interface
-            cl <- parallel::makeCluster(ncores)
-            doParallel::registerDoParallel(cl)
-            # Run
-            savedPlots <- foreach::foreach(x = seq_len(nbCpd),
-                                            .inorder = TRUE) %dopar%
-                outputAnnotationDiagnostic_saveSingleMultiPlot(cpdNb = x,
-                    annotation = object, saveFolder = saveFolder,
-                    sampleColour = sampleColour, nbCpd = nbCpd,
-                    verbose = verbose, ...)
-            # Close
-            parallel::stopCluster(cl)
-            if (verbose) { message("All plots saved") }
-
-        # run serial
-        } else {
-            if (verbose) { message("Saving diagnostic plots:") }
-            for (cpd in seq_len(nbCpd)) {
-                outputAnnotationDiagnostic_saveSingleMultiPlot(cpdNb = cpd,
-                    annotation = object, saveFolder = saveFolder,
-                    sampleColour = sampleColour, nbCpd = nbCpd,
-                    verbose = verbose, ...)
-            }
+        nCores <- as.integer(nCores)
+        if (nCores < 0) {
+            stop("Check input, nCores must be a positive integer")
         }
+        # Handle default BPParam
+        if (is.null(BPPARAM)) {
+            if (nCores > 1) {
+                if (.Platform$OS.type == 'windows') {
+                BPPARAM <- BiocParallel::SnowParam(workers = nCores)
+                }
+                else {
+                BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
+                }
+            } else {
+            BPPARAM <- BiocParallel::SerialParam()}
+        }
+        else if (!is(BPPARAM, 'BiocParallelParam')) {
+            stop("Check input, BPPARAM must be a BiocParallel Param object")
+        }
+
+        if (verbose) {
+            message("Saving ", nbCpd, " diagnostic plots in ", saveFolder) }
+
+        # Open parallel interface
+        BiocParallel::register(BPPARAM)
+        BiocParallel::bpstart(BPPARAM)
+        # Run
+        savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd), 
+                FUN = outputAnnotationDiagnostic_saveSingleMultiPlot,
+                annotation = object, saveFolder = saveFolder,
+                sampleColour = sampleColour, nbCpd = nbCpd,
+                verbose = verbose, BPPARAM = BPPARAM, ...)
+        # Close parallel interface
+        BiocParallel::bpstop(BPPARAM)
+        if (verbose) { message("All plots saved") }
+
     }
 })
 # outputAnnotationDiagnostic
@@ -1789,7 +1800,7 @@ setGeneric("outputAnnotationResult",
 #'                                         targetFeatTable=targetFeatTable)
 #'
 #' # Calculate annotation
-#' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
+#' annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, nCores=1,
 #'                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 #'
 #' # temporary location
@@ -2432,7 +2443,7 @@ setGeneric("retentionTimeCorrection",
 #'                                         targetFeatTable=targetFeatTable)
 #' # annotate files serially
 #' annotation_result <- peakPantheR_parallelAnnotation(smallAnnotation,
-#'                                          ncores=0, verbose=TRUE)
+#'                                          nCores=1, verbose=TRUE)
 #' data_annotation   <- annotation_result$annotation
 #'
 #' # Example with constant correction

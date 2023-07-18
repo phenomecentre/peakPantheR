@@ -1,4 +1,4 @@
-# ui.R
+# server.R
 
 # peakPantheR-App
 # Based on peakPantheR v1.3.0, R >= 4.0, shiny >= 1.0.5, bslib

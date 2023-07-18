@@ -12,8 +12,6 @@ Description: An automated pipeline for the detection, integration and reporting 
 Depends:
 	R (>= 4.2)
 Imports: 
-	foreach (>= 1.4.4),
-	doParallel (>= 1.0.11),
 	ggplot2 (>= 3.3.0),
 	gridExtra (>= 2.3),
 	MSnbase (>= 2.4.0),
@@ -28,6 +26,7 @@ Imports:
 	shinycssloaders (>= 1.0.0),
 	DT (>= 0.15),
 	pracma (>= 2.2.3),
+	BiocParallel (>= 1.28.3),
 	utils,
 	lubridate
 biocViews: MassSpectrometry, Metabolomics, PeakDetection

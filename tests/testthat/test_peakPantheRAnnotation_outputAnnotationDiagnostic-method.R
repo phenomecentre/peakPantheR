@@ -116,7 +116,8 @@ test_that('default output, with plots and colours, serial, verbose, no verbose',
   expected_CSV[,-c(1,2,3,10,17)]  <- sapply(expected_CSV[,-c(1,2,3,10,17)], as.numeric)
   
   # results (output, warnings and messages)
-  result_save     <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath1, savePlots=TRUE, sampleColour=input_colour, verbose=TRUE, ncores=0))
+  result_save     <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath1,
+                                                                 savePlots=TRUE, sampleColour=input_colour, verbose=TRUE, nCores=1))
   
   # Check CSV has been produced
   expect_true(file.exists(expected_path_CSV))
@@ -127,20 +128,22 @@ test_that('default output, with plots and colours, serial, verbose, no verbose',
   # Check values saved
   saved_CSV       <- read.csv(expected_path_CSV, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_CSV, expected_CSV)
-  
+
   # Check result messages (save path)
-  expect_equal(length(result_save$messages), 4)
+  expect_equal(length(result_save$messages), 5)
   
   
   ## no verbose
   savePath2       <- tempdir()
   # clear temp folder
   suppressWarnings(do.call(file.remove, list(list.files(savePath2, full.names = TRUE))))
-  result_save2    <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath2, savePlots=TRUE, sampleColour=input_colour, verbose=FALSE, ncores=0)
+  result_save2    <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath2, savePlots=TRUE,
+                                                                 sampleColour=input_colour, verbose=FALSE, nCores=1)
   )
   expect_equal(length(result_save2$messages), 0)
 })
 
+if (.Platform$OS.type != "windows") {
 test_that('default output, with plots and colours, parallel, verbose, no verbose', {
   # temporary file
   savePath3         <- tempdir()
@@ -161,7 +164,9 @@ test_that('default output, with plots and colours, parallel, verbose, no verbose
   expected_CSV[,-c(1,2,3,10,17)]  <- sapply(expected_CSV[,-c(1,2,3,10,17)], as.numeric)
   
   # results (output, warnings and messages)
-  result_save3    <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath3, savePlots=TRUE, sampleColour=input_colour, verbose=TRUE, ncores=1))
+  BPParam <- BiocParallel::SnowParam(1)
+  result_save3    <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath3, savePlots=TRUE, sampleColour=input_colour,
+                                                                 verbose=TRUE, nCores=1, BPPARAM=BPParam))
   
   # Check CSV has been produced
   expect_true(file.exists(expected_path_CSV))
@@ -174,17 +179,18 @@ test_that('default output, with plots and colours, parallel, verbose, no verbose
   expect_equal(saved_CSV, expected_CSV)
   
   # Check result messages (save path)
-  expect_equal(length(result_save3$messages), 3)
+  expect_equal(length(result_save3$messages), 4)
   
   
   ## no verbose
   savePath4       <- tempdir()
   # clear temp folder
   suppressWarnings(do.call(file.remove, list(list.files(savePath4, full.names = TRUE))))
-  result_save4    <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath4, savePlots=TRUE, sampleColour=input_colour, verbose=FALSE, ncores=1)
+  result_save4    <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath4, savePlots=TRUE,
+                                                                 sampleColour=input_colour, verbose=FALSE, nCores=1, BPPARAM=BPParam)
   )
   expect_equal(length(result_save4$messages), 0)
-})
+}) }
 
 test_that('no plot saved, verbose', {
   # temporary file
@@ -239,10 +245,10 @@ test_that('no data to plot, serial, verbose', {
   expected_CSV[2,]    <- c('ID-2', 'Cpd 2', '|', 3385.577, 496.2, 3280., 3440., 496.195038, 496.204962, '|', NA, NA, NA, NA, NA, NA, '|', NA, NA, NA, NA)
   expected_CSV[,-c(1,2,3,10:21)]  <- sapply(expected_CSV[,-c(1,2,3,10:21)], as.numeric)
   expected_CSV[,c(11:16, 18:21)]  <- sapply(expected_CSV[,c(11:16, 18:21)], as.logical)
-  expected_message    <- c("Saving diagnostic plots:\n", "Warning: the object has not been annotated, return an empty diagnostic plot list\n", "  No plot to save for compound 1/2\n", "Warning: the object has not been annotated, return an empty diagnostic plot list\n", "  No plot to save for compound 2/2\n" )
+  expected_message    <- c("Warning: the object has not been annotated, return an empty diagnostic plot list\n", "  No plot to save for compound 1/2\n", "Warning: the object has not been annotated, return an empty diagnostic plot list\n", "  No plot to save for compound 2/2\n", "All plots saved\n")
   
   # results (output, warnings and messages)
-  result_save6   <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath6, savePlots=TRUE, verbose=TRUE, ncores=0))
+  result_save6   <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath6, savePlots=TRUE, verbose=TRUE, nCores=1))
   
   # Check CSV has been produced
   expect_true(file.exists(expected_path_CSV))
@@ -255,8 +261,8 @@ test_that('no data to plot, serial, verbose', {
   expect_equal(saved_CSV, expected_CSV)
   
   # Check result messages (without save path)
-  expect_equal(length(result_save6$messages), 6)
-  expect_equal(result_save6$messages[2:6], expected_message)
+  expect_equal(length(result_save6$messages), 7)
+  expect_equal(result_save6$messages[3:7], expected_message)
 })
 
 test_that('no data to plot, parallel, verbose', {
@@ -281,7 +287,7 @@ test_that('no data to plot, parallel, verbose', {
   expected_CSV[,c(11:16, 18:21)]  <- sapply(expected_CSV[,c(11:16, 18:21)], as.logical)
   
   # results (output, warnings and messages)
-  result_save7     <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath7, savePlots=TRUE, verbose=TRUE, ncores=1))
+  result_save7     <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath7, savePlots=TRUE, verbose=TRUE, nCores=1))
   
   # Check CSV has been produced
   expect_true(file.exists(expected_path_CSV))
@@ -294,5 +300,5 @@ test_that('no data to plot, parallel, verbose', {
   expect_equal(saved_CSV, expected_CSV)
   
   # Check result messages (without save path)
-  expect_equal(length(result_save7$messages), 3)
+  expect_equal(length(result_save7$messages), 7)
 })
