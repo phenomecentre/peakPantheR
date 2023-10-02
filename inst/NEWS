@@ -2,3 +2,4 @@ Changes in version 1.15.1 (2023-08-06)
 - corrections in vignettes
 Changes in version 1.15.2 (2023-10-02)
 - ROI, uROI and FIR input checks for NA in rtMin, rtMax, mzMin and mzMax
+Changes in version 1.15.3 (2023-10-03)
