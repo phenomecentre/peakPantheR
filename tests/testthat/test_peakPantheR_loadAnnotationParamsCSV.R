@@ -178,6 +178,26 @@ test_that('raise errors - prepare_basic_target_parameters', {
   msg4                  <- paste('Check ROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
   expect_error(prepare_basic_target_parameters(wrongROImz_spl), msg4, fixed=TRUE)
   
+  # ROI rtMin is NA
+  wrongROIrtMin        <- input_CSV_spl
+  wrongROIrtMin$rtMin  <- c(NA, 19)
+  msg4                  <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_basic_target_parameters(wrongROIrtMin), msg4, fixed=TRUE)
+  # ROI rtMax is NA
+  wrongROIrtMax        <- input_CSV_spl
+  wrongROIrtMax$rtMax  <- c(4, NA)
+  msg5                  <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_basic_target_parameters(wrongROIrtMax), msg5, fixed=TRUE)
+  # ROI mzMin is NA
+  wrongROImzMin        <- input_CSV_spl
+  wrongROImzMin$mzMin  <- c(NA, 21)
+  msg6                  <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_basic_target_parameters(wrongROImzMin), msg6, fixed=TRUE)
+  # ROI mzMax is NA
+  wrongROImzMax        <- input_CSV_spl
+  wrongROImzMax$mzMax  <- c(6, NA)
+  msg7                  <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_basic_target_parameters(wrongROImzMax), msg7, fixed=TRUE)
 })
 
 test_that('prepare_advanced_target_parameters', {
@@ -222,15 +242,36 @@ test_that('raise errors - prepare_advanced_target_parameters', {
   msg7                      <- paste('Check ROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
   expect_error(prepare_advanced_target_parameters(wrongROImz_adv, verbose=FALSE), msg7, fixed=TRUE)
   
+  # ROI rtMin is NA
+  wrongROIrtMin             <- input_CSV_adv
+  wrongROIrtMin$ROI_rtMin   <- c(NA, 19)
+  msg10                     <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_advanced_target_parameters(wrongROIrtMin, verbose=FALSE), msg10, fixed=TRUE)
+  # ROI rtMax is NA
+  wrongROIrtMax             <- input_CSV_adv
+  wrongROIrtMax$ROI_rtMax   <- c(4, NA)
+  msg11                     <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_advanced_target_parameters(wrongROIrtMax, verbose=FALSE), msg11, fixed=TRUE)
+  # ROI mzMin is NA
+  wrongROImzMin             <- input_CSV_adv
+  wrongROImzMin$ROI_mzMin   <- c(NA, 21)
+  msg12                     <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_advanced_target_parameters(wrongROImzMin, verbose=FALSE), msg12, fixed=TRUE)
+  # ROI mzMax is NA
+  wrongROImzMax             <- input_CSV_adv
+  wrongROImzMax$ROI_mzMax   <- c(6, NA)
+  msg13                     <- paste('Check ROI values: "ROI$rtMin", "ROI$rtMax", "ROI$mzMin" and "ROI$mzMax" cannot be NA')
+  expect_error(prepare_advanced_target_parameters(wrongROImzMax, verbose=FALSE), msg13, fixed=TRUE)
+
   # uROI rtMin > rtMax
-  wrongUROIrt             <- input_CSV_adv
-  wrongUROIrt$uROI_rtMin  <- c(7, 25)
-  msg8                    <- paste('Check uROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
+  wrongUROIrt               <- input_CSV_adv
+  wrongUROIrt$uROI_rtMin    <- c(7, 25)
+  msg8                      <- paste('Check uROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
   expect_error(prepare_advanced_target_parameters(wrongUROIrt, verbose=FALSE), msg8, fixed=TRUE)
   
   # uROI mzMin < mzMax
-  wrongUROImz             <- input_CSV_adv
-  wrongUROImz$uROI_mzMin  <- c(12, 25)
-  msg9                    <- paste('Check uROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
+  wrongUROImz               <- input_CSV_adv
+  wrongUROImz$uROI_mzMin    <- c(12, 25)
+  msg9                      <- paste('Check uROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
   expect_error(prepare_advanced_target_parameters(wrongUROImz, verbose=FALSE), msg9, fixed=TRUE)
 })

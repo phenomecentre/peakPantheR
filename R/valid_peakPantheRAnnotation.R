@@ -95,8 +95,7 @@ valid_ppR_ROI <- function(object, valid, msg, nbCpd) {
 # check NA and column types, split due to function length
 valid_ppR_ROI_content <- function(object, valid, msg, nbCpd){
     # Missing rtMin, rtMax, mzMin or mzMax
-    if (any(is.na(object@ROI$rtMin))|any(is.na(object@ROI$rtMax))|
-        any(is.na(object@ROI$mzMin))|any(is.na(object@ROI$mzMax))) {
+    if (any(is.na(object@ROI[,c("rtMin","rtMax","mzMin","mzMax")]))) {
         valid <- FALSE
         msg <- c(msg, paste0("ROI$rtMin, ROI$rtMax, ROI$mzMin and ",
                             "ROI$mzMax cannot be NA")) }
@@ -212,11 +211,10 @@ valid_ppR_uROI_content <- function(object, valid, msg, nbCpd){
     # Missing rtMin, rtMax, mzMin or mzMax
     if (object@uROIExist) {
         # only check uROI if declared as existing
-        if (any(is.na(object@uROI$rtMin))|any(is.na(object@uROI$rtMax))|
-        any(is.na(object@uROI$mzMin))|any(is.na(object@uROI$mzMax))) {
-        valid <- FALSE
-        msg <- c(msg, paste0("uROI$rtMin, uROI$rtMax, uROI$mzMin and ",
-                            "uROI$mzMax cannot be NA")) }
+        if (any(is.na(object@uROI[,c("rtMin","rtMax","mzMin","mzMax")]))) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$rtMin, uROI$rtMax, uROI$mzMin and ",
+                                "uROI$mzMax cannot be NA")) }
     }
     # uROI column type
     if (nbCpd >= 1) {
