@@ -73,4 +73,4 @@ Suggestions and contributions to `peakPantheR` are welcome, for more information
 
 As a summary, the GPLv3 license requires attribution, inclusion of copyright and license information, disclosure of source code and changes. Derivative work must be available under the same terms.
 
-© National Phenome Centre (2022)
+© National Phenome Centre (2023)

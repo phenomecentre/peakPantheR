@@ -138,7 +138,7 @@ input_spectraPaths
 Two targeted features (_e.g. compounds, fragments, adducts, ..._) are defined 
 and stored in a table with as columns:
 
-* `cpdID` (numeric)
+* `cpdID` (character)
 * `cpdName` (character)
 * `rtMin` (sec)
 * `rtMax` (sec)
