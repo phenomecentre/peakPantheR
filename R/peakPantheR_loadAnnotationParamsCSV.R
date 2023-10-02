@@ -112,7 +112,9 @@ prepare_basic_target_parameters <- function(paramTable){
     tmp_uROIExist <- FALSE
 
     # check loaded data
-    # ROI
+    # ROI check no NA (stop otherwise crash at next step)
+    check_NA_in_target_parameters(tmp_targetFeatTable)
+    # ROI is in order
     if ( !(all(tmp_targetFeatTable$rtMin <= tmp_targetFeatTable$rtMax) &
             all(tmp_targetFeatTable$mzMin <= tmp_targetFeatTable$mzMax)) ) {
         stop('Check ROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"')
@@ -121,7 +123,13 @@ prepare_basic_target_parameters <- function(paramTable){
     return(list(targetFeatTable=tmp_targetFeatTable, uROI=tmp_uROI, FIR=tmp_FIR,
                 uROIExist=tmp_uROIExist))
 }
-
+# Check if NA in ROI, split function too long
+check_NA_in_target_parameters <- function(targetFeatTable) {
+    if (any(is.na(targetFeatTable[,c("rtMin","rtMax","mzMin","mzMax")]))) {
+        stop(paste0('Check ROI values: "ROI$rtMin", "ROI$rtMax", ',
+                    '"ROI$mzMin" and "ROI$mzMax" cannot be NA'))
+    }
+}
 
 #' Process target region parameters (with uROI, FIR) for object initialisation
 #'
@@ -147,7 +155,6 @@ prepare_advanced_target_parameters <- function(paramTable, verbose) {
             ' "ROI_mz", "ROI_rtMin", "ROI_rtMax", "ROI_mzMin", "ROI_mzMax", ',
             '"uROI_rtMin", "uROI_rtMax", "uROI_mzMin", "uROI_mzMax", "uROI_rt"',
             ', "uROI_mz", "FIR_rtMin", "FIR_rtMax", "FIR_mzMin", "FIR_mzMax"') }
-
     # Prepare ROI, uROI and FIR
     tmp_targetFeatTable <- paramTable[,c("cpdID", "cpdName", "ROI_rtMin",
                                         "ROI_rt", "ROI_rtMax", "ROI_mzMin",
@@ -171,13 +178,12 @@ prepare_advanced_target_parameters <- function(paramTable, verbose) {
                                             "mzMax")]))
     if (tmp_uROIExist) { if (verbose) { message('uROIExist set to TRUE') }
     } else { if (verbose) { message('NA in uROI, uROIExist is set to FALSE') }}
-
-    # check loaded data
-    # ROI
+    # Check ROI (no NA, is in order)
+    check_NA_in_target_parameters(tmp_targetFeatTable)
     if ( !(all(tmp_targetFeatTable$rtMin <= tmp_targetFeatTable$rtMax) &
             all(tmp_targetFeatTable$mzMin <= tmp_targetFeatTable$mzMax)) ) {
         stop('Check ROI values: "rtMin" < "rtMax" and "mzMin" < "mzMax"') }
-    # uROI
+    # Check uROI is in order (cannot have NA and uROIExist)
     if (tmp_uROIExist) {
         if ( !(all(tmp_uROI$rtMin <= tmp_uROI$rtMax) &
                 all(tmp_uROI$mzMin <= tmp_uROI$mzMax)) ) {

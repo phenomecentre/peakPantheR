@@ -17,6 +17,12 @@ input_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390., 522.1947
 input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
 input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], as.numeric)
 
+# FIR
+input_FIR  <- data.frame(rtMin=c(1,5), rtMax=c(2,6), mzMin=c(3,7), mzMax=c(4,8), stringsAsFactors=FALSE)
+
+# uROI
+input_uROI <- data.frame(rtMin=c(9,13), rt=c(9.5,13.5), rtMax=c(10,14), mzMin=c(11,15), mz=c(11.5,15.5), mzMax=c(12,16), stringsAsFactors = FALSE)
+
 # TICs
 input_TIC <- c(2410533091, 2524040155, 2332817115)
 
@@ -82,7 +88,7 @@ defaultInit_empty       <- peakPantheRAnnotation()
 # Object, init samples and compounds
 defaultInit_cpd_spectra <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
 # Object, fully filled
-filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
+filledAnnotation        <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, FIR=input_FIR, uROI=input_uROI, uROIExist=TRUE, useUROI=TRUE, useFIR=TRUE, spectraMetadata=input_spectraMetadata, acquisitionTime=input_acquisitionTime, TIC=input_TIC, peakTables=input_peakTables, dataPoints=input_dataPoints, peakFit=input_peakFit, isAnnotated=TRUE)
 
 
 test_that('initialised objects are valid', {
@@ -119,6 +125,11 @@ test_that('validObject() raises errors', {
   colnames(wrong4@ROI)  <- c("wrongCol", "rt", "rtMax", "mzMin", "mz", "mzMax")
   msg4            <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI columns should be "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", not wrongCol rt rtMax mzMin mz mzMax', sep='')
   expect_error(validObject(wrong4), msg4 , fixed=TRUE)
+  # ROI$rtMin is NA
+  wrong5a           <- filledAnnotation
+  wrong5a@ROI$rtMin  <- c(3310 , NA)
+  msg5a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rtMin, ROI$rtMax, ROI$mzMin and ROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong5a), msg5a, fixed=TRUE)
   # ROI$rtMin numeric
   wrong5            <- filledAnnotation
   wrong5@ROI$rtMin  <- c("not numeric", "not numeric")
@@ -129,11 +140,21 @@ test_that('validObject() raises errors', {
   wrong6@ROI$rt     <- c("not numeric", "not numeric")
   msg6              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rt should be numeric, not character', sep='')
   expect_error(validObject(wrong6), msg6, fixed=TRUE)
+  # ROI$rtMax is NA
+  wrong7a            <- filledAnnotation
+  wrong7a@ROI$rtMax  <- c(NA , 3440)
+  msg7a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rtMin, ROI$rtMax, ROI$mzMin and ROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong7a), msg7a, fixed=TRUE)
   # ROI$rtMax numeric
   wrong7            <- filledAnnotation
   wrong7@ROI$rtMax  <- c("not numeric", "not numeric")
   msg7              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rtMax should be numeric, not character', sep='')
   expect_error(validObject(wrong7), msg7, fixed=TRUE)
+  # ROI$mzMin is NA
+  wrong8a            <- filledAnnotation
+  wrong8a@ROI$mzMin  <- c(522.1948 , NA)
+  msg8a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rtMin, ROI$rtMax, ROI$mzMin and ROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong8a), msg8a, fixed=TRUE)
   # ROI$mzMin numeric
   wrong8            <- filledAnnotation
   wrong8@ROI$mzMin  <- c("not numeric", "not numeric")
@@ -144,6 +165,11 @@ test_that('validObject() raises errors', {
   wrong9@ROI$mz     <- c("not numeric", "not numeric")
   msg9              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$mz should be numeric, not character', sep='')
   expect_error(validObject(wrong9), msg9, fixed=TRUE)
+  # ROI$mzMax is NA
+  wrong10a            <- filledAnnotation
+  wrong10a@ROI$rtMin  <- c(NA, 496.2050)
+  msg10a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: ROI$rtMin, ROI$rtMax, ROI$mzMin and ROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong10a), msg10a, fixed=TRUE)
   # ROI$mzMax numeric
   wrong10            <- filledAnnotation
   wrong10@ROI$mzMax  <- c("not numeric", "not numeric")
@@ -165,21 +191,41 @@ test_that('validObject() raises errors', {
   colnames(wrong13@FIR)   <- c("wrongCol", "rtMax", "mzMin", "mzMax")
   msg13                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR columns should be "rtMin", "rtMax", "mzMin", "mzMax", not wrongCol rtMax mzMin mzMax', sep='')
   expect_error(validObject(wrong13), msg13, fixed=TRUE)
+  # FIR$rtMin is NA
+  wrong14a            <- filledAnnotation
+  wrong14a@FIR$rtMin  <- c(1 , NA)
+  msg14a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMin, FIR$rtMax, FIR$mzMin and FIR$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong14a), msg14a, fixed=TRUE)
   # FIR$rtMin numeric
   wrong14             <- filledAnnotation
   wrong14@FIR$rtMin   <- c("not numeric", "not numeric")
   msg14               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMin should be numeric, not character', sep='')
   expect_error(validObject(wrong14), msg14, fixed=TRUE)
+  # FIR$rtMax is NA
+  wrong15a            <- filledAnnotation
+  wrong15a@FIR$rtMax  <- c(NA , 6)
+  msg15a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMin, FIR$rtMax, FIR$mzMin and FIR$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong15a), msg15a, fixed=TRUE)
   # FIR$rtMax numeric
   wrong15             <- filledAnnotation
   wrong15@FIR$rtMax   <- c("not numeric", "not numeric")
   msg15               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMax should be numeric, not character', sep='')
   expect_error(validObject(wrong15), msg15, fixed=TRUE)
+  # FIR$mzMin is NA
+  wrong16a            <- filledAnnotation
+  wrong16a@FIR$mzMin  <- c(3 , NA)
+  msg16a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMin, FIR$rtMax, FIR$mzMin and FIR$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong16a), msg16a, fixed=TRUE)
   # FIR$mzMin numeric
   wrong16             <- filledAnnotation
   wrong16@FIR$mzMin   <- c("not numeric", "not numeric")
   msg16               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$mzMin should be numeric, not character', sep='')
   expect_error(validObject(wrong16), msg16, fixed=TRUE)
+  # FIR$mzMax is NA
+  wrong17a            <- filledAnnotation
+  wrong17a@FIR$mzMax  <- c(NA , 8)
+  msg17a              <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: FIR$rtMin, FIR$rtMax, FIR$mzMin and FIR$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong17a), msg17a, fixed=TRUE)
   # FIR$mzMax numeric
   wrong17             <- filledAnnotation
   wrong17@FIR$mzMax   <- c("not numeric", "not numeric")
@@ -201,6 +247,11 @@ test_that('validObject() raises errors', {
   colnames(wrong20@uROI)  <- c("wrongCol", "rt", "rtMax", "mzMin", "mz", "mzMax")
   msg20                   <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI columns should be "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax", not wrongCol rt rtMax mzMin mz mzMax', sep='')
   expect_error(validObject(wrong20), msg20, fixed=TRUE)
+  # uROI$rtMin is NA
+  wrong21a             <- filledAnnotation
+  wrong21a@uROI$rtMin  <- c(9 , NA)
+  msg21a               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rtMin, uROI$rtMax, uROI$mzMin and uROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong21a), msg21a, fixed=TRUE)
   # uROI$rtMin numeric
   wrong21             <- filledAnnotation
   wrong21@uROI$rtMin  <- c("not numeric", "not numeric")
@@ -211,11 +262,21 @@ test_that('validObject() raises errors', {
   wrong22@uROI$rt     <- c("not numeric", "not numeric")
   msg22               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rt should be numeric, not character', sep='')
   expect_error(validObject(wrong22), msg22, fixed=TRUE)
+  # uROI$rtMax is NA
+  wrong23a             <- filledAnnotation
+  wrong23a@uROI$rtMax  <- c(NA , 14)
+  msg23a               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rtMin, uROI$rtMax, uROI$mzMin and uROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong23a), msg23a, fixed=TRUE)
   # uROI$rtMax numeric
   wrong23             <- filledAnnotation
   wrong23@uROI$rtMax  <- c("not numeric", "not numeric")
   msg23               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rtMax should be numeric, not character', sep='')
   expect_error(validObject(wrong23), msg23, fixed=TRUE)
+  # uROI$mzMin is NA
+  wrong24a             <- filledAnnotation
+  wrong24a@uROI$mzMin  <- c(11 , NA)
+  msg24a               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rtMin, uROI$rtMax, uROI$mzMin and uROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong24a), msg24a, fixed=TRUE)
   # uROI$mzMin numeric
   wrong24             <- filledAnnotation
   wrong24@uROI$mzMin  <- c("not numeric", "not numeric")
@@ -226,6 +287,11 @@ test_that('validObject() raises errors', {
   wrong25@uROI$mz     <- c("not numeric", "not numeric")
   msg25               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$mz should be numeric, not character', sep='')
   expect_error(validObject(wrong25), msg25, fixed=TRUE)
+  # uROI$mzMax is NA
+  wrong26a             <- filledAnnotation
+  wrong26a@uROI$mzMax  <- c(12 , NA)
+  msg26a               <- paste('invalid class ', dQuote('peakPantheRAnnotation'),' object: uROI$rtMin, uROI$rtMax, uROI$mzMin and uROI$mzMax cannot be NA', sep='')
+  expect_error(validObject(wrong26a), msg26a, fixed=TRUE)
   # uROI$mzMax numeric
   wrong26             <- filledAnnotation
   wrong26@uROI$mzMax  <- c("not numeric", "not numeric")
