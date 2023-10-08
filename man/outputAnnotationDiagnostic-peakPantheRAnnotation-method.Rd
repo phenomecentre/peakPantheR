@@ -8,13 +8,14 @@
 per fitted compound}
 \usage{
 \S4method{outputAnnotationDiagnostic}{peakPantheRAnnotation}(
-    object,
-    saveFolder,
-    savePlots = TRUE,
-    sampleColour = NULL,
-    verbose = TRUE,
-    ncores = 0,
-    ...
+  object,
+  saveFolder,
+  savePlots = TRUE,
+  sampleColour = NULL,
+  verbose = TRUE,
+  ncores = 0,
+  svgPlot = FALSE,
+  ...
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ and plots will be saved}
 \item{verbose}{(bool) If TRUE message progress}
 
 \item{ncores}{(int) Number of cores to use to save plots in parallel}
+
+\item{svgPlot}{(bool) If TRUE save plots as 'svg', otherwise as 'png'}
 
 \item{...}{Additional parameters for plotting i.e. \code{sampling} for the
 number of points to employ when plotting fittedCurve}
