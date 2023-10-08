@@ -1723,7 +1723,7 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
     if (svgPlot) { ext_format <- "svg" } else { ext_format <- "svg" }
     if (length(tmp_multiPlot) != 0) {
         # A4 page size
-        tmp_targetFile <- paste("cpd_", cpdNb, ".", ext, sep = "")
+        tmp_targetFile <- paste("cpd_", cpdNb, ".", ext_format, sep = "")
         ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
             device = ext_format, path = saveFolder, dpi = 100, width = 21,
             height = 29.7, units = "cm", limitsize = FALSE)
