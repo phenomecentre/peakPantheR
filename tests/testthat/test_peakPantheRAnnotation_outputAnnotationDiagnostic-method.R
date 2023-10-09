@@ -317,7 +317,7 @@ test_that('SVG plot with colours, serial, no verbose', {
   expected_CSV[,-c(1,2,3,10,17)]  <- sapply(expected_CSV[,-c(1,2,3,10,17)], as.numeric)
   
   # results (output, warnings and messages)
-  result_save     <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath1, savePlots=TRUE, sampleColour=input_colour, verbose=FALSE, ncores=0, svgPlot=TRUE))
+  result_save     <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath8, savePlots=TRUE, sampleColour=input_colour, verbose=FALSE, ncores=0, svgPlot=TRUE))
   
   # Check CSV has been produced
   expect_true(file.exists(expected_path_CSV))
@@ -330,5 +330,5 @@ test_that('SVG plot with colours, serial, no verbose', {
   expect_equal(saved_CSV, expected_CSV)
   
   # Check result messages (save path)
-  expect_equal(length(result_save$messages), 4)
+  expect_equal(length(result_save$messages), 0)
 })

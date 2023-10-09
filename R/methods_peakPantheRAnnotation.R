@@ -1620,6 +1620,7 @@ setGeneric("outputAnnotationDiagnostic",
 #' @docType methods
 #' @aliases outputAnnotationDiagnostic
 #' @export
+#' @import svglite
 #' @examples
 #' if(requireNamespace('faahKO')){
 #' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
@@ -1720,7 +1721,7 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
         tmp_multiPlot <- annotationDiagnosticMultiplot(tmp_diagPlotList)))
 
     # save
-    if (svgPlot) { ext_format <- "svg" } else { ext_format <- "svg" }
+    if (svgPlot) { ext_format <- "svg" } else { ext_format <- "png" }
     if (length(tmp_multiPlot) != 0) {
         # A4 page size
         tmp_targetFile <- paste("cpd_", cpdNb, ".", ext_format, sep = "")
