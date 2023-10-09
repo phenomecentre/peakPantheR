@@ -4,3 +4,6 @@ Changes in version 1.15.2 (2023-10-02)
 - ROI, uROI and FIR input checks for NA in rtMin, rtMax, mzMin and mzMax
 Changes in version 1.15.3 (2023-10-03)
 - correct `plotAnnotationDiagnosticMultiplot` axes limit  after change in ggplot2 behaviour following a rotation
+Changes in version 1.15.4 (2023-10-08)
+- option to output `outputAnnotationDiagnostic` plots as '.svg'
+- `peakPantheR_quickEIC()` to plot EIC from a raw data file, or output raw data or EIC data points as a table
