@@ -37,7 +37,7 @@
 #'                      rt = c(3290., 3410.),
 #'                      mz = c(522.194778, 522.205222))
 peakPantheR_quickEIC <- function(spectraPath, rt, mz, valuesOnly='Plot',
-                            centroided=TRUE, msLevel=1L, verbose=TRUE, ...) {
+                            centroided=TRUE, msLevel=1L, verbose=TRUE) {
     # Initialise file with MSnbase
     rawSpec <- MSnbase::readMSData(spectraPath,
                                     centroided=centroided,
