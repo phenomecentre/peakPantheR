@@ -11,8 +11,7 @@ peakPantheR_quickEIC(
     valuesOnly = "Plot",
     centroided = TRUE,
     msLevel = 1L,
-    verbose = TRUE,
-    ...
+    verbose = TRUE
 )
 }
 \arguments{
