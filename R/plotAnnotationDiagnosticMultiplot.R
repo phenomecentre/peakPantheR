@@ -122,13 +122,13 @@ annotDiagMultiplot_linkAxes <- function(tmp_EIC, tmp_rtPeakwidthVert,
         tmp_peakAreaHorz, tmp_areaHisto) {
 
     # link axis (same lim)
-    # EIC + rt peakwidth (is rotated, use y in histogram)
+    # EIC + rt peakwidth (is rotated, but ggplot fixed it no more use y pkwidth)
     minXEIC <- min(ggplot2::layer_scales(tmp_EIC)$x$range$range[1],
-                ggplot2::layer_scales(tmp_rtPeakwidthVert)$y$range$range[1])
+                ggplot2::layer_scales(tmp_rtPeakwidthVert)$x$range$range[1])
     maxXEIC <- max(ggplot2::layer_scales(tmp_EIC)$x$range$range[2],
-                ggplot2::layer_scales(tmp_rtPeakwidthVert)$y$range$range[2])
+                ggplot2::layer_scales(tmp_rtPeakwidthVert)$x$range$range[2])
     tmp_EIC <- tmp_EIC + ggplot2::xlim(minXEIC, maxXEIC)
-    tmp_rtPeakwidthVert <- tmp_rtPeakwidthVert + ggplot2::ylim(minXEIC, maxXEIC)
+    tmp_rtPeakwidthVert <- tmp_rtPeakwidthVert + ggplot2::xlim(minXEIC, maxXEIC)
 
     # rt peakwidth runOrder + histo (is rotated, use x in histo)
     minYRT <- min(ggplot2::layer_scales(tmp_rtPeakwidthHorz)$y$range$range[1],

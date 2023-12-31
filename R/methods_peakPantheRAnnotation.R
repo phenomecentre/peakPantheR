@@ -1598,7 +1598,7 @@ singleDiagnosticPlots <- function(tmp_annotation,sampleColour,sampling,verbose){
 ## fitted compound
 setGeneric("outputAnnotationDiagnostic",
     function(object, saveFolder, savePlots = TRUE, sampleColour = NULL,
-            verbose = TRUE, ncores = 0, ...)
+            verbose = TRUE, ncores = 0, svgPlot = FALSE, ...)
     standardGeneric("outputAnnotationDiagnostic"))
 #' @title Save to disk the annotation parameters as CSV and a diagnostic plot
 #' per fitted compound
@@ -1613,12 +1613,14 @@ setGeneric("outputAnnotationDiagnostic",
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param verbose (bool) If TRUE message progress
 #' @param ncores (int) Number of cores to use to save plots in parallel
+#' @param svgPlot (bool) If TRUE save plots as 'svg', otherwise as 'png'
 #' @param ... Additional parameters for plotting i.e. \code{sampling} for the
 #' number of points to employ when plotting fittedCurve
 #' @return None
 #' @docType methods
 #' @aliases outputAnnotationDiagnostic
 #' @export
+#' @import svglite
 #' @examples
 #' if(requireNamespace('faahKO')){
 #' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
@@ -1654,7 +1656,8 @@ setGeneric("outputAnnotationDiagnostic",
 #'                             verbose=TRUE)
 #' }
 setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
-    function(object, saveFolder, savePlots, sampleColour, verbose, ncores,...) {
+    function(object, saveFolder, savePlots, sampleColour, verbose, ncores,
+            svgPlot,...) {
     # Save standardised csv
     outputAnnotationParamsCSV(object, saveFolder = saveFolder,verbose = verbose)
     
@@ -1678,7 +1681,7 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
                 outputAnnotationDiagnostic_saveSingleMultiPlot(cpdNb = x,
                     annotation = object, saveFolder = saveFolder,
                     sampleColour = sampleColour, nbCpd = nbCpd,
-                    verbose = verbose, ...)
+                    verbose = verbose, svgPlot = svgPlot, ...)
             # Close
             parallel::stopCluster(cl)
             if (verbose) { message("All plots saved") }
@@ -1690,19 +1693,20 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
                 outputAnnotationDiagnostic_saveSingleMultiPlot(cpdNb = cpd,
                     annotation = object, saveFolder = saveFolder,
                     sampleColour = sampleColour, nbCpd = nbCpd,
-                    verbose = verbose, ...)
+                    verbose = verbose, svgPlot = svgPlot, ...)
             }
         }
     }
 })
 # outputAnnotationDiagnostic
 outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
-                                saveFolder, sampleColour, nbCpd, verbose, ...) {
+                    saveFolder, sampleColour, nbCpd, verbose, svgPlot, ...) {
     # @param cpdNb (int) cpd number betweem 1 and nbCompounds()
     # @param annotation (peakPantheRAnnotation) Annotation object
     # @param saveFolder (str) Path where plots will be saved
     # @param sampleColour (str) NULL or vector colour for each sample
     # @param verbose (bool) message progress
+    # @param svgPlot (bool) If TRUE save plots as 'svg', otherwise as 'png'
     # @param ... Additional parameters for plotting
 
     # subset annotation to only 1 cpd
@@ -1717,11 +1721,12 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
         tmp_multiPlot <- annotationDiagnosticMultiplot(tmp_diagPlotList)))
 
     # save
+    if (svgPlot) { ext_format <- "svg" } else { ext_format <- "png" }
     if (length(tmp_multiPlot) != 0) {
         # A4 page size
-        tmp_targetFile <- paste("cpd_", cpdNb, ".png", sep = "")
+        tmp_targetFile <- paste("cpd_", cpdNb, ".", ext_format, sep = "")
         ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
-            device = "png", path = saveFolder, dpi = 100, width = 21,
+            device = ext_format, path = saveFolder, dpi = 100, width = 21,
             height = 29.7, units = "cm", limitsize = FALSE)
         grDevices::dev.off()
         # output path
