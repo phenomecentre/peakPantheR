@@ -129,7 +129,7 @@ observeEvent(input$goAnnotation, {
   values$annotation <- result$annotation
   values$failures   <- result$failures
   # Set a list of feature name for later use
-  values$featNmeList        <- paste(cpdID(values$annotation), cpdName(values$annotation), sep=' - ')
+  values$featNmeList        <- paste(peakPantheR::cpdID(values$annotation), peakPantheR::cpdName(values$annotation), sep=' - ')
   names(values$featNmeList) <- seq_len(length(values$featNmeList))
   # Set a list of spectraMetadata columns (+ None)
   tmp_splCol                <- c(list('None'), colnames(peakPantheR::spectraMetadata(values$annotation)))
