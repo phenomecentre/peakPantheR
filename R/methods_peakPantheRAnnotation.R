@@ -1598,7 +1598,7 @@ singleDiagnosticPlots <- function(tmp_annotation,sampleColour,sampling,verbose){
 ## fitted compound
 setGeneric("outputAnnotationDiagnostic",
     function(object, saveFolder, savePlots = TRUE, sampleColour = NULL,
-            verbose = TRUE, nCores = 1, BPPARAM=NULL, ...)
+            verbose = TRUE, nCores = 1, BPPARAM=NULL, svgPlot = FALSE, ...)
     standardGeneric("outputAnnotationDiagnostic"))
 #' @title Save to disk the annotation parameters as CSV and a diagnostic plot
 #' per fitted compound
@@ -1613,14 +1613,16 @@ setGeneric("outputAnnotationDiagnostic",
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param verbose (bool) If TRUE message progress
 #' @param nCores (int) Number of cores to use to save plots in parallel
-#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel 
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel
 #' processing. Must be a BiocParallelParam object
+#' @param svgPlot (bool) If TRUE save plots as 'svg', otherwise as 'png'
 #' @param ... Additional parameters for plotting i.e. \code{sampling} for the
 #' number of points to employ when plotting fittedCurve
 #' @return None
 #' @docType methods
 #' @aliases outputAnnotationDiagnostic
 #' @export
+#' @import svglite
 #' @examples
 #' if(requireNamespace('faahKO')){
 #' ## Initialise a peakPantheRAnnotation object with 3 samples and 2 targeted
@@ -1656,8 +1658,8 @@ setGeneric("outputAnnotationDiagnostic",
 #'                             verbose=TRUE)
 #' }
 setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
-    function(object, saveFolder, savePlots, sampleColour, verbose, nCores, 
-            BPPARAM, ...) {
+    function(object, saveFolder, savePlots, sampleColour, verbose, nCores,
+            BPPARAM, svgPlot, ...) {
     # Save standardised csv
     outputAnnotationParamsCSV(object, saveFolder = saveFolder,verbose = verbose)
     
@@ -1695,25 +1697,36 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         BiocParallel::register(BPPARAM)
         BiocParallel::bpstart(BPPARAM)
         # Run
-        savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd), 
+        savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd),
                 FUN = outputAnnotationDiagnostic_saveSingleMultiPlot,
                 annotation = object, saveFolder = saveFolder,
                 sampleColour = sampleColour, nbCpd = nbCpd,
-                verbose = verbose, BPPARAM = BPPARAM, ...)
+                verbose = verbose, BPPARAM = BPPARAM, svgPlot = svgPlot, ...)
         # Close parallel interface
         BiocParallel::bpstop(BPPARAM)
         if (verbose) { message("All plots saved") }
 
+        # run serial
+        } else {
+            if (verbose) { message("Saving diagnostic plots:") }
+            for (cpd in seq_len(nbCpd)) {
+                outputAnnotationDiagnostic_saveSingleMultiPlot(cpdNb = cpd,
+                    annotation = object, saveFolder = saveFolder,
+                    sampleColour = sampleColour, nbCpd = nbCpd,
+                    verbose = verbose, svgPlot = svgPlot, ...)
+            }
+        }
     }
 })
 # outputAnnotationDiagnostic
 outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
-                                saveFolder, sampleColour, nbCpd, verbose, ...) {
+                    saveFolder, sampleColour, nbCpd, verbose, svgPlot, ...) {
     # @param cpdNb (int) cpd number betweem 1 and nbCompounds()
     # @param annotation (peakPantheRAnnotation) Annotation object
     # @param saveFolder (str) Path where plots will be saved
     # @param sampleColour (str) NULL or vector colour for each sample
     # @param verbose (bool) message progress
+    # @param svgPlot (bool) If TRUE save plots as 'svg', otherwise as 'png'
     # @param ... Additional parameters for plotting
 
     # subset annotation to only 1 cpd
@@ -1728,11 +1741,12 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
         tmp_multiPlot <- annotationDiagnosticMultiplot(tmp_diagPlotList)))
 
     # save
+    if (svgPlot) { ext_format <- "svg" } else { ext_format <- "png" }
     if (length(tmp_multiPlot) != 0) {
         # A4 page size
-        tmp_targetFile <- paste("cpd_", cpdNb, ".png", sep = "")
+        tmp_targetFile <- paste("cpd_", cpdNb, ".", ext_format, sep = "")
         ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
-            device = "png", path = saveFolder, dpi = 100, width = 21,
+            device = ext_format, path = saveFolder, dpi = 100, width = 21,
             height = 29.7, units = "cm", limitsize = FALSE)
         grDevices::dev.off()
         # output path

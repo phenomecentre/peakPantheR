@@ -12,6 +12,7 @@ reference:
       - peakPantheR_plotEICFit
       - peakPantheR_plotPeakwidth
       - peakPantheR_ROIStatistics
+      - peakPantheR_quickEIC
   - title: peakPantheRAnnotation object Accessors
     desc: Accessors
     contents:

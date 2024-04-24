@@ -15,6 +15,7 @@ per fitted compound}
     verbose = TRUE,
     nCores = 1,
     BPPARAM = NULL,
+    svgPlot = FALSE,
     ...
 )
 }
@@ -32,8 +33,10 @@ and plots will be saved}
 
 \item{nCores}{(int) Number of cores to use to save plots in parallel}
 
-\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel 
+\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel
 processing. Must be a BiocParallelParam object}
+
+\item{svgPlot}{(bool) If TRUE save plots as 'svg', otherwise as 'png'}
 
 \item{...}{Additional parameters for plotting i.e. \code{sampling} for the
 number of points to employ when plotting fittedCurve}

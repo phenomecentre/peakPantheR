@@ -86,32 +86,45 @@ valid_ppR_ROI <- function(object, valid, msg, nbCpd) {
                 '\"rtMax\", \"mzMin\", \"mz\", \"mzMax\", not ',
                 paste(colnames(object@ROI), collapse = " ")))
         } else {
-            # ROI column type
-            if (nbCpd >= 1) {
-                if (!is.numeric(object@ROI$rtMin[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("ROI$rtMin should be numeric, not ",
-                                        typeof(object@ROI$rtMin[1]))) }
-                if (!is.numeric(object@ROI$rt[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("ROI$rt should be numeric, not ",
-                                        typeof(object@ROI$rt[1]))) }
-                if (!is.numeric(object@ROI$rtMax[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("ROI$rtMax should be numeric, not ",
-                                        typeof(object@ROI$rtMax[1]))) }
-                if (!is.numeric(object@ROI$mzMin[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("ROI$mzMin should be numeric, not ",
-                                        typeof(object@ROI$mzMin[1]))) }
-                if (!is.numeric(object@ROI$mz[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("ROI$mz should be numeric, not ",
-                                        typeof(object@ROI$mz[1]))) }
-                if (!is.numeric(object@ROI$mzMax[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("ROI$mzMax should be numeric, not ",
-                                        typeof(object@ROI$mzMax[1]))) }}}}
+            vcheck <- valid_ppR_ROI_content(object, valid, msg, nbCpd)
+            valid <- vcheck$valid; msg <- vcheck$msg
+        }
+    }
+    return(list(valid=valid, msg=msg))
+}
+# check NA and column types, split due to function length
+valid_ppR_ROI_content <- function(object, valid, msg, nbCpd){
+    # Missing rtMin, rtMax, mzMin or mzMax
+    if (any(is.na(object@ROI[,c("rtMin","rtMax","mzMin","mzMax")]))) {
+        valid <- FALSE
+        msg <- c(msg, paste0("ROI$rtMin, ROI$rtMax, ROI$mzMin and ",
+                            "ROI$mzMax cannot be NA")) }
+    # ROI column type
+    if (nbCpd >= 1) {
+        if (!is.numeric(object@ROI$rtMin[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("ROI$rtMin should be numeric, not ",
+                                typeof(object@ROI$rtMin[1]))) }
+        if (!is.numeric(object@ROI$rt[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("ROI$rt should be numeric, not ",
+                                typeof(object@ROI$rt[1]))) }
+        if (!is.numeric(object@ROI$rtMax[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("ROI$rtMax should be numeric, not ",
+                                typeof(object@ROI$rtMax[1]))) }
+        if (!is.numeric(object@ROI$mzMin[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("ROI$mzMin should be numeric, not ",
+                                typeof(object@ROI$mzMin[1]))) }
+        if (!is.numeric(object@ROI$mz[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("ROI$mz should be numeric, not ",
+                                typeof(object@ROI$mz[1]))) }
+        if (!is.numeric(object@ROI$mzMax[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("ROI$mzMax should be numeric, not ",
+                                typeof(object@ROI$mzMax[1]))) }}
     return(list(valid=valid, msg=msg))
 }
 
@@ -136,6 +149,15 @@ valid_ppR_FIR <- function(object, valid, msg, nbCpd) {
                                 '\"mzMin\", \"mzMax\", not ',
                                 paste(colnames(object@FIR), collapse = " ")))
         } else {
+            # Missing rtMin, rtMax, mzMin or mzMax
+            if (object@useFIR) {
+                # FIR is set to NA when not in use
+                if (any(is.na(object@FIR$rtMin))|any(is.na(object@FIR$rtMax))|
+                    any(is.na(object@FIR$mzMin))|any(is.na(object@FIR$mzMax))) {
+                    valid <- FALSE
+                    msg <- c(msg, paste0("FIR$rtMin, FIR$rtMax, FIR$mzMin and ",
+                                        "FIR$mzMax cannot be NA")) }
+            }
             # FIR column type
             if (nbCpd >= 1) {
                 if (!is.numeric(object@FIR$rtMin[1])) {
@@ -178,32 +200,48 @@ valid_ppR_uROI <- function(object, valid, msg, nbCpd) {
                             '\"rtMax\", \"mzMin\", \"mz\", \"mzMax\", not ',
                             paste(colnames(object@uROI), collapse = " ")))
         } else {
-            # uROI column type
-            if (nbCpd >= 1) {
-                if (!is.numeric(object@uROI$rtMin[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("uROI$rtMin should be numeric, not ",
-                                        typeof(object@uROI$rtMin[1]))) }
-                if (!is.numeric(object@uROI$rt[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("uROI$rt should be numeric, not ",
-                                        typeof(object@uROI$rt[1]))) }
-                if (!is.numeric(object@uROI$rtMax[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("uROI$rtMax should be numeric, not ",
-                                        typeof(object@uROI$rtMax[1]))) }
-                if (!is.numeric(object@uROI$mzMin[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("uROI$mzMin should be numeric, not ",
-                                        typeof(object@uROI$mzMin[1]))) }
-                if (!is.numeric(object@uROI$mz[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("uROI$mz should be numeric, not ",
-                                        typeof(object@uROI$mz[1]))) }
-                if (!is.numeric(object@uROI$mzMax[1])) {
-                    valid <- FALSE
-                    msg <- c(msg, paste0("uROI$mzMax should be numeric, not ",
-                                        typeof(object@uROI$mzMax[1]))) }}}}
+            vcheck <- valid_ppR_uROI_content(object, valid, msg, nbCpd)
+            valid <- vcheck$valid; msg <- vcheck$msg
+        }
+    }
+    return(list(valid=valid, msg=msg))
+}
+# check NA and column types, split due to function length
+valid_ppR_uROI_content <- function(object, valid, msg, nbCpd){
+    # Missing rtMin, rtMax, mzMin or mzMax
+    if (object@uROIExist) {
+        # only check uROI if declared as existing
+        if (any(is.na(object@uROI[,c("rtMin","rtMax","mzMin","mzMax")]))) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$rtMin, uROI$rtMax, uROI$mzMin and ",
+                                "uROI$mzMax cannot be NA")) }
+    }
+    # uROI column type
+    if (nbCpd >= 1) {
+        if (!is.numeric(object@uROI$rtMin[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$rtMin should be numeric, not ",
+                                typeof(object@uROI$rtMin[1]))) }
+        if (!is.numeric(object@uROI$rt[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$rt should be numeric, not ",
+                                typeof(object@uROI$rt[1]))) }
+        if (!is.numeric(object@uROI$rtMax[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$rtMax should be numeric, not ",
+                                typeof(object@uROI$rtMax[1]))) }
+        if (!is.numeric(object@uROI$mzMin[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$mzMin should be numeric, not ",
+                                typeof(object@uROI$mzMin[1]))) }
+        if (!is.numeric(object@uROI$mz[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$mz should be numeric, not ",
+                                typeof(object@uROI$mz[1]))) }
+        if (!is.numeric(object@uROI$mzMax[1])) {
+            valid <- FALSE
+            msg <- c(msg, paste0("uROI$mzMax should be numeric, not ",
+                                typeof(object@uROI$mzMax[1]))) }}
     return(list(valid=valid, msg=msg))
 }
 

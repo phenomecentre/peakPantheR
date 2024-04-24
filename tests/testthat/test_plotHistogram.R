@@ -32,7 +32,7 @@ test_that('histogram and density, with NA in input', {
   expect_equal(result_histoAndDensity$labels$x, "Test variable")
   expect_equal(result_histoAndDensity$labels$y, "density")
   expect_equal(result_histoAndDensity$data, expected_data)
-  expect_equal(length(result_histoAndDensity), 9)
+  expect_equal(length(result_histoAndDensity), length(ggplot2::ggplot()))
   
   # Check message (warning is caught as result and not warning!?!)
   expect_equal(result_message$messages, expected_message)
@@ -50,7 +50,7 @@ test_that('histogram without density', {
   expect_equal(result_histoNoDensity$labels$x, "Test variable 2")
   expect_equal(result_histoNoDensity$labels$y[1], "count")
   expect_equal(result_histoNoDensity$data, expected_data)
-  expect_equal(length(result_histoNoDensity), 9)
+  expect_equal(length(result_histoNoDensity), length(ggplot2::ggplot()))
 })
 
 test_that('histogram and density with modified ... (bins)', {
@@ -71,5 +71,5 @@ test_that('histogram and density with modified ... (bins)', {
   expect_equal(result_histoChangeBins$labels$x, "Test variable 3")
   expect_equal(result_histoChangeBins$labels$y, "density")
   expect_equal(result_histoChangeBins$data, expected_data)
-  expect_equal(length(result_histoChangeBins), 9)
+  expect_equal(length(result_histoChangeBins), length(ggplot2::ggplot()))
 })
