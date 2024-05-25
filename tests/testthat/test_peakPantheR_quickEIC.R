@@ -20,7 +20,7 @@ test_that('default plot EIC, subset rt and mz, verbose', {
   expect_true(ggplot2::is.ggplot(result_peakPantheR_quickEIC$result))
   expect_equal(result_peakPantheR_quickEIC$result$labels$x, "Retention Time (sec)")
   expect_equal(result_peakPantheR_quickEIC$result$labels$y, "Intensity")
-  expect_equal(length(result_peakPantheR_quickEIC$result), 9)
+  expect_equal(length(result_peakPantheR_quickEIC$result), length(ggplot2::ggplot()))
   
   # Check result messages (reading and timing)
   expect_equal(length(result_peakPantheR_quickEIC$messages), 3)
@@ -35,7 +35,7 @@ test_that('default plot EIC, no verbose', {
   expect_true(ggplot2::is.ggplot(result_peakPantheR_quickEIC$result))
   expect_equal(result_peakPantheR_quickEIC$result$labels$x, "Retention Time (sec)")
   expect_equal(result_peakPantheR_quickEIC$result$labels$y, "Intensity")
-  expect_equal(length(result_peakPantheR_quickEIC$result), 9)
+  expect_equal(length(result_peakPantheR_quickEIC$result), length(ggplot2::ggplot()))
   
   # Check result messages (None other than MSnbase)
   expect_equal(length(result_peakPantheR_quickEIC$messages), 1)

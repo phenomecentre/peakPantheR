@@ -174,7 +174,7 @@ test_that('rt correction plot (uROI)', {
   expect_equal(length(resultCorrected$result), 2)
   # plot values
   expect_equal(resultCorrected$result$plot[[1]], expected_plotFrame, tolerance=1e-6)
-  expect_equal(length(resultCorrected$result$plot), 9)
+  expect_equal(length(resultCorrected$result$plot), length(ggplot2::ggplot()))
   expect_equal(resultCorrected$result$plot$labels$x, 'Retention time')
   expect_equal(resultCorrected$result$plot$labels$y, 'Retention time deviation')
   expect_is(resultCorrected$result$plot$layers[[1]]$geom, 'GeomPoint')
