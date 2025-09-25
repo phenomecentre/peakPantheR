@@ -19,10 +19,10 @@ test_that('plot 3 samples, no color', {
                                                      rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_3splNoColNoRot))
-  expect_equal(result_3splNoColNoRot$labels$x, "x")
+  expect_true(ggplot2::is_ggplot(result_3splNoColNoRot))
+  expect_null(result_3splNoColNoRot$labels$x)
   expect_equal(result_3splNoColNoRot$labels$y, "Test variable")
-  expect_equal(length(result_3splNoColNoRot), length(ggplot2::ggplot()))
+  expect_equal(length(result_3splNoColNoRot$layers), 2)
 })
 
 test_that('plot 3 samples, no color, acquisition time', {
@@ -32,10 +32,10 @@ test_that('plot 3 samples, no color, acquisition time', {
                                                              rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_3splNoColNoRotRunOrder))
+  expect_true(ggplot2::is_ggplot(result_3splNoColNoRotRunOrder))
   expect_equal(result_3splNoColNoRotRunOrder$labels$x, "Acquisition Time")
   expect_equal(result_3splNoColNoRotRunOrder$labels$y, "Test variable 2")
-  expect_equal(length(result_3splNoColNoRotRunOrder), length(ggplot2::ggplot()))
+  expect_equal(length(result_3splNoColNoRotRunOrder$layers), 2)
 })
 
 test_that('plot 3 samples, no color, rotate axis', {
@@ -45,10 +45,10 @@ test_that('plot 3 samples, no color, rotate axis', {
                                                    rotateAxis=TRUE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_3splNoColRot))
+  expect_true(ggplot2::is_ggplot(result_3splNoColRot))
   expect_equal(result_3splNoColRot$labels$x, "Test variable 3")
-  expect_equal(result_3splNoColRot$labels$y, "x")
-  expect_equal(length(result_3splNoColRot), length(ggplot2::ggplot()))
+  expect_null(result_3splNoColRot$labels$y)
+  expect_equal(length(result_3splNoColRot$layers), 2)
 })
 
 test_that('plot 3 samples, no color, acquisition time, rotate axis', {
@@ -58,10 +58,10 @@ test_that('plot 3 samples, no color, acquisition time, rotate axis', {
                                                            rotateAxis=TRUE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_3splNoColRotRunOrder))
+  expect_true(ggplot2::is_ggplot(result_3splNoColRotRunOrder))
   expect_equal(result_3splNoColRotRunOrder$labels$x, "Test variable 4")
   expect_equal(result_3splNoColRotRunOrder$labels$y, "Acquisition Time")
-  expect_equal(length(result_3splNoColRotRunOrder), length(ggplot2::ggplot()))
+  expect_equal(length(result_3splNoColRotRunOrder$layers), 2)
 })
 
 test_that('plot 4 samples with color', {
@@ -71,10 +71,10 @@ test_that('plot 4 samples with color', {
                                                        rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_4splWithColNoRot))
-  expect_equal(result_4splWithColNoRot$labels$x, "x")
+  expect_true(ggplot2::is_ggplot(result_4splWithColNoRot))
+  expect_null(result_4splWithColNoRot$labels$x)
   expect_equal(result_4splWithColNoRot$labels$y, "Test variable 5")
-  expect_equal(length(result_4splWithColNoRot), length(ggplot2::ggplot()))
+  expect_equal(length(result_4splWithColNoRot$layers), 2)
 })
 
 test_that('plot 4 samples with color, acquisition time', {
@@ -84,10 +84,10 @@ test_that('plot 4 samples with color, acquisition time', {
                                                                sampleColour=c('blue','red','green','orange'), rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_4splWithColNoRotRunOrder))
+  expect_true(ggplot2::is_ggplot(result_4splWithColNoRotRunOrder))
   expect_equal(result_4splWithColNoRotRunOrder$labels$x, "Acquisition Time")
   expect_equal(result_4splWithColNoRotRunOrder$labels$y, "Test variable 6")
-  expect_equal(length(result_4splWithColNoRotRunOrder), length(ggplot2::ggplot()))
+  expect_equal(length(result_4splWithColNoRotRunOrder$layers), 2)
 })
 
 test_that('plot 4 samples with color, rotate axis', {
@@ -97,10 +97,10 @@ test_that('plot 4 samples with color, rotate axis', {
                                                      rotateAxis=TRUE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_4splWithColRot))
+  expect_true(ggplot2::is_ggplot(result_4splWithColRot))
   expect_equal(result_4splWithColRot$labels$x, "Test variable 7")
-  expect_equal(result_4splWithColRot$labels$y, "x")
-  expect_equal(length(result_4splWithColRot), length(ggplot2::ggplot()))
+  expect_null(result_4splWithColRot$labels$y)
+  expect_equal(length(result_4splWithColRot$layers), 2)
 })
 
 test_that('plot 4 samples with color, acquisition time, rotate axis', {
@@ -110,10 +110,10 @@ test_that('plot 4 samples with color, acquisition time, rotate axis', {
                                                              sampleColour=c('blue','red','green','orange'), rotateAxis=FALSE, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_4splWithColRotRunOrder))
+  expect_true(ggplot2::is_ggplot(result_4splWithColRotRunOrder))
   expect_equal(result_4splWithColRotRunOrder$labels$x, "Acquisition Time")
   expect_equal(result_4splWithColRotRunOrder$labels$y, "Test variable 8")
-  expect_equal(length(result_4splWithColRotRunOrder), length(ggplot2::ggplot()))
+  expect_equal(length(result_4splWithColRotRunOrder$layers), 2)
 })
 
 test_that('sampleColour length warning, peakwidth and rotate and input order message', {
@@ -129,10 +129,10 @@ test_that('sampleColour length warning, peakwidth and rotate and input order mes
   expect_equal(result_plotColourWarning$messages, expected_message)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plotColourWarning$result))
+  expect_true(ggplot2::is_ggplot(result_plotColourWarning$result))
   expect_equal(result_plotColourWarning$result$labels$x, "Test variable 9")
-  expect_equal(result_plotColourWarning$result$labels$y, "x")
-  expect_equal(length(result_plotColourWarning$result), length(ggplot2::ggplot()))
+  expect_null(result_plotColourWarning$result$labels$y)
+  expect_equal(length(result_plotColourWarning$result$layers), 2)
 })
 
 test_that('sampleColour length warning, no peakwidth (missing widthMax) and no rotate and run order message', {
@@ -148,10 +148,10 @@ test_that('sampleColour length warning, no peakwidth (missing widthMax) and no r
   expect_equal(result_plotColourWarningRunOrder$messages, expected_message)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plotColourWarningRunOrder$result))
+  expect_true(ggplot2::is_ggplot(result_plotColourWarningRunOrder$result))
   expect_equal(result_plotColourWarningRunOrder$result$labels$x, "Acquisition Time")
   expect_equal(result_plotColourWarningRunOrder$result$labels$y, "Test variable 10")
-  expect_equal(length(result_plotColourWarningRunOrder$result), length(ggplot2::ggplot()))
+  expect_equal(length(result_plotColourWarningRunOrder$result$layers), 1) # no geom_line
 })
 
 test_that('missing widthMin, no peakwidth plot', {
@@ -167,10 +167,10 @@ test_that('missing widthMin, no peakwidth plot', {
   expect_equal(result_plotNoWidthMin$messages, expected_message)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plotNoWidthMin$result))
-  expect_equal(result_plotNoWidthMin$result$labels$x, "x")
+  expect_true(ggplot2::is_ggplot(result_plotNoWidthMin$result))
+  expect_null(result_plotNoWidthMin$result$labels$x)
   expect_equal(result_plotNoWidthMin$result$labels$y, "Test variable 11")
-  expect_equal(length(result_plotNoWidthMin$result), length(ggplot2::ggplot()))
+  expect_equal(length(result_plotNoWidthMin$result$layers), 1) # no geom_line
 })
 
 test_that('missing widthMax, no peakwidth plot', {
@@ -186,10 +186,10 @@ test_that('missing widthMax, no peakwidth plot', {
   expect_equal(result_plotNoWidthMax$messages, expected_message)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plotNoWidthMax$result))
-  expect_equal(result_plotNoWidthMax$result$labels$x, "x")
+  expect_true(ggplot2::is_ggplot(result_plotNoWidthMax$result))
+  expect_null(result_plotNoWidthMax$result$labels$x)
   expect_equal(result_plotNoWidthMax$result$labels$y, "Test variable 11")
-  expect_equal(length(result_plotNoWidthMax$result), length(ggplot2::ggplot()))
+  expect_equal(length(result_plotNoWidthMax$result$layers), 1) # no geom_line
 })
 
 test_that('NA in acquisition time, revert to input order plot', {
@@ -205,10 +205,10 @@ test_that('NA in acquisition time, revert to input order plot', {
   expect_equal(result_plotFallBackNAAcqu$messages, expected_message)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plotFallBackNAAcqu$result))
-  expect_equal(result_plotFallBackNAAcqu$result$labels$x, "x")
+  expect_true(ggplot2::is_ggplot(result_plotFallBackNAAcqu$result))
+  expect_null(result_plotFallBackNAAcqu$result$labels$x)
   expect_equal(result_plotFallBackNAAcqu$result$labels$y, "Test variable 12")
-  expect_equal(length(result_plotFallBackNAAcqu$result), length(ggplot2::ggplot()))
+  expect_equal(length(result_plotFallBackNAAcqu$result$layers), 2)
 })
 
 test_that('raise errors', {

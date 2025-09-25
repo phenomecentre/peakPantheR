@@ -35,7 +35,7 @@ test_that('plot feature in 1 sample', {
                                                  sampling=250, sampleColour=NULL, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plot1SplNoCol))
+  expect_true(ggplot2::is_ggplot(result_plot1SplNoCol))
   expect_equal(result_plot1SplNoCol$labels$x, "Retention Time (sec)")
   expect_equal(result_plot1SplNoCol$labels$y, "Intensity")
   expect_equal(length(result_plot1SplNoCol), length(ggplot2::ggplot()))
@@ -56,7 +56,7 @@ test_that('plot feature in 1 sample, no curveFit with warning', {
   expect_equal(result_plot1SplNoFitNoCol$messages, expected_message)
 
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plot1SplNoFitNoCol$result))
+  expect_true(ggplot2::is_ggplot(result_plot1SplNoFitNoCol$result))
   expect_equal(result_plot1SplNoFitNoCol$result$labels$x, "Retention Time (sec)")
   expect_equal(result_plot1SplNoFitNoCol$result$labels$y, "Intensity")
   expect_equal(length(result_plot1SplNoFitNoCol$result), length(ggplot2::ggplot()))
@@ -70,7 +70,7 @@ test_that('plot feature in 2 samples, change colours and sampling', {
                                                    sampling=300, sampleColour=c('blue', 'red'), verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plot2SplWithCol))
+  expect_true(ggplot2::is_ggplot(result_plot2SplWithCol))
   expect_equal(result_plot2SplWithCol$labels$x, "Retention Time (sec)")
   expect_equal(result_plot2SplWithCol$labels$y, "Intensity")
   expect_equal(length(result_plot2SplWithCol), length(ggplot2::ggplot()))
@@ -84,7 +84,7 @@ test_that('plot feature in 2 samples, rtMin and/or rtMax have a NA (cannot plot 
                                                 sampling=250, sampleColour=NULL, verbose=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plot2SplRTNA))
+  expect_true(ggplot2::is_ggplot(result_plot2SplRTNA))
   expect_equal(result_plot2SplRTNA$labels$x, "Retention Time (sec)")
   expect_equal(result_plot2SplRTNA$labels$y, "Intensity")
   expect_equal(length(result_plot2SplRTNA), length(ggplot2::ggplot()))
@@ -104,7 +104,7 @@ test_that('no rtMin and/or rtMax, cannot plot fit warning', {
   expect_equal(result_plotFitWarning$messages, expected_message)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plotFitWarning$result))
+  expect_true(ggplot2::is_ggplot(result_plotFitWarning$result))
   expect_equal(result_plotFitWarning$result$labels$x, "Retention Time (sec)")
   expect_equal(result_plotFitWarning$result$labels$y, "Intensity")
   expect_equal(length(result_plotFitWarning$result), length(ggplot2::ggplot()))
@@ -125,7 +125,7 @@ test_that('sampleColour length warning', {
   expect_equal(result_plotColourWarning$messages, expected_message)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_plotColourWarning$result))
+  expect_true(ggplot2::is_ggplot(result_plotColourWarning$result))
   expect_equal(result_plotColourWarning$result$labels$x, "Retention Time (sec)")
   expect_equal(result_plotColourWarning$result$labels$y, "Intensity")
   expect_equal(length(result_plotColourWarning$result), length(ggplot2::ggplot()))
