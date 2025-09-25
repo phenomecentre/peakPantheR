@@ -166,15 +166,21 @@ test_that('rt correction plot (uROI)', {
   # run RT correction
   resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=TRUE))
 
-  # check results (output, warnings and messages)
+  # check both a plot and an annotation are returned
+  expect_equal(length(resultCorrected$result), 2)
+
+  # check annotation in results 
   expect_equal(resultCorrected$result$annotation@uROI, expected_uROI, tolerance=1e-5)
   expect_equal(resultCorrected$result$annotation@FIR,  expected_FIR, tolerance=1e-5)
 
-  # check plot exist
-  expect_equal(length(resultCorrected$result), 2)
-  # plot values
-  expect_equal(resultCorrected$result$plot[[1]], expected_plotFrame, tolerance=1e-6)
-  expect_equal(length(resultCorrected$result$plot), length(ggplot2::ggplot()))
+  # check plot
+  expect_true(ggplot2::is_ggplot(resultCorrected$result$plot))
+  # check plot data
+  test_plot_data <- ggplot2::layer_data(resultCorrected$result$plot, 1) 
+  expect_equal(test_plot_data$x, expected_plotFrame$rt, tolerance = 1e-6)
+  expect_equal(test_plot_data$y, expected_plotFrame$rt_dev_sec, tolerance = 1e-6)
+  # check plot structure
+  expect_equal(length(resultCorrected$result$plot$layers), 2)
   expect_equal(resultCorrected$result$plot$labels$x, 'Retention time')
   expect_equal(resultCorrected$result$plot$labels$y, 'Retention time deviation')
   expect_is(resultCorrected$result$plot$layers[[1]]$geom, 'GeomPoint')

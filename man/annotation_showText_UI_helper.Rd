@@ -19,11 +19,11 @@ Return a text description of an annotation for UI presentation
 \examples{
 # Input
 properties_default <- list(nbCompounds = 0,
-                            nbSamples = 0,
-                            uROIExist = FALSE,
-                            useUROI = FALSE,
-                            useFIR = FALSE,
-                            isAnnotated = FALSE)
+                           nbSamples = 0,
+                           uROIExist = FALSE,
+                           useUROI = FALSE,
+                           useFIR = FALSE,
+                           isAnnotated = FALSE)
 
 # Generate description
 annotation_showText_UI_helper(properties_default)
