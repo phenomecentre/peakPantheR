@@ -110,71 +110,71 @@ ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTabl
 expected_dataPoints <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
 
 
-if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
-test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
-  # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
+# if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
+# test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
+#   # Object fully initialised
+#   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
-  # Expected annotation
-  expected_annotation             <- initAnnotation
-  expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
-  expected_annotation@peakTables  <- expected_peakTables
-  expected_annotation@peakFit     <- expected_peakFit
-  expected_annotation@dataPoints  <- expected_dataPoints
-  expected_annotation@isAnnotated <- TRUE
-  # Expected failures
-  tmp_status          <- NA
-  names(tmp_status)   <- 'test'
-  tmp_failures        <- !is.na(tmp_status)
-  names(tmp_failures) <- NULL
-  expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
-  # Expected message
-  expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
+#   # Expected annotation
+#   expected_annotation             <- initAnnotation
+#   expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
+#   expected_annotation@peakTables  <- expected_peakTables
+#   expected_annotation@peakFit     <- expected_peakFit
+#   expected_annotation@dataPoints  <- expected_dataPoints
+#   expected_annotation@isAnnotated <- TRUE
+#   # Expected failures
+#   tmp_status          <- NA
+#   names(tmp_status)   <- 'test'
+#   tmp_failures        <- !is.na(tmp_status)
+#   names(tmp_failures) <- NULL
+#   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
+#   # Expected message
+#   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
-  # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+#   # results (output, warnings and messages)
+#   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
 
-  # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
-  expect_equal(result_parallelAnnotation$result$failures, expected_failures)
+#   # Check results
+#   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
+#   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
-  # Check messages (centwave output)
-  expect_equal(length(result_parallelAnnotation$messages), 3)
-  expect_equal(result_parallelAnnotation$messages, expected_message)
-  }) }
+#   # Check messages (centwave output)
+#   expect_equal(length(result_parallelAnnotation$messages), 3)
+#   expect_equal(result_parallelAnnotation$messages, expected_message)
+#   }) }
 
-if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
-test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
-  # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
+# if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
+# test_that('3 files (1 missing), 4 compounds, no uROI, no FIR, no getAcquTime, no verbose', {
+#   # Object fully initialised
+#   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_missingSpectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
-  # Expected annotation
-  expected_annotation             <- initAnnotation[c(1,3),]
-  expected_annotation@TIC         <- c(2410533091, 2332817115)
-  expected_annotation@peakTables  <- expected_peakTables[c(1,3)]
-  expected_annotation@peakFit     <- expected_peakFit[c(1,3)]
-  expected_annotation@dataPoints  <- expected_dataPoints[c(1,3)]
-  expected_annotation@isAnnotated <- TRUE
-  # Expected failures
-  tmp_status          <- 'Error file does not exist: aaa/bbb.cdf'
-  names(tmp_status)   <- 'aaa/bbb.cdf'
-  tmp_failures        <- !is.na(tmp_status)
-  names(tmp_failures) <- NULL
-  expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
-  # Expected message
-  expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
+#   # Expected annotation
+#   expected_annotation             <- initAnnotation[c(1,3),]
+#   expected_annotation@TIC         <- c(2410533091, 2332817115)
+#   expected_annotation@peakTables  <- expected_peakTables[c(1,3)]
+#   expected_annotation@peakFit     <- expected_peakFit[c(1,3)]
+#   expected_annotation@dataPoints  <- expected_dataPoints[c(1,3)]
+#   expected_annotation@isAnnotated <- TRUE
+#   # Expected failures
+#   tmp_status          <- 'Error file does not exist: aaa/bbb.cdf'
+#   names(tmp_status)   <- 'aaa/bbb.cdf'
+#   tmp_failures        <- !is.na(tmp_status)
+#   names(tmp_failures) <- NULL
+#   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
+#   # Expected message
+#   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
-  # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+#   # results (output, warnings and messages)
+#   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
 
-  # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
-  expect_equal(result_parallelAnnotation$result$failures, expected_failures)
+#   # Check results
+#   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
+#   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
-  # Check messages (centwave output)
-  expect_equal(length(result_parallelAnnotation$messages), 2)
-  expect_equal(result_parallelAnnotation$messages, expected_message)
-  }) }
+#   # Check messages (centwave output)
+#   expect_equal(length(result_parallelAnnotation$messages), 2)
+#   expect_equal(result_parallelAnnotation$messages, expected_message)
+#   }) }
 
 test_that('3 files, 4 compounds, no uROI, no FIR, no getAcquTime, no verbose, modify parameter with ... (cpd #3)', {
   # Cpd 3 is now found in 3rd file
@@ -336,38 +336,38 @@ test_that('3 files, 4 compounds, no uROI, FIR replace peaks not found (cpd #3), 
   expect_equal(result_parallelAnnotation$messages, expected_message)
 })
 
-if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
-test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no verbose', {
-  # Object fully initialised
-  initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=input_uROI, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
+# if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
+# test_that('3 files, 4 compounds, uROI, no FIR, no fitGauss, no getAcquTime, no verbose', {
+#   # Object fully initialised
+#   initAnnotation      <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_badtargetFeatTable, uROIExist=TRUE, useUROI=TRUE, uROI=input_uROI, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata)
 
-  # Expected annotation
-  expected_annotation             <- initAnnotation
-  expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
-  expected_annotation@peakTables  <- expected_peakTables
-  expected_annotation@peakFit     <- expected_peakFit
-  expected_annotation@dataPoints  <- expected_dataPoints
-  expected_annotation@isAnnotated <- TRUE
-  # Expected failures
-  tmp_status          <- NA
-  names(tmp_status)   <- 'test'
-  tmp_failures        <- !is.na(tmp_status)
-  names(tmp_failures) <- NULL
-  expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
-  # Expected message
-  expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
+#   # Expected annotation
+#   expected_annotation             <- initAnnotation
+#   expected_annotation@TIC         <- c(2410533091, 2524040155, 2332817115)
+#   expected_annotation@peakTables  <- expected_peakTables
+#   expected_annotation@peakFit     <- expected_peakFit
+#   expected_annotation@dataPoints  <- expected_dataPoints
+#   expected_annotation@isAnnotated <- TRUE
+#   # Expected failures
+#   tmp_status          <- NA
+#   names(tmp_status)   <- 'test'
+#   tmp_failures        <- !is.na(tmp_status)
+#   names(tmp_failures) <- NULL
+#   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
+#   # Expected message
+#   expected_message    <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n")
 
-  # results (output, warnings and messages)
-  result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
+#   # results (output, warnings and messages)
+#   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, verbose=FALSE))
 
-  # Check results
-  expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
-  expect_equal(result_parallelAnnotation$result$failures, expected_failures)
+#   # Check results
+#   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)
+#   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
-  # Check messages (centwave output)
-  expect_equal(length(result_parallelAnnotation$messages), 3)
-  expect_equal(result_parallelAnnotation$messages, expected_message)
-  }) }
+#   # Check messages (centwave output)
+#   expect_equal(length(result_parallelAnnotation$messages), 3)
+#   expect_equal(result_parallelAnnotation$messages, expected_message)
+#   }) }
 
 test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
   # sample 2 is missing

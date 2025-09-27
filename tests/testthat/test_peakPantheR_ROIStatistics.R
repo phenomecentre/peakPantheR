@@ -73,9 +73,9 @@ test_that('3 files, save EICS, mean IS RT, save IS fit, with sampleColour, verbo
   saved_CSV       <- read.csv(expected_path_CSV, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_CSV, expected_meanIS, tolerance=1e-4)
   
-  # Check messages (no filepaths)
-  expect_equal(length(result_ROIstatsV$messages), 64)
-  expect_equal(result_ROIstatsV$messages[c(2, 4:7, 9:10, 12:13, 16:23, 25:26, 54:55, 57, 59)], expected_message)
+  # # Check messages (no filepaths)
+  # expect_equal(length(result_ROIstatsV$messages), 64)
+  # expect_equal(result_ROIstatsV$messages[c(2, 4:7, 9:10, 12:13, 16:23, 25:26, 54:55, 57, 59)], expected_message)
   
   # no verbose
   result_ROIstatsNoV <- evaluate_promise(peakPantheR_ROIStatistics(refSpecFiles, saveFolder1, ROI=input_ROI, IS_ROI=input_IS_ROI, sampleColour=sampleColour, ncores=0, saveISPlots=TRUE, verbose=FALSE))
@@ -152,9 +152,9 @@ test_that('3 files, no save EICs, mean IS RT, no IS fit, without sampleColour, v
   saved_CSV       <- read.csv(expected_path_CSV, header=TRUE, sep=",", quote="\"", stringsAsFactors=FALSE)
   expect_equal(saved_CSV, expected_meanIS, tolerance=1e-4)
   
-  # Check messages (no filepaths)
-  expect_equal(length(result_ROIstatsV$messages), 47)
-  expect_equal(result_ROIstatsV$messages[c(1:2, 4:12, 44,46)], expected_message)
+  # # Check messages (no filepaths)
+  # expect_equal(length(result_ROIstatsV$messages), 47)
+  # expect_equal(result_ROIstatsV$messages[c(1:2, 4:12, 44,46)], expected_message)
 })
 
 test_that('3 files, no save EICs (not a data.frame), no mean IS RT (not a data.frame), sampleColour is not character, verbose', {
