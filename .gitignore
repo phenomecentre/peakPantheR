@@ -33,3 +33,5 @@ tests/testthat/Rplots.pdf
 .vscode
 docs
 inst/doc
+/doc/
+/Meta/
