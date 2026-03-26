@@ -93,7 +93,7 @@ or not, for example loading a previously run annotation (_see the **Export**
 section for more details_).
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/01-import_RData.png")
+knitr::include_graphics("figures/01-import_RData.png")
 ```
 
 $~$
@@ -103,7 +103,7 @@ targeted features, spectra to process and corresponding metadata (optional).
 Spectra can also be directly selected on disk.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/02-import_CSV.png")
+knitr::include_graphics("figures/02-import_CSV.png")
 ```
 
 $~$
@@ -120,7 +120,7 @@ Finally `Parallelisation` enables the selection of the number of CPU cores to
 employ for parallel file access and processing.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/03-Run_annotation.png")
+knitr::include_graphics("figures/03-Run_annotation.png")
 ```
 
 $~$
@@ -165,7 +165,7 @@ reliably integrated over a large number of samples. Visual evaluation
 integration of said feature.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/04-Diagnostic_statistics.png")
+knitr::include_graphics("figures/04-Diagnostic_statistics.png")
 ```
 
 $~$
@@ -174,7 +174,7 @@ $~$
 the _RT_ / _m/z_ boundaries of the peaks successfully integrated.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/05-Diagnostic_updateUROIFIR.png")
+knitr::include_graphics("figures/05-Diagnostic_updateUROIFIR.png")
 ```
 
 $~$
@@ -186,7 +186,7 @@ peak area through time. Samples can be automatically coloured based on a
 _sample metadata_ column.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/06-Diagnostic_plot.png")
+knitr::include_graphics("figures/06-Diagnostic_plot.png")
 ```
 
 $~$
@@ -208,7 +208,7 @@ $~$
 columns_) and all spectra (_as rows_).
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/07-Results_Overall.png")
+knitr::include_graphics("figures/07-Results_Overall.png")
 ```
 
 $~$
@@ -217,7 +217,7 @@ $~$
 for all samples (_as rows_) for a selected targeted feature.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/08-Results_byFeature.png")
+knitr::include_graphics("figures/08-Results_byFeature.png")
 ```
 
 $~$
@@ -226,7 +226,7 @@ $~$
 targeted features (_as rows_) for a selected sample.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/09-Results_bySample.png")
+knitr::include_graphics("figures/09-Results_bySample.png")
 ```
 
 $~$
@@ -249,7 +249,7 @@ _rows_ and all targeted features as _columns_. Additionally a _summary_ table
 will present the integration success rate for each targeted feature.
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/10-Export.png")
+knitr::include_graphics("figures/10-Export.png")
 ```
 
 $~$

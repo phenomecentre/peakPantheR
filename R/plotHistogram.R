@@ -23,11 +23,13 @@ plotHistogram <- function(var, varName = "Variable", density = TRUE, ...) {
                                 colour = "black", 
                                 fill = "white", 
                                 ...) +
-        ggplot2::geom_density(alpha = 0.1, fill = "blue")
+        ggplot2::geom_density(alpha = 0.1, fill = "blue") +
+        ggplot2::ylab("density")
         # without density
     } else {
         p_hist <- p_hist + ggplot2::geom_histogram(colour = "black",
-                                                    fill = "white", ...)
+                                                    fill = "white", ...) +
+                                                    ggplot2::ylab("count")
     }
     
     return(p_hist)

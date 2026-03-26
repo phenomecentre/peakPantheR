@@ -75,7 +75,7 @@ Parallel compound integration is set to process **multiple** compounds in
 
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/parallelAnnotation.png")
+knitr::include_graphics("figures/parallelAnnotation.png")
 ```
 
 To achieve this, `peakPantheR` will:
@@ -106,7 +106,7 @@ fallback integration regions (FIR), with all samples
 
 
 ```{r, out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/parallelAnnotation_procedure.png")
+knitr::include_graphics("figures/parallelAnnotation_procedure.png")
 ```
 
 > Diagram of the workflow and functions used for parallel annotation.
@@ -312,7 +312,7 @@ pander::pandoc.table(tmp_csv, digits=9)
 
 ```{r, out.width = "700px", echo = FALSE}
 knitr::include_graphics(
-    "../man/figures/parallel_annotation_diagnostic_cpd1.png")
+    "figures/parallel_annotation_diagnostic_cpd1.png")
 ```
 
 > Diagnostic plot for compound 1: The top panel is an overlay of the extracted 

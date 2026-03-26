@@ -17,7 +17,7 @@ test_that('default plot EIC, subset rt and mz, verbose', {
   result_peakPantheR_quickEIC <- evaluate_promise(peakPantheR_quickEIC(spectraPath=raw_data_path, rt=c(3310., 3390.), mz=c(520., 522.4)))
 
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_peakPantheR_quickEIC$result))
+  expect_true(ggplot2::is_ggplot(result_peakPantheR_quickEIC$result))
   expect_equal(result_peakPantheR_quickEIC$result$labels$x, "Retention Time (sec)")
   expect_equal(result_peakPantheR_quickEIC$result$labels$y, "Intensity")
   expect_equal(length(result_peakPantheR_quickEIC$result), length(ggplot2::ggplot()))
@@ -32,7 +32,7 @@ test_that('default plot EIC, no verbose', {
   result_peakPantheR_quickEIC <- evaluate_promise(peakPantheR_quickEIC(spectraPath=raw_data_path, rt=c(3310., 3390.), mz=c(520., 522.4), verbose=FALSE))
 
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_peakPantheR_quickEIC$result))
+  expect_true(ggplot2::is_ggplot(result_peakPantheR_quickEIC$result))
   expect_equal(result_peakPantheR_quickEIC$result$labels$x, "Retention Time (sec)")
   expect_equal(result_peakPantheR_quickEIC$result$labels$y, "Intensity")
   expect_equal(length(result_peakPantheR_quickEIC$result), length(ggplot2::ggplot()))

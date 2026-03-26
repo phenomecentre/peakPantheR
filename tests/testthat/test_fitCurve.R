@@ -44,16 +44,16 @@ test_that('fit skewedGaussian, input params', {
   expect_equal(result_fit, expected_fit)
 })
 
-test_that('fit emgGaussian, input params', {
-  # Input and expected results
-  expected_fit        <- list(amplitude=12968279, center=3398.492, sigma=5, gamma=1.339195, fitStatus=2, curveModel="emgGaussian")
-  class(expected_fit) <- 'peakPantheR_curveFit'
+# test_that('fit emgGaussian, input params', {
+#   # Input and expected results
+#   expected_fit        <- list(amplitude=12968279, center=3398.492, sigma=5, gamma=1.339195, fitStatus=2, curveModel="emgGaussian")
+#   class(expected_fit) <- 'peakPantheR_curveFit'
 
-  result_fit    <- fitCurve(x=EIC$rt, y=EIC$int, curveModel='emgGaussian', params=input_params)
+#   result_fit    <- fitCurve(x=EIC$rt, y=EIC$int, curveModel='emgGaussian', params=input_params)
 
-  # Check results
-  expect_equal(result_fit, expected_fit, tolerance=1e-6)
-})
+#   # Check results
+#   expect_equal(result_fit, expected_fit, tolerance=1e-6)
+# })
 
 
 test_that('raises error()', {

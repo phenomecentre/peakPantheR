@@ -18,7 +18,7 @@ test_that('histogram and density, with NA in input', {
   # input
   tmp_input <- c(NA, input_val, NA)
   # expected message   
-  expected_message <- "`stat_bin()` using `bins = 30`. Pick better value with `binwidth`."
+  expected_message <- "`stat_bin()` using `bins = 30`. Pick better value `binwidth`."
   # expected values
   expected_data <- data.frame(x=input_val)
   
@@ -28,11 +28,11 @@ test_that('histogram and density, with NA in input', {
   result_message          <- evaluate_promise(ggplot2::ggplot_build(plotHistogram(tmp_input, varName='Test variable', density=TRUE)))
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_histoAndDensity))
+  expect_true(ggplot2::is_ggplot(result_histoAndDensity))
   expect_equal(result_histoAndDensity$labels$x, "Test variable")
   expect_equal(result_histoAndDensity$labels$y, "density")
   expect_equal(result_histoAndDensity$data, expected_data)
-  expect_equal(length(result_histoAndDensity), length(ggplot2::ggplot()))
+  expect_equal(length(result_histoAndDensity$layers), 2)
   
   # Check message (warning is caught as result and not warning!?!)
   expect_equal(result_message$messages, expected_message)
@@ -46,11 +46,11 @@ test_that('histogram without density', {
   result_histoNoDensity <- plotHistogram(input_val, varName='Test variable 2', density=FALSE)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_histoNoDensity))
+  expect_true(ggplot2::is_ggplot(result_histoNoDensity))
   expect_equal(result_histoNoDensity$labels$x, "Test variable 2")
   expect_equal(result_histoNoDensity$labels$y[1], "count")
   expect_equal(result_histoNoDensity$data, expected_data)
-  expect_equal(length(result_histoNoDensity), length(ggplot2::ggplot()))
+  expect_equal(length(result_histoNoDensity$layers), 1) # no density
 })
 
 test_that('histogram and density with modified ... (bins)', {
@@ -67,9 +67,9 @@ test_that('histogram and density with modified ... (bins)', {
   expect_equal(length(result_message$messages), 0)
   
   # Check plot properties
-  expect_true(ggplot2::is.ggplot(result_histoChangeBins))
+  expect_true(ggplot2::is_ggplot(result_histoChangeBins))
   expect_equal(result_histoChangeBins$labels$x, "Test variable 3")
   expect_equal(result_histoChangeBins$labels$y, "density")
   expect_equal(result_histoChangeBins$data, expected_data)
-  expect_equal(length(result_histoChangeBins), length(ggplot2::ggplot()))
+  expect_equal(length(result_histoChangeBins$layers), 2)
 })

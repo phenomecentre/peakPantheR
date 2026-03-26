@@ -92,7 +92,7 @@ peakPantheR_start_GUI(browser = TRUE)
 #  To exit press ESC in the command line
 ```
 ```{r, fig.align="center", out.width = "700px", echo = FALSE}
-knitr::include_graphics("../man/figures/example-UI.png")
+knitr::include_graphics("figures/example-UI.png")
 ```
 
 The GUI is to be preferred to understand the methodology, select the best
