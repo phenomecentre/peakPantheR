@@ -1668,44 +1668,25 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         # iterate over compound (more progressive plot generation and save than
         # generating all plots at once)
         nbCpd <- nbCompounds(object)
-        
+
         # run in parallel
         nCores <- as.integer(nCores)
-        if (nCores < 0) {
+        if (nCores < 1) {
             stop("Check input, nCores must be a positive integer")
         }
-        # Handle default BPParam
-        if (is.null(BPPARAM)) {
-            if (nCores > 1) {
-                if (.Platform$OS.type == 'windows') {
-                BPPARAM <- BiocParallel::SnowParam(workers = nCores)
-                }
-                else {
-                BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
-                }
-            } else {
-            BPPARAM <- BiocParallel::SerialParam()}
-        }
-        else if (!is(BPPARAM, 'BiocParallelParam')) {
-            stop("Check input, BPPARAM must be a BiocParallel Param object")
-        }
+        BPPARAM <- .resolveBPPARAM(BPPARAM, nCores)
 
-        if (verbose) {
-            message("Saving ", nbCpd, " diagnostic plots in ", saveFolder) }
-
-        # Open parallel interface
-        BiocParallel::register(BPPARAM)
-        BiocParallel::bpstart(BPPARAM)
-        # Run
-        savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd),
-                FUN = outputAnnotationDiagnostic_saveSingleMultiPlot,
-                annotation = object, saveFolder = saveFolder,
-                sampleColour = sampleColour, nbCpd = nbCpd,
-                verbose = verbose, BPPARAM = BPPARAM, svgPlot = svgPlot, ...)
-        # Close parallel interface
-        BiocParallel::bpstop(BPPARAM)
-        if (verbose) { message("All plots saved") }
-
+        if (nCores > 1) {
+            if (verbose) {
+                message("Saving ", nbCpd, " diagnostic plots in ", saveFolder) }
+            BiocParallel::bpstart(BPPARAM)
+            on.exit(BiocParallel::bpstop(BPPARAM), add = TRUE)
+            savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd),
+                    FUN = outputAnnotationDiagnostic_saveSingleMultiPlot,
+                    annotation = object, saveFolder = saveFolder,
+                    sampleColour = sampleColour, nbCpd = nbCpd,
+                    verbose = verbose, BPPARAM = BPPARAM, svgPlot = svgPlot, ...)
+            if (verbose) { message("All plots saved") }
         # run serial
         } else {
             if (verbose) { message("Saving diagnostic plots:") }

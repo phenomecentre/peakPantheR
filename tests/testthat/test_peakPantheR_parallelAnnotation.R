@@ -3,6 +3,11 @@ context('peakPantheR_parallelAnnotation()')
 skip_if_not_installed('faahKO',  minimum_version = '1.18.0')
 library(faahKO)
 
+if (.Platform$OS.type == 'windows') {
+    BPPARAM_parallel <- BiocParallel::SnowParam(workers = 1)
+} else {
+    BPPARAM_parallel <- BiocParallel::MulticoreParam(workers = 1)
+}
 
 ## Input and expected data
 # 3 files

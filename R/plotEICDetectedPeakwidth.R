@@ -33,8 +33,8 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
     # Check input, init
     ratio <- plotEICDetectedPeakwidth_checkInp(ROIDataPointSampleList, rt,
                                                 ratio, verbose)
-    title <- paste("CpdID: ", cpdID, " - ", cpdName, " ", round(mzMin, 4), "-",
-                    round(mzMax, 4))
+    title <- paste0("CpdID: ", cpdID, " - ", cpdName, " ",
+                    round(mzMin, 4), "-", round(mzMax, 4))
     
     # Plot raw spectra and curve fit
     p_spec <- peakPantheR_plotEICFit(
@@ -50,23 +50,22 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
         widthMax = rtMax, varName = "Retention Time (sec)", acquTime = NULL,
         sampleColour = sampleColour, rotateAxis = TRUE, verbose = FALSE)
     
-    # Set common x lim (due to the rotation, x on p_peakwidth is originally y
-    # and accessed as such)
     minX <- min(ggplot2::layer_scales(p_spec)$x$range$range[1],
-        ggplot2::layer_scales(p_peakwidth)$y$range$range[1])
+        ggplot2::layer_scales(p_peakwidth)$x$range$range[1])
     maxX <- max(ggplot2::layer_scales(p_spec)$x$range$range[2],
-        ggplot2::layer_scales(p_peakwidth)$y$range$range[2])
+        ggplot2::layer_scales(p_peakwidth)$x$range$range[2])
     p_spec <- p_spec + ggplot2::xlim(minX, maxX)
-    suppressMessages(p_peakwidth <- p_peakwidth + ggplot2::ylim(minX, maxX))
+    p_peakwidth <- p_peakwidth + ggplot2::coord_cartesian(xlim = c(minX, maxX))
     # convert to gtables
     p_spec <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_spec))
     p_peakwidth <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(p_peakwidth))
-    # find the widths of each of the plots, calculate the maximum and then apply
-    # it to each of them individually. This effectively applies a uniform layout
-    # to each of the plots.
-    maxWidth <- grid::unit.pmax(p_spec$widths[2:5], p_peakwidth$widths[2:5])
-    p_spec$widths[2:5] <- maxWidth
-    p_peakwidth$widths[2:5] <- maxWidth
+
+    panel_col <- min(p_spec$layout[grepl("^panel", p_spec$layout$name), "l"])
+    left_cols <- seq_len(panel_col - 1)
+    maxWidth <- grid::unit.pmax(p_spec$widths[left_cols],
+                                p_peakwidth$widths[left_cols])
+    p_spec$widths[left_cols] <- maxWidth
+    p_peakwidth$widths[left_cols] <- maxWidth
     
     # Group plots with y axis ratio
     topSize <- ratio * 10
@@ -88,7 +87,7 @@ plotEICDetectedPeakwidth_checkInp <- function(ROIDataPointSampleList, rt, ratio,
     }
 
     # ratio must be between 0 and 1
-    if ((ratio < 0) | (ratio > 1)) {
+    if ((ratio < 0) || (ratio > 1)) {
         if (verbose) {
             message("Err","or: ratio must be between 0 and 1, ",
                     "replaced by default value")

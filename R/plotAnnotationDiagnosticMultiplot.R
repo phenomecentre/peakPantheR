@@ -178,37 +178,49 @@ annotDiagMultiplot_generateMulti <- function(annotationDiagnosticPlotList, cpd,
     p_rtHisto <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_rtHisto))
     p_mzHisto <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_mzHisto))
     p_areaHisto <- ggplot2::ggplot_gtable(ggplot2::ggplot_build(tmp_areaHisto))
-    # find the widths of each of the plots, calculate the maximum and then apply
-    # it to each of them individually. This effectively applies a uniform layout
-    # to each of the plots ## EIC + rt peakwidth
+
     maxWidthEIC <- grid::unit.pmax(p_EIC$widths[2:5],
                                     p_rtPeakwidthVert$widths[2:5])
     p_EIC$widths[2:5] <- maxWidthEIC
     p_rtPeakwidthVert$widths[2:5] <- maxWidthEIC
-    # rt peakwidth + mz peakwidth + peak area (x axis)
+
+
     maxWidthRtMzArea <- grid::unit.pmax(p_rtPeakwidthHorz$widths[2:5],
                                         p_mzPeakwidthHorz$widths[2:5],
                                         p_peakAreaHorz$widths[2:5])
     p_rtPeakwidthHorz$widths[2:5] <- maxWidthRtMzArea
     p_mzPeakwidthHorz$widths[2:5] <- maxWidthRtMzArea
     p_peakAreaHorz$widths[2:5] <- maxWidthRtMzArea
-    # rt + mz + area peakwidth and histo (y axis)
-    maxHeight <- grid::unit.pmin(p_rtPeakwidthHorz$heights[2:3],
-                                p_mzPeakwidthHorz$heights[2:3],
-                                p_peakAreaHorz$heights[2:3],
-                                p_rtHisto$widths[2:5], p_mzHisto$widths[2:3],
-                                p_areaHisto$widths[2:3])
-    p_rtPeakwidthHorz$heights[2:3] <- maxHeight
-    p_mzPeakwidthHorz$heights[2:3] <- maxHeight
-    p_peakAreaHorz$heights[2:3] <- maxHeight
-    p_rtHisto$widths[2:3] <- maxHeight
-    p_mzHisto$widths[2:3] <- maxHeight
-    p_areaHisto$widths[2:3] <- maxHeight
+
+    panel_col <- min( p_EIC$layout[grepl("^panel", p_EIC$layout$name), "l"])
+    left_cols <- seq_len(panel_col - 1)
+    maxWidthLeft <- do.call(grid::unit.pmax, list(
+        p_EIC$widths[left_cols],
+        p_rtPeakwidthVert$widths[left_cols],
+        p_rtPeakwidthHorz$widths[left_cols],
+        p_mzPeakwidthHorz$widths[left_cols],
+        p_peakAreaHorz$widths[left_cols]))
+    p_EIC$widths[left_cols] <- maxWidthLeft
+    p_rtPeakwidthVert$widths[left_cols] <- maxWidthLeft
+    p_rtPeakwidthHorz$widths[left_cols] <- maxWidthLeft
+    p_mzPeakwidthHorz$widths[left_cols] <- maxWidthLeft
+    p_peakAreaHorz$widths[left_cols] <- maxWidthLeft
+
+    max_hRT <- grid::unit.pmax(p_rtPeakwidthHorz$heights, p_rtHisto$heights)
+    p_rtPeakwidthHorz$heights <- max_hRT
+    p_rtHisto$heights <- max_hRT
+    max_hMZ <- grid::unit.pmax(p_mzPeakwidthHorz$heights, p_mzHisto$heights)
+    p_mzPeakwidthHorz$heights <- max_hMZ
+    p_mzHisto$heights <- max_hMZ
+    max_hArea <- grid::unit.pmax(p_peakAreaHorz$heights, p_areaHisto$heights)
+    p_peakAreaHorz$heights <- max_hArea
+    p_areaHisto$heights <- max_hArea
+
     ## Generate
     return(gridExtra::grid.arrange(p_EIC, p_rtPeakwidthVert,
         p_rtPeakwidthHorz, p_rtHisto, p_mzPeakwidthHorz, p_mzHisto,
         p_peakAreaHorz, p_areaHisto, widths = c(6, 1),
-        heights = c(100, 45, 30, 30, 30, 14),
-        layout_matrix = rbind(c(1, 1),c(2, 2),c(3, 4),c(5, 6),c(7, 8),c(7, 9)),
+        heights = c(100, 45, 30, 30, 30),
+        layout_matrix = rbind(c(1, 1),c(2, 2),c(3, 4),c(5, 6),c(7, 8)),
         top = annotationDiagnosticPlotList[[cpd]]$title) )
 }

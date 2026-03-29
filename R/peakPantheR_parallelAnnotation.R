@@ -269,6 +269,25 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
 }
 
 
+## Resolve BPPARAM: return a valid BiocParallelParam, constructing a default if needed
+.resolveBPPARAM <- function(BPPARAM, nCores) {
+    if (is.null(BPPARAM)) {
+        if (nCores > 1) {
+            if (.Platform$OS.type == 'windows') {
+                BPPARAM <- BiocParallel::SnowParam(workers = nCores)
+            } else {
+                BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
+            }
+        } else {
+            BPPARAM <- BiocParallel::SerialParam()
+        }
+    } else if (!is(BPPARAM, 'BiocParallelParam')) {
+        stop("Check input, BPPARAM must be a BiocParallel Param object")
+    }
+    return(BPPARAM)
+}
+
+
 ## Check inputs, Initialise variables and outputs
 parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
     # check validity of object
@@ -280,21 +299,7 @@ parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
     }
 
     # Handle default BPParams
-    if (is.null(BPPARAM)) {
-        if (nCores > 1) {
-            if (.Platform$OS.type == 'windows') {
-            BPPARAM <- BiocParallel::SnowParam(workers = nCores)
-            }
-            else {
-            BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
-            }
-
-        } else {
-            BPPARAM <- BiocParallel::SerialParam()}
-    }
-    else if (!is(BPPARAM, 'BiocParallelParam')) {
-        stop("Check input, BPPARAM must be a BiocParallel Param object")
-    }
+    BPPARAM <- .resolveBPPARAM(BPPARAM, nCores)
 
     # Initialise parameters from object
     use_uROI <- useUROI(object)
@@ -333,16 +338,14 @@ parallelAnnotation_runSingleFileSearch <- function(file_paths,
 target_peak_table, input_FIR, BPPARAM, getAcquTime, centroided,
 curveModel, verbose, ...) {
 
-    BiocParallel::register(BPPARAM)
     BiocParallel::bpstart(BPPARAM)
-    allFilesRes <- BiocParallel::bplapply(X=file_paths, 
+    on.exit(BiocParallel::bpstop(BPPARAM), add = TRUE)
+    allFilesRes <- BiocParallel::bplapply(X=file_paths,
                     FUN=parallelAnnotation_parallelHelper,
                     targetFeatTable=target_peak_table,
                     inGetAcquTime=getAcquTime, inFIR=input_FIR,
                     centr=centroided, curveModel=curveModel, inVerbose=verbose,
                     BPPARAM = BPPARAM, ...)
-
-    BiocParallel::bpstop(BPPARAM)
     return(allFilesRes) }
 
 ## Collect, process and reorder results

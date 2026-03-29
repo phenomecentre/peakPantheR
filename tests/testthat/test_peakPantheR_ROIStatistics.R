@@ -282,7 +282,7 @@ test_that('parallel give the same result: 3 files, no save EICs, mean IS RT, sav
   expected_path_IS_plot3  <- file.path(saveFolder6,"IS_search", "cpd_3.png")
   expected_path_IS_plot4  <- file.path(saveFolder6,"IS_search", "cpd_4.png")
   # Expected message
-  expected_message_parallel <- c("No ROI provided, EICs of ROI windows will not be saved\n", "- EICs of ROI windows will not be saved\n", "    4 IS in 3 reference samples\n", "\n-- Calculating mean RT for each IS --\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  0 failure(s)\n", "All plots saved\n")
+  expected_message_parallel <- c("No ROI provided, EICs of ROI windows will not be saved\n", "- EICs of ROI windows will not be saved\n", "    4 IS in 3 reference samples\n", "\n-- Calculating mean RT for each IS --\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  0 failure(s)\n", "Saving diagnostic plots:\n")
   
   
   # results (output, warnings and messages)
@@ -308,11 +308,11 @@ test_that('parallel give the same result: 3 files, no save EICs, mean IS RT, sav
 
   # Check messages (no filepaths)
   if (.Platform$OS.type == 'windows') {
-    expect_equal(length(result_ROIstats_parallel$messages), 21)
-  expect_equal(result_ROIstats_parallel$messages[c(1,2,4:8, 10,11, 13,20)], expected_message_parallel)
-  } else {
     expect_equal(length(result_ROIstats_parallel$messages), 20)
-  expect_equal(result_ROIstats_parallel$messages[c(1,2,4:10,12,19)], expected_message_parallel)
+  expect_equal(result_ROIstats_parallel$messages[c(1,2,4:8, 10,11, 13,15)], expected_message_parallel)
+  } else {
+    expect_equal(length(result_ROIstats_parallel$messages), 19)
+  expect_equal(result_ROIstats_parallel$messages[c(1,2,4:10,12,14)], expected_message_parallel)
   }
 })
 
