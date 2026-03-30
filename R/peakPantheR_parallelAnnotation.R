@@ -157,13 +157,21 @@ peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
     file_paths<-initRes$file_paths; target_peak_table<-initRes$target_peak_table
     input_FIR  <- initRes$input_FIR; BPPARAMObject <- initRes$BPPARAMObject
 
+    # Manage worker lifecycle at the top level, alongside BPPARAM creation
+    started_here <- !BiocParallel::bpisup(BPPARAMObject)
+    if (started_here) BiocParallel::bpstart(BPPARAMObject)
+    on.exit(if (started_here) BiocParallel::bpstop(BPPARAMObject), add = TRUE)
+
     stime <- Sys.time()
 
-    # Run singleFileSearch
+    # Run singleFileSearch on all files
     # (list, each item is the result of a file, errors are passed into the list)
-    allFilesRes <- parallelAnnotation_runSingleFileSearch(file_paths,
-        target_peak_table, input_FIR, BPPARAM = BPPARAMObject, getAcquTime,
-        centroided, curveModel, verbose,...)
+    allFilesRes <- BiocParallel::bplapply(X=file_paths,
+                    FUN=parallelAnnotation_parallelHelper,
+                    targetFeatTable=target_peak_table,
+                    inGetAcquTime=getAcquTime, inFIR=input_FIR,
+                    centr=centroided, curveModel=curveModel, inVerbose=verbose,
+                    BPPARAM=BPPARAMObject, ...)
 
     # Collect, process and reorder results
     res <- parallelAnnotation_process(allFilesRes, object, verbose)
@@ -264,7 +272,6 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
         return(list(TIC = as.numeric(NA), peakTable = NULL,
         acquTime = as.character(NA), curveFit = NULL,
             ROIsDataPoint = NULL, failure = failureMsg))  })
-    gc(verbose = FALSE) # try clearing variables
     return(result)  # return singleFileSearch results with failure status
 }
 
@@ -331,22 +338,6 @@ parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
                 input_FIR=input_FIR, BPPARAMObject=BPPARAM))
 }
 
-
-## Run singleFileSearch
-# (list, each item is the result of a file, errors are passed into the list)
-parallelAnnotation_runSingleFileSearch <- function(file_paths,
-target_peak_table, input_FIR, BPPARAM, getAcquTime, centroided,
-curveModel, verbose, ...) {
-
-    BiocParallel::bpstart(BPPARAM)
-    on.exit(BiocParallel::bpstop(BPPARAM), add = TRUE)
-    allFilesRes <- BiocParallel::bplapply(X=file_paths,
-                    FUN=parallelAnnotation_parallelHelper,
-                    targetFeatTable=target_peak_table,
-                    inGetAcquTime=getAcquTime, inFIR=input_FIR,
-                    centr=centroided, curveModel=curveModel, inVerbose=verbose,
-                    BPPARAM = BPPARAM, ...)
-    return(allFilesRes) }
 
 ## Collect, process and reorder results
 parallelAnnotation_process <- function(allFilesRes, object, verbose) {

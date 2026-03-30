@@ -234,7 +234,7 @@ annotation_result$failures
 `peakPantheR_parallelAnnotation()` will run the annotation across files in
 parallel (if `nCores` > 1) and return the successful annotations
 (`result$annotation`) and failures (`result$failures`):
-```{r}
+```{r, eval = (.Platform$OS.type != 'windows')}
 # annotate files in parallel using two workers
 annotation_result <- peakPantheR_parallelAnnotation(init_annotation, nCores=2,
                                                     curveModel='skewedGaussian',
