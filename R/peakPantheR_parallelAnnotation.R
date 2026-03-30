@@ -248,7 +248,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
     # try catch
     result <- tryCatch({
         # singleFileSearch
-        tmpResult <- peakPantheR_singleFileSearch(singleSpectraDataPath,
+        tmpResult <- peakPantheR::peakPantheR_singleFileSearch(singleSpectraDataPath,
             targetFeatTable, peakStatistic = TRUE, plotEICsPath = NA,
             getAcquTime = inGetAcquTime, FIR = inFIR, centroided = centr,
             curveModel = curveModel, verbose = inVerbose, ...)
@@ -281,8 +281,7 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
     if (is.null(BPPARAM)) {
         if (nCores > 1) {
             if (.Platform$OS.type == 'windows') {
-                BPPARAM <- BiocParallel::SnowParam(workers = nCores,
-                                                   packages = "peakPantheR")
+                BPPARAM <- BiocParallel::SnowParam(workers = nCores)
             } else {
                 BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
             }
