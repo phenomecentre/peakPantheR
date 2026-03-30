@@ -1674,13 +1674,23 @@ setMethod("outputAnnotationDiagnostic", "peakPantheRAnnotation",
         if (nCores < 1) {
             stop("Check input, nCores must be a positive integer")
         }
-        BPPARAM <- .resolveBPPARAM(BPPARAM, nCores)
+        # force snow param
+        if (is.null(BPPARAM)) {
+            if (nCores > 1) {
+                BPPARAM <- BiocParallel::SnowParam(workers = nCores)
+            } else {
+                BPPARAM <- BiocParallel::SerialParam()
+            }
+        } else if (!is(BPPARAM, 'BiocParallelParam')) {
+            stop("Check input, BPPARAM must be a BiocParallel Param object")
+        }
 
         if (nCores > 1) {
             if (verbose) {
                 message("Saving ", nbCpd, " diagnostic plots in ", saveFolder) }
-            BiocParallel::bpstart(BPPARAM)
-            on.exit(BiocParallel::bpstop(BPPARAM), add = TRUE)
+            started_here <- !BiocParallel::bpisup(BPPARAM)
+            if (started_here) BiocParallel::bpstart(BPPARAM)
+            on.exit(if (started_here) BiocParallel::bpstop(BPPARAM), add = TRUE)
             savedPlots <- BiocParallel::bplapply(X=seq_len(nbCpd),
                     FUN = outputAnnotationDiagnostic_saveSingleMultiPlot,
                     annotation = object, saveFolder = saveFolder,
@@ -1729,7 +1739,6 @@ outputAnnotationDiagnostic_saveSingleMultiPlot <- function(cpdNb, annotation,
         ggplot2::ggsave(file = tmp_targetFile, plot = tmp_multiPlot[[1]],
             device = ext_format, path = saveFolder, dpi = 100, width = 21,
             height = 29.7, units = "cm", limitsize = FALSE)
-        grDevices::dev.off()
         # output path
         if (verbose) {
             message("  Compound ", cpdNb, "/", nbCpd,

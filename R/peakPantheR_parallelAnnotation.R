@@ -281,7 +281,8 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
     if (is.null(BPPARAM)) {
         if (nCores > 1) {
             if (.Platform$OS.type == 'windows') {
-                BPPARAM <- BiocParallel::SnowParam(workers = nCores)
+                BPPARAM <- BiocParallel::SnowParam(workers = nCores,
+                                                   packages = "peakPantheR")
             } else {
                 BPPARAM <- BiocParallel::MulticoreParam(workers = nCores)
             }
