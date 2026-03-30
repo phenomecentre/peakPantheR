@@ -107,7 +107,7 @@ output$cpuSlider <- renderUI({
 # correction when slider doesn't appear
 ncoresInput <- reactive ({
   if( input$parallelisation != 0 ) { input$ncores }
-  else { return(0) }
+  else { return(1) }
 })
 
 
