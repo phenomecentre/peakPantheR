@@ -222,5 +222,8 @@ annotDiagMultiplot_generateMulti <- function(annotationDiagnosticPlotList, cpd,
         p_peakAreaHorz, p_areaHisto, widths = c(6, 1),
         heights = c(100, 45, 30, 30, 30),
         layout_matrix = rbind(c(1, 1),c(2, 2),c(3, 4),c(5, 6),c(7, 8)),
-        top = annotationDiagnosticPlotList[[cpd]]$title) )
+        top = grid::grobTree(
+            grid::rectGrob(gp = grid::gpar(fill = "white", col = NA)),
+            grid::textGrob(annotationDiagnosticPlotList[[cpd]]$title,
+                y = grid::unit(0.35, "npc")))) )
 }

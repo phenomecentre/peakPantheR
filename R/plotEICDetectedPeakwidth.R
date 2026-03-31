@@ -44,7 +44,9 @@ plotEICDetectedPeakwidth <- function(ROIDataPointSampleList, cpdID, cpdName, rt,
     p_spec <- p_spec + ggplot2::ggtitle(title) +
             ggplot2::theme(axis.title.x = ggplot2::element_blank(),
                 axis.text.x = ggplot2::element_blank(),
-                plot.title = ggplot2::element_text(size = ggplot2::rel(1)))
+                plot.title = ggplot2::element_text(size = ggplot2::rel(1)),
+                plot.background = ggplot2::element_rect(fill = "white",
+                                                        colour = NA))
     # Plot peakwidth
     p_peakwidth <- peakPantheR_plotPeakwidth(apexValue = rt, widthMin = rtMin,
         widthMax = rtMax, varName = "Retention Time (sec)", acquTime = NULL,
