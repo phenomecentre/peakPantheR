@@ -84,8 +84,7 @@ peakPantheR_plotEICFit  <- function(ROIDataPointSampleList,
 
     # Plot raw spectra and curve fit
     # init plot
-    p_spec <- ggplot2::ggplot(NULL, ggplot2::aes(x),
-                            environment = environment()) +
+    p_spec <- ggplot2::ggplot() +
         ggplot2::theme_bw() + ggplot2::xlab("Retention Time (sec)") +
         ggplot2::ylab("Intensity") +
         ggplot2::scale_y_continuous(expand = c(0.01, 0.01)) +
@@ -164,8 +163,7 @@ plotEICFit_prepData <- function(ROIDataPointSampleList, curveFitSampleList,
         tmp_EIC <- generateIonChromatogram(ROIDataPointSampleList[[x]],
                                             aggregationFunction = "sum")
         tmp_EIC <- cbind(tmp_EIC, specID = rep(paste("spl", x, sep = ""),
-                                                    nrow(tmp_EIC)),
-                        stringsAsFactors = FALSE)
+                                                    nrow(tmp_EIC)))
     })
     input_EIC <- do.call(rbind, all_EIC)
 
@@ -180,8 +178,7 @@ plotEICFit_prepData <- function(ROIDataPointSampleList, curveFitSampleList,
                 tmp_fit <- data.frame(rt = grid_rt,
                     int = predictCurve(curveFitSampleList[[x]], x = grid_rt))
                 tmp_fit <- cbind(tmp_fit, specID = rep(paste("spl", x, sep=""),
-                                                        nrow(tmp_fit)),
-                            stringsAsFactors = FALSE)
+                                                        nrow(tmp_fit)))
             }
         })
         input_fit <- do.call(rbind, all_fit)

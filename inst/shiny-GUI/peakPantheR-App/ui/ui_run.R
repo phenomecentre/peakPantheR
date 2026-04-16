@@ -31,7 +31,7 @@ tabPanel("Run annotation",
               uiOutput("curveModelSelectInput"), # curveModel
             ), # end column (useUROI, useFIR)
 
-            # ncores cpuslider
+            # nCores cpuslider
             column(4, offset=1,
 			  checkboxInput("parallelisation",
                 label = span("Parallelisation", style="color:#3e648d;font-weight:bold"),

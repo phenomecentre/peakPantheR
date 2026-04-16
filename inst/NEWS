@@ -1,3 +1,2 @@
-Changes in version 1.23.3 (2025-09-27)
-- update unittest for `ggplot2` 4.0.0
-- update vignette figures location
+Changes in version 1.25.1 (2026-04-16)
+- Use `BiocParallel` instead of `doParallel` / `foreach`

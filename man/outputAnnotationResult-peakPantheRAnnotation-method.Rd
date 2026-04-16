@@ -62,7 +62,7 @@ emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
                                         targetFeatTable=targetFeatTable)
 
 # Calculate annotation
-annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, ncores=0,
+annotation      <- peakPantheR_parallelAnnotation(emptyAnnotation, nCores=1,
                                 getAcquTime=FALSE, verbose=FALSE)$annotation
 
 # temporary location

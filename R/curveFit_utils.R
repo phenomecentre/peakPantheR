@@ -84,7 +84,7 @@ fitCurve <- function(x, y, curveModel = "skewedGaussian", params = "guess") {
         stop(paste0("Err","or: \"curveModel\" must be one of: ",
             paste(known_curveModel, collapse=', '))) }
     # params
-    if (!(typeof(params) %in% c("list", "character"))) {
+    if (!is.list(params) && !identical(params, "guess")) {
         stop("Err","or: \"params\" must be a list or \"guess\"") }
 
     useGuess <- TRUE

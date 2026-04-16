@@ -192,7 +192,7 @@ test_that('peakPantheR_parallelAnnotation() continuum mode', {
     expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
 
     # results (output, warnings and messages)
-    result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, ncores=0, getAcquTime=FALSE, centroided=FALSE, verbose=FALSE))
+    result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=1, getAcquTime=FALSE, centroided=FALSE, verbose=FALSE))
 
     # Check results
     expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-5)

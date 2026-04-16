@@ -7,7 +7,7 @@ vignette: >
     %\VignetteIndexEntry{peakPantheR Graphical User Interface}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
-    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle,foreach,doParallel}
+    %\VignetteDepends{peakPantheR,faahKO,pander,BiocStyle,BiocParallel}
     %\VignettePackage{peakPantheR}
     %\VignetteKeywords{mass spectrometry, metabolomics}
 ---

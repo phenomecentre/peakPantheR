@@ -100,14 +100,14 @@ output$cpuSlider <- renderUI({
   tagList(
     sliderInput("ncores",
       label = paste("Available cores: ",maxCores,sep=""),
-      min = 0, max = maxCores, value = maxCores, step=1
+      min = 1, max = maxCores, value = maxCores, step=1
     )
   )
 })
 # correction when slider doesn't appear
 ncoresInput <- reactive ({
   if( input$parallelisation != 0 ) { input$ncores }
-  else { return(0) }
+  else { return(1) }
 })
 
 
@@ -123,7 +123,7 @@ observeEvent(input$goAnnotation, {
                                                  useFIR=input$useFIR,
                                                  verbose=FALSE)
   ## Annotate!
-  result <- peakPantheR_parallelAnnotation(tmp_annotation, ncores=ncoresInput(), curveModel=input$curveModel, verbose=TRUE)
+  result <- peakPantheR_parallelAnnotation(tmp_annotation, nCores=ncoresInput(), curveModel=input$curveModel, verbose=TRUE)
 
   # Store the annotation and failures into the reactiveValue
   values$annotation <- result$annotation

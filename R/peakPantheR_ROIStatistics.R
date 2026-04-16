@@ -17,7 +17,9 @@
 #' (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float)  (if NULL IS
 #' mean RT is not calculated and saved in \code{IS_mean_RT.csv})
 #' @param sampleColour (str) NULL or vector colour for each sample
-#' @param ncores (int) Number of cores to use to integrate IS in parallel
+#' @param nCores (int) Number of cores to use to integrate IS in parallel
+#' @param BPPARAM (BiocParallel::BiocParallelParam) Settings for parallel 
+#' processing. Must be a BiocParallelParam object
 #' @param saveISPlots (bool) If TRUE save a diagnostic plot for each IS to
 #' \code{saveFolder/IS_search} compound
 #' @param verbose (bool) If TRUE message progress
@@ -54,12 +56,13 @@
 #' # Calculate ROI statiscs
 #' peakPantheR_ROIStatistics(refSpecFiles, saveFolder1, ROI=input_ROI,
 #'                             IS_ROI=input_IS_ROI, sampleColour=sampleColour,
-#'                             ncores=0, saveISPlots=TRUE, verbose=TRUE)
+#'                             nCores=1, saveISPlots=TRUE, verbose=TRUE)
 #' }
 peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
                                         ROI = NULL, IS_ROI = NULL,
-                                        sampleColour = NULL, ncores = 0,
-                                        saveISPlots = TRUE, verbose = TRUE) {
+                                        sampleColour = NULL, nCores = 1,
+                                        saveISPlots = TRUE, verbose = TRUE, 
+                                        BPPARAM=NULL) {
     # Check and process input parameters
     resInit <- ROIStatistics_init_checks(referenceSpectraFiles, saveFolder, ROI,
                                         IS_ROI, sampleColour, verbose)
@@ -77,7 +80,7 @@ peakPantheR_ROIStatistics   <- function(referenceSpectraFiles, saveFolder,
     # calculate mean IS for each RT
     if (calculateMeanISRT) {
         ROIStatistics_calculateMeanISRT(referenceSpectraFiles, saveFolder,
-                            IS_ROI, saveISPlots, ncores, sampleColour, verbose)
+                IS_ROI, saveISPlots, nCores, sampleColour, verbose, BPPARAM)
     }
 }
 
@@ -239,7 +242,7 @@ ROIStatistics_saveEICsROI <- function(referenceSpectraFiles, saveFolder, ROI,
 }
 # Calculate mean RT for each IS
 ROIStatistics_calculateMeanISRT <- function(referenceSpectraFiles, saveFolder,
-                            IS_ROI, saveISPlots, ncores, sampleColour, verbose){
+                IS_ROI, saveISPlots, nCores, sampleColour, verbose, BPPARAM){
     if (verbose) {
         message("\n-- Calculating mean RT for each IS --")
     }
@@ -247,7 +250,7 @@ ROIStatistics_calculateMeanISRT <- function(referenceSpectraFiles, saveFolder,
         spectraPaths = referenceSpectraFiles,
         targetFeatTable = IS_ROI)
     IS_annotation_results <- peakPantheR_parallelAnnotation(IS_annotation,
-        ncores = ncores, verbose = verbose)
+        nCores = nCores, verbose = verbose, BPPARAM=BPPARAM)
     IS_annotation <- IS_annotation_results$annotation
 
     # save IS fit diagnostic plots
@@ -255,7 +258,7 @@ ROIStatistics_calculateMeanISRT <- function(referenceSpectraFiles, saveFolder,
         outputAnnotationDiagnostic(IS_annotation,
             saveFolder = file.path(saveFolder, "IS_search"),
             savePlots = TRUE, sampleColour=sampleColour, verbose = verbose,
-            ncores = ncores)
+            nCores = nCores)
     }
 
     # calculate statistics

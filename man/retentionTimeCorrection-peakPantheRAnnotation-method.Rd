@@ -81,7 +81,7 @@ smallAnnotation  <- peakPantheRAnnotation(spectraPaths=spectraPaths,
                                         targetFeatTable=targetFeatTable)
 # annotate files serially
 annotation_result <- peakPantheR_parallelAnnotation(smallAnnotation,
-                                            ncores=0, verbose=TRUE)
+                                            nCores=1, verbose=TRUE)
 data_annotation   <- annotation_result$annotation
 
 # Example with constant correction

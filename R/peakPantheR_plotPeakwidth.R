@@ -69,7 +69,7 @@ peakPantheR_plotPeakwidth <- function(apexValue, widthMin=NULL, widthMax = NULL,
     sampleIDColour <- resInp$sampleIDColour
 
     ## Init plot draw default x/y will fill depending on rotation
-    p <- ggplot2::ggplot(NULL, ggplot2::aes(x), environment = environment()) +
+    p <- ggplot2::ggplot() +
         ggplot2::theme_bw()
     # set fill and colour scale, with one color per sample ID
     p <- p + ggplot2::scale_colour_manual(values = colourSpl, guide = "none")
@@ -163,8 +163,7 @@ plotPeakwidth_plotWidthApex <- function(p, useWidth, rotateAxis,
     ## Apex value
     # add apex point (add the color ID to each point, and an ID pointing to the 
     # black stroke)
-    tmp_pt <- data.frame(x = x_axis, y = apexValue, colr = sampleIDColour,
-                        stringsAsFactors = FALSE)
+    tmp_pt <- data.frame(x = x_axis, y = apexValue, colr = sampleIDColour)
     tmp_pt <- tmp_pt[!is.na(tmp_pt$y), ]
 
     # with peakwidth and black stroke
@@ -172,8 +171,7 @@ plotPeakwidth_plotWidthApex <- function(p, useWidth, rotateAxis,
         ## Prepare peakWidth (must go first to be the bottom most layer)
         tmp_pwidth <- data.frame(x = c(x_axis, x_axis),
                                 y = c(widthMin, widthMax),
-                                colr = c(sampleIDColour, sampleIDColour),
-                                stringsAsFactors = FALSE)
+                                colr = c(sampleIDColour, sampleIDColour))
         tmp_pwidth <- tmp_pwidth[!is.na(tmp_pwidth$y),]#remove val without pkwdt
         if (rotateAxis) { #flip x and y
             p <- p + ggplot2::geom_line(data=tmp_pwidth,
@@ -228,15 +226,13 @@ plotPeakwidth_rotateAxis_setLabels <- function(p, rotateAxis, useRunOrder,
         }
     } else {
         if (rotateAxis) { # input order axis rotated (+ flipped)
-            suppressMessages(
-            p <- p +  #needs to go first
-                ggplot2::scale_y_continuous(breaks=NULL, expand=c(0.007,0.007))+
-                ggplot2::ylim(max(x_axis), min(x_axis)) +
-                ggplot2::xlab(varName) + 
+            p <- p +
+                ggplot2::scale_y_continuous(breaks=NULL, expand=c(0.007,0.007),
+                    limits=c(max(x_axis), min(x_axis))) +
+                ggplot2::xlab(varName) +
                 ggplot2::theme(axis.title.y = ggplot2::element_blank(),
                                 axis.text.y = ggplot2::element_blank(),
                                 axis.ticks.y = ggplot2::element_blank())
-            )
             if (verbose) { message("x and y axis rotated") }
         } else {          # input order axis not rotated
             p <- p + ggplot2::ylab(varName) + 

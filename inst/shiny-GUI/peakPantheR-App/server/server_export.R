@@ -200,7 +200,7 @@ output$controlExportPlotUI <- renderUI ({
 output$cpuSliderDiag <- renderUI({
   if(input$parallelisationDiag == 0) return(NULL)
   tagList(
-    sliderInput("ncoresDiag", label = paste("Available cores: ",maxCores,sep=""), min = 0, max = maxCores, value = maxCores, step=1)
+    sliderInput("ncoresDiag", label = paste("Available cores: ",maxCores,sep=""), min = 1, max = maxCores, value = maxCores, step=1)
   )
 })
 # correction when slider doesn't appear

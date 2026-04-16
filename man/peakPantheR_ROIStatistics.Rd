@@ -10,9 +10,10 @@ peakPantheR_ROIStatistics(
     ROI = NULL,
     IS_ROI = NULL,
     sampleColour = NULL,
-    ncores = 0,
+    nCores = 1,
     saveISPlots = TRUE,
-    verbose = TRUE
+    verbose = TRUE,
+    BPPARAM = NULL
 )
 }
 \arguments{
@@ -36,12 +37,15 @@ mean RT is not calculated and saved in \code{IS_mean_RT.csv})}
 
 \item{sampleColour}{(str) NULL or vector colour for each sample}
 
-\item{ncores}{(int) Number of cores to use to integrate IS in parallel}
+\item{nCores}{(int) Number of cores to use to integrate IS in parallel}
 
 \item{saveISPlots}{(bool) If TRUE save a diagnostic plot for each IS to
 \code{saveFolder/IS_search} compound}
 
 \item{verbose}{(bool) If TRUE message progress}
+
+\item{BPPARAM}{(BiocParallel::BiocParallelParam) Settings for parallel 
+processing. Must be a BiocParallelParam object}
 }
 \value{
 None
@@ -82,6 +86,6 @@ saveFolder1   <- tempdir()
 # Calculate ROI statiscs
 peakPantheR_ROIStatistics(refSpecFiles, saveFolder1, ROI=input_ROI,
                             IS_ROI=input_IS_ROI, sampleColour=sampleColour,
-                            ncores=0, saveISPlots=TRUE, verbose=TRUE)
+                            nCores=1, saveISPlots=TRUE, verbose=TRUE)
 }
 }

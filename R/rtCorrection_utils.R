@@ -31,9 +31,6 @@ peakPantheR_applyRTCorrection <- function(targetFeatTable, referenceTable,
                                 method, robust)
     params <- applyRTCorrection_checkInputParams(params, method, referenceTable)
 
-    if (dim(referenceTable)[1] == 1) {
-        method <- 'constant'
-    }
     ## Run correction
     correctedFeatTable <- applyRTCorrection_correctFeatTable(
     targetFeatTable, referenceTable, method, params, robust)
@@ -239,7 +236,8 @@ fit_RANSAC <- function(x, y, polynomialOrder=3,
     # If residual_threshold is NULL, use the MAD (median absolute deviation)
     # of the y variable as cutoff
     if (is.null(residual_threshold)) {
-        residual_threshold <- stats::median(abs(y - stats::median(y)))
+        residual_threshold <- max(stats::median(abs(y - stats::median(y))),
+                                    .Machine$double.eps)
     }
     # Minimum number of samples - by default the max between
     # polynomial function degree + 1 and half of the dataset size
@@ -291,11 +289,14 @@ dynamic_max_trials <- function(n_inliers, n_samples, min_samples, probability) {
 fit_RANSAC_coreOptimization <- function(x, y, max_trials,
     min_samples, polynomialOrder, loss_function, residual_threshold,
     stop_n_inliers=Inf, stop_score=Inf, stop_probability=0.99) {
-    x_data <- data.frame(x, columns=c('x')) # data frame to call "predict.lm"
+    x_data <- data.frame(x=x) # data frame to call "predict.lm"
     n_trials<- 0
     n_skips_no_inliers <- 0
     n_inliers_best <- 0
     score_best <- 0
+    inlier_mask_best <- NULL
+    X_inlier_best <- NULL
+    y_inlier_best <- NULL
     while (n_trials < max_trials) {
         n_trials <- n_trials + 1
         data_subset_idx <- sample(seq(1, length(x)), min_samples, replace=FALSE)
@@ -364,7 +365,7 @@ fit_RANSAC_checkInput <- function(x,y, polynomialOrder, loss) {
     }
 
     if (isFALSE(all.equal(polynomialOrder,
-        as.integer(polynomialOrder)) | (polynomialOrder >= 1))) {
+        as.integer(polynomialOrder))) | (polynomialOrder < 1)) {
         stop("`polynomialOrder` must be an integer and equal or greater than 1")
     }
     # Select the loss function
