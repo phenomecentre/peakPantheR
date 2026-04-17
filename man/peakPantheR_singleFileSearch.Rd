@@ -5,16 +5,16 @@
 \title{Search, integrate and report targeted features in a raw spectra}
 \usage{
 peakPantheR_singleFileSearch(
-    singleSpectraDataPath,
-    targetFeatTable,
-    peakStatistic = FALSE,
-    plotEICsPath = NA,
-    getAcquTime = FALSE,
-    FIR = NULL,
-    centroided = TRUE,
-    curveModel = "skewedGaussian",
-    verbose = TRUE,
-    ...
+  singleSpectraDataPath,
+  targetFeatTable,
+  peakStatistic = FALSE,
+  plotEICsPath = NA,
+  getAcquTime = FALSE,
+  FIR = NULL,
+  centroided = TRUE,
+  curveModel = "skewedGaussian",
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{

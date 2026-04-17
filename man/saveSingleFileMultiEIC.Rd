@@ -5,13 +5,13 @@
 \title{Save to disk a plot of all ROI EIC and detected feature range}
 \usage{
 saveSingleFileMultiEIC(
-    ROIsDataPoint,
-    curveFit,
-    foundPeakTable,
-    savePath,
-    width = 15,
-    height = 15,
-    verbose = TRUE
+  ROIsDataPoint,
+  curveFit,
+  foundPeakTable,
+  savePath,
+  width = 15,
+  height = 15,
+  verbose = TRUE
 )
 }
 \arguments{

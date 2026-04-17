@@ -5,10 +5,10 @@
 \title{Calculate chromatographic peak properties}
 \usage{
 getTargetFeatureStatistic(
-    fittedCurves,
-    targetFeatTable,
-    foundPeakTable,
-    verbose = FALSE
+  fittedCurves,
+  targetFeatTable,
+  foundPeakTable,
+  verbose = FALSE
 )
 }
 \arguments{

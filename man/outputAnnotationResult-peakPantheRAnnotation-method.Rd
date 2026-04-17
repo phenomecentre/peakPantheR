@@ -7,10 +7,10 @@
 \title{Save to disk all annotation results as csv files}
 \usage{
 \S4method{outputAnnotationResult}{peakPantheRAnnotation}(
-    object,
-    saveFolder,
-    annotationName = "annotationResult",
-    verbose = TRUE
+  object,
+  saveFolder,
+  annotationName = "annotationResult",
+  verbose = TRUE
 )
 }
 \arguments{

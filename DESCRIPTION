@@ -29,7 +29,8 @@ Imports:
 	BiocParallel (>= 1.28.3),
 	utils,
 	lubridate,
-	svglite (>= 2.1.1)
+	svglite (>= 2.1.1),
+	plotly (>= 4.10.0)
 biocViews: MassSpectrometry, Metabolomics, PeakDetection
 License: GPL-3
 BugReports: https://github.com/phenomecentre/peakPantheR/issues/new

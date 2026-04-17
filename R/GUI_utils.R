@@ -177,13 +177,18 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 
 #' UI data import helper - check loaded annotation
 #'
-#' Load a .RData file (check it exists) and that a peakPantheRAnnotation named
-#' "annotationObject" is present. Returns the annotation if everything is valid
+#' Load a .RData or .RDS file and return the peakPantheRAnnotation it contains.
+#' For .RData files with multiple peakPantheRAnnotation objects, either pass
+#' `objectName` to pick one or receive a list of candidates (class
+#' `peakPantheRAnnotation_candidates`) for the caller to choose from.
 #'
-#' @param annotationPath (str) Path to a RData file containing a
-#' peakPantheRAnnotation names `annotationObject`
+#' @param annotationPath (str) Path to a .RData or .RDS file containing one or
+#' more peakPantheRAnnotation objects
+#' @param objectName (str or NULL) Optional name of the object to return when
+#' the file contains several candidates
 #'
-#' @return (peakPantheRAnnotation) Object loaded from file
+#' @return (peakPantheRAnnotation) Object loaded from file, or a list of
+#' candidate annotations when multiple are found and `objectName` is NULL
 #'
 #' @export
 #'
@@ -220,27 +225,53 @@ spectraPaths_and_metadata_UI_helper <- function(spectraPaths = NULL,
 #' #   does not use updated ROI (uROI)
 #' #   does not use fallback integration regions (FIR)
 #' #   is not annotated
-load_annotation_from_file_UI_helper <- function(annotationPath) {
-    # Check file exist
+load_annotation_from_file_UI_helper <- function(annotationPath,
+                                                 objectName = NULL) {
     if (!file.exists(annotationPath)) {
         stop('Err','or: annotation file does not exist') }
 
-    # load file content
-    load(annotationPath)
+    ext <- tolower(tools::file_ext(annotationPath))
 
-    # check it exist and is named correctly
-    if (length(ls()[ls() == 'annotationObject']) !=1) {
-        stop("Err","or: annotation file must contain a ",
-            "`peakPantheRAnnotation` named 'annotationObject'") }
-    # dummy initialisation to pass BiocCheck. In no case would the code reach
-    # this section if `annotationObject` wasn't present in the environment
-    if (0) {annotationObject <- NULL}
+    if (ext == "rds") {
+        # RDS stores exactly one object — load and validate.
+        obj <- readRDS(annotationPath)
+        if (!is(obj, "peakPantheRAnnotation")) {
+            stop("Err","or: the RDS file does not contain a ",
+                 "`peakPantheRAnnotation`")
+        }
+        return(obj)
+    }
 
-    # check it's a peakPantheRAnnotation
-    if (!is(annotationObject, "peakPantheRAnnotation")) {
-        stop("Err","or: the variable loaded is not a `peakPantheRAnnotation`") }
+    # RData / rda: load into a fresh env and scan for peakPantheRAnnotations.
+    e <- new.env(parent = emptyenv())
+    load(annotationPath, envir = e)
+    allNames <- ls(e)
+    candidates <- allNames[vapply(allNames, function(n) {
+        is(get(n, envir = e), "peakPantheRAnnotation")
+    }, logical(1))]
 
-    return(annotationObject)
+    if (length(candidates) == 0L) {
+        stop("Err","or: no `peakPantheRAnnotation` object found in the ",
+             "RData file")
+    }
+
+    if (!is.null(objectName)) {
+        if (!(objectName %in% candidates)) {
+            stop("Err","or: requested object '", objectName, "' is not a ",
+                 "`peakPantheRAnnotation` in the file")
+        }
+        return(get(objectName, envir = e))
+    }
+
+    if (length(candidates) == 1L) {
+        return(get(candidates, envir = e))
+    }
+
+    # Multiple candidates: return them all so the caller can pick one.
+    lst <- lapply(candidates, function(n) get(n, envir = e))
+    names(lst) <- candidates
+    structure(lst,
+              class = c("peakPantheRAnnotation_candidates", "list"))
 }
 
 
@@ -416,29 +447,163 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
     } else { return(ggplot2::ggplot() + ggplot2::theme_void()) }
 }
 
-subset_annot_diag_plot_UI_helper <- function(cpdNb, annotation, splNum=NULL) {
-    # subset the compound and sample according to inputs
+#' @title Interactive sibling of annotation_diagnostic_multiplot_UI_helper
+#'
+#' @description plotly-based sibling of
+#' \code{annotation_diagnostic_multiplot_UI_helper()}. Returns a single
+#' interactive plotly htmlwidget for the requested compound, or an empty
+#' plotly figure when there is nothing to plot.
+#'
+#' @param cpdNb (int) index of the compound to plot
+#' @param annotation (peakPantheRAnnotation)
+#' @param splNum (int or NULL) number of samples to display (default all)
+#' @param splColrColumn (str or NULL) spectraMetadata column for colouring
+#' @param source (str or NULL) plotly event source id (for
+#'   \code{plotly::event_data})
+#' @param dragmode (str or NULL) plotly dragmode, e.g. "zoom" or "select"
+#' @param ... passed to \code{annotationDiagnosticPlots()}
+#'
+#' @return A plotly htmlwidget.
+#' @export
+annotation_diagnostic_multiplot_UI_helper_interactive <- function(cpdNb,
+    annotation, splNum = NULL, splColrColumn = NULL,
+    splMode = c("sequential", "random"),
+    splFilterCol = NULL, splFilterLevels = NULL,
+    source = NULL, dragmode = NULL, ...) {
+    splMode <- match.arg(splMode)
+    tmp_annotat <- subset_annot_diag_plot_UI_helper(cpdNb, annotation, splNum,
+        splMode = splMode,
+        splFilterCol = splFilterCol, splFilterLevels = splFilterLevels)
+    sampleColour <- spectra_metadata_colourScheme_UI_helper(tmp_annotat,
+        splColrColumn)
+    tmp_diagPlotList <- annotationDiagnosticPlots(tmp_annotat,
+        sampleColour = sampleColour, verbose = FALSE, ...)
 
-    nSpl <- nbSamples(annotation)
-    if (is.null(splNum)) { splNum <- nSpl }
+    # pull the selected compound's  uROI / FIR rt bounds
+    # to overlay as shaded rectangle
+    windows <- rt_windows_for_cpd(annotation, cpdNb)
 
-    # fix extrem values allowed by UI
+    suppressMessages(suppressWarnings(
+        tmp_multiPlot <- annotationDiagnosticMultiplot_interactive(
+            tmp_diagPlotList,
+            windowsList = list(windows),
+            source = source, dragmode = dragmode)))
+
+    plt <- NULL
+    if (length(tmp_multiPlot) != 0) {
+        for (p in tmp_multiPlot) {
+            if (!is.null(p)) { plt <- p; break }
+        }
+    }
+    if (is.null(plt)) { return(plotly::plotly_empty()) }
+    return(plt)
+}
+
+# Extract rt-window bounds for a single compound from the annotation's
+# ROI / uROI / FIR slots. Returns a named list; entries are NULL when the
+# slot does not carry valid bounds for that compound.
+rt_windows_for_cpd <- function(annotation, cpdNb) {
+    safeRow <- function(df, col, row) {
+        if (is.null(df) || nrow(df) < row) return(NA_real_)
+        if (!col %in% colnames(df)) return(NA_real_)
+        suppressWarnings(as.numeric(df[row, col]))
+    }
+    roi  <- tryCatch(ROI(annotation),  error = function(e) NULL)
+    uroi <- tryCatch(uROI(annotation), error = function(e) NULL)
+    fir  <- tryCatch(FIR(annotation),  error = function(e) NULL)
+    pack <- function(df) {
+        rtMin <- safeRow(df, "rtMin", cpdNb)
+        rtMax <- safeRow(df, "rtMax", cpdNb)
+        if (!is.finite(rtMin) || !is.finite(rtMax)) return(NULL)
+        list(rtMin = rtMin, rtMax = rtMax)
+    }
+    list(ROI = pack(roi), uROI = pack(uroi), FIR = pack(fir))
+}
+
+#' @title Apply an rt window to an annotation's uROI / FIR row
+#'
+#' @description Writes \code{rtMin}/\code{rtMax} for compound \code{cpdNb}
+#' to the requested slot(s) of a \code{peakPantheRAnnotation}. Used by the
+#' diagnostic-plot drag-select UI to update retention-time
+#' windows.
+#'
+#' @param annotation (peakPantheRAnnotation)
+#' @param cpdNb (int) 1-based compound index
+#' @param rt (numeric length 2) c(rtMin, rtMax), strictly increasing and
+#' finite
+#' @param targets (character) subset of \code{c("uROI", "FIR")}; default
+#' both. Invalid or empty targets trigger an error.
+#'
+#' @return The updated \code{peakPantheRAnnotation}.
+#' @export
+apply_rt_window_to_annotation <- function(annotation, cpdNb, rt,
+    targets = c("uROI", "FIR")) {
+    if (!is.numeric(rt) || length(rt) != 2L || any(!is.finite(rt))) {
+        stop("`rt` must be a length-2 finite numeric vector")
+    }
+    if (rt[1] >= rt[2]) {
+        stop("`rt[1]` (rtMin) must be strictly less than `rt[2]` (rtMax)")
+    }
+    cpdNb <- as.integer(cpdNb)
+    nCpd <- nbCompounds(annotation)
+    if (length(cpdNb) != 1L || is.na(cpdNb) || cpdNb < 1L || cpdNb > nCpd) {
+        stop("`cpdNb` must be a single integer in [1, ", nCpd, "]")
+    }
+    if (length(targets) < 1L || !all(targets %in% c("uROI", "FIR"))) {
+        stop("`targets` must be a non-empty subset of c('uROI', 'FIR')")
+    }
+
+    if ("uROI" %in% targets) {
+        annotation@uROI[cpdNb, "rtMin"] <- rt[1]
+        annotation@uROI[cpdNb, "rtMax"] <- rt[2]
+    }
+    if ("FIR" %in% targets) {
+        annotation@FIR[cpdNb, "rtMin"] <- rt[1]
+        annotation@FIR[cpdNb, "rtMax"] <- rt[2]
+    }
+    annotation
+}
+
+subset_annot_diag_plot_UI_helper <- function(cpdNb, annotation, splNum=NULL,
+    splMode = c("sequential", "random"),
+    splFilterCol = NULL, splFilterLevels = NULL) {
+    splMode <- match.arg(splMode)
+
+    # restrict the pool of samples to those whose value of
+    # splFilterCol is in splFilterLevels.
+    nSplAll <- nbSamples(annotation)
+    eligible <- seq_len(nSplAll)
+    if (!is.null(splFilterCol) && nzchar(splFilterCol) &&
+        splFilterCol != "None" && !is.null(splFilterLevels)) {
+        meta <- spectraMetadata(annotation)
+        if (splFilterCol %in% colnames(meta)) {
+            vals <- as.character(meta[[splFilterCol]])
+            eligible <- which(vals %in% as.character(splFilterLevels))
+        }
+    }
+    nEligible <- length(eligible)
+    if (nEligible == 0) { eligible <- seq_len(nSplAll); nEligible <- nSplAll }
+
+    if (is.null(splNum)) splNum <- nEligible
     if (splNum < 1) {
         splNum <- 1
         warning("Negative number of samples to show, 1 spectra will be shown!")
     }
-    if (splNum > nSpl) {
-        splNum <- nSpl
+    if (splNum > nEligible) {
+        splNum <- nEligible
         warning("More samples to show than available,",
                 " all spectra will be shown!")
     }
 
-    # appoximately equally spaced
-    currentSplChoice  <- round(seq(1, nSpl, length.out=splNum))
+    if (splMode == "random") {
+        currentSplChoice <- sort(sample(eligible, size = splNum,
+                                        replace = FALSE))
+    } else {
+        currentSplChoice <- eligible[round(seq(1, nEligible,
+                                               length.out = splNum))]
+    }
 
-    # subset annotation to only 1 cpd and subset of samples
     subsetAnnotation <- annotation[currentSplChoice, cpdNb]
-
     return(subsetAnnotation)
 }
 

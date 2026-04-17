@@ -5,13 +5,13 @@
 \title{Plot samples raw data and detected feature for a single ROI}
 \usage{
 peakPantheR_plotEICFit(
-    ROIDataPointSampleList,
-    curveFitSampleList = NULL,
-    rtMin = NULL,
-    rtMax = NULL,
-    sampling = 250,
-    sampleColour = NULL,
-    verbose = TRUE
+  ROIDataPointSampleList,
+  curveFitSampleList = NULL,
+  rtMin = NULL,
+  rtMax = NULL,
+  sampling = 250,
+  sampleColour = NULL,
+  verbose = TRUE
 )
 }
 \arguments{

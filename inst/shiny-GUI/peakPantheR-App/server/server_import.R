@@ -10,7 +10,12 @@
 # check input but doesn't validate inputs
 
 # Default annotation as reactiveValue
-values <- reactiveValues(annotation = NULL, failures = NULL, featNmeList = NULL, spectraMetadataCol = NULL, filename = NULL)
+values <- reactiveValues(annotation = NULL, failures = NULL, featNmeList = NULL, spectraMetadataCol = NULL, filename = NULL,
+                         dragArmed = FALSE, pendingRtWindow = NULL,
+                         # Per-compound rt-window backup for the "Reset last
+                         # edit". Stores the full uROI + FIR rows
+                         # for the compound most recently edited.
+                         rtBackup = NULL)
 
 # New annotation
 observeEvent(input$triggerImportNewAnnotation, {
@@ -48,6 +53,16 @@ observeEvent(input$triggerImportNewAnnotation, {
   } # end if
 })  # end New Annotation
 
+# Helper to finalise a loaded annotation (populate downstream metadata)
+finaliseLoadedAnnotation <- function(annot) {
+  values$annotation         <- annot
+  values$featNmeList        <- paste(peakPantheR::cpdID(annot), peakPantheR::cpdName(annot), sep=' - ')
+  names(values$featNmeList) <- seq_len(length(values$featNmeList))
+  tmp_splCol                <- c(list('None'), colnames(peakPantheR::spectraMetadata(annot)))
+  values$spectraMetadataCol <- tmp_splCol
+  values$filename           <- peakPantheR::filename(annot)
+}
+
 # Load annotation
 observeEvent(input$triggerLoadPreviousAnnotation, {
   # only if the right button is clicked
@@ -60,21 +75,40 @@ observeEvent(input$triggerLoadPreviousAnnotation, {
       stopApp(e[[1]])
     })
 
-    # no validation on load (cannot guarantee annotation is valid)
-    values$annotation <- res_data
-
-    ## Need to add metadata needed later
-    # Set a list of feature name for later use
-    values$featNmeList        <- paste(peakPantheR::cpdID(values$annotation), peakPantheR::cpdName(values$annotation), sep=' - ')
-    names(values$featNmeList) <- seq_len(length(values$featNmeList))
-    # Set a list of spectraMetadata columns (+ None)
-    tmp_splCol                <- c(list('None'), colnames(peakPantheR::spectraMetadata(values$annotation)))
-    values$spectraMetadataCol <- tmp_splCol
-    # Set a list of filename (sample list)
-    values$filename           <- peakPantheR::filename(values$annotation)
+    # Multiple candidates: prompt user to pick one
+    if (inherits(res_data, "peakPantheRAnnotation_candidates")) {
+      values$loadCandidates <- res_data
+      showModal(modalDialog(
+        title = "Select annotation object",
+        paste0("The file contains ", length(res_data),
+               " peakPantheRAnnotation objects. Please select one:"),
+        radioButtons("loadCandidateChoice", label = NULL,
+                     choices = names(res_data),
+                     selected = names(res_data)[1]),
+        footer = tagList(
+          modalButton("Cancel"),
+          actionButton("loadCandidateConfirm", "Load", class = "btn-primary")
+        ),
+        easyClose = FALSE
+      ))
+    } else {
+      # no validation on load (cannot guarantee annotation is valid)
+      finaliseLoadedAnnotation(res_data)
+    }
 
   } # end if
 })  # end Load Annotation
+
+# Confirm selection from multi-candidate modal
+observeEvent(input$loadCandidateConfirm, {
+  choice <- input$loadCandidateChoice
+  cand   <- values$loadCandidates
+  if (!is.null(cand) && !is.null(choice) && choice %in% names(cand)) {
+    finaliseLoadedAnnotation(cand[[choice]])
+  }
+  values$loadCandidates <- NULL
+  removeModal()
+})
 
 
 ## Check Import/Load are a success

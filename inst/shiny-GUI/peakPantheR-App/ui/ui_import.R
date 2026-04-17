@@ -65,10 +65,10 @@ tabPanel("Import Data",
       h4(HTML("Load a <em>peakPantheRAnnotation</em>"), style="color:#3e648d;font-weight:bold"),
       wellPanel(
         h5(HTML("Annotation"), style="color:#3e648d;font-weight:bold"),
-        span("Select a .RData file containing a ", shiny::span(strong("peakPantheRAnnotation")), " named", shiny::span(em("annotationObject")),style="color:black"),
+        span("Select a .RData or .RDS file containing a ", shiny::span(strong("peakPantheRAnnotation")), ". If the file contains multiple annotation objects, you will be prompted to choose one.", style="color:black"),
         fluidRow(
-          fileInput('pathAnnotation', 'Choose a .RData File',
-                    accept=c('application/octet-stream','.RData','.rdata'))
+          fileInput('pathAnnotation', 'Choose a .RData or .RDS File',
+                    accept=c('application/octet-stream','.RData','.rdata','.RDS','.rds'))
         ),
 
         fluidRow(

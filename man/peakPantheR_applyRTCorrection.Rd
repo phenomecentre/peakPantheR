@@ -5,11 +5,11 @@
 \title{Correct targeted retention time based on reference compounds}
 \usage{
 peakPantheR_applyRTCorrection(
-    targetFeatTable,
-    referenceTable,
-    method = "polynomial",
-    params = list(polynomialOrder = 3),
-    robust = TRUE
+  targetFeatTable,
+  referenceTable,
+  method = "polynomial",
+  params = list(polynomialOrder = 3),
+  robust = TRUE
 )
 }
 \arguments{

@@ -5,19 +5,19 @@
 \title{Plot samples raw data and detected feature for a single ROI}
 \usage{
 plotEICDetectedPeakwidth(
-    ROIDataPointSampleList,
-    cpdID,
-    cpdName,
-    rt,
-    rtMin,
-    rtMax,
-    mzMin,
-    mzMax,
-    ratio = 0.85,
-    sampling = 250,
-    curveFitSampleList = NULL,
-    sampleColour = NULL,
-    verbose = TRUE
+  ROIDataPointSampleList,
+  cpdID,
+  cpdName,
+  rt,
+  rtMin,
+  rtMax,
+  mzMin,
+  mzMax,
+  ratio = 0.85,
+  sampling = 250,
+  curveFitSampleList = NULL,
+  sampleColour = NULL,
+  verbose = TRUE
 )
 }
 \arguments{

@@ -10,8 +10,14 @@ tabPanel("Diagnostic: plot & update",
 
   ## Sidebar
       column(width=2,
-        # Current annotation status
-        uiOutput("showAnnotStatusDiag")
+        shiny::tabsetPanel(id = "diagSidebarTabs", type = "pills",
+          tabPanel("Status",
+            uiOutput("showAnnotStatusDiag")
+          ),
+          tabPanel("Settings",
+            uiOutput("diagSettingsUI")
+          )
+        )
       ), # end Sidebar column
 
   ## Main panel
@@ -66,7 +72,8 @@ tabPanel("Diagnostic: plot & update",
 
         # Show diagnostic plots - TAB
           tabPanel("Diagnostic plot",
-            # control the plot
+            # control strip (feature/colour/samples + drag-edit inside
+            # the same wellPanel, divided by an <hr>)
             uiOutput("diagPlotControlUI"),
             # plot output
             uiOutput("diagPlotResultUI")
