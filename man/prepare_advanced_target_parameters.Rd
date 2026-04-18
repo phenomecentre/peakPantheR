@@ -2,8 +2,7 @@
 % Please edit documentation in R/peakPantheR_loadAnnotationParamsCSV.R
 \name{prepare_advanced_target_parameters}
 \alias{prepare_advanced_target_parameters}
-\title{Process target region parameters (with uROI, FIR) for object
-initialisation}
+\title{Process target region parameters (with uROI, FIR) for object initialisation}
 \usage{
 prepare_advanced_target_parameters(paramTable, verbose)
 }

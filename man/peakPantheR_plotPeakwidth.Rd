@@ -5,14 +5,14 @@
 \title{Plot peak value and peakwidth by acquisition time or in input order}
 \usage{
 peakPantheR_plotPeakwidth(
-    apexValue,
-    widthMin = NULL,
-    widthMax = NULL,
-    acquTime = NULL,
-    varName = "variable",
-    sampleColour = NULL,
-    rotateAxis = FALSE,
-    verbose = TRUE
+  apexValue,
+  widthMin = NULL,
+  widthMax = NULL,
+  acquTime = NULL,
+  varName = "variable",
+  sampleColour = NULL,
+  rotateAxis = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{

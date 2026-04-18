@@ -4,10 +4,7 @@
 \alias{spectra_metadata_colourScheme_UI_helper}
 \title{UI export plot helper - sample colour}
 \usage{
-spectra_metadata_colourScheme_UI_helper(
-    annot,
-    splColrColumn = NULL
-)
+spectra_metadata_colourScheme_UI_helper(annot, splColrColumn = NULL)
 }
 \arguments{
 \item{annot}{(peakPantheRAnnotation) Annotation object}

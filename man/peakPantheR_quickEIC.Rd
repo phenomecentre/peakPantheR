@@ -5,13 +5,13 @@
 \title{Extract and plot a EIC from a raw data file}
 \usage{
 peakPantheR_quickEIC(
-    spectraPath,
-    rt,
-    mz,
-    valuesOnly = "Plot",
-    centroided = TRUE,
-    msLevel = 1L,
-    verbose = TRUE
+  spectraPath,
+  rt,
+  mz,
+  valuesOnly = "Plot",
+  centroided = TRUE,
+  msLevel = 1L,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -55,6 +55,6 @@ data file and a provided mz and rt window. Return ggplot plot object.
 library(faahKO)
 spectraPath <- system.file('cdf/KO/ko15.CDF',package='faahKO')
 peakPantheR_quickEIC(spectraPath,
-                        rt = c(3290., 3410.),
-                        mz = c(522.194778, 522.205222))
+                     rt = c(3290., 3410.),
+                     mz = c(522.194778, 522.205222))
 }

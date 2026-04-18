@@ -8,15 +8,15 @@
 per fitted compound}
 \usage{
 \S4method{outputAnnotationDiagnostic}{peakPantheRAnnotation}(
-    object,
-    saveFolder,
-    savePlots = TRUE,
-    sampleColour = NULL,
-    verbose = TRUE,
-    nCores = 1,
-    BPPARAM = NULL,
-    svgPlot = FALSE,
-    ...
+  object,
+  saveFolder,
+  savePlots = TRUE,
+  sampleColour = NULL,
+  verbose = TRUE,
+  nCores = 1,
+  BPPARAM = NULL,
+  svgPlot = FALSE,
+  ...
 )
 }
 \arguments{

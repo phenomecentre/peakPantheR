@@ -1,2 +1,6 @@
 Changes in version 1.25.1 (2026-04-16)
 - Use `BiocParallel` instead of `doParallel` / `foreach`
+- Internal: decouple I/O from FIR integration; `integrateFIR()` now accepts pre-extracted signal (`FIR_data`) instead of a raw `OnDiskMSnExp` handle
+- Internal: reuse already-extracted ROI signal when FIR windows are contained within ROI bounds, avoiding a redundant raw-data read
+- `peakPantheR_parallelAnnotation()` reuses cached `@dataPoints`/`@TIC`/`@acquisitionTime` when re-annotating an already-annotated object, skipping per-file disk reads for re-fit workflows. Per-file fallback to disk when the cache is missing or malformed
+- New `peakPantheR_updateAnnotationParamsCSV()`: overlay ROI (and optionally uROI / FIR) from a CSV onto an existing `peakPantheRAnnotation`, preserving cached `@dataPoints` / `@TIC` / `@acquisitionTime` so the next `peakPantheR_parallelAnnotation()` refits without re-reading raw spectra

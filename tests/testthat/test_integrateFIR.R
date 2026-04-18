@@ -27,8 +27,11 @@ test_that('no modification, no missing, no verbose', {
   # Expected peakTable
   expected_peakTable  <- full_peakTable
 
+  # No rows need filling -> empty FIR_data
+  FIR_data <- list()
+
   # results (output, warnings and messages)
-  result_integrateFIR <- evaluate_promise(integrateFIR(rawSpec=raw_data, foundPeakTable=full_peakTable, FIR=input_FIR, verbose=TRUE))
+  result_integrateFIR <- evaluate_promise(integrateFIR(FIR_data=FIR_data, foundPeakTable=full_peakTable, FIR=input_FIR, verbose=TRUE))
 
   # Check results
   expect_equal(result_integrateFIR$result, expected_peakTable)
@@ -53,17 +56,26 @@ test_that('3 missing with 1 which gives no scan, verbose', {
   expected_peakTable[4,c(1:11,14:18)] <- c(TRUE, 3670.9201232710702, 3701.697, 3740.0172511251799, 536.1995, 536.20001220703125, 536.2005, 8692184, 8692184, 330176, as.numeric(NA), TRUE, as.numeric(NA), as.numeric(NA), as.numeric(NA), as.numeric(NA))
   expected_peakTable[,c(1,14)]        <- sapply(expected_peakTable[,c(1,14)], as.logical)
   # Expected message
-  expected_messages                   <- c("3 features to integrate with FIR\n", "Reading data from 3 windows\n", "No scan present in the FIR # 3: rt and mz are set as the middle of the FIR box; peakArea, maxIntMeasured and maxIntPredicted are set to 0\n")
+  expected_messages                   <- c("3 features to integrate with FIR\n", "No scan present in the FIR # 3: rt and mz are set as the middle of the FIR box; peakArea, maxIntMeasured and maxIntPredicted are set to 0\n")
+
+  # Pre-extract FIR signal for rows needing filling (2, 3, 4)
+  needsFilling_idx <- which(!notFound_peakTable$found)
+  FIR_data <- extractSignalRawData(raw_data,
+      mz = data.frame(mzMin = input_FIR_empty$mzMin[needsFilling_idx],
+                      mzMax = input_FIR_empty$mzMax[needsFilling_idx]),
+      rt = data.frame(rtMin = input_FIR_empty$rtMin[needsFilling_idx],
+                      rtMax = input_FIR_empty$rtMax[needsFilling_idx]),
+      verbose = FALSE)
 
   # results (output, warnings and messages)
-  result_integrateFIR           <- evaluate_promise(integrateFIR(rawSpec=raw_data, foundPeakTable=notFound_peakTable, FIR=input_FIR_empty, verbose=TRUE))
+  result_integrateFIR           <- evaluate_promise(integrateFIR(FIR_data=FIR_data, foundPeakTable=notFound_peakTable, FIR=input_FIR_empty, verbose=TRUE))
 
   # Check results
   expect_equal(result_integrateFIR$result, expected_peakTable)
 
   # Check messages (cannot check time on message)
-  expect_equal(length(result_integrateFIR$messages), 5)
-  expect_equal(result_integrateFIR$messages[c(1,2,4)], expected_messages)
+  expect_equal(length(result_integrateFIR$messages), 3)
+  expect_equal(result_integrateFIR$messages[c(1,2)], expected_messages)
 })
 
 test_that('raise errors', {
@@ -71,7 +83,7 @@ test_that('raise errors', {
   wrongFIRsize    <- input_FIR[1:3,]
 
   # foundPeakTable and FIR dimension mismatch
-  expect_error(integrateFIR(rawSpec=raw_data, foundPeakTable=full_peakTable, FIR=wrongFIRsize, verbose=TRUE), "Check input, FIR must have the same number of rows as foundPeakTable")
+  expect_error(integrateFIR(FIR_data=list(), foundPeakTable=full_peakTable, FIR=wrongFIRsize, verbose=TRUE), "Check input, FIR must have the same number of rows as foundPeakTable")
 })
 
 

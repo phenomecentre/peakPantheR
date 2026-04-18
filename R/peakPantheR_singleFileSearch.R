@@ -40,6 +40,18 @@
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
 #' peak-picking parameters (e.g. \code{curveModel}, \code{sampling},
 #' \code{params} as a list of parameters for each ROI or 'guess',...)
+#' @param cachedROIsDataPoint (list or NULL) Optional. If supplied, skip
+#' reading the raw file and reuse this list of \code{data.frame(rt, mz, int)}
+#' (one element per row of \code{targetFeatTable}, as produced by a previous
+#' call to \code{extractSignalRawData}). The cached data must cover the rt
+#' and mz bounds in \code{targetFeatTable}; it is row-subset to the current
+#' window before fitting.
+#' @param cachedTIC (numeric or NULL) Optional. When \code{cachedROIsDataPoint}
+#' is supplied, this value is returned as \code{TIC} instead of computing it
+#' from the raw file.
+#' @param cachedAcquTime (character, POSIXct or NULL) Optional. When
+#' \code{cachedROIsDataPoint} is supplied and \code{getAcquTime=TRUE}, this
+#' value is returned as \code{acquTime} instead of parsing the mzML header.
 #'
 #' @return a list: \code{list()$TIC} \emph{(int)} TIC value,
 #' \code{list()$peakTable} \emph{(data.frame)} targeted features results
@@ -219,34 +231,45 @@
 #' @export
 peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
     peakStatistic = FALSE, plotEICsPath = NA, getAcquTime = FALSE, FIR = NULL,
-    centroided = TRUE, curveModel='skewedGaussian', verbose = TRUE, ...) {
+    centroided = TRUE, curveModel='skewedGaussian', verbose = TRUE,
+    cachedROIsDataPoint = NULL, cachedTIC = NULL, cachedAcquTime = NULL, ...) {
     stime <- Sys.time()
-    # Check input
+    useCache <- !is.null(cachedROIsDataPoint)
+    # Check input (skip file-existence when cache is supplied)
     resInp <- singleFileSearch_checkInput(singleSpectraDataPath,targetFeatTable,
-                                            plotEICsPath, FIR, curveModel)
+                                            plotEICsPath, FIR, curveModel,
+                                            skipFileExists = useCache)
     singleSpectraDataPath <- resInp$specPath
     plotEICsPath <- resInp$plotPath
     useFIR <- resInp$useFIR
-    
-    # Read file
-    raw_data <- MSnbase::readMSData(singleSpectraDataPath,
-                                    centroided = centroided, mode = "onDisk")
-    
-    # Get TIC
-    TICvalue <- sum(MSnbase::tic(raw_data))
-        #, initial=FALSE to calculate from raw and not header
-    
-    # Get AcquTime
-    AcquTime <- NA
-    if (getAcquTime) {
-        AcquTime <- getAcquisitionDatemzML(mzMLPath = singleSpectraDataPath,
-                                            verbose = verbose) }
-    
-    # Get ROIsDataPoint (return empty list if no windows)
-    ROIsDataPoint <- extractSignalRawData(raw_data,
+
+    if (useCache) {
+        if (verbose) { message("Reusing cached EIC data for ",
+            tools::file_path_sans_ext(basename(singleSpectraDataPath))) }
+        raw_data <- NULL
+        TICvalue <- if (is.null(cachedTIC)) as.numeric(NA) else cachedTIC
+        AcquTime <- if (getAcquTime && !is.null(cachedAcquTime))
+                        cachedAcquTime else NA
+        ROIsDataPoint <- subset_cached_ROIsDataPoint(cachedROIsDataPoint,
+                                                    targetFeatTable)
+    } else {
+        # Read file
+        raw_data <- MSnbase::readMSData(singleSpectraDataPath,
+                                        centroided = centroided, mode = "onDisk")
+        # Get TIC
+        TICvalue <- sum(MSnbase::tic(raw_data))
+            #, initial=FALSE to calculate from raw and not header
+        # Get AcquTime
+        AcquTime <- NA
+        if (getAcquTime) {
+            AcquTime <- getAcquisitionDatemzML(mzMLPath = singleSpectraDataPath,
+                                                verbose = verbose) }
+        # Get ROIsDataPoint (return empty list if no windows)
+        ROIsDataPoint <- extractSignalRawData(raw_data,
                                     rt = targetFeatTable[, c("rtMin", "rtMax")],
                                     mz = targetFeatTable[, c("mzMin", "mzMax")],
                                     verbose = verbose)
+    }
 
     # Integrate
     resInt <- singleFileSearch_integrate(raw_data, targetFeatTable,
@@ -274,10 +297,11 @@ peakPantheR_singleFileSearch <- function(singleSpectraDataPath, targetFeatTable,
 
 # Check inputs
 singleFileSearch_checkInput <- function(singleSpectraDataPath, targetFeatTable,
-                                        plotEICsPath, FIR, curveModel) {
+                                        plotEICsPath, FIR, curveModel,
+                                        skipFileExists = FALSE) {
     singleSpectraDataPath <- normalizePath(singleSpectraDataPath,
                                             mustWork = FALSE)
-    if (!file.exists(singleSpectraDataPath)) {
+    if (!skipFileExists && !file.exists(singleSpectraDataPath)) {
     stop("Check input, file \"", singleSpectraDataPath, "\" does not exist") }
 
     if (dim(targetFeatTable)[1] != 0) {
@@ -344,7 +368,11 @@ singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
                                                 finalOutput, verbose = verbose)}
         # Fill features not found based on FIR
         if (useFIR) {
-            finalOutput <- integrateFIR(raw_data, FIR, finalOutput,
+            FIR_data <- build_FIR_data(raw_data, ROIsDataPoint,
+                targetFeatTable, FIR,
+                needsFilling_idx = which(!finalOutput$found),
+                verbose = verbose)
+            finalOutput <- integrateFIR(FIR_data, FIR, finalOutput,
                                         verbose = verbose) }
         # Save all EICs plot
         if (!is.na(plotEICsPath)) {
@@ -372,4 +400,88 @@ singleFileSearch_integrate <- function(raw_data, targetFeatTable, ROIsDataPoint,
         curveFit <- list()
     }
     return(list(finalOutput=finalOutput, curveFit=curveFit))
+}
+
+# Row-subset each cached ROIsDataPoint entry by the current rt/mz bounds in
+# targetFeatTable. Used when annotating from cached @dataPoints; the cache may
+# hold a wider window than the current run requests.
+subset_cached_ROIsDataPoint <- function(cachedROIsDataPoint, targetFeatTable) {
+    n <- nrow(targetFeatTable)
+    out <- vector("list", n)
+    for (i in seq_len(n)) {
+        df <- cachedROIsDataPoint[[i]]
+        if (is.null(df) || nrow(df) == 0) {
+            out[[i]] <- df
+            next
+        }
+        keep <- df$rt >= targetFeatTable$rtMin[i] &
+                df$rt <= targetFeatTable$rtMax[i] &
+                df$mz >= targetFeatTable$mzMin[i] &
+                df$mz <= targetFeatTable$mzMax[i]
+        sub <- df[keep, , drop = FALSE]
+        rownames(sub) <- NULL
+        out[[i]] <- sub
+    }
+    return(out)
+}
+
+
+# Build FIR_data for integrateFIR, reusing ROIsDataPoint when FIR[i] is
+# contained in targetFeatTable[i] (rt and mz bounds). Contained rows are
+# subset from memory; non-contained rows are pulled in a single batched
+# extractSignalRawData() call.
+build_FIR_data <- function(raw_data, ROIsDataPoint, targetFeatTable, FIR,
+                            needsFilling_idx, verbose = TRUE) {
+    n <- length(needsFilling_idx)
+    if (n == 0) { return(list()) }
+
+    # Per-row containment: FIR[i] subset of targetFeatTable[i]
+    i_idx     <- needsFilling_idx
+    contained <- (FIR$rtMin[i_idx] >= targetFeatTable$rtMin[i_idx]) &
+                    (FIR$rtMax[i_idx] <= targetFeatTable$rtMax[i_idx]) &
+                    (FIR$mzMin[i_idx] >= targetFeatTable$mzMin[i_idx]) &
+                    (FIR$mzMax[i_idx] <= targetFeatTable$mzMax[i_idx])
+    contained[is.na(contained)] <- FALSE
+
+    out     <- vector("list", n)
+    n_reuse <- sum(contained)
+
+    # Reused rows: subset ROIsDataPoint by FIR bounds
+    if (n_reuse != 0) {
+        if (verbose) {
+            message("FIR data reused from ROI for ", n_reuse, "/", n,
+                    " windows") }
+        reuse_local <- which(contained)
+        for (k in reuse_local) {
+            i    <- i_idx[k]
+            roi  <- ROIsDataPoint[[i]]
+            keep <- roi$rt >= FIR$rtMin[i] & roi$rt <= FIR$rtMax[i] &
+                    roi$mz >= FIR$mzMin[i] & roi$mz <= FIR$mzMax[i]
+            sub  <- roi[keep, , drop = FALSE]
+            rownames(sub) <- NULL
+            out[[k]] <- sub
+        }
+    }
+
+    # Remaining rows: single batched extract
+    if (n_reuse != n) {
+        extract_local <- which(!contained)
+        extract_i     <- i_idx[extract_local]
+        if (is.null(raw_data)) {
+            stop("Cached annotation in use; FIR window for row(s) ",
+                paste(extract_i, collapse = ", "),
+                " not contained in ROI - re-extraction requires raw data")
+        }
+        extracted <- extractSignalRawData(raw_data,
+            mz = data.frame(mzMin = FIR$mzMin[extract_i],
+                            mzMax = FIR$mzMax[extract_i]),
+            rt = data.frame(rtMin = FIR$rtMin[extract_i],
+                            rtMax = FIR$rtMax[extract_i]),
+            verbose = verbose)
+        for (j in seq_along(extract_local)) {
+            out[[extract_local[j]]] <- extracted[[j]]
+        }
+    }
+
+    return(out)
 }

@@ -2,7 +2,11 @@
 #'
 #' @description Integrate region defined in FIR if a feature is not found
 #'
-#' @param rawSpec an \code{\link[MSnbase]{OnDiskMSnExp-class}}
+#' @param FIR_data (list) Pre-extracted raw signal for each FIR window of rows
+#' needing filling (i.e. rows where \code{foundPeakTable$found} is
+#' \code{FALSE}), in the same order as those rows. Each element is a
+#' \code{data.frame} with columns \code{rt}, \code{mz}, \code{i} as produced by
+#' \code{\link{extractSignalRawData}}.
 #' @param FIR (data.frame) Fallback Integration Regions (FIR) to integrate when
 #' a feature is not found. Compounds as row are identical to the targeted
 #' features, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in
@@ -16,7 +20,7 @@
 #' @param verbose (bool) if TRUE message progress
 #'
 #' @return an updated foundPeakTable with FIR integration values
-integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
+integrateFIR <- function(FIR_data, FIR, foundPeakTable, verbose = TRUE) {
     # Check input
     if (dim(FIR)[1] != dim(foundPeakTable)[1]) {
         stop("Check input, FIR must have the same number of rows as ",
@@ -38,15 +42,8 @@ integrateFIR <- function(rawSpec, FIR, foundPeakTable, verbose = TRUE) {
                                                 "peakArea", "peakAreaRaw",
                                                 "maxIntMeasured",
                                                 "maxIntPredicted"))))
-        # extract data for all fallback windows from raw (list of windows)
-        all_peakData <- extractSignalRawData(rawSpec,
-            mz = data.frame(mzMin = FIR$mzMin[needsFilling_idx],
-                mzMax = FIR$mzMax[needsFilling_idx]),
-            rt = data.frame(rtMin = FIR$rtMin[needsFilling_idx],
-                rtMax = FIR$rtMax[needsFilling_idx]),
-            verbose = verbose)
         # iterate over features to integrate
-        tmpResult <- integrateFIR_features(needsFilling_idx, all_peakData, FIR,
+        tmpResult <- integrateFIR_features(needsFilling_idx, FIR_data, FIR,
                                             tmpResult, verbose)
         # Replace results with FIR integration
         outTable[needsFilling_idx,

@@ -5,8 +5,8 @@
 \title{UI data import helper - prepare file paths and metadata}
 \usage{
 spectraPaths_and_metadata_UI_helper(
-    spectraPaths = NULL,
-    spectraMetadataPath = NULL
+  spectraPaths = NULL,
+  spectraMetadataPath = NULL
 )
 }
 \arguments{
@@ -32,18 +32,18 @@ input_spectraPaths    <- c('./path/file1', './path/file2', './path/file3')
 
 # spectraMetadata
 input_spectraMetadata <- data.frame(matrix(data=c(input_spectraPaths,
-                            c('a','b','c')), nrow=3, ncol=2,
-                            dimnames=list(c(),c('filepath', 'testcol')),
-                            byrow=FALSE), stringsAsFactors=FALSE)
+                         c('a','b','c')), nrow=3, ncol=2,
+                         dimnames=list(c(),c('filepath', 'testcol')),
+                         byrow=FALSE), stringsAsFactors=FALSE)
 
 # temporary file location
 spectraMetaPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.csv')
 # save csv
 utils::write.csv(input_spectraMetadata,
-                    file=spectraMetaPath,
-                    row.names=FALSE)
+                 file=spectraMetaPath,
+                 row.names=FALSE)
 
 # load data from CSV
 spectraPaths_and_metadata_UI_helper(spectraPaths = NULL,
-                                    spectraMetadataPath = spectraMetaPath)
+                                     spectraMetadataPath = spectraMetaPath)
 }

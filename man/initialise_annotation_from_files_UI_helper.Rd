@@ -5,11 +5,11 @@
 \title{UI data import helper - initialise new annotation from files}
 \usage{
 initialise_annotation_from_files_UI_helper(
-    CSVParamPath,
-    spectraPaths,
-    cpdMetadataPath = NULL,
-    spectraMetadata = NULL,
-    verbose = TRUE
+  CSVParamPath,
+  spectraPaths,
+  cpdMetadataPath = NULL,
+  spectraMetadata = NULL,
+  verbose = TRUE
 )
 }
 \arguments{

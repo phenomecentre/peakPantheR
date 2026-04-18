@@ -5,14 +5,14 @@
 \title{Search, integrate and report targeted features in a multiple spectra}
 \usage{
 peakPantheR_parallelAnnotation(
-    object,
-    BPPARAM = NULL,
-    nCores = 1,
-    getAcquTime = TRUE,
-    centroided = TRUE,
-    curveModel = "skewedGaussian",
-    verbose = TRUE,
-    ...
+  object,
+  BPPARAM = NULL,
+  nCores = 1,
+  getAcquTime = TRUE,
+  centroided = TRUE,
+  curveModel = "skewedGaussian",
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{

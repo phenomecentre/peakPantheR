@@ -2,8 +2,7 @@
 % Please edit documentation in R/peakPantheR_loadAnnotationParamsCSV.R
 \name{prepare_basic_target_parameters}
 \alias{prepare_basic_target_parameters}
-\title{Process target region parameters (simple format) for object
-initialisation}
+\title{Process target region parameters (simple format) for object initialisation}
 \usage{
 prepare_basic_target_parameters(paramTable)
 }

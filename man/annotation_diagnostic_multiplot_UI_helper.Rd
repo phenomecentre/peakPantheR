@@ -5,11 +5,11 @@
 \title{UI diagnostic plot helper - single feature multiplot}
 \usage{
 annotation_diagnostic_multiplot_UI_helper(
-    cpdNb,
-    annotation,
-    splNum = NULL,
-    splColrColumn = NULL,
-    ...
+  cpdNb,
+  annotation,
+  splNum = NULL,
+  splColrColumn = NULL,
+  ...
 )
 }
 \arguments{
@@ -55,9 +55,9 @@ emptyAnnotation <- peakPantheRAnnotation(spectraPaths=spectraPaths,
 
 # Plot of an empty annotation
 annotation_diagnostic_multiplot_UI_helper(cpdNb = 2,
-                                            annotation = emptyAnnotation,
-                                            splNum = NULL,
-                                            splColrColumn = NULL)
+                                         annotation = emptyAnnotation,
+                                         splNum = NULL,
+                                         splColrColumn = NULL)
 # Warning: the object has not been annotated, return an empty diagnostic
 # plot list
 }
