@@ -4,7 +4,7 @@
 \name{ROI,peakPantheRAnnotation-method}
 \alias{ROI,peakPantheRAnnotation-method}
 \alias{ROI}
-\title{ROI accessor returns targetFeatTable with cpdID, cpdName added}
+\title{ROI accessor returns targetFeatTable with cpdID, cpdName added.}
 \usage{
 \S4method{ROI}{peakPantheRAnnotation}(object)
 }
@@ -16,7 +16,11 @@
 parameters as columns
 }
 \description{
-ROI accessor returns targetFeatTable with cpdID, cpdName added
+\code{ROI} is the extraction envelope: defines what is read from disk
+into \code{@dataPoints} and acts as the cache key. Widening \code{ROI}
+triggers re-read of LC-MS data on the next
+'\code{peakPantheR_parallelAnnotation} call. Narrowing the integration
+window for a refit should be done on \code{uROI} instead.
 }
 \examples{
 if(requireNamespace('faahKO')){

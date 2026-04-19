@@ -55,17 +55,41 @@ will:
 `r Biocpkg("faahKO")` dataset
 
 ## Abbreviations
-- **ROI**: _Regions Of Interest_ 
+- **ROI**: _Regions Of Interest_
     * reference _RT_ / _m/z_ windows in which to search for a feature
 - **uROI**: _updated Regions Of Interest_
-    * modifed ROI adapted to the current dataset which override the reference 
+    * modifed ROI adapted to the current dataset which override the reference
     ROI
-- **FIR**: _Fallback Integration Regions_ 
+- **FIR**: _Fallback Integration Regions_
     * _RT_ / _m/z_ window to integrate if no peak is found
-- **TIC**: _Total Ion Chromatogram_ 
+- **TIC**: _Total Ion Chromatogram_
     * the intensities summed across all masses for each scan
-- **EIC**: _Extracted Ion Chromatogram_ 
+- **EIC**: _Extracted Ion Chromatogram_
     * the intensities summed over a mass range, for each scan
+
+## Distinction between the three "Region of Interest" slots
+`peakPantheR` tracks three conceptually distinct _RT_ / _m/z_ windows per
+compound.
+
+- **`@ROI`** — Acts as a broader EIC _extraction envelope_. Defines what is
+read from the raw file into `@dataPoints`. The initial data read will then be
+stored in subsequent fits, and re-used to avoid intensive data I/O.
+Widening `@ROI` invalidates the cache and forces reading from the LC-MS
+files on the next annotation.
+- **`@uROI`** — _integration window_. What `findTargetFeatures` searches
+within. This slot will be updated by the user when reviewing the integration
+boundaries and refitting. Must satisfy `uROI ⊆ ROI` so refits used the cached
+data.
+- **`@FIR`** — _fallback integration window_. When `useFIR = TRUE` and a
+fit fails inside `@uROI`, the raw signal is integrated over `@FIR` and the
+resulting row is flagged `is_filled = TRUE`. Must satisfy `FIR ⊆ ROI`.
+
+There are also two related switches:
+
+- `@useFIR` selects `useFIR = FALSE` propagates failed fits
+as `NA`; `useFIR = TRUE` produces filled rows via numerical integration of the `@FIR`.
+- `@useUROI` should be kept as `TRUE` after the initial data read and is
+scheduled for deprecation.
 
 
 # Parallel Annotation Concept

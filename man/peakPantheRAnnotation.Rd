@@ -28,7 +28,8 @@ peakPantheRAnnotation(
   peakTables = list(),
   dataPoints = list(),
   peakFit = list(),
-  isAnnotated = FALSE
+  isAnnotated = FALSE,
+  .deprecationSilent = FALSE
 )
 
 peakPantheRAnnotation(
@@ -53,7 +54,8 @@ peakPantheRAnnotation(
   peakTables = list(),
   dataPoints = list(),
   peakFit = list(),
-  isAnnotated = FALSE
+  isAnnotated = FALSE,
+  .deprecationSilent = FALSE
 )
 }
 \arguments{
@@ -162,16 +164,27 @@ compounds}
 \item{\code{ROI}}{A data.frame of Regions Of Interest (ROI) with compounds as row and
 ROI parameters as columns: \code{rtMin} (float in seconds), \code{rt} (float
 in seconds, or \emph{NA}), \code{rtMax} (float in seconds), \code{mzMin}
-(float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
+(float), \code{mz} (float or \emph{NA}), \code{mzMax} (float). \code{ROI}
+is the \emph{extraction envelope}: it defines what is read from disk into
+\code{@dataPoints} and acts as the cache key. Manually extending \code{ROI}
+will invalidate the cached \code{@dataPoints} and require reading LC-MS data again.}
 
 \item{\code{FIR}}{A data.frame of Fallback Integration Regions (FIR) with compounds
 as row and FIR parameters as columns: \code{rtMin} (float in seconds),
-\code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).}
+\code{rtMax} (float in seconds), \code{mzMin} (float), \code{mzMax} (float).
+\code{FIR} is the fallback integration window used when \code{useFIR = TRUE}
+and a peak fit fails inside \code{uROI}: the raw signal is integrated over
+\code{FIR} and the resulting row is flagged \code{is_filled = TRUE}
+Must satisfy \code{FIR \eqn{\subseteq} ROI}.}
 
 \item{\code{uROI}}{A data.frame of updated Regions Of Interest (uROI) with compounds
 as row and uROI parameters as columns: \code{rtMin} (float in seconds),
 \code{rt} (float in seconds, or \emph{NA}), \code{rtMax} (float in seconds),
-\code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).}
+\code{mzMin} (float), \code{mz} (float or \emph{NA}), \code{mzMax} (float).
+\code{uROI} represents the \emph{integration window}: what
+'\code{findTargetFeatures} searches within. Slot meant to be updated
+by the user when reviewing integration and fit. Must satisfy
+'\code{uROI \eqn{\subseteq} ROI}.}
 
 \item{\code{filepath}}{A character vector of file paths, of length number of spectra
 files}

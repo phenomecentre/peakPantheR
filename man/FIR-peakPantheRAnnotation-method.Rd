@@ -4,7 +4,7 @@
 \name{FIR,peakPantheRAnnotation-method}
 \alias{FIR,peakPantheRAnnotation-method}
 \alias{FIR}
-\title{FIR accessor returns targetFeatTable with cpdID, cpdName added}
+\title{FIR accessor returns targetFeatTable with cpdID, cpdName added.}
 \usage{
 \S4method{FIR}{peakPantheRAnnotation}(object)
 }
@@ -16,7 +16,10 @@
 parameters as columns
 }
 \description{
-FIR accessor returns targetFeatTable with cpdID, cpdName added
+\code{FIR} is the fallback integration window used when \code{useFIR = TRUE}
+and a peak fit fails inside \code{uROI}: the raw signal is integrated over
+\code{FIR} and the resulting row is flagged \code{is_filled = TRUE}
+Must satisfy \code{FIR \eqn{\subseteq} ROI}.
 }
 \examples{
 if(requireNamespace('faahKO')){

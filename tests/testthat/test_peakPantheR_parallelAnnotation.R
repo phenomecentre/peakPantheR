@@ -569,7 +569,7 @@ test_that('catch file that doesnt exist, catch error processing, no file left', 
   expected_annotation             <- initAnnotation[c(FALSE, FALSE),]
   expected_annotation@isAnnotated <- FALSE
   # Expected message (have to remove Error file does not exist as it now returns a path)
-  expected_message    <- c("Processing 4 compounds in 2 samples:\n", "  uROI:\tFALSE\n", "  FIR:\tFALSE\n", "----------------\n", "No file left in the object!\n", "Annotation object reordered by sample acquisition date\n", "----------------\n", "  2 failure(s)\n")
+  expected_message    <- c("Processing 4 compounds in 2 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tFALSE\n", "----------------\n", "No file left in the object!\n", "Annotation object reordered by sample acquisition date\n", "----------------\n", "  2 failure(s)\n")
 
   # results (output, warnings and messages)
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, BPPARAM=BPPARAM_parallel, getAcquTime=FALSE, verbose=TRUE))

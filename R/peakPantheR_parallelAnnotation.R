@@ -407,18 +407,26 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
     return(list(outObject=outObject, fail_table=fail_table)) }
 
 
-# Per-file cache shape check: `cached_points` must be a length-matching list
-# of non-empty `data.frame(rt, mz, int)`. Returns FALSE if any row's cache is
-# empty or missing so the file falls back to a fresh disk read. Exact bounds
-# coverage cannot be asserted from scan data alone (data rows sit strictly
-# inside the requested window), so callers relying on cache reuse should only
-# narrow bounds between runs — widening silently returns cached data only.
-cache_bounds_ok <- function(cached_points, targetFeatTable) {
+# Per-file cache boundary check: the cache was filled using `extractionROI`
+# (i.e. `object@ROI`) as the extraction envelope, so a hit requires
+# `targetFeatTable[i, ] ⊆ extractionROI[i, ]` for every row, plus the cache
+# list shape to match. Returns FALSE if any row's cache is empty/missing, or
+# the target window sits outside what was read from disk, triggering a fresh
+# disk read instead of silently truncating the EIC.
+cache_bounds_ok <- function(cached_points, targetFeatTable, extractionROI) {
     if (is.null(cached_points)) { return(FALSE) }
     if (length(cached_points) != nrow(targetFeatTable)) { return(FALSE) }
+    if (is.null(extractionROI) ||
+        nrow(extractionROI) != nrow(targetFeatTable)) { return(FALSE) }
     for (i in seq_len(nrow(targetFeatTable))) {
         df <- cached_points[[i]]
         if (is.null(df) || !is.data.frame(df) || nrow(df) == 0) {
+            return(FALSE)
+        }
+        tgt <- targetFeatTable[i, ]
+        env <- extractionROI[i, ]
+        if (env$rtMin > tgt$rtMin || env$rtMax < tgt$rtMax ||
+            env$mzMin > tgt$mzMin || env$mzMax < tgt$mzMax) {
             return(FALSE)
         }
     }
@@ -443,7 +451,7 @@ build_parallelAnnotation_cache <- function(object, target_peak_table, verbose){
     anyHit <- FALSE
     for (i in seq_len(nFiles)) {
         dp_i <- if (length(cached_dp) >= i) cached_dp[[i]] else NULL
-        if (cache_bounds_ok(dp_i, target_peak_table)) {
+        if (cache_bounds_ok(dp_i, target_peak_table, object@ROI)) {
             cacheList[[i]] <- list(
                 dataPoints = dp_i,
                 TIC = if (length(cached_tic) >= i) cached_tic[i]

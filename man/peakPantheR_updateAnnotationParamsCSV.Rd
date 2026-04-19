@@ -4,19 +4,29 @@
 \alias{peakPantheR_updateAnnotationParamsCSV}
 \title{Update fit parameters from CSV on an existing annotation}
 \usage{
-peakPantheR_updateAnnotationParamsCSV(annotation, CSVParamPath, verbose = TRUE)
+peakPantheR_updateAnnotationParamsCSV(
+  annotation,
+  CSVParamPath,
+  target = c("uROI", "ROI"),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{annotation}{(peakPantheRAnnotation) An existing annotation object.}
 
 \item{CSVParamPath}{(str) Path to a CSV file of fit parameters.}
 
+\item{target}{(str) For basic-layout CSVs, which slot(s) to update. Either
+\code{"uROI"} (default; updates \code{@uROI} and \code{@FIR}) or
+\code{"ROI"} (legacy; updates \code{@ROI} only, with a deprecation
+message). Ignored for advanced-layout CSVs, which always update all three.}
+
 \item{verbose}{(bool) If TRUE message progress.}
 }
 \value{
-(peakPantheRAnnotation) The input object with updated ROI
-(and uROI, FIR, uROIExist when the advanced format is supplied). All other
-slots, including \code{@dataPoints}, are left untouched.
+(peakPantheRAnnotation) The input object with updated bound slots.
+Cache-bearing slots (\code{@dataPoints}, \code{@TIC},
+\code{@acquisitionTime}) and previous results are left untouched.
 }
 \description{
 Overlay ROI (and optionally uROI and FIR) bounds on an existing
@@ -32,9 +42,17 @@ bounds without re-reading raw spectra from disk when bounds remain within
 the cached ROI.
 
 The CSV format follows \code{peakPantheR_loadAnnotationParamsCSV}: either
-the basic layout (\code{cpdID, cpdName, rtMin, rt, rtMax, mzMin, mz, mzMax})
-which only updates ROI, or the advanced layout (\code{ROI_*, uROI_*, FIR_*}
-columns) which also updates uROI, FIR and \code{uROIExist}.
+the basic layout (\code{cpdID, cpdName, rtMin, rt, rtMax, mzMin, mz, mzMax}),
+or the advanced layout (\code{ROI_*, uROI_*, FIR_*} columns) which updates
+all three bound slots and \code{uROIExist}.
+
+A basic CSV updates the integration window (\code{@uROI}) and the fallback
+integration window (\code{@FIR}) in lockstep, leaving the extraction
+envelope (\code{@ROI}) untouched. This matches the cache-oriented model
+where \code{@ROI} is the stable cache key and \code{@uROI} is the
+user-mutable integration target. Pass \code{target = "ROI"} to restore the
+previous behaviour (basic CSV writes to \code{@ROI}); this emits a
+deprecation message and will be removed in a future release.
 
 The CSV must describe the same compounds, in the same order, as the input
 annotation (\code{cpdID} match). Use \code{peakPantheR_loadAnnotationParamsCSV}

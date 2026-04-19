@@ -67,8 +67,18 @@ peakPantheRAnnotation <- function(spectraPaths = NULL,
     spectraMetadata = data.frame(), acquisitionTime = character(),
     uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE, TIC = numeric(),
     peakTables = list(), dataPoints = list(), peakFit = list(),
-    isAnnotated = FALSE) {
-    
+    isAnnotated = FALSE, .deprecationSilent = FALSE) {
+
+    # Soft-deprecate user-facing `useUROI`: `@uROI` is now always the
+    # integration target once seeded from `@ROI`. Only warn when called from
+    # user code; internal rebuild paths (subset `[`, resetAnnotation) set
+    # `.deprecationSilent = TRUE` to avoid noise.
+    if (!missing(useUROI) && !isTRUE(.deprecationSilent)) {
+        message('Note: the "useUROI" argument is deprecated and will be ',
+                'removed in a future release. @uROI is always the integration ',
+                'window once seeded from @ROI.')
+    }
+
     # set spectra if spectraPaths is provided
     if (!is.null(spectraPaths)) {
         initSpec <- initialize_spectraPaths(spectraPaths, acquisitionTime, TIC,
@@ -169,27 +179,21 @@ initialize_targetFeatTable <- function(targetFeatTable, cpdMetadata, FIR, uROI,
     if (dim(cpdMetadata)[1] != nbCompound) {
         cpdMetadata <- data.frame(matrix(, nrow = nbCompound, ncol = 0))
     }
-    # only set FIR and uROI to the correct size if not provided in input (at the
-    # correct size)
+    # Seed FIR and uROI from ROI when not explicitly provided. @ROI is the
+    # extraction envelope and cache key; @uROI is the integration window and is
+    # what is used to refit targets once setup; @FIR is the fallback integration
+    # window used when `useFIR = TRUE`. Seeding both from ROI guarantees the
+    # `uROI ⊆ ROI` and `FIR ⊆ ROI` invariants and avoids users having to
+    # re-enter bounds to toggle `useFIR`.
     if (dim(FIR)[1] != nbCompound) {
-        FIR <- data.frame(rtMin = as.numeric(rep(NA, nbCompound)),
-                            rtMax = as.numeric(rep(NA, nbCompound)),
-                            mzMin = as.numeric(rep(NA, nbCompound)),
-                            mzMax = as.numeric(rep(NA, nbCompound)),
+        FIR <- data.frame(rtMin = ROI$rtMin, rtMax = ROI$rtMax,
+                            mzMin = ROI$mzMin, mzMax = ROI$mzMax,
                             stringsAsFactors = FALSE)
     }
     if (dim(uROI)[1] != nbCompound) {
-        uROI <- data.frame(rtMin = as.numeric(rep(NA, nbCompound)),
-                            rt = as.numeric(rep(NA, nbCompound)),
-                            rtMax = as.numeric(rep(NA, nbCompound)),
-                            mzMin = as.numeric(rep(NA, nbCompound)),
-                            mz = as.numeric(rep(NA, nbCompound)),
-                            mzMax = as.numeric(rep(NA, nbCompound)),
-                            stringsAsFactors = FALSE)
-        # if we reset, it doesn't exist
-        uROIExist <- FALSE
-        # if we reset, it can't be used
-        useUROI <- FALSE
+        uROI <- ROI
+        uROIExist <- TRUE
+        useUROI <- TRUE
     }
 
     return(list(cpdID=cpdID, cpdName=cpdName, cpdMeta=cpdMetadata, ROI=ROI,
