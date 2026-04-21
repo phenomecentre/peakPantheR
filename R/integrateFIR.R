@@ -5,8 +5,8 @@
 #' @param FIR_data (list) Pre-extracted raw signal for each FIR window of rows
 #' needing filling (i.e. rows where \code{foundPeakTable$found} is
 #' \code{FALSE}), in the same order as those rows. Each element is a
-#' \code{data.frame} with columns \code{rt}, \code{mz}, \code{i} as produced by
-#' \code{\link{extractSignalRawData}}.
+#' \code{data.frame} with columns \code{rt}, \code{mz}, \code{int} as produced
+#' by \code{\link{extractSignalRawData}}.
 #' @param FIR (data.frame) Fallback Integration Regions (FIR) to integrate when
 #' a feature is not found. Compounds as row are identical to the targeted
 #' features, columns are \code{rtMin} (float in seconds), \code{rtMax} (float in
@@ -80,21 +80,21 @@ integrateFIR_features <- function(needsFilling_idx, all_peakData, FIR,
             tmpResult[i, c("mzMin", "mzMax", "rtMin", "rtMax")] <- FIR[i,
                 c("mzMin", "mzMax", "rtMin", "rtMax")]
             # rt (rt of max intensity)
-            tmpResult[i, "rt"] <- peakData$rt[which.max(peakData$i)]
+            tmpResult[i, "rt"] <- peakData$rt[which.max(peakData$int)]
             # mz (weighted average of total intensity across all rt for each mz)
             # total intensity across rt for each mz
             mzRange <- unique(peakData$mz)
             mzTotalIntensity <- vapply(mzRange, function(x) {
-            sum(peakData$i[peakData$mz == x])}, FUN.VALUE = numeric(1))
+            sum(peakData$int[peakData$mz == x])}, FUN.VALUE = numeric(1))
             # mz (is weighted average)
             tmpResult[i, "mz"] <- stats::weighted.mean(mzRange,mzTotalIntensity)
             # maxIntMeasured (max intensity)
-            tmpResult[i, "maxIntMeasured"] <- max(peakData$i)
+            tmpResult[i, "maxIntMeasured"] <- max(peakData$int)
             # maxIntPredicted is NA (we don't have a fit)
             tmpResult[i, "maxIntPredicted"] <- as.numeric(NA)
             # into max intensity across mz for each rt
             rtMaxIntensity <- vapply(rtRange, function(x) {
-            max(peakData$i[peakData$rt == x])}, FUN.VALUE = numeric(1))
+            max(peakData$int[peakData$rt == x])}, FUN.VALUE = numeric(1))
             # peakArea/peakAreaRaw calculated trapezoid rule
             peakArea <- pracma::trapz(x=rtRange, y=rtMaxIntensity)
             tmpResult[i, "peakArea"] <- peakArea

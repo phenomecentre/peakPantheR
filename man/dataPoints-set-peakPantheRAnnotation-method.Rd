@@ -23,7 +23,7 @@ Replace the \code{@dataPoints} slot of a \code{peakPantheRAnnotation}.
 The supplied \code{value} must be a list of length \code{nbSamples(object)}.
 Each non-NULL element must be a list of length \code{nbCompounds(object)}
 whose entries are \code{data.frame}s with columns \code{rt}, \code{mz},
-\code{int}. Validity is checked with \code{validObject()}.
+\code{int}. Validity is enforced with \code{validObject()}.
 }
 \details{
 Other slots (\code{@ROI}, \code{@uROI}, \code{@FIR}, \code{@peakFit},

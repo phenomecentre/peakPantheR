@@ -10,8 +10,8 @@ integrateFIR(FIR_data, FIR, foundPeakTable, verbose = TRUE)
 \item{FIR_data}{(list) Pre-extracted raw signal for each FIR window of rows
 needing filling (i.e. rows where \code{foundPeakTable$found} is
 \code{FALSE}), in the same order as those rows. Each element is a
-\code{data.frame} with columns \code{rt}, \code{mz}, \code{i} as produced by
-\code{\link{extractSignalRawData}}.}
+\code{data.frame} with columns \code{rt}, \code{mz}, \code{int} as produced
+by \code{\link{extractSignalRawData}}.}
 
 \item{FIR}{(data.frame) Fallback Integration Regions (FIR) to integrate when
 a feature is not found. Compounds as row are identical to the targeted

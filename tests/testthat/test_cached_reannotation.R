@@ -117,6 +117,48 @@ test_that('cache hit when uROI narrows inside ROI; miss when it widens', {
 })
 
 
+test_that('FIR inside ROI but outside uROI is served from cache (no disk read)', {
+    # First run populates @dataPoints at ROI bounds
+    first <- peakPantheR_parallelAnnotation(init_annotation,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = FALSE)
+    annot <- first$annotation
+
+    # Narrow uROI to a region with no peak signal so the refit records
+    # found=FALSE and FIR integration kicks in.
+    annot@uROI <- data.frame(
+        rtMin = c(3355, 3710),
+        rt    = c(3357.5, 3712.5),
+        rtMax = c(3360, 3715),
+        mzMin = ROI(annot)$mzMin,
+        mz    = ROI(annot)$mz,
+        mzMax = ROI(annot)$mzMax,
+        stringsAsFactors = FALSE)
+    annot@useUROI   <- TRUE
+    annot@uROIExist <- TRUE
+
+    # FIR sits within @ROI but outside the narrow uROI above. Before the fix
+    # this would error in build_FIR_data (no raw_data in cache mode); after
+    # the fix the wider @ROI-wide cache is used as the envelope.
+    annot@FIR <- data.frame(
+        rtMin = ROI(annot)$rtMin,
+        rtMax = ROI(annot)$rtMax,
+        mzMin = ROI(annot)$mzMin,
+        mzMax = ROI(annot)$mzMax,
+        stringsAsFactors = FALSE)
+    annot@useFIR <- TRUE
+
+    res <- evaluate_promise(peakPantheR_parallelAnnotation(annot,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = TRUE))
+
+    # No disk reads, cache reused, FIR filled the not-found rows.
+    expect_equal(length(grep("Reading data from", res$messages)), 0)
+    expect_gte(length(grep("Reusing cached EIC data", res$messages)), 1)
+    pt <- peakTables(res$result$annotation)
+    expect_true(all(vapply(pt, function(x) all(x$is_filled),
+        FUN.VALUE = logical(1))))
+})
+
+
 test_that('build_FIR_data errors when raw_data NULL and FIR not contained', {
     raw_data <- MSnbase::readMSData(input_spectraPaths[1],
         centroided = TRUE, mode = 'onDisk')
@@ -133,7 +175,7 @@ test_that('build_FIR_data errors when raw_data NULL and FIR not contained', {
 
     expect_error(
         peakPantheR:::build_FIR_data(raw_data = NULL,
-            ROIsDataPoint = cached_dp, targetFeatTable = tbl,
+            ROIsDataPoint = cached_dp, ROI = tbl,
             FIR = FIR_bad, needsFilling_idx = c(1L, 2L), verbose = FALSE),
         regexp = "Cached annotation in use")
 })
