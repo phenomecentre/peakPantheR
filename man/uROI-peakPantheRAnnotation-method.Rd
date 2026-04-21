@@ -4,7 +4,7 @@
 \name{uROI,peakPantheRAnnotation-method}
 \alias{uROI,peakPantheRAnnotation-method}
 \alias{uROI}
-\title{uROI accessor returns targetFeatTable with cpdID, cpdName added}
+\title{uROI accessor returns targetFeatTable with cpdID, cpdName added.}
 \usage{
 \S4method{uROI}{peakPantheRAnnotation}(object)
 }
@@ -16,7 +16,10 @@
 parameters as columns
 }
 \description{
-uROI accessor returns targetFeatTable with cpdID, cpdName added
+\code{uROI} represents the \emph{integration window}: what
+'\code{findTargetFeatures} searches within. Slot meant to be updated
+by the user when reviewing integration and fit. Must satisfy
+'\code{uROI \eqn{\subseteq} ROI}.
 }
 \examples{
 if(requireNamespace('faahKO')){

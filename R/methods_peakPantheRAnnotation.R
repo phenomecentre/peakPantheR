@@ -145,7 +145,13 @@ setMethod("cpdName", "peakPantheRAnnotation", function(object) {
 
 # ROI targetFeatTable with ROI
 setGeneric("ROI", function(object, ...) standardGeneric("ROI"))
-#' ROI accessor returns targetFeatTable with cpdID, cpdName added
+#' ROI accessor returns targetFeatTable with cpdID, cpdName added.
+#'
+#' \code{ROI} is the extraction envelope: defines what is read from disk
+#' into \code{@dataPoints} and acts as the cache key. Widening \code{ROI}
+#' triggers re-read of LC-MS data on the next
+#' '\code{peakPantheR_parallelAnnotation} call. Narrowing the integration
+#' window for a refit should be done on \code{uROI} instead.
 #' @param object peakPantheRAnnotation
 #' @return (data.frame) target feature table with compounds as row and ROI
 #' parameters as columns
@@ -191,7 +197,12 @@ setMethod("ROI", "peakPantheRAnnotation", function(object) {
 
 # uROI targetFeatTable with uROI
 setGeneric("uROI", function(object, ...) standardGeneric("uROI"))
-#' uROI accessor returns targetFeatTable with cpdID, cpdName added
+#' uROI accessor returns targetFeatTable with cpdID, cpdName added.
+#'
+#' \code{uROI} represents the \emph{integration window}: what
+#' '\code{findTargetFeatures} searches within. Slot meant to be updated
+#' by the user when reviewing integration and fit. Must satisfy
+#' '\code{uROI \eqn{\subseteq} ROI}.
 #' @param object peakPantheRAnnotation
 #' @return (data.frame) target feature table with compounds as row and uROI
 #' parameters as columns
@@ -238,7 +249,12 @@ setMethod("uROI", "peakPantheRAnnotation", function(object) {
 
 # FIR similar to targetFeatTable with FIR
 setGeneric("FIR", function(object, ...) standardGeneric("FIR"))
-#' FIR accessor returns targetFeatTable with cpdID, cpdName added
+#' FIR accessor returns targetFeatTable with cpdID, cpdName added.
+#'
+#' \code{FIR} is the fallback integration window used when \code{useFIR = TRUE}
+#' and a peak fit fails inside \code{uROI}: the raw signal is integrated over
+#' \code{FIR} and the resulting row is flagged \code{is_filled = TRUE}
+#' Must satisfy \code{FIR \eqn{\subseteq} ROI}.
 #' @param object peakPantheRAnnotation
 #' @return (data.frame) target feature table with compounds as row and FIR
 #' parameters as columns
@@ -725,6 +741,38 @@ setMethod("dataPoints", "peakPantheRAnnotation", function(object) {
     object@dataPoints
 })
 
+# dataPoints<-
+setGeneric("dataPoints<-",
+    function(object, value) standardGeneric("dataPoints<-"))
+#' dataPoints replacement method
+#'
+#' Replace the \code{@dataPoints} slot of a \code{peakPantheRAnnotation}.
+#' The supplied \code{value} must be a list of length \code{nbSamples(object)}.
+#' Each non-NULL element must be a list of length \code{nbCompounds(object)}
+#' whose entries are \code{data.frame}s with columns \code{rt}, \code{mz},
+#' \code{int}. Validity is enforced with \code{validObject()}.
+#'
+#' Other slots (\code{@ROI}, \code{@uROI}, \code{@FIR}, \code{@peakFit},
+#' \code{@peakTables}, \code{@isAnnotated}, ...) are left untouched. If the
+#' replacement invalidates downstream state (e.g. existing \code{@peakFit}
+#' no longer corresponds to the new \code{@dataPoints}), the caller is
+#' responsible for clearing or refitting.
+#'
+#' @param object \code{peakPantheRAnnotation}
+#' @param value A list of length \code{nbSamples(object)} of
+#' \emph{ROIsDataPoint} lists (or NULL per sample). See
+#' \code{\link{dataPoints}}.
+#' @return \code{peakPantheRAnnotation} with \code{@dataPoints} replaced.
+#' @docType methods
+#' @aliases dataPoints<-
+#' @export
+setReplaceMethod("dataPoints", "peakPantheRAnnotation",
+    function(object, value) {
+        object@dataPoints <- value
+        validObject(object)
+        object
+    })
+
 # peakFit
 setGeneric("peakFit", function(object, ...) standardGeneric("peakFit"))
 #' peakFit accessor
@@ -1136,7 +1184,7 @@ setMethod("[", "peakPantheRAnnotation",
         acquisitionTime = .acquisitionTime, uROIExist = .uROIExist,
         useUROI = .useUROI, useFIR = .useFIR, TIC = .TIC,
         peakTables = .peakTables, dataPoints = .dataPoints, peakFit = .peakFit,
-        isAnnotated = .isAnnotated)
+        isAnnotated = .isAnnotated, .deprecationSilent = TRUE)
 })
 # sub-setting peakTables, dataPoints and peakFit
 subsetting_peakTables_dataPoints_peakFit <- function(x, i, j) {
@@ -1455,7 +1503,7 @@ setMethod("outputAnnotationParamsCSV", "peakPantheRAnnotation",
 ## Generate fit diagnostic plots
 setGeneric("annotationDiagnosticPlots",
             function(object, sampleColour = NULL, sampling = 250,
-                    verbose = TRUE, ...)
+                    plotWindow = c("uROI", "ROI"), verbose = TRUE, ...)
             standardGeneric("annotationDiagnosticPlots"))
 #' @title Generate fit diagnostic plots
 #' @description Generate fit diagnostic plots for each ROI: \code{EICFit} the
@@ -1470,6 +1518,9 @@ setGeneric("annotationDiagnosticPlots",
 #' @param object (peakPantheRAnnotation) Annotated peakPantheRAnnotation object
 #' @param sampleColour (str) NULL or vector colour for each sample
 #' @param sampling (int) Number of points to employ when plotting fittedCurve
+#' @param plotWindow (str) \code{"uROI"} (default) plots the EIC restricted to
+#' the integration window \code{@uROI}; \code{"ROI"} plots the full extraction
+#' envelope \code{@ROI} with \code{@uROI} overlaid as a shaded band.
 #' @param verbose (bool) if TRUE message the plot generation progress
 #' @return A list (one list per compound) of diagnostic plots:
 #' \code{result[[i]]$EICFit}, \code{result[[i]]$rtPeakwidthVert},
@@ -1514,7 +1565,9 @@ setGeneric("annotationDiagnosticPlots",
 #' # NULL
 #' }
 setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
-    function(object, sampleColour, sampling, verbose) {
+    function(object, sampleColour, sampling, plotWindow, verbose) {
+
+    plotWindow <- match.arg(plotWindow, c("uROI", "ROI"))
 
     # Init
     nbCpd <- nbCompounds(object)
@@ -1526,12 +1579,12 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
                         ' empty diagnostic plot list')
         return(outList)
     }
-    
+
     # Iterate over compounds
     for (cpd in seq_len(nbCpd)) {
         tmp_annotation <- object[, cpd]
         tmp_plotList <- singleDiagnosticPlots(tmp_annotation, sampleColour,
-                                                sampling, verbose)
+                                                sampling, plotWindow, verbose)
         # store results
         outList[[cpd]] <- tmp_plotList
 
@@ -1542,16 +1595,25 @@ setMethod("annotationDiagnosticPlots", "peakPantheRAnnotation",
     return(outList)
 })
 # diagnostic plots for 1 cpd
-singleDiagnosticPlots <- function(tmp_annotation,sampleColour,sampling,verbose){
+singleDiagnosticPlots <- function(tmp_annotation, sampleColour, sampling,
+                                    plotWindow = "uROI", verbose) {
     tmp_plotList <- vector("list", 9)
     names(tmp_plotList) <- c("EICFit", "rtPeakwidthVert",
         "rtPeakwidthHorzRunOrder", "mzPeakwidthHorzRunOrder","areaRunOrder",
         "rtHistogram", "mzHistogram", "areaHistogram", "title")
     tmp_plotList$title <- paste(cpdID(tmp_annotation), "-",              # title
                                 cpdName(tmp_annotation))
+    eic_points <- unlist(dataPoints(tmp_annotation), recursive = FALSE)
+    if (identical(plotWindow, "uROI")) {
+        # Narrow cached EIC down to the integration window @uROI
+        uroi_row <- uROI(tmp_annotation)[1, ]
+        eic_points <- lapply(eic_points, function(df) {
+            if (is.null(df) || nrow(df) == 0) return(df)
+            df[df$rt >= uroi_row$rtMin & df$rt <= uroi_row$rtMax, , drop=FALSE]
+        })
+    }
     tmp_plotList$EICFit <- peakPantheR_plotEICFit(                  # plotEICFit
-        ROIDataPointSampleList = unlist(dataPoints(tmp_annotation),
-                                        recursive = FALSE),
+        ROIDataPointSampleList = eic_points,
         curveFitSampleList = unlist(peakFit(tmp_annotation),
                                         recursive = FALSE),
         rtMin = annotationTable(tmp_annotation, "rtMin")[, 1],
@@ -2040,7 +2102,7 @@ setGeneric("resetAnnotation",
 setMethod("resetAnnotation", "peakPantheRAnnotation",
     function(previousAnnotation, spectraPaths, targetFeatTable, uROI, FIR,
         cpdMetadata, spectraMetadata, uROIExist, useUROI, useFIR, verbose, ...){
-    
+
     # If input is NULL, use previousAnnotation value, else use the passed value
     # If number of compounds or spectra is changed, the previous values
     # (metadata, uROI, FIR) cannot be reused (risk a mismatch of the metadata)
@@ -2079,7 +2141,7 @@ setMethod("resetAnnotation", "peakPantheRAnnotation",
         targetFeatTable = .targetFeatTable, uROI = .uROI, FIR = .FIR,
         cpdMetadata = .cpdMetadata, spectraMetadata = .spectraMetadata,
         uROIExist = .uROIExist, useUROI = .useUROI, useFIR = .useFIR,
-        isAnnotated = .isAnnotated, ...)
+        isAnnotated = .isAnnotated, .deprecationSilent = TRUE, ...)
 })
 # resetAnnotation targetFeatTable (cpdID, cpdName, ROI), uROI, FIR, cpdMetadata
 resetAnnot_targetFeatTable_uROI_FIR_cpdMeta <- function(previousAnnotation,

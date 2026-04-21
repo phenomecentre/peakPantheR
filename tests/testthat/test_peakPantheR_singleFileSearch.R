@@ -368,7 +368,7 @@ test_that('one feature not found (#3), use FIR', {
   # Expected acquTime
   expected_acquTime       <- NA
   # Expected messages
-  expected_messages       <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "1 features to integrate with FIR\n", "Reading data from 1 windows\n")
+  expected_messages       <- c("Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Reading data from 1 windows\n", "1 features to integrate with FIR\n")
   
   # results (output, warnings and messages)
   result_singleFileSearch <- evaluate_promise(peakPantheR_singleFileSearch(singleSpectraDataPath, tmp_ROI, peakStatistic=FALSE, plotEICsPath=NA, getAcquTime=FALSE, FIR=input_FIR, verbose=TRUE))
@@ -382,7 +382,7 @@ test_that('one feature not found (#3), use FIR', {
   
   # Check messages (can't check timing)
   expect_equal(length(result_singleFileSearch$messages), 11)
-  expect_equal(result_singleFileSearch$messages[c(1,2,4,5,7,8)], expected_messages)
+  expect_equal(result_singleFileSearch$messages[c(1,2,4,5,7,9)], expected_messages)
 })
 
 test_that('raise errors', {

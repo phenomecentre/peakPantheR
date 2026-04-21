@@ -6,7 +6,8 @@
 \alias{annotationDiagnosticPlots}
 \title{Generate fit diagnostic plots}
 \usage{
-\S4method{annotationDiagnosticPlots}{peakPantheRAnnotation}(object, sampleColour, sampling, verbose)
+\S4method{annotationDiagnosticPlots}{peakPantheRAnnotation}(object,
+sampleColour, sampling, plotWindow, verbose)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}
@@ -14,6 +15,10 @@
 \item{sampleColour}{(str) NULL or vector colour for each sample}
 
 \item{sampling}{(int) Number of points to employ when plotting fittedCurve}
+
+\item{plotWindow}{(str) \code{"uROI"} (default) plots the EIC restricted to
+the integration window \code{@uROI}; \code{"ROI"} plots the full extraction
+envelope \code{@ROI} with \code{@uROI} overlaid as a shaded band.}
 
 \item{verbose}{(bool) if TRUE message the plot generation progress}
 }

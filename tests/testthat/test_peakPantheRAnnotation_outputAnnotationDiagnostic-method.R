@@ -241,10 +241,10 @@ test_that('no data to plot, serial, verbose', {
   expected_path_plot1 <- file.path(savePath6, "cpd_1.png")
   expected_path_plot2 <- file.path(savePath6, "cpd_2.png")
   expected_CSV        <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
-  expected_CSV[1,]    <- c('ID-1', 'Cpd 1', '|', 3344.888, 522.2, 3310., 3390., 522.194778, 522.205222, '|', NA, NA, NA, NA, NA, NA, '|', NA, NA, NA, NA)
-  expected_CSV[2,]    <- c('ID-2', 'Cpd 2', '|', 3385.577, 496.2, 3280., 3440., 496.195038, 496.204962, '|', NA, NA, NA, NA, NA, NA, '|', NA, NA, NA, NA)
-  expected_CSV[,-c(1,2,3,10:21)]  <- sapply(expected_CSV[,-c(1,2,3,10:21)], as.numeric)
-  expected_CSV[,c(11:16, 18:21)]  <- sapply(expected_CSV[,c(11:16, 18:21)], as.logical)
+  # uROI/FIR now seeded from ROI at construction
+  expected_CSV[1,]    <- c('ID-1', 'Cpd 1', '|', 3344.888, 522.2, 3310., 3390., 522.194778, 522.205222, '|', 3310., 3390., 522.194778, 522.205222, 3344.888, 522.2, '|', 3310., 3390., 522.194778, 522.205222)
+  expected_CSV[2,]    <- c('ID-2', 'Cpd 2', '|', 3385.577, 496.2, 3280., 3440., 496.195038, 496.204962, '|', 3280., 3440., 496.195038, 496.204962, 3385.577, 496.2, '|', 3280., 3440., 496.195038, 496.204962)
+  expected_CSV[,-c(1,2,3,10,17)]  <- sapply(expected_CSV[,-c(1,2,3,10,17)], as.numeric)
   expected_message    <- c("Warning: the object has not been annotated, return an empty diagnostic plot list\n", "  No plot to save for compound 1/2\n", "Warning: the object has not been annotated, return an empty diagnostic plot list\n", "  No plot to save for compound 2/2\n")
 
   # results (output, warnings and messages)
@@ -281,10 +281,10 @@ test_that('no data to plot, parallel, verbose', {
   expected_path_plot1 <- file.path(savePath7, "cpd_1.png")
   expected_path_plot2 <- file.path(savePath7, "cpd_2.png")
   expected_CSV        <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 'ROI_mzMin', 'ROI_mzMax', 'X', 'uROI_rtMin', 'uROI_rtMax', 'uROI_mzMin', 'uROI_mzMax', 'uROI_rt', 'uROI_mz', 'X', 'FIR_rtMin', 'FIR_rtMax', 'FIR_mzMin', 'FIR_mzMax'))))
-  expected_CSV[1,]    <- c('ID-1', 'Cpd 1', '|', 3344.888, 522.2, 3310., 3390., 522.194778, 522.205222, '|', NA, NA, NA, NA, NA, NA, '|', NA, NA, NA, NA)
-  expected_CSV[2,]    <- c('ID-2', 'Cpd 2', '|', 3385.577, 496.2, 3280., 3440., 496.195038, 496.204962, '|', NA, NA, NA, NA, NA, NA, '|', NA, NA, NA, NA)
-  expected_CSV[,-c(1,2,3,10:21)]  <- sapply(expected_CSV[,-c(1,2,3,10:21)], as.numeric)
-  expected_CSV[,c(11:16, 18:21)]  <- sapply(expected_CSV[,c(11:16, 18:21)], as.logical)
+  # uROI/FIR now seeded from ROI at construction
+  expected_CSV[1,]    <- c('ID-1', 'Cpd 1', '|', 3344.888, 522.2, 3310., 3390., 522.194778, 522.205222, '|', 3310., 3390., 522.194778, 522.205222, 3344.888, 522.2, '|', 3310., 3390., 522.194778, 522.205222)
+  expected_CSV[2,]    <- c('ID-2', 'Cpd 2', '|', 3385.577, 496.2, 3280., 3440., 496.195038, 496.204962, '|', 3280., 3440., 496.195038, 496.204962, 3385.577, 496.2, '|', 3280., 3440., 496.195038, 496.204962)
+  expected_CSV[,-c(1,2,3,10,17)]  <- sapply(expected_CSV[,-c(1,2,3,10,17)], as.numeric)
   
   # results (output, warnings and messages)
   result_save7     <- evaluate_promise(outputAnnotationDiagnostic(input_annotation, saveFolder=savePath7, savePlots=TRUE, verbose=TRUE, nCores=1))

@@ -26,6 +26,14 @@
 #' Accepted values are \code{skewedGaussian} and \code{emgGaussian}
 #' @param verbose (bool) If TRUE message calculation progress, time taken,
 #' number of features found (total and matched to targets) and failures
+#' @param compounds (character or NULL) Optional. When supplied, restrict
+#' processing to the subset of compounds whose \code{cpdID} matches one of
+#' these values. Requires \code{@isAnnotated = TRUE}, since unselected
+#' compound rows retain their prior per-sample \code{@peakTables},
+#' \code{@peakFit} and \code{@dataPoints}. The returned annotation has the
+#' same \code{nbCompounds} as the input; only rows matching \code{compounds}
+#' are refit. Unknown cpdIDs raise an error; duplicates in \code{compounds}
+#' are silently deduplicated.
 #' @param ... Passes arguments to \code{findTargetFeatures} to alter
 #' peak-picking parameters
 #'
@@ -150,12 +158,40 @@
 #' @export
 peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
     getAcquTime = TRUE, centroided = TRUE,
-    curveModel='skewedGaussian', verbose=TRUE, ...){
+    curveModel='skewedGaussian', verbose=TRUE, compounds = NULL, ...){
+
+    # Dispatch to the compound-subset path when `compounds` narrows the set.
+    # Requires @isAnnotated=TRUE: unselected rows keep their prior contents
+    # and would otherwise be undefined.
+    if (!is.null(compounds)) {
+        if (!isAnnotated(object)) {
+            stop("Check input, 'compounds' requires @isAnnotated = TRUE; ",
+                "run a full annotation before refitting a compound subset")
+        }
+        j <- resolve_compound_selector(compounds, cpdID(object))
+        if (length(j) < nbCompounds(object)) {
+            return(parallelAnnotation_compoundSubset(object, j,
+                BPPARAM = BPPARAM, nCores = nCores,
+                getAcquTime = getAcquTime, centroided = centroided,
+                curveModel = curveModel, verbose = verbose, ...))
+        }
+        # length(j) == nbCompounds(object): selector covers every compound,
+        # fall through to the standard full-width path unchanged.
+    }
 
     # Check inputs, Initialise variables and outputs
     initRes    <- parallelAnnotation_init(object, BPPARAM, nCores, verbose)
     file_paths<-initRes$file_paths; target_peak_table<-initRes$target_peak_table
     input_FIR  <- initRes$input_FIR; BPPARAMObject <- initRes$BPPARAMObject
+
+    # Build per-file cache descriptor (from @dataPoints) when the input is
+    # already annotated and cached data covers current bounds
+    cacheList <- build_parallelAnnotation_cache(object, target_peak_table,
+        verbose)
+    # Hit mask: cache entries that skipped disk I/O; used by process() to keep
+    # the prior @TIC[i] / @acquisitionTime[i] instead of overwriting with NA
+    cacheHit <- vapply(cacheList,
+        function(ce) !is.null(ce$dataPoints), logical(1))
 
     # Manage worker lifecycle at the top level, alongside BPPARAM creation
     started_here <- !BiocParallel::bpisup(BPPARAMObject)
@@ -166,15 +202,20 @@ peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
 
     # Run singleFileSearch on all files
     # (list, each item is the result of a file, errors are passed into the list)
-    allFilesRes <- BiocParallel::bplapply(X=file_paths,
+    allFilesRes <- BiocParallel::bpmapply(
                     FUN=parallelAnnotation_parallelHelper,
-                    targetFeatTable=target_peak_table,
-                    inGetAcquTime=getAcquTime, inFIR=input_FIR,
-                    centr=centroided, curveModel=curveModel, inVerbose=verbose,
-                    BPPARAM=BPPARAMObject, ...)
+                    singleSpectraDataPath=file_paths,
+                    cacheEntry=cacheList,
+                    MoreArgs=list(targetFeatTable=target_peak_table,
+                        inGetAcquTime=getAcquTime, inFIR=input_FIR,
+                        centr=centroided, curveModel=curveModel,
+                        inVerbose=verbose, ...),
+                    SIMPLIFY=FALSE, USE.NAMES=FALSE,
+                    BPPARAM=BPPARAMObject)
 
     # Collect, process and reorder results
-    res <- parallelAnnotation_process(allFilesRes, object, verbose)
+    res <- parallelAnnotation_process(allFilesRes, object, verbose,
+        cacheHit = cacheHit)
     outObject <- res$outObject; fail_table <- res$fail_table
 
     ## check validity and exit
@@ -228,9 +269,10 @@ peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
 #  singleSpectraDataPath) or NA if the processing is successful.
 parallelAnnotation_parallelHelper <- function(singleSpectraDataPath,
 targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,
-curveModel='skewedGaussian', inVerbose=TRUE,...){
-    # Check input path exist or exit with error message
-    if (!file.exists(singleSpectraDataPath)) {
+curveModel='skewedGaussian', inVerbose=TRUE, cacheEntry=NULL, ...){
+    useCache <- !is.null(cacheEntry) && !is.null(cacheEntry$dataPoints)
+    # Check input path exist or exit with error message (skip if cache hit)
+    if (!useCache && !file.exists(singleSpectraDataPath)) {
         if (inVerbose) { message("Err","or file does not exist: ",
                 singleSpectraDataPath) }
         # add error status
@@ -246,12 +288,17 @@ curveModel='skewedGaussian', inVerbose=TRUE,...){
     # progress
     if (inVerbose) { message("----- ", file_name, " -----") }
     # try catch
+    # TIC and acquTime are not threaded via the cache: parallelAnnotation_process
+    # preserves @TIC[i] / @acquisitionTime[i] for cache-hit samples and only
+    # overwrites for cache misses (where singleFileSearch returns real values).
     result <- tryCatch({
-        # singleFileSearch
         tmpResult <- peakPantheR::peakPantheR_singleFileSearch(singleSpectraDataPath,
             targetFeatTable, peakStatistic = TRUE, plotEICsPath = NA,
             getAcquTime = inGetAcquTime, FIR = inFIR, centroided = centr,
-            curveModel = curveModel, verbose = inVerbose, ...)
+            curveModel = curveModel, verbose = inVerbose,
+            cachedDataPoints = if (useCache) cacheEntry$dataPoints else NULL,
+            cachedROI = if (useCache) cacheEntry$ROI else NULL,
+            ...)
         # add failure status
         failureMsg <- NA
         names(failureMsg) <- singleSpectraDataPath
@@ -340,7 +387,8 @@ parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
 
 
 ## Collect, process and reorder results
-parallelAnnotation_process <- function(allFilesRes, object, verbose) {
+parallelAnnotation_process <- function(allFilesRes, object, verbose,
+    cacheHit = NULL) {
     # identify annotations that failed
     fail_status <- unlist(lapply(allFilesRes,
         function(x) {x$failure}), use.names = TRUE)
@@ -354,18 +402,28 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
         message("----------------")
         message(sum(failures), " file(s) failed to process:\n",
             paste0(utils::capture.output(fail_table), collapse = "\n")) }
-    # remove failures
+    # Drop failed samples (and their cacheHit entries) in lockstep
+    if (!is.null(cacheHit)) { cacheHit <- cacheHit[!failures] }
     allFilesRes <- allFilesRes[!failures]
     # reshape the output object to match (remove failed samples)
     outObject <- object[!failures, ]
     # unlist result into final object (if there is a minimum of 1 file left)
     if (sum(!failures) > 0) {
-        # acquisitionTime
-        outObject@acquisitionTime <- vapply(allFilesRes, function(x) {
+        # acquisitionTime: cache-hit rows keep prior value; misses use result
+        acq_new <- vapply(allFilesRes, function(x) {
             as.character(x$acquTime)}, FUN.VALUE = character(1))
-        # TIC
-        outObject@TIC <- vapply(allFilesRes, function(x) {
+        if (!is.null(cacheHit) && any(cacheHit)) {
+            acq_new[cacheHit] <- as.character(
+                outObject@acquisitionTime[cacheHit])
+        }
+        outObject@acquisitionTime <- acq_new
+        # TIC: same rule - preserve prior for cache hits
+        tic_new <- vapply(allFilesRes, function(x) {
             x$TIC}, FUN.VALUE = numeric(1))
+        if (!is.null(cacheHit) && any(cacheHit)) {
+            tic_new[cacheHit] <- outObject@TIC[cacheHit]
+        }
+        outObject@TIC <- tic_new
         # peakTables (all columns but cpdID and cpdName)
         outObject@peakTables <- lapply(allFilesRes,
             function(x) {x$peakTable[, !names(x$peakTable) %in%
@@ -390,3 +448,143 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose) {
                     'acquisition date') }
     }
     return(list(outObject=outObject, fail_table=fail_table)) }
+
+
+# Per-file cache boundary check: the cache was filled using `cachedROI`
+# (i.e. `object@ROI`) as the extraction envelope, so a hit requires
+# `targetFeatTable[i, ] ⊆ cachedROI[i, ]` for every row, plus the cache
+# list shape to match. Returns FALSE if any row's cache is empty/missing, or
+# the target window sits outside what was read from disk, triggering a fresh
+# disk read instead of silently truncating the EIC.
+cache_bounds_ok <- function(cachedDataPoints, targetFeatTable, cachedROI) {
+    if (is.null(cachedDataPoints)) { return(FALSE) }
+    if (length(cachedDataPoints) != nrow(targetFeatTable)) { return(FALSE) }
+    if (is.null(cachedROI) ||
+        nrow(cachedROI) != nrow(targetFeatTable)) { return(FALSE) }
+    for (i in seq_len(nrow(targetFeatTable))) {
+        df <- cachedDataPoints[[i]]
+        if (is.null(df) || !is.data.frame(df) || nrow(df) == 0) {
+            return(FALSE)
+        }
+        tgt <- targetFeatTable[i, ]
+        env <- cachedROI[i, ]
+        if (env$rtMin > tgt$rtMin || env$rtMax < tgt$rtMax ||
+            env$mzMin > tgt$mzMin || env$mzMax < tgt$mzMax) {
+            return(FALSE)
+        }
+    }
+    return(TRUE)
+}
+
+
+# Run parallelAnnotation on a compound-wise subset and merge results back into
+# the full-width input `object`. `j` is an integer vector of compound column
+# positions (strict subset of seq_len(nbCompounds(object))). Unselected rows
+# of @peakTables/@peakFit/@dataPoints are preserved from `object`. Samples
+# that fail during the sub-run are dropped, matching the existing behaviour
+# of peakPantheR_parallelAnnotation for failed files.
+parallelAnnotation_compoundSubset <- function(object, j, BPPARAM, nCores,
+    getAcquTime, centroided, curveModel, verbose, ...) {
+    sub <- object[, j]
+    subRes <- peakPantheR_parallelAnnotation(sub, BPPARAM = BPPARAM,
+        nCores = nCores, getAcquTime = getAcquTime, centroided = centroided,
+        curveModel = curveModel, verbose = verbose, compounds = NULL, ...)
+    sub_out <- subRes$annotation
+    fail_table <- subRes$failures
+
+    # All samples failed: return empty full-width object
+    if (nbSamples(sub_out) == 0L) {
+        return(list(annotation = object[integer(0), ],
+                    failures = fail_table))
+    }
+
+    # Align original object to the sub-run's sample order (which may have
+    # been reordered by acquisition date and may have dropped failed files)
+    orig_idx <- match(filepath(sub_out), filepath(object))
+    full_out <- object[orig_idx, ]
+
+    # Overwrite rows `j` of per-sample peakTables / peakFit / dataPoints
+    new_pt <- full_out@peakTables
+    new_pf <- full_out@peakFit
+    new_dp <- full_out@dataPoints
+    for (s in seq_len(nbSamples(full_out))) {
+        if (!is.null(new_pt[[s]]) && !is.null(sub_out@peakTables[[s]])) {
+            new_pt[[s]][j, ] <- sub_out@peakTables[[s]]
+        }
+        if (!is.null(new_pf[[s]]) && !is.null(sub_out@peakFit[[s]])) {
+            new_pf[[s]][j] <- sub_out@peakFit[[s]]
+        }
+        if (!is.null(new_dp[[s]]) && !is.null(sub_out@dataPoints[[s]])) {
+            new_dp[[s]][j] <- sub_out@dataPoints[[s]]
+        }
+    }
+    full_out@peakTables <- new_pt
+    full_out@peakFit <- new_pf
+    full_out@dataPoints <- new_dp
+
+    # TIC and acquisitionTime are whole-file quantities: take from sub_out
+    full_out@TIC <- sub_out@TIC
+    full_out@acquisitionTime <- sub_out@acquisitionTime
+    full_out@isAnnotated <- TRUE
+
+    validObject(full_out)
+    return(list(annotation = full_out, failures = fail_table))
+}
+
+
+# Resolve a `compounds` selector (character cpdID values) to integer positions
+# within `ids`. Returns NULL when `compounds` is NULL (signals "no filter").
+# Errors on: non-character `compounds`, empty character vector, duplicated
+# `ids`, or any value in `compounds` not found in `ids`. Duplicated entries
+# in `compounds` are silently deduplicated, preserving first-seen order.
+resolve_compound_selector <- function(compounds, ids) {
+    if (is.null(compounds)) { return(NULL) }
+    if (!is.character(compounds)) {
+        stop("Check input, 'compounds' must be a character vector of cpdID ",
+            "values (or NULL); got ", class(compounds)[1])
+    }
+    if (length(compounds) == 0L) {
+        stop("Check input, 'compounds' must contain at least one cpdID ",
+            "when not NULL")
+    }
+    if (anyDuplicated(ids) > 0L) {
+        dup <- unique(ids[duplicated(ids)])
+        stop("Check input, cpdID must be unique to select by cpdID; ",
+            "duplicated IDs: ", paste(dup, collapse = ", "))
+    }
+    compounds <- unique(compounds)
+    unknown <- setdiff(compounds, ids)
+    if (length(unknown) > 0L) {
+        stop("Check input, unknown cpdID(s) in 'compounds': ",
+            paste(unknown, collapse = ", "))
+    }
+    match(compounds, ids)
+}
+
+
+# Build a per-file cache descriptor list. Each element is either a list with
+# $dataPoints and $ROI (cache hit) or an empty list (cache miss / fall back to
+# disk). TIC and acquisitionTime are not included - parallelAnnotation_process
+# preserves the object's own @TIC[i] / @acquisitionTime[i] for cache hits.
+# Returns a list of length nbSamples(object).
+build_parallelAnnotation_cache <- function(object, target_peak_table, verbose){
+    nFiles <- length(filepath(object))
+    cacheList <- vector("list", nFiles)
+    for (i in seq_len(nFiles)) { cacheList[[i]] <- list() }
+
+    if (!isAnnotated(object)) { return(cacheList) }
+
+    dp_all <- object@dataPoints
+    anyHit <- FALSE
+    for (i in seq_len(nFiles)) {
+        dp_i <- if (length(dp_all) >= i) dp_all[[i]] else NULL
+        if (cache_bounds_ok(dp_i, target_peak_table, object@ROI)) {
+            cacheList[[i]] <- list(dataPoints = dp_i, ROI = object@ROI)
+            anyHit <- TRUE
+        }
+    }
+    if (verbose && anyHit) {
+        message("  (reusing cached EIC data where valid)")
+    }
+    return(cacheList)
+}

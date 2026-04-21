@@ -14,6 +14,10 @@ peakPantheR_singleFileSearch(
   centroided = TRUE,
   curveModel = "skewedGaussian",
   verbose = TRUE,
+  cachedDataPoints = NULL,
+  cachedROI = NULL,
+  cachedTIC = NULL,
+  cachedAcquTime = NULL,
   ...
 )
 }
@@ -51,6 +55,25 @@ Accepted values are \code{skewedGaussian} and \code{emgGaussian}}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken and
 number of features found}
+
+\item{cachedDataPoints}{(list or NULL) Optional. If supplied, skip reading
+the raw file and reuse this list of \code{data.frame(rt, mz, int)} (one
+element per row of \code{targetFeatTable}, as produced by
+\code{extractSignalRawData}). Must span at least the rt/mz bounds in
+\code{targetFeatTable}; rows are row-subset to those bounds before fitting.}
+
+\item{cachedROI}{(data.frame or NULL) Required when \code{cachedDataPoints}
+is supplied: the rt/mz bounds (\code{rtMin}, \code{rtMax}, \code{mzMin},
+\code{mzMax}) \code{cachedDataPoints} were extracted over. Used to decide
+whether FIR windows can be served from the cached data without re-reading.}
+
+\item{cachedTIC}{(numeric or NULL) Optional. When \code{cachedDataPoints}
+is supplied, this value is returned as \code{TIC} instead of computing it
+from the raw file.}
+
+\item{cachedAcquTime}{(character, POSIXct or NULL) Optional. When
+\code{cachedDataPoints} is supplied and \code{getAcquTime=TRUE}, this value
+is returned as \code{acquTime} instead of parsing the mzML header.}
 
 \item{...}{Passes arguments to \code{findTargetFeatures} to alter
 peak-picking parameters (e.g. \code{curveModel}, \code{sampling},

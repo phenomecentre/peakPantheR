@@ -8,6 +8,7 @@ reference:
       - peakPantheR_start_GUI
       - peakPantheR_singleFileSearch
       - peakPantheR_loadAnnotationParamsCSV
+      - peakPantheR_updateAnnotationParamsCSV
       - peakPantheR_parallelAnnotation
       - peakPantheR_plotEICFit
       - peakPantheR_plotPeakwidth

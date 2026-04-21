@@ -12,6 +12,7 @@ peakPantheR_parallelAnnotation(
   centroided = TRUE,
   curveModel = "skewedGaussian",
   verbose = TRUE,
+  compounds = NULL,
   ...
 )
 }
@@ -39,6 +40,15 @@ Accepted values are \code{skewedGaussian} and \code{emgGaussian}}
 
 \item{verbose}{(bool) If TRUE message calculation progress, time taken,
 number of features found (total and matched to targets) and failures}
+
+\item{compounds}{(character or NULL) Optional. When supplied, restrict
+processing to the subset of compounds whose \code{cpdID} matches one of
+these values. Requires \code{@isAnnotated = TRUE}, since unselected
+compound rows retain their prior per-sample \code{@peakTables},
+\code{@peakFit} and \code{@dataPoints}. The returned annotation has the
+same \code{nbCompounds} as the input; only rows matching \code{compounds}
+are refit. Unknown cpdIDs raise an error; duplicates in \code{compounds}
+are silently deduplicated.}
 
 \item{...}{Passes arguments to \code{findTargetFeatures} to alter
 peak-picking parameters}

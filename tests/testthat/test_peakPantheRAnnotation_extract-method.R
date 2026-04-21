@@ -251,14 +251,10 @@ test_that('set i, empty peakTables, dataPoints and peakFit', {
   ## object with cpd and spectra set
   defaultInit_cpd_spectra   <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable, cpdMetadata=input_cpdMetadata, spectraMetadata=input_spectraMetadata, isAnnotated=TRUE)
 
-  ## Expected values
+  ## Expected values (FIR and uROI seeded from ROI at construction)
   expected_ROI              <- input_targetFeatTable[, c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
-  expected_FIR              <- data.frame(matrix(vector(), 2, 4, dimnames=list(c(), c("rtMin", "rtMax", "mzMin", "mzMax"))), stringsAsFactors=FALSE)
-  expected_FIR[1,]          <- sapply(expected_FIR[1,], as.numeric)
-  expected_FIR[2,]          <- sapply(expected_FIR[2,], as.numeric)
-  expected_uROI             <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
-  expected_uROI[1,]         <- sapply(expected_uROI[1,], as.numeric)
-  expected_uROI[2,]         <- sapply(expected_uROI[2,], as.numeric)
+  expected_FIR              <- expected_ROI[, c("rtMin", "rtMax", "mzMin", "mzMax")]
+  expected_uROI             <- expected_ROI
   expected_filepath         <- input_spectraPaths[1:2]
   expected_spectraMetadata  <- input_spectraMetadata[1:2,]
   expected_acquisitionTime  <- as.character(c(NA, NA))
@@ -288,10 +284,10 @@ test_that('set i, empty peakTables, dataPoints and peakFit', {
   expect_equal(setIandNULL@spectraMetadata, expected_spectraMetadata)
   # acquisitionTime
   expect_equal(setIandNULL@acquisitionTime, expected_acquisitionTime)
-  # uROIExist
-  expect_false(setIandNULL@uROIExist)
-  # useUROI
-  expect_false(setIandNULL@useUROI)
+  # uROIExist (seeded at construction)
+  expect_true(setIandNULL@uROIExist)
+  # useUROI (seeded at construction)
+  expect_true(setIandNULL@useUROI)
   # useFIR
   expect_false(setIandNULL@useFIR)
   # TIC

@@ -325,8 +325,10 @@ test_that('initialize with targetFeatTable', {
   expected_ROI              <- data.frame(matrix(vector(), 2, 6, dimnames=list(c(), c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))), stringsAsFactors=FALSE)
   expected_ROI[1,]          <- c(3310., 3344.888, 3390., 522.194778, 522.2, 522.205222)
   expected_ROI[2,]          <- c(3280., 3385.577, 3440., 496.195038, 496.2, 496.204962)
-  expected_FIR              <- data.frame(rtMin=as.numeric(rep(NA,2)), rtMax=as.numeric(rep(NA,2)), mzMin=as.numeric(rep(NA,2)), mzMax=as.numeric(rep(NA,2)), stringsAsFactors=FALSE)
-  expected_uROI             <- data.frame(rtMin=as.numeric(rep(NA,2)), rt=as.numeric(rep(NA,2)), rtMax=as.numeric(rep(NA,2)), mzMin=as.numeric(rep(NA,2)), mz=as.numeric(rep(NA,2)), mzMax=as.numeric(rep(NA,2)), stringsAsFactors=FALSE)
+  # Seeded-from-ROI defaults: when FIR/uROI are not supplied they are
+  # populated from @ROI so uROI⊆ROI and FIR⊆ROI invariants hold.
+  expected_FIR              <- data.frame(rtMin=expected_ROI$rtMin, rtMax=expected_ROI$rtMax, mzMin=expected_ROI$mzMin, mzMax=expected_ROI$mzMax, stringsAsFactors=FALSE)
+  expected_uROI             <- expected_ROI
   expected_cpdMetadata      <- data.frame(matrix(, nrow=2, ncol=0))
   expected_spectraMetadata  <- data.frame(matrix(, nrow=0, ncol=0))
 
@@ -347,8 +349,8 @@ test_that('initialize with targetFeatTable', {
   expect_equal(targetFeatTableAnnotation@cpdMetadata, expected_cpdMetadata)
   expect_equal(targetFeatTableAnnotation@spectraMetadata, expected_spectraMetadata)
   expect_equal(length(targetFeatTableAnnotation@acquisitionTime), 0)
-  expect_false(targetFeatTableAnnotation@uROIExist)
-  expect_false(targetFeatTableAnnotation@useUROI)
+  expect_true(targetFeatTableAnnotation@uROIExist)
+  expect_true(targetFeatTableAnnotation@useUROI)
   expect_false(targetFeatTableAnnotation@useFIR)
   expect_true(is.numeric(targetFeatTableAnnotation@TIC))
   expect_equal(length(targetFeatTableAnnotation@TIC), 0)
@@ -372,12 +374,12 @@ test_that('initialize with targetFeatTable', {
   expect_equal(cpdMetadataAnnotation@uROI, expected_uROI)
   expect_true(is.character(cpdMetadataAnnotation@filepath))
   expect_equal(length(cpdMetadataAnnotation@filepath), 0)
-  expect_equal(cpdMetadataAnnotation@cpdMetadata, input_cpdMetadata) # change is here
+  expect_equal(cpdMetadataAnnotation@cpdMetadata, input_cpdMetadata)
   expect_equal(cpdMetadataAnnotation@spectraMetadata, expected_spectraMetadata)
   expect_true(is.character(cpdMetadataAnnotation@acquisitionTime))
   expect_equal(length(cpdMetadataAnnotation@acquisitionTime), 0)
-  expect_false(cpdMetadataAnnotation@uROIExist)
-  expect_false(cpdMetadataAnnotation@useUROI)
+  expect_true(cpdMetadataAnnotation@uROIExist)
+  expect_true(cpdMetadataAnnotation@useUROI)
   expect_false(cpdMetadataAnnotation@useFIR)
   expect_true(is.numeric(cpdMetadataAnnotation@TIC))
   expect_equal(length(cpdMetadataAnnotation@TIC), 0)
@@ -397,7 +399,7 @@ test_that('initialize with targetFeatTable', {
   expect_equal(FIRAnnotation@cpdID, expected_cpdID)
   expect_equal(FIRAnnotation@cpdName, expected_cpdName)
   expect_equal(FIRAnnotation@ROI, expected_ROI)
-  expect_equal(FIRAnnotation@FIR, input_FIR) # change is here
+  expect_equal(FIRAnnotation@FIR, input_FIR)
   expect_equal(FIRAnnotation@uROI, expected_uROI)
   expect_true(is.character(FIRAnnotation@filepath))
   expect_equal(length(FIRAnnotation@filepath), 0)
@@ -405,9 +407,9 @@ test_that('initialize with targetFeatTable', {
   expect_equal(FIRAnnotation@spectraMetadata, expected_spectraMetadata)
   expect_true(is.character(FIRAnnotation@acquisitionTime))
   expect_equal(length(FIRAnnotation@acquisitionTime), 0)
-  expect_false(FIRAnnotation@uROIExist)
-  expect_false(FIRAnnotation@useUROI)
-  expect_true(FIRAnnotation@useFIR) # change is here
+  expect_true(FIRAnnotation@uROIExist)
+  expect_true(FIRAnnotation@useUROI)
+  expect_true(FIRAnnotation@useFIR)
   expect_true(is.numeric(FIRAnnotation@TIC))
   expect_equal(length(FIRAnnotation@TIC), 0)
   expect_true(is.list(FIRAnnotation@peakTables))
@@ -427,14 +429,14 @@ test_that('initialize with targetFeatTable', {
   expect_equal(uROIAnnotation@cpdName, expected_cpdName)
   expect_equal(uROIAnnotation@ROI, expected_ROI)
   expect_equal(uROIAnnotation@FIR, expected_FIR)
-  expect_equal(uROIAnnotation@uROI, input_uROI) # change is here
+  expect_equal(uROIAnnotation@uROI, input_uROI)
   expect_true(is.character(uROIAnnotation@filepath))
   expect_equal(length(uROIAnnotation@filepath), 0)
   expect_equal(uROIAnnotation@cpdMetadata, expected_cpdMetadata)
   expect_equal(uROIAnnotation@spectraMetadata, expected_spectraMetadata)
   expect_true(is.character(uROIAnnotation@acquisitionTime))
   expect_equal(length(uROIAnnotation@acquisitionTime), 0)
-  expect_true(uROIAnnotation@uROIExist) # change is here
+  expect_true(uROIAnnotation@uROIExist) 
   expect_false(uROIAnnotation@useUROI)
   expect_false(uROIAnnotation@useFIR)
   expect_true(is.numeric(uROIAnnotation@TIC))
@@ -447,7 +449,7 @@ test_that('initialize with targetFeatTable', {
   expect_equal(length(uROIAnnotation@peakFit), 0)
   expect_false(uROIAnnotation@isAnnotated)
 
-  # Force uROIExist and useUROI to FALSE (despite setting to TRUE) as uROI is reset
+  # uROI is seeded from ROI when not supplied: uROIExist/useUROI stay TRUE
   uROIResetAnnotation <- peakPantheRAnnotation(targetFeatTable=input_targetFeatTable, uROIExist=TRUE, useUROI=TRUE)
   # check object
   expect_true(is(uROIResetAnnotation, "peakPantheRAnnotation"))
@@ -463,8 +465,8 @@ test_that('initialize with targetFeatTable', {
   expect_equal(uROIResetAnnotation@spectraMetadata, expected_spectraMetadata)
   expect_true(is.character(uROIResetAnnotation@acquisitionTime))
   expect_equal(length(uROIResetAnnotation@acquisitionTime), 0)
-  expect_false(uROIResetAnnotation@uROIExist) # false as ROI is reset
-  expect_false(uROIResetAnnotation@useUROI) # false as ROI is reset
+  expect_true(uROIResetAnnotation@uROIExist)
+  expect_true(uROIResetAnnotation@useUROI)
   expect_false(uROIResetAnnotation@useFIR)
   expect_true(is.numeric(uROIResetAnnotation@TIC))
   expect_equal(length(uROIResetAnnotation@TIC), 0)
@@ -516,4 +518,22 @@ test_that('initialize with targetFeatTable', {
   wrongDF9        <- input_targetFeatTable
   wrongDF9$mzMax  <- c('notNumeric', 'notNumeric')
   expect_error(peakPantheRAnnotation(targetFeatTable=wrongDF9), 'mzMax must be numeric')
+})
+
+
+test_that('passing useUROI emits a deprecation message', {
+    tft <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+        c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+        stringsAsFactors=FALSE)
+    tft[1,] <- c("ID-1", "Cpd 1", 1., 2., 3., 4., 5., 6.)
+    tft[2,] <- c("ID-2", "Cpd 2", 1., 2., 3., 4., 5., 6.)
+    tft[,3:8] <- sapply(tft[,3:8], as.numeric)
+
+    expect_message(
+        peakPantheRAnnotation(targetFeatTable = tft, useUROI = TRUE),
+        regexp = '"useUROI" argument is deprecated')
+
+    # not passed: no deprecation
+    res <- evaluate_promise(peakPantheRAnnotation(targetFeatTable = tft))
+    expect_false(any(grepl('deprecated', res$messages)))
 })
