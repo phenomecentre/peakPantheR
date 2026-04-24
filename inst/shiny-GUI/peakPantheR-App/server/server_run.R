@@ -23,7 +23,7 @@ output$noImportForFitUI <- renderUI ({
 output$showAnnotStatus <- renderUI({
   # Capture the annotation shown and split by line into a list
   tmp_text <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(values$annotation))
-  fail_text <- paste(dim(values$failures)[1], 'annotation failure(s)')
+  fail_text <- paste(NROW(values$failures), 'annotation failure(s)')
   # render the panel
   wellPanel(
     h4('Status:', style="color:#3e648d;font-weight:bold"),
@@ -115,17 +115,24 @@ ncoresInput <- reactive ({
 observeEvent(input$goAnnotation, {
   ## Need to update an annotation first with useUROI and useFIR
   tmp_annotation <- values$annotation
-  # proxy for useUROI (if uROI does not exist: it is always FALSE)
-  if (peakPantheR::uROIExist(tmp_annotation)) { tmp_useUROI <- input$useUROI } else { tmp_useUROI <- FALSE }
-  # finalise the setup of the annotation (useUROI, useFIR)
-  tmp_annotation <- peakPantheR::resetAnnotation(tmp_annotation,
-                                                 useUROI=tmp_useUROI,
-                                                 useFIR=input$useFIR,
-                                                 verbose=FALSE)
+  # Set useUROI / useFIR flags directly so @dataPoints cache is preserved.
+  if (peakPantheR::uROIExist(tmp_annotation)) {
+      tmp_annotation@useUROI <- input$useUROI
+  } else {
+      tmp_annotation@useUROI <- FALSE
+  }
+  tmp_annotation@useFIR <- input$useFIR
   ## Annotate!
   result <- peakPantheR_parallelAnnotation(tmp_annotation, nCores=ncoresInput(), curveModel=input$curveModel, verbose=TRUE)
 
+  # Guard against all-sample failure (e.g. broken paths on cache fallback)
+  if (peakPantheR::nbSamples(result$annotation) == 0L) {
+    values$lastRunOk <- FALSE
+    values$failures  <- result$failures
+    return()
+  }
   # Store the annotation and failures into the reactiveValue
+  values$lastRunOk  <- TRUE
   values$annotation <- result$annotation
   values$failures   <- result$failures
   # Set a list of feature name for later use
@@ -151,16 +158,13 @@ output$progressBarUI <- renderUI({
 
 
 ## Check annotation run is a success
-# value for success
+# value for success (drives Diagnostic tab visibility via AnnotationDone)
 runSuccess <- reactive({
-  # no annotation computed yet (cover the case of no import without having to do an isAnnotated on NULL which would throw an error)
   if(is.null(values$annotation)) {
     return('no')
   }
-  # annotation successful or already annotated
   if(peakPantheR::isAnnotated(values$annotation)) {
     return('yes')
-  # annotation not yet run or all spectra fail (trigger is checked in successAnnotationUI
   } else {
     return('no')
   }
@@ -168,7 +172,16 @@ runSuccess <- reactive({
 
 ## Success message
 output$successAnnotationUI <- renderUI({
-  failure_text <- paste(dim(values$failures)[1], 'annotation failure(s)')
+  failure_text <- paste(NROW(values$failures), 'annotation failure(s)')
+  # Latest run explicitly failed — override the success banner even if
+  # the old annotation is still isAnnotated from a previous run.
+  if(identical(values$lastRunOk, FALSE)) {
+    return(
+      tagList(
+        HTML(paste0("<div class=\"alert alert-dismissible alert-danger\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button><h4 style=\"font-weight:bold\">Error</h4>Annotation run failed<br>", failure_text, "</div>"))
+      )
+    )
+  }
   if(runSuccess()=='no') {
     # not imported yet
     if(input$goAnnotation == 0) {

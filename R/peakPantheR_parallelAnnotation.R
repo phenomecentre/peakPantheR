@@ -181,12 +181,14 @@ peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
 
     # Check inputs, Initialise variables and outputs
     initRes    <- parallelAnnotation_init(object, BPPARAM, nCores, verbose)
-    file_paths<-initRes$file_paths; target_peak_table<-initRes$target_peak_table
+    file_paths<-initRes$file_paths; targetFeatTable<-initRes$targetFeatTable
+    cacheROI <- initRes$cacheROI
     input_FIR  <- initRes$input_FIR; BPPARAMObject <- initRes$BPPARAMObject
 
     # Build per-file cache descriptor (from @dataPoints) when the input is
-    # already annotated and cached data covers current bounds
-    cacheList <- build_parallelAnnotation_cache(object, target_peak_table,
+    # already annotated and cached data is well-shaped. Validation uses
+    # cacheROI (= @ROI), which is the cache envelope.
+    cacheList <- build_parallelAnnotation_cache(object, cacheROI,
         verbose)
     # Hit mask: cache entries that skipped disk I/O; used by process() to keep
     # the prior @TIC[i] / @acquisitionTime[i] instead of overwriting with NA
@@ -206,7 +208,8 @@ peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
                     FUN=parallelAnnotation_parallelHelper,
                     singleSpectraDataPath=file_paths,
                     cacheEntry=cacheList,
-                    MoreArgs=list(targetFeatTable=target_peak_table,
+                    MoreArgs=list(targetFeatTable=targetFeatTable,
+                        inCacheROI=cacheROI,
                         inGetAcquTime=getAcquTime, inFIR=input_FIR,
                         centr=centroided, curveModel=curveModel,
                         inVerbose=verbose, ...),
@@ -268,8 +271,9 @@ peakPantheR_parallelAnnotation <- function(object, BPPARAM=NULL, nCores = 1,
 #  or NULL)} a string detailing the error (named with the
 #  singleSpectraDataPath) or NA if the processing is successful.
 parallelAnnotation_parallelHelper <- function(singleSpectraDataPath,
-targetFeatTable, inFIR=NULL, inGetAcquTime=FALSE,centr=TRUE,
-curveModel='skewedGaussian', inVerbose=TRUE, cacheEntry=NULL, ...){
+targetFeatTable, inCacheROI=NULL, inFIR=NULL, inGetAcquTime=FALSE,
+centr=TRUE, curveModel='skewedGaussian', inVerbose=TRUE, cacheEntry=NULL,
+...){
     useCache <- !is.null(cacheEntry) && !is.null(cacheEntry$dataPoints)
     # Check input path exist or exit with error message (skip if cache hit)
     if (!useCache && !file.exists(singleSpectraDataPath)) {
@@ -296,8 +300,8 @@ curveModel='skewedGaussian', inVerbose=TRUE, cacheEntry=NULL, ...){
             targetFeatTable, peakStatistic = TRUE, plotEICsPath = NA,
             getAcquTime = inGetAcquTime, FIR = inFIR, centroided = centr,
             curveModel = curveModel, verbose = inVerbose,
+            cacheROI = inCacheROI,
             cachedDataPoints = if (useCache) cacheEntry$dataPoints else NULL,
-            cachedROI = if (useCache) cacheEntry$ROI else NULL,
             ...)
         # add failure status
         failureMsg <- NA
@@ -355,14 +359,18 @@ parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
     # Handle default BPParams
     BPPARAM <- .resolveBPPARAM(BPPARAM, nCores)
 
-    # Initialise parameters from object
+    # Initialise parameters from object. @ROI is always the cache / disk-read
+    # envelope (a single concept, not a pair of past-vs-current bounds).
+    # @uROI is the fit/integration window when useUROI=TRUE, otherwise fit
+    # falls back to @ROI too.
     use_uROI <- useUROI(object)
     use_FIR <- useFIR(object)
     file_paths <- filepath(object)
+    cacheROI <- ROI(object)
     if (use_uROI) {
-        target_peak_table <- uROI(object)
+        targetFeatTable <- uROI(object)
     } else {
-        target_peak_table <- ROI(object)
+        targetFeatTable <- ROI(object)
     }
     if (use_FIR) {
         input_FIR <- FIR(object)
@@ -381,7 +389,8 @@ parallelAnnotation_init <- function(object, BPPARAM, nCores, verbose) {
         message("  FIR:\t", use_FIR)
     }
 
-    return(list(file_paths=file_paths, target_peak_table=target_peak_table,
+    return(list(file_paths=file_paths, targetFeatTable=targetFeatTable,
+                cacheROI=cacheROI,
                 input_FIR=input_FIR, BPPARAMObject=BPPARAM))
 }
 
@@ -450,26 +459,20 @@ parallelAnnotation_process <- function(allFilesRes, object, verbose,
     return(list(outObject=outObject, fail_table=fail_table)) }
 
 
-# Per-file cache boundary check: the cache was filled using `cachedROI`
-# (i.e. `object@ROI`) as the extraction envelope, so a hit requires
-# `targetFeatTable[i, ] ⊆ cachedROI[i, ]` for every row, plus the cache
-# list shape to match. Returns FALSE if any row's cache is empty/missing, or
-# the target window sits outside what was read from disk, triggering a fresh
-# disk read instead of silently truncating the EIC.
-cache_bounds_ok <- function(cachedDataPoints, targetFeatTable, cachedROI) {
+# Per-file cache shape/staleness check. The cache is always stored at the
+# current extraction envelope (object@ROI), so the only things to verify are
+# that the list shape matches the expected number of compounds and that no
+# per-compound data.frame is NULL or empty (the latter is the test-suite
+# staleness signal when cached rows are cleared). Containment of the request
+# in the cache envelope is guaranteed by construction as long as @ROI is not
+# edited between runs; that unsupported case is documented in
+# build_parallelAnnotation_cache() and is the user's responsibility.
+cache_bounds_ok <- function(cachedDataPoints, cacheROI) {
     if (is.null(cachedDataPoints)) { return(FALSE) }
-    if (length(cachedDataPoints) != nrow(targetFeatTable)) { return(FALSE) }
-    if (is.null(cachedROI) ||
-        nrow(cachedROI) != nrow(targetFeatTable)) { return(FALSE) }
-    for (i in seq_len(nrow(targetFeatTable))) {
+    if (length(cachedDataPoints) != nrow(cacheROI)) { return(FALSE) }
+    for (i in seq_len(nrow(cacheROI))) {
         df <- cachedDataPoints[[i]]
         if (is.null(df) || !is.data.frame(df) || nrow(df) == 0) {
-            return(FALSE)
-        }
-        tgt <- targetFeatTable[i, ]
-        env <- cachedROI[i, ]
-        if (env$rtMin > tgt$rtMin || env$rtMax < tgt$rtMax ||
-            env$mzMin > tgt$mzMin || env$mzMax < tgt$mzMax) {
             return(FALSE)
         }
     }
@@ -492,10 +495,9 @@ parallelAnnotation_compoundSubset <- function(object, j, BPPARAM, nCores,
     sub_out <- subRes$annotation
     fail_table <- subRes$failures
 
-    # All samples failed: return empty full-width object
+    # All samples failed: return original object unchanged
     if (nbSamples(sub_out) == 0L) {
-        return(list(annotation = object[integer(0), ],
-                    failures = fail_table))
+        return(list(annotation = object, failures = fail_table))
     }
 
     # Align original object to the sub-run's sample order (which may have
@@ -563,11 +565,17 @@ resolve_compound_selector <- function(compounds, ids) {
 
 
 # Build a per-file cache descriptor list. Each element is either a list with
-# $dataPoints and $ROI (cache hit) or an empty list (cache miss / fall back to
-# disk). TIC and acquisitionTime are not included - parallelAnnotation_process
+# $dataPoints (cache hit) or an empty list (cache miss / fall back to disk).
+# TIC and acquisitionTime are not included - parallelAnnotation_process
 # preserves the object's own @TIC[i] / @acquisitionTime[i] for cache hits.
 # Returns a list of length nbSamples(object).
-build_parallelAnnotation_cache <- function(object, target_peak_table, verbose){
+#
+# The envelope for the cache is always `object@ROI`; this function trusts
+# that @ROI has not been edited since the cache was populated (the supported
+# pattern is to edit @uROI / @FIR for refits and leave @ROI alone). Direct
+# @ROI edits should be followed by `resetAnnotation()` to clear stale
+# @dataPoints - there's no way to detect that from the object alone.
+build_parallelAnnotation_cache <- function(object, cacheROI, verbose){
     nFiles <- length(filepath(object))
     cacheList <- vector("list", nFiles)
     for (i in seq_len(nFiles)) { cacheList[[i]] <- list() }
@@ -578,8 +586,8 @@ build_parallelAnnotation_cache <- function(object, target_peak_table, verbose){
     anyHit <- FALSE
     for (i in seq_len(nFiles)) {
         dp_i <- if (length(dp_all) >= i) dp_all[[i]] else NULL
-        if (cache_bounds_ok(dp_i, target_peak_table, object@ROI)) {
-            cacheList[[i]] <- list(dataPoints = dp_i, ROI = object@ROI)
+        if (cache_bounds_ok(dp_i, cacheROI)) {
+            cacheList[[i]] <- list(dataPoints = dp_i)
             anyHit <- TRUE
         }
     }

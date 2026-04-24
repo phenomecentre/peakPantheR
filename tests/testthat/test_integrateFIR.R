@@ -27,11 +27,11 @@ test_that('no modification, no missing, no verbose', {
   # Expected peakTable
   expected_peakTable  <- full_peakTable
 
-  # No rows need filling -> empty FIR_data
-  FIR_data <- list()
+  # No rows need filling -> empty firData
+  firData <- list()
 
   # results (output, warnings and messages)
-  result_integrateFIR <- evaluate_promise(integrateFIR(FIR_data=FIR_data, foundPeakTable=full_peakTable, FIR=input_FIR, verbose=TRUE))
+  result_integrateFIR <- evaluate_promise(integrateFIR(firData=firData, foundPeakTable=full_peakTable, FIR=input_FIR, verbose=TRUE))
 
   # Check results
   expect_equal(result_integrateFIR$result, expected_peakTable)
@@ -60,7 +60,7 @@ test_that('3 missing with 1 which gives no scan, verbose', {
 
   # Pre-extract FIR signal for rows needing filling (2, 3, 4)
   needsFilling_idx <- which(!notFound_peakTable$found)
-  FIR_data <- extractSignalRawData(raw_data,
+  firData <- extractSignalRawData(raw_data,
       mz = data.frame(mzMin = input_FIR_empty$mzMin[needsFilling_idx],
                       mzMax = input_FIR_empty$mzMax[needsFilling_idx]),
       rt = data.frame(rtMin = input_FIR_empty$rtMin[needsFilling_idx],
@@ -68,7 +68,7 @@ test_that('3 missing with 1 which gives no scan, verbose', {
       verbose = FALSE)
 
   # results (output, warnings and messages)
-  result_integrateFIR           <- evaluate_promise(integrateFIR(FIR_data=FIR_data, foundPeakTable=notFound_peakTable, FIR=input_FIR_empty, verbose=TRUE))
+  result_integrateFIR           <- evaluate_promise(integrateFIR(firData=firData, foundPeakTable=notFound_peakTable, FIR=input_FIR_empty, verbose=TRUE))
 
   # Check results
   expect_equal(result_integrateFIR$result, expected_peakTable)
@@ -83,7 +83,7 @@ test_that('raise errors', {
   wrongFIRsize    <- input_FIR[1:3,]
 
   # foundPeakTable and FIR dimension mismatch
-  expect_error(integrateFIR(FIR_data=list(), foundPeakTable=full_peakTable, FIR=wrongFIRsize, verbose=TRUE), "Check input, FIR must have the same number of rows as foundPeakTable")
+  expect_error(integrateFIR(firData=list(), foundPeakTable=full_peakTable, FIR=wrongFIRsize, verbose=TRUE), "Check input, FIR must have the same number of rows as foundPeakTable")
 })
 
 

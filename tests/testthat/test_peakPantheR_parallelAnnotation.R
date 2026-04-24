@@ -35,13 +35,18 @@ input_FIR[3,] 	            <- c(3444.524, 3478.431, 464.1995, 464.2005)
 input_FIR[4,] 	            <- c(3689.7,   3738.213, 536.1995, 536.2005)
 input_FIR[,c(1:4)]          <- sapply(input_FIR[,c(1:4)], as.numeric)
 
-# uROI (ROI are wrong, uROI are right)
+# uROI (ROI are deliberately wider than the target peak but still contain it;
+# uROI brings the fit window back onto the peak). ROI is the extraction
+# envelope in the new fit-vs-extract split, so we keep it moderately wide
+# rather than whole-file-wide — the semantics exercised are identical
+# ("uROI ⊂ ROI and uROI is the integration window") but extraction /
+# @dataPoints stay tractable.
 input_uROI                  <- input_targetFeatTable[,c("rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax")]
 input_badtargetFeatTable    <- input_targetFeatTable
-input_badtargetFeatTable[1, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000, 0,1000)
-input_badtargetFeatTable[2, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000, 0,1000)
-input_badtargetFeatTable[3, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000, 0,1000)
-input_badtargetFeatTable[4, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(0,10000, 0,1000)
+input_badtargetFeatTable[1, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(3200, 3500, 521, 523)
+input_badtargetFeatTable[2, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(3200, 3500, 495, 497)
+input_badtargetFeatTable[3, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(3350, 3600, 463, 465)
+input_badtargetFeatTable[4, c("rtMin", "rtMax", "mzMin", "mzMax")] <- c(3550, 3850, 535, 537)
 
 # cpdMetadata
 input_cpdMetadata     <- data.frame(matrix(data=c('a','b','c','d',1,2,3,4), nrow=4, ncol=2, dimnames=list(c(),c('testcol1','testcol2')), byrow=FALSE), stringsAsFactors=FALSE)
@@ -105,7 +110,9 @@ cFit3.4         <- list(amplitude=26628.505498512375, center=3708.088, sigma=0.0
 class(cFit3.4)  <- 'peakPantheR_curveFit'
 expected_peakFit <- list(list(cFit1.1, cFit1.2, cFit1.3, cFit1.4), list(cFit2.1, cFit2.2, cFit2.3, cFit2.4), list(cFit3.1, cFit3.2, cFit3.3, cFit3.4))
 
-# Expected dataPoints
+# Expected dataPoints (extracted at the narrow input_targetFeatTable bounds;
+# @dataPoints under the new extract-at-ROI split stays at these bounds when
+# ROI = uROI = input_targetFeatTable, i.e. the default-constructor case).
 tmp_raw_data1  	  <- MSnbase::readMSData(input_spectraPaths[1], centroided=TRUE, mode='onDisk')
 ROIDataPoints1    <- extractSignalRawData(tmp_raw_data1, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=FALSE)
 tmp_raw_data2  	  <- MSnbase::readMSData(input_spectraPaths[2], centroided=TRUE, mode='onDisk')
@@ -113,6 +120,14 @@ ROIDataPoints2    <- extractSignalRawData(tmp_raw_data2, rt=input_targetFeatTabl
 tmp_raw_data3  	  <- MSnbase::readMSData(input_spectraPaths[3], centroided=TRUE, mode='onDisk')
 ROIDataPoints3    <- extractSignalRawData(tmp_raw_data3, rt=input_targetFeatTable[,c('rtMin','rtMax')], mz=input_targetFeatTable[,c('mzMin','mzMax')], verbose=FALSE)
 expected_dataPoints <- list(ROIDataPoints1, ROIDataPoints2, ROIDataPoints3)
+
+# Expected dataPoints when ROI = input_badtargetFeatTable (extraction at the
+# moderately-wide bad ROI; used by the "uROI corrects ROI" tests below).
+ROIDataPoints1_bad <- extractSignalRawData(tmp_raw_data1, rt=input_badtargetFeatTable[,c('rtMin','rtMax')], mz=input_badtargetFeatTable[,c('mzMin','mzMax')], verbose=FALSE)
+ROIDataPoints3_bad <- extractSignalRawData(tmp_raw_data3, rt=input_badtargetFeatTable[,c('rtMin','rtMax')], mz=input_badtargetFeatTable[,c('mzMin','mzMax')], verbose=FALSE)
+# Samples 1 and 3 are the surviving files in the input_missingSpectraPaths
+# tests; sample 2 is "aaa/bbb.cdf" and never reaches @dataPoints.
+expected_dataPoints_badROI <- list(ROIDataPoints1_bad, ROIDataPoints3_bad)
 
 
 # if ((.Platform$OS.type != "windows") || (.Machine$sizeof.pointer == 8)) {
@@ -409,9 +424,10 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   tmp_peakFit[[1]][[3]]           <- NA
   tmp_peakFit[[2]][[3]]           <- NA
   expected_annotation@peakFit     <- tmp_peakFit
-  tmp_dataPoints                  <- expected_dataPoints[c(1,3)]
-  tmp_dataPoints[[1]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
-  tmp_dataPoints[[2]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
+  # @dataPoints is now extracted at @ROI (the bad-ROI bounds) rather than
+  # @uROI: cpd #3's uROI has a shifted mz so the fit fails, but the
+  # extraction still returns the ROI-wide EIC for cpd #3.
+  tmp_dataPoints                  <- expected_dataPoints_badROI
   expected_annotation@dataPoints  <- tmp_dataPoints
   expected_annotation@isAnnotated <- TRUE
   # Expected failures
@@ -420,8 +436,10 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   tmp_failures        <- !is.na(tmp_status)
   names(tmp_failures) <- NULL
   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
-  # Expected message
-  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Reading data from 1 windows\n", "1 features to integrate with FIR\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4\n", "Reading data from 1 windows\n", "1 features to integrate with FIR\n", "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
+  # Expected message. FIR is now served from the wider @ROI extraction
+  # ("FIR data reused from ROI ...") instead of a separate disk read
+  # ("Reading data from 1 windows").
+  expected_message    <- c("Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "FIR data reused from ROI for 1/1 windows\n", "1 features to integrate with FIR\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4\n", "FIR data reused from ROI for 1/1 windows\n", "1 features to integrate with FIR\n", "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
 
   # results (output, warnings and messages)
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=1, getAcquTime=TRUE, verbose=TRUE))
@@ -431,8 +449,8 @@ test_that('serial: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks no
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
 
   # Check messages (no timing)
-  expect_equal(length(result_parallelAnnotation$messages), 40)
-  expect_equal(result_parallelAnnotation$messages[c(1:7,9,10,13,15,18:22,24:27,30,32,35,36,37,38,40)], expected_message)
+  expect_equal(length(result_parallelAnnotation$messages), 38)
+  expect_equal(result_parallelAnnotation$messages[c(1:7,9,10,13,14,17:21,23:26,29,30,33,34,35,36,38)], expected_message)
 })
 
 test_that('parallel: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks not found (cpd #3), getAcquTime, verbose', {
@@ -458,9 +476,7 @@ test_that('parallel: 3 files, (1 missing), 4 compounds, uROI, FIR replace peaks 
   tmp_peakFit[[1]][[3]]           <- NA
   tmp_peakFit[[2]][[3]]           <- NA
   expected_annotation@peakFit     <- tmp_peakFit
-  tmp_dataPoints                  <- expected_dataPoints[c(1,3)]
-  tmp_dataPoints[[1]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
-  tmp_dataPoints[[2]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
+  tmp_dataPoints                  <- expected_dataPoints_badROI
   expected_annotation@dataPoints  <- tmp_dataPoints
   expected_annotation@isAnnotated <- TRUE
   # Expected failures
@@ -534,9 +550,7 @@ test_that('already annotated message in verbose', {
   tmp_peakFit[[1]][[3]]           <- NA
   tmp_peakFit[[2]][[3]]           <- NA
   expected_annotation@peakFit     <- tmp_peakFit
-  tmp_dataPoints                  <- expected_dataPoints[c(1,3)]
-  tmp_dataPoints[[1]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
-  tmp_dataPoints[[2]][[3]]        <- data.frame(rt=numeric(), mz=numeric(), int=numeric())
+  tmp_dataPoints                  <- expected_dataPoints_badROI
   expected_annotation@dataPoints  <- tmp_dataPoints
   expected_annotation@isAnnotated <- TRUE
   # Expected failures
@@ -545,19 +559,20 @@ test_that('already annotated message in verbose', {
   tmp_failures        <- !is.na(tmp_status)
   names(tmp_failures) <- NULL
   expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
-  # Expected message
-  expected_message    <- c("!! Data was already annotated, results will be overwritten !!\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Reading data from 1 windows\n", "1 features to integrate with FIR\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4\n", "Reading data from 1 windows\n", "1 features to integrate with FIR\n", "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
-  
+  # Expected message. FIR is now served from the wider @ROI extraction
+  # ("FIR data reused from ROI ...") instead of a separate disk read.
+  expected_message    <- c("!! Data was already annotated, results will be overwritten !!\n", "Processing 4 compounds in 3 samples:\n", "  uROI:\tTRUE\n", "  FIR:\tTRUE\n", "----- ko15 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Fit of ROI #3 is unsuccessful (try err)\n", "FIR data reused from ROI for 1/1 windows\n", "1 features to integrate with FIR\n", "Error file does not exist: aaa/bbb.cdf\n", "----- ko18 -----\n", "Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.\n", "Check input, mzMLPath must be a .mzML\n", "Reading data from 4 windows\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #1\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #2\n", "Fit of ROI #3 is unsuccessful (try err)\n", "Warning: rtMin/rtMax outside of ROI; datapoints cannot be used for mzMin/mzMax calculation, approximate mz and returning ROI$mzMin and ROI$mzMax for ROI #4\n", "FIR data reused from ROI for 1/1 windows\n", "1 features to integrate with FIR\n", "----------------\n", "1 file(s) failed to process:\n         file                                  error\n1 aaa/bbb.cdf Error file does not exist: aaa/bbb.cdf\n", "Annotation object cannot be reordered by sample acquisition date\n", "----------------\n", "  1 failure(s)\n")
+
   # results (output, warnings and messages)
   result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores = 1, getAcquTime=TRUE, verbose=TRUE))
 
     # Check results
   expect_equal(result_parallelAnnotation$result$annotation, expected_annotation, tolerance=1e-6)
   expect_equal(result_parallelAnnotation$result$failures, expected_failures)
-  
+
   # Check messages (no timing)
-  expect_equal(length(result_parallelAnnotation$messages), 41)
-  expect_equal(result_parallelAnnotation$messages[c(1:8,10,11,14,16,19:23,25:28,31,33,36,37,38,39,41)], expected_message)
+  expect_equal(length(result_parallelAnnotation$messages), 39)
+  expect_equal(result_parallelAnnotation$messages[c(1:8,10,11,14,15,18:22,24:27,30,31,34,35,36,37,39)], expected_message)
 })
 
 test_that('catch file that doesnt exist, catch error processing, no file left', {
@@ -731,4 +746,200 @@ test_that('raise errors', {
   initAnnotation3 <- peakPantheRAnnotation(spectraPaths=input_spectraPaths, targetFeatTable=input_targetFeatTable)
   msg3            <- "Check input, nCores must be a positive integer"
   expect_error(peakPantheR_parallelAnnotation(initAnnotation3, nCores=-10, getAcquTime=FALSE, verbose=FALSE), msg3, fixed=TRUE)
+})
+
+
+test_that('refit with narrowed uROI preserves @dataPoints ROI-span', {
+  # Guard against the "cache decay" regression: without the extraction/fit
+  # split, narrowing @uROI on a refit would also narrow @dataPoints, and
+  # the next refit would see less cached data available.
+
+  # First pass: full annotation at ROI=uROI seeded from input_targetFeatTable
+  initAnnot <- peakPantheRAnnotation(spectraPaths=input_spectraPaths,
+      targetFeatTable=input_targetFeatTable)
+  full_res  <- peakPantheR_parallelAnnotation(initAnnot, nCores=1,
+      getAcquTime=FALSE, verbose=FALSE)
+  full_ann  <- full_res$annotation
+  baseline_nrow_cpd1 <- nrow(full_ann@dataPoints[[1]][[1]])
+  expect_gt(baseline_nrow_cpd1, 0)
+
+  # Narrow @uROI for compound 1 by ~25% in rt, keep @ROI wide
+  narrowed <- full_ann
+  narrowed@uROI[1, "rtMin"] <- narrowed@uROI[1, "rtMin"] + 20
+  narrowed@uROI[1, "rtMax"] <- narrowed@uROI[1, "rtMax"] - 20
+
+  # Refit just compound 1
+  refit_res <- peakPantheR_parallelAnnotation(narrowed,
+      compounds = cpdID(narrowed)[1], nCores=1, getAcquTime=FALSE,
+      verbose=FALSE)
+  refit_ann <- refit_res$annotation
+
+  # @dataPoints span for compound 1 is preserved across the refit
+  expect_equal(nrow(refit_ann@dataPoints[[1]][[1]]), baseline_nrow_cpd1)
+
+  # The refit DID act on the narrower fit window: the detected peak's
+  # apex (rt) must stay within the new uROI bounds (the fit only
+  # sees that subset of the data). The peak's *rtMin* can still fall
+  # below the uROI because it's the leading edge at 0.5% apex intensity,
+  # projected from the fit curve rather than clamped to the data window.
+  new_uroi <- uROI(narrowed)[1, c("rtMin", "rtMax")]
+  expect_gte(refit_ann@peakTables[[1]][1, "rt"], new_uroi$rtMin)
+  expect_lte(refit_ann@peakTables[[1]][1, "rt"], new_uroi$rtMax)
+
+  # And the fit output differs from the baseline (otherwise the refit was
+  # a no-op and we couldn't distinguish "fix works" from "cache returned
+  # identical results")
+  expect_false(isTRUE(all.equal(
+      refit_ann@peakTables[[1]][1, "peakArea"],
+      full_ann@peakTables[[1]][1, "peakArea"],
+      tolerance=1e-6)))
+})
+
+
+## cached re-annotation ---------------------------------------------------
+BPPARAM_serial <- BiocParallel::SerialParam()
+
+cache_spectraPaths <- input_spectraPaths[c(1, 2)]
+
+cache_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
+    c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),
+    stringsAsFactors = FALSE)
+cache_targetFeatTable[1,] <- c("ID-1", "Cpd 1", 3310., 3344.888, 3390.,
+    522.194778, 522.2, 522.205222)
+cache_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3670., 3701.697, 3745.,
+    536.194638, 536.2, 536.205362)
+cache_targetFeatTable[, 3:8] <- sapply(cache_targetFeatTable[, 3:8],
+    as.numeric)
+
+cache_init_annotation <- peakPantheRAnnotation(
+    spectraPaths = cache_spectraPaths,
+    targetFeatTable = cache_targetFeatTable)
+
+
+test_that('second run reuses cached EIC data and skips disk reads', {
+    first <- peakPantheR_parallelAnnotation(cache_init_annotation,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = FALSE)
+    expect_true(isAnnotated(first$annotation))
+
+    res <- evaluate_promise(peakPantheR_parallelAnnotation(first$annotation,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = TRUE))
+
+    reuse_msgs <- grep("Reusing cached EIC data",
+        res$messages, value = TRUE)
+    read_msgs <- grep("Reading data from",
+        res$messages, value = TRUE)
+    expect_equal(length(reuse_msgs), 2)
+    expect_equal(length(read_msgs), 0)
+
+    expect_equal(peakTables(res$result$annotation),
+                    peakTables(first$annotation))
+})
+
+
+test_that('cache miss (bounds outside cache) falls back to disk read', {
+    first <- peakPantheR_parallelAnnotation(cache_init_annotation,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = FALSE)
+
+    broken <- first$annotation
+    broken@dataPoints[[1]][[1]] <- broken@dataPoints[[1]][[1]][0, ,
+        drop = FALSE]
+
+    res <- evaluate_promise(peakPantheR_parallelAnnotation(broken,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = TRUE))
+
+    reuse_msgs <- grep("Reusing cached EIC data",
+        res$messages, value = TRUE)
+    read_msgs <- grep("Reading data from",
+        res$messages, value = TRUE)
+    expect_equal(length(reuse_msgs), 1)
+    expect_gte(length(read_msgs), 1)
+})
+
+
+test_that('cache_bounds_ok returns FALSE for empty or misshaped cache', {
+    tbl <- cache_targetFeatTable
+    expect_false(cache_bounds_ok(NULL, tbl))
+    expect_false(cache_bounds_ok(list(), tbl))
+    empty_dp <- list(
+        data.frame(rt = numeric(), mz = numeric(), int = numeric()),
+        data.frame(rt = numeric(), mz = numeric(), int = numeric()))
+    expect_false(cache_bounds_ok(empty_dp, tbl))
+})
+
+
+test_that('narrowing or widening uROI inside ROI keeps the cache hot', {
+    first <- peakPantheR_parallelAnnotation(cache_init_annotation,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = FALSE)
+    annot <- first$annotation
+
+    narrow <- annot
+    narrow@uROI <- data.frame(
+        rtMin = ROI(annot)$rtMin + 5,
+        rt    = ROI(annot)$rt,
+        rtMax = ROI(annot)$rtMax - 5,
+        mzMin = ROI(annot)$mzMin,
+        mz    = ROI(annot)$mz,
+        mzMax = ROI(annot)$mzMax,
+        stringsAsFactors = FALSE)
+    narrow@useUROI <- TRUE
+    narrow@uROIExist <- TRUE
+    res_narrow <- evaluate_promise(peakPantheR_parallelAnnotation(narrow,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = TRUE))
+    expect_equal(length(grep("Reading data from",
+        res_narrow$messages)), 0)
+    expect_gte(length(grep("Reusing cached EIC data",
+        res_narrow$messages)), 1)
+
+    wider_uROI <- annot
+    wider_uROI@uROI <- data.frame(
+        rtMin = ROI(annot)$rtMin,
+        rt    = ROI(annot)$rt,
+        rtMax = ROI(annot)$rtMax,
+        mzMin = ROI(annot)$mzMin,
+        mz    = ROI(annot)$mz,
+        mzMax = ROI(annot)$mzMax,
+        stringsAsFactors = FALSE)
+    wider_uROI@useUROI <- TRUE
+    wider_uROI@uROIExist <- TRUE
+    res_w <- evaluate_promise(peakPantheR_parallelAnnotation(wider_uROI,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = TRUE))
+    expect_equal(length(grep("Reading data from", res_w$messages)), 0)
+    expect_gte(length(grep("Reusing cached EIC data",
+        res_w$messages)), 1)
+})
+
+
+test_that('FIR inside ROI but outside uROI is served from cache', {
+    first <- peakPantheR_parallelAnnotation(cache_init_annotation,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = FALSE)
+    annot <- first$annotation
+
+    annot@uROI <- data.frame(
+        rtMin = c(3355, 3710),
+        rt    = c(3357.5, 3712.5),
+        rtMax = c(3360, 3715),
+        mzMin = ROI(annot)$mzMin,
+        mz    = ROI(annot)$mz,
+        mzMax = ROI(annot)$mzMax,
+        stringsAsFactors = FALSE)
+    annot@useUROI   <- TRUE
+    annot@uROIExist <- TRUE
+
+    annot@FIR <- data.frame(
+        rtMin = ROI(annot)$rtMin,
+        rtMax = ROI(annot)$rtMax,
+        mzMin = ROI(annot)$mzMin,
+        mzMax = ROI(annot)$mzMax,
+        stringsAsFactors = FALSE)
+    annot@useFIR <- TRUE
+
+    res <- evaluate_promise(peakPantheR_parallelAnnotation(annot,
+        BPPARAM = BPPARAM_serial, getAcquTime = FALSE, verbose = TRUE))
+
+    expect_equal(length(grep("Reading data from", res$messages)), 0)
+    expect_gte(length(grep("Reusing cached EIC data",
+        res$messages)), 1)
+    pt <- peakTables(res$result$annotation)
+    expect_true(all(vapply(pt, function(x) all(x$is_filled),
+        FUN.VALUE = logical(1))))
 })

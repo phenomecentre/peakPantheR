@@ -4,18 +4,24 @@
 \alias{load_annotation_from_file_UI_helper}
 \title{UI data import helper - check loaded annotation}
 \usage{
-load_annotation_from_file_UI_helper(annotationPath)
+load_annotation_from_file_UI_helper(annotationPath, objectName = NULL)
 }
 \arguments{
-\item{annotationPath}{(str) Path to a RData file containing a
-peakPantheRAnnotation names `annotationObject`}
+\item{annotationPath}{(str) Path to a .RData or .RDS file containing one or
+more peakPantheRAnnotation objects}
+
+\item{objectName}{(str or NULL) Optional name of the object to return when
+the file contains several candidates}
 }
 \value{
-(peakPantheRAnnotation) Object loaded from file
+(peakPantheRAnnotation) Object loaded from file, or a list of
+candidate annotations when multiple are found and `objectName` is NULL
 }
 \description{
-Load a .RData file (check it exists) and that a peakPantheRAnnotation named
-"annotationObject" is present. Returns the annotation if everything is valid
+Load a .RData or .RDS file and return the peakPantheRAnnotation it contains.
+For .RData files with multiple peakPantheRAnnotation objects, either pass
+`objectName` to pick one or receive a list of candidates (class
+`peakPantheRAnnotation_candidates`) for the caller to choose from.
 }
 \examples{
 ## Initialise a peakPantheRAnnotation object with 3 samples and 2 compounds

@@ -69,13 +69,17 @@ applyRTCorrection_correctFeatTable <- function(targetFeatTable, referenceTable,
         correctionFunction <- rtCorrectionOutput$model
         correctedRtDrift <- stats::predict(correctionFunction,
                             newdata=data.frame(x=targetFeatTable$rt))
+        # rt_dev_sec = measured - expected (see getTargetFeatureStatistic),
+        # so the predicted drift tells us how far downstream the real peak
+        # sits relative to the expected rt. Add it to move the expected rt
+        # (and the red target line in the diagnostic plot) onto the peak.
         corrected_targetFeatTable$correctedRt <-
-            corrected_targetFeatTable$rt - correctedRtDrift
+            corrected_targetFeatTable$rt + correctedRtDrift
         corrected_targetFeatTable$predictedRtDrift <- correctedRtDrift }
     else if (method == 'constant') {
-        # {redicted drift = constant observed drift in the reference
+        # predicted drift = constant observed drift in the reference
         corrected_targetFeatTable$correctedRt <-
-            corrected_targetFeatTable$rt - rep(referenceTable$rt_dev_sec,
+            corrected_targetFeatTable$rt + rep(referenceTable$rt_dev_sec,
                 dim(corrected_targetFeatTable)[1])
         corrected_targetFeatTable$predictedRtDrift <-
             rep(referenceTable$rt_dev_sec, dim(corrected_targetFeatTable)[1])

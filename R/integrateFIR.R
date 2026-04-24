@@ -2,7 +2,7 @@
 #'
 #' @description Integrate region defined in FIR if a feature is not found
 #'
-#' @param FIR_data (list) Pre-extracted raw signal for each FIR window of rows
+#' @param firData (list) Pre-extracted raw signal for each FIR window of rows
 #' needing filling (i.e. rows where \code{foundPeakTable$found} is
 #' \code{FALSE}), in the same order as those rows. Each element is a
 #' \code{data.frame} with columns \code{rt}, \code{mz}, \code{int} as produced
@@ -20,7 +20,7 @@
 #' @param verbose (bool) if TRUE message progress
 #'
 #' @return an updated foundPeakTable with FIR integration values
-integrateFIR <- function(FIR_data, FIR, foundPeakTable, verbose = TRUE) {
+integrateFIR <- function(firData, FIR, foundPeakTable, verbose = TRUE) {
     # Check input
     if (dim(FIR)[1] != dim(foundPeakTable)[1]) {
         stop("Check input, FIR must have the same number of rows as ",
@@ -43,7 +43,7 @@ integrateFIR <- function(FIR_data, FIR, foundPeakTable, verbose = TRUE) {
                                                 "maxIntMeasured",
                                                 "maxIntPredicted"))))
         # iterate over features to integrate
-        tmpResult <- integrateFIR_features(needsFilling_idx, FIR_data, FIR,
+        tmpResult <- integrateFIR_features(needsFilling_idx, firData, FIR,
                                             tmpResult, verbose)
         # Replace results with FIR integration
         outTable[needsFilling_idx,

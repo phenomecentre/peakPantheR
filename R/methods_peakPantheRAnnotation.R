@@ -1358,11 +1358,12 @@ annotationParamsDiagnostic_uROI <- function(outAnnotation, verbose) {
             message("uROI max mzMax which are NA are replaced ROI mzMax") }
         mzMaxUROI[is.infinite(mzMaxUROI)] <-
             outAnnotation@ROI[is.infinite(mzMaxUROI), "mzMax"] }
-    # store new uROI values
-    outAnnotation@uROI[, "rtMin"] <- rtMinUROI
-    outAnnotation@uROI[, "rtMax"] <- rtMaxUROI
-    outAnnotation@uROI[, "mzMin"] <- mzMinUROI
-    outAnnotation@uROI[, "mzMax"] <- mzMaxUROI
+    # store new uROI values, clamped to ROI (the cache / extraction envelope)
+    roi <- ROI(outAnnotation)
+    outAnnotation@uROI[, "rtMin"] <- pmax(rtMinUROI, roi$rtMin)
+    outAnnotation@uROI[, "rtMax"] <- pmin(rtMaxUROI, roi$rtMax)
+    outAnnotation@uROI[, "mzMin"] <- pmax(mzMinUROI, roi$mzMin)
+    outAnnotation@uROI[, "mzMax"] <- pmin(mzMaxUROI, roi$mzMax)
     outAnnotation@uROI[, c("rt", "mz")] <- outAnnotation@ROI[,c("rt", "mz")]
     # set uROIExist
     outAnnotation@uROIExist <- TRUE
@@ -1412,11 +1413,12 @@ annotationParamsDiagnostic_FIR <- function(outAnnotation, verbose) {
         mzMaxFIR[is.na(mzMaxFIR)] <-
             outAnnotation@uROI[is.na(mzMaxFIR), "mzMax"] }
 
-    # store new FIR values
-    outAnnotation@FIR[, "rtMin"] <- rtMinFIR
-    outAnnotation@FIR[, "rtMax"] <- rtMaxFIR
-    outAnnotation@FIR[, "mzMin"] <- mzMinFIR
-    outAnnotation@FIR[, "mzMax"] <- mzMaxFIR
+    # store new FIR values, clamped to ROI (the cache / extraction envelope)
+    roi <- ROI(outAnnotation)
+    outAnnotation@FIR[, "rtMin"] <- pmax(rtMinFIR, roi$rtMin)
+    outAnnotation@FIR[, "rtMax"] <- pmin(rtMaxFIR, roi$rtMax)
+    outAnnotation@FIR[, "mzMin"] <- pmax(mzMinFIR, roi$mzMin)
+    outAnnotation@FIR[, "mzMax"] <- pmin(mzMaxFIR, roi$mzMax)
 
     return(outAnnotation)
 }
@@ -2282,7 +2284,7 @@ resetAnnot_spectraPathMetadata <- function(previousAnnotation, spectraPaths,
 
         # new values
     } else {
-        .spectraPaths <- spectraPaths
+        .spectraPaths <- normalizePath(spectraPaths, mustWork = FALSE)
         if (verbose) {
             message("  New \"spectraPaths\" value set")
         }

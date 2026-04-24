@@ -11,11 +11,19 @@
 
 # Default annotation as reactiveValue
 values <- reactiveValues(annotation = NULL, failures = NULL, featNmeList = NULL, spectraMetadataCol = NULL, filename = NULL,
-                         dragArmed = FALSE, pendingRtWindow = NULL,
+                         dragArmed = FALSE, refitTrigger = 0L,
+                         suggestTrigger = 0L,
+                         firEqualsUroiTrigger = 0L,
+                         rtCorrResult = NULL,
+                         pendingRtWindow = NULL,
                          # Per-compound rt-window backup for the "Reset last
                          # edit". Stores the full uROI + FIR rows
                          # for the compound most recently edited.
-                         rtBackup = NULL)
+                         rtBackup = NULL,
+                         # Tracks whether the latest annotation run
+                         # succeeded (TRUE), failed (FALSE), or
+                         # hasn't been triggered yet (NULL).
+                         lastRunOk = NULL)
 
 # New annotation
 observeEvent(input$triggerImportNewAnnotation, {
@@ -117,30 +125,32 @@ importSuccess <- reactive({
   # return 'no' until a trigger button is clicked
   if(input$triggerImportNewAnnotation == 0 & input$triggerLoadPreviousAnnotation == 0) { return('no')} # import not clicked
 
-  isolate({
-    # use a validObject as check to stop having a 'yes' in case of problems
-    # if error raised during import, could have a values$annotation that exist (NULL) and validObject(NULL) is TRUE... so check it's a peakPantheRAnnotation
-    if( isTRUE(validObject(values$annotation, test=TRUE)) & is(values$annotation, 'peakPantheRAnnotation') ) {
-      return('yes')
+  # multi-candidate modal is open — user hasn't picked yet
+  if (!is.null(values$loadCandidates)) { return('pending') }
 
-    # not valid, return 'no'.
-    # If it isn't a peakPantheRAnnotation, the app is killed with the error raised in the loading part (ordering is out of our control)
-    # If it is an annotation, it is killed here
-    } else {
-      if(is(values$annotation, 'peakPantheRAnnotation')) {
-        stopApp( paste('Error:', validObject(values$annotation, test=TRUE)))
-      }
-      return('no')
+  # use a validObject as check to stop having a 'yes' in case of problems
+  # if error raised during import, could have a values$annotation that exist (NULL) and validObject(NULL) is TRUE... so check it's a peakPantheRAnnotation
+  if( isTRUE(validObject(values$annotation, test=TRUE)) & is(values$annotation, 'peakPantheRAnnotation') ) {
+    return('yes')
+
+  # not valid, return 'no'.
+  # If it isn't a peakPantheRAnnotation, the app is killed with the error raised in the loading part (ordering is out of our control)
+  # If it is an annotation, it is killed here
+  } else {
+    if(is(values$annotation, 'peakPantheRAnnotation')) {
+      stopApp( paste('Error:', validObject(values$annotation, test=TRUE)))
     }
-  })
+    return('no')
+  }
 })
 
 
 # success/failure UI
 output$resultImportCheck <- renderUI({
-  if(importSuccess()=='no') {
-    # not imported yet
-    if(input$triggerImportNewAnnotation == 0 & input$triggerLoadPreviousAnnotation == 0) {
+  if(importSuccess() %in% c('no', 'pending')) {
+    # not imported yet, or candidate selection in progress
+    if(input$triggerImportNewAnnotation == 0 & input$triggerLoadPreviousAnnotation == 0 |
+       importSuccess() == 'pending') {
       return()
     # import control failed
     } else {

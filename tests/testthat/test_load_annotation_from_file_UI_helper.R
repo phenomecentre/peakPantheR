@@ -33,41 +33,89 @@ annotationPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
 save(annotationObject, file=annotationPath, compress=TRUE)
 
 
-test_that('load correct file', {
-    # expected
+test_that('load RData with single peakPantheRAnnotation', {
     expected    <- annotationObject
 
-    # results (output, warnings and messages)
-    result_load <- evaluate_promise(load_annotation_from_file_UI_helper(annotationPath = annotationPath))
-    # Check result
+    result_load <- evaluate_promise(load_annotation_from_file_UI_helper(
+        annotationPath = annotationPath))
     expect_equal(result_load$result, expected)
-
-    # Check result messages (in output)
     expect_equal(length(result_load$messages), 0)
     expect_equal(result_load$output, "")
 })
 
-test_that('raise errors', {
-
-    noFile          <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
-
+test_that('RData object found by class regardless of variable name', {
     wrongNameObject <- annotationObject
-    wrongName_path  <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+    wrongName_path  <- tempfile(pattern="file", tmpdir=tempdir(),
+        fileext='.RData')
     save(wrongNameObject, file=wrongName_path, compress=TRUE)
 
-    annotationObject    <- 'notAPeakPantheRAnnotation'
-    wrongObject_path    <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
-    save(annotationObject, file=wrongObject_path, compress=TRUE)
+    result <- load_annotation_from_file_UI_helper(
+        annotationPath = wrongName_path)
+    expect_equal(result, annotationObject)
+})
 
-    # file doesn't exist
-    msg1    <- paste('Error: annotation file does not exist', sep='')
-    expect_error(load_annotation_from_file_UI_helper(annotationPath = noFile), msg1, fixed=TRUE)
+test_that('load RDS file', {
+    rdsPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.rds')
+    saveRDS(annotationObject, file=rdsPath)
 
-    # wrong name in .RData
-    msg2    <- paste("Error: annotation file must contain a `peakPantheRAnnotation` named 'annotationObject'", sep='')
-    expect_error(load_annotation_from_file_UI_helper(annotationPath = wrongName_path), msg2, fixed=TRUE)
+    result <- load_annotation_from_file_UI_helper(annotationPath = rdsPath)
+    expect_equal(result, annotationObject)
+})
 
-    # not a peakPantheRAnnotation
-    msg3    <- paste("Error: the variable loaded is not a `peakPantheRAnnotation`", sep='')
-    expect_error(load_annotation_from_file_UI_helper(annotationPath = wrongObject_path), msg3, fixed=TRUE)
+test_that('objectName selects among multiple candidates', {
+    annot1 <- annotationObject
+    annot2 <- annotationObject
+    multiPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+    save(annot1, annot2, file=multiPath, compress=TRUE)
+
+    result <- load_annotation_from_file_UI_helper(annotationPath = multiPath,
+        objectName = "annot2")
+    expect_equal(result, annot2)
+})
+
+test_that('multiple candidates without objectName returns candidate list', {
+    annot1 <- annotationObject
+    annot2 <- annotationObject
+    multiPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+    save(annot1, annot2, file=multiPath, compress=TRUE)
+
+    result <- load_annotation_from_file_UI_helper(annotationPath = multiPath)
+    expect_true(is(result, "peakPantheRAnnotation_candidates"))
+    expect_equal(length(result), 2)
+    expect_true(all(c("annot1", "annot2") %in% names(result)))
+})
+
+test_that('raise errors', {
+    noFile <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+
+    notAnnot <- 'notAPeakPantheRAnnotation'
+    wrongObject_path <- tempfile(pattern="file", tmpdir=tempdir(),
+        fileext='.RData')
+    save(notAnnot, file=wrongObject_path, compress=TRUE)
+
+    rdsWrongPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.rds')
+    saveRDS("not an annotation", file=rdsWrongPath)
+
+    multiPath <- tempfile(pattern="file", tmpdir=tempdir(), fileext='.RData')
+    annot1 <- annotationObject
+    annot2 <- annotationObject
+    save(annot1, annot2, file=multiPath, compress=TRUE)
+
+    expect_error(load_annotation_from_file_UI_helper(annotationPath = noFile),
+        "annotation file does not exist", fixed=TRUE)
+
+    expect_error(load_annotation_from_file_UI_helper(
+        annotationPath = wrongObject_path),
+        "no `peakPantheRAnnotation` object found in the RData file",
+        fixed=TRUE)
+
+    expect_error(load_annotation_from_file_UI_helper(
+        annotationPath = rdsWrongPath),
+        "the RDS file does not contain a `peakPantheRAnnotation`",
+        fixed=TRUE)
+
+    expect_error(load_annotation_from_file_UI_helper(
+        annotationPath = multiPath, objectName = "noSuchName"),
+        "requested object 'noSuchName' is not a `peakPantheRAnnotation`",
+        fixed=TRUE)
 })

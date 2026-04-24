@@ -177,6 +177,13 @@ plotEICFit_prepData <- function(ROIDataPointSampleList, curveFitSampleList,
                                 by = ((rtMax[x] - rtMin[x])/(sampling - 1)))
                 tmp_fit <- data.frame(rt = grid_rt,
                     int = predictCurve(curveFitSampleList[[x]], x = grid_rt))
+                # Clip fit to the RT range of the displayed EIC
+                eic_rt <- ROIDataPointSampleList[[x]]$rt
+                if (length(eic_rt) > 0) {
+                    eic_range <- range(eic_rt, na.rm = TRUE)
+                    tmp_fit <- tmp_fit[tmp_fit$rt >= eic_range[1] &
+                        tmp_fit$rt <= eic_range[2], , drop = FALSE]
+                }
                 tmp_fit <- cbind(tmp_fit, specID = rep(paste("spl", x, sep=""),
                                                         nrow(tmp_fit)))
             }

@@ -30,7 +30,7 @@ baseAnnot <- peakPantheRAnnotation(spectraPaths = spectraPaths,
     targetFeatTable = targetFeatTable,
     uROI = uROIseed, FIR = FIRseed, uROIExist = TRUE)
 
-newRt <- c(3300, 3400)
+newRt <- c(3320, 3380)
 
 
 test_that('bound-order guard rejects rt[1] >= rt[2]', {
@@ -89,4 +89,63 @@ test_that('targets = "FIR" only updates FIR', {
     expect_equal(FIR(out)[1, "rtMin"], newRt[1])
     expect_equal(uROI(out)[1, "rtMin"], uROI(baseAnnot)[1, "rtMin"])
     expect_equal(uROI(out)[1, "rtMax"], uROI(baseAnnot)[1, "rtMax"])
+})
+
+## Flag updates: editing a slot must flip the corresponding use* flag so the
+## next refit actually reads the new bounds (previously the edit was silently
+## ignored when the object was previously run with useUROI/useFIR = FALSE).
+
+# Build a variant with the flags off to verify they get flipped
+offFlagsAnnot <- suppressMessages(peakPantheRAnnotation(
+    spectraPaths = spectraPaths,
+    targetFeatTable = targetFeatTable,
+    uROI = uROIseed, FIR = FIRseed,
+    uROIExist = FALSE, useUROI = FALSE, useFIR = FALSE))
+
+test_that('editing uROI flips @useUROI and @uROIExist to TRUE', {
+    expect_false(useUROI(offFlagsAnnot))
+    expect_false(uROIExist(offFlagsAnnot))
+    out <- apply_rt_window_to_annotation(offFlagsAnnot, 1, newRt,
+                                         targets = "uROI")
+    expect_true(useUROI(out))
+    expect_true(uROIExist(out))
+    # FIR flag untouched when only uROI edited
+    expect_false(useFIR(out))
+})
+
+test_that('editing FIR flips @useFIR to TRUE', {
+    expect_false(useFIR(offFlagsAnnot))
+    out <- apply_rt_window_to_annotation(offFlagsAnnot, 1, newRt,
+                                         targets = "FIR")
+    expect_true(useFIR(out))
+    # uROI flags untouched when only FIR edited
+    expect_false(useUROI(out))
+    expect_false(uROIExist(out))
+})
+
+test_that('default targets flip both @useUROI and @useFIR', {
+    out <- apply_rt_window_to_annotation(offFlagsAnnot, 1, newRt)
+    expect_true(useUROI(out))
+    expect_true(uROIExist(out))
+    expect_true(useFIR(out))
+})
+
+test_that('rt values outside ROI are clipped to ROI bounds', {
+    # Compound 1 ROI: rtMin=3310, rtMax=3390
+    out <- apply_rt_window_to_annotation(baseAnnot, 1, c(3200, 3500))
+    expect_equal(uROI(out)[1, "rtMin"], 3310)
+    expect_equal(uROI(out)[1, "rtMax"], 3390)
+    expect_equal(FIR(out)[1, "rtMin"], 3310)
+    expect_equal(FIR(out)[1, "rtMax"], 3390)
+})
+
+test_that('selection entirely outside ROI returns annotation unchanged', {
+    # Both values below ROI rtMin=3310
+    out <- apply_rt_window_to_annotation(baseAnnot, 1, c(3100, 3200))
+    expect_equal(uROI(out)[1, "rtMin"], uROI(baseAnnot)[1, "rtMin"])
+    expect_equal(uROI(out)[1, "rtMax"], uROI(baseAnnot)[1, "rtMax"])
+    # Both values above ROI rtMax=3390
+    out <- apply_rt_window_to_annotation(baseAnnot, 1, c(3400, 3500))
+    expect_equal(FIR(out)[1, "rtMin"], FIR(baseAnnot)[1, "rtMin"])
+    expect_equal(FIR(out)[1, "rtMax"], FIR(baseAnnot)[1, "rtMax"])
 })

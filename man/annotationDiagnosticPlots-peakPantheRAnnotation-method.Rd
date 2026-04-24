@@ -6,8 +6,7 @@
 \alias{annotationDiagnosticPlots}
 \title{Generate fit diagnostic plots}
 \usage{
-\S4method{annotationDiagnosticPlots}{peakPantheRAnnotation}(object,
-sampleColour, sampling, plotWindow, verbose)
+\S4method{annotationDiagnosticPlots}{peakPantheRAnnotation}(object, sampleColour, sampling, plotWindow, verbose)
 }
 \arguments{
 \item{object}{(peakPantheRAnnotation) Annotated peakPantheRAnnotation object}

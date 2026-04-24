@@ -461,6 +461,10 @@ annotation_diagnostic_multiplot_UI_helper <- function(cpdNb, annotation,
 #' @param source (str or NULL) plotly event source id (for
 #'   \code{plotly::event_data})
 #' @param dragmode (str or NULL) plotly dragmode, e.g. "zoom" or "select"
+#' @param plotWindow (str) \code{"ROI"} (default) draws the full ROI
+#'   extraction envelope on the x-axis; \code{"uROIFIR"} restricts the
+#'   x-axis range to the union of the compound's uROI and FIR rt bounds
+#'   (EIC data outside is still computed but the initial view zooms in).
 #' @param ... passed to \code{annotationDiagnosticPlots()}
 #'
 #' @return A plotly htmlwidget.
@@ -469,15 +473,20 @@ annotation_diagnostic_multiplot_UI_helper_interactive <- function(cpdNb,
     annotation, splNum = NULL, splColrColumn = NULL,
     splMode = c("sequential", "random"),
     splFilterCol = NULL, splFilterLevels = NULL,
-    source = NULL, dragmode = NULL, ...) {
+    source = NULL, dragmode = NULL,
+    plotWindow = c("ROI", "uROIFIR"), ...) {
     splMode <- match.arg(splMode)
+    plotWindow <- match.arg(plotWindow)
     tmp_annotat <- subset_annot_diag_plot_UI_helper(cpdNb, annotation, splNum,
         splMode = splMode,
         splFilterCol = splFilterCol, splFilterLevels = splFilterLevels)
     sampleColour <- spectra_metadata_colourScheme_UI_helper(tmp_annotat,
         splColrColumn)
+    # EIC data is always extracted over the full @ROI envelope so that
+    # shrinking the x-axis to uROI/FIR is a pure view change (no refit).
     tmp_diagPlotList <- annotationDiagnosticPlots(tmp_annotat,
-        sampleColour = sampleColour, verbose = FALSE, ...)
+        sampleColour = sampleColour, verbose = FALSE,
+        plotWindow = "ROI", ...)
 
     # pull the selected compound's  uROI / FIR rt bounds
     # to overlay as shaded rectangle
@@ -496,7 +505,119 @@ annotation_diagnostic_multiplot_UI_helper_interactive <- function(cpdNb,
         }
     }
     if (is.null(plt)) { return(plotly::plotly_empty()) }
+    if (identical(plotWindow, "uROIFIR")) {
+        bounds <- rt_union_bounds(windows[c("uROI", "FIR")])
+        if (!is.null(bounds)) {
+            if (is.null(plt$x$layout)) plt$x$layout <- list()
+            if (is.null(plt$x$layout$xaxis)) plt$x$layout$xaxis <- list()
+            plt$x$layout$xaxis$range <- bounds
+            plt$x$layout$xaxis$autorange <- FALSE
+            # Rescale y to the EIC traces visible in the zoomed window;
+            # otherwise plotly keeps the full-ROI y-range and tall peaks
+            # outside the window flatten the signal inside it.
+            yMax <- max_eic_int_in_window(tmp_annotat, bounds)
+            if (is.finite(yMax) && yMax > 0) {
+                if (is.null(plt$x$layout$yaxis)) plt$x$layout$yaxis <- list()
+                plt$x$layout$yaxis$range <- c(0, yMax * 1.05)
+                plt$x$layout$yaxis$autorange <- FALSE
+            }
+        }
+    }
     return(plt)
+}
+
+# Compute the union rt span across a named list of window entries
+# (each NULL or list(rtMin=, rtMax=)). Returns c(min, max) or NULL.
+rt_union_bounds <- function(windows) {
+    mins <- c(); maxs <- c()
+    for (w in windows) {
+        if (is.null(w)) next
+        rtMin <- suppressWarnings(as.numeric(w$rtMin))
+        rtMax <- suppressWarnings(as.numeric(w$rtMax))
+        if (length(rtMin) != 1 || length(rtMax) != 1) next
+        if (!is.finite(rtMin) || !is.finite(rtMax) || rtMin >= rtMax) next
+        mins <- c(mins, rtMin); maxs <- c(maxs, rtMax)
+    }
+    if (length(mins) == 0) return(NULL)
+    c(min(mins), max(maxs))
+}
+
+# Max EIC intensity within [rtMin, rtMax] across the annotation's
+# cached @dataPoints. Intensities are summed per-scan to mirror
+# generateIonChromatogram(aggregationFunction = "sum"), which builds the
+# EIC traces drawn on the diagnostic plot.
+max_eic_int_in_window <- function(annotation, bounds) {
+    dp <- tryCatch(dataPoints(annotation), error = function(e) NULL)
+    if (is.null(dp) || length(dp) == 0) return(NA_real_)
+    pts <- unlist(dp, recursive = FALSE)
+    best <- -Inf
+    for (df in pts) {
+        if (is.null(df) || !is.data.frame(df) || nrow(df) == 0) next
+        if (!all(c("rt", "int") %in% colnames(df))) next
+        sub <- df[df$rt >= bounds[1] & df$rt <= bounds[2], , drop = FALSE]
+        if (nrow(sub) == 0) next
+        summed <- tapply(sub$int, sub$rt, sum, na.rm = TRUE)
+        m <- suppressWarnings(max(summed, na.rm = TRUE))
+        if (is.finite(m) && m > best) best <- m
+    }
+    if (!is.finite(best)) return(NA_real_)
+    best
+}
+
+#' @title Interactive RT correction diagnostic plot
+#'
+#' @description Builds a plotly scatter plot of retention time
+#' vs retention time deviation, coloured by reference status,
+#' with the fitted correction curve overlaid.
+#'
+#' @param correctedRtTable (data.frame) Output of
+#'   \code{peakPantheR_applyRTCorrection} with columns
+#'   \code{cpdID}, \code{cpdName}, \code{rt},
+#'   \code{rt_dev_sec}, \code{isReference},
+#'   \code{correctedRt}, \code{predictedRtDrift}.
+#' @param source (character) plotly event source id
+#'
+#' @return A plotly htmlwidget
+#' @export
+rtCorrection_interactive_plot_UI_helper <- function(
+    correctedRtTable, source = "rtCorrPlot") {
+    refPalette <- c(
+        "Reference set"         = "#2ca02c",
+        "Reference set outlier" = "#d62728",
+        "External set"          = "#1f77b4")
+    ct <- correctedRtTable
+    ctSorted <- ct[order(ct$rt), ]
+    plt <- plotly::plot_ly(source = source)
+    for (grp in intersect(names(refPalette),
+                          unique(ct$isReference))) {
+        sub <- ct[ct$isReference == grp, , drop = FALSE]
+        plt <- plotly::add_trace(plt, data = sub,
+            x = ~rt, y = ~rt_dev_sec,
+            type = "scatter", mode = "markers",
+            name = grp,
+            marker = list(color = refPalette[[grp]],
+                          size = 10),
+            text = ~paste0(
+                cpdName,
+                "<br>rt: ", round(rt, 2),
+                "<br>dev: ", round(rt_dev_sec, 2),
+                "<br>corrected: ",
+                round(correctedRt, 2)),
+            hoverinfo = "text")
+    }
+    plt <- plotly::add_trace(plt, data = ctSorted,
+        x = ~rt, y = ~predictedRtDrift,
+        type = "scatter", mode = "lines",
+        name = "Fitted correction",
+        line = list(color = "black", width = 2),
+        hoverinfo = "none", showlegend = TRUE)
+    plt <- plotly::layout(plt,
+        xaxis = list(title = "Retention time (sec)"),
+        yaxis = list(
+            title = "Retention time deviation (sec)"),
+        legend = list(orientation = "h",
+            x = 0.5, xanchor = "center", y = 1.1))
+    plt
 }
 
 # Extract rt-window bounds for a single compound from the annotation's
@@ -515,7 +636,10 @@ rt_windows_for_cpd <- function(annotation, cpdNb) {
         rtMin <- safeRow(df, "rtMin", cpdNb)
         rtMax <- safeRow(df, "rtMax", cpdNb)
         if (!is.finite(rtMin) || !is.finite(rtMax)) return(NULL)
-        list(rtMin = rtMin, rtMax = rtMax)
+        rt <- safeRow(df, "rt", cpdNb)
+        out <- list(rtMin = rtMin, rtMax = rtMax)
+        if (is.finite(rt)) out$rt <- rt
+        out
     }
     list(ROI = pack(roi), uROI = pack(uroi), FIR = pack(fir))
 }
@@ -525,12 +649,15 @@ rt_windows_for_cpd <- function(annotation, cpdNb) {
 #' @description Writes \code{rtMin}/\code{rtMax} for compound \code{cpdNb}
 #' to the requested slot(s) of a \code{peakPantheRAnnotation}. Used by the
 #' diagnostic-plot drag-select UI to update retention-time
-#' windows.
+#' windows. Editing \code{"uROI"} flips \code{@useUROI} (and
+#' \code{@uROIExist}) to \code{TRUE}; editing \code{"FIR"} flips
+#' \code{@useFIR} to \code{TRUE}, so the next refit picks up the new bounds.
 #'
 #' @param annotation (peakPantheRAnnotation)
 #' @param cpdNb (int) 1-based compound index
 #' @param rt (numeric length 2) c(rtMin, rtMax), strictly increasing and
-#' finite
+#' finite. Values are clamped to the compound's ROI bounds so that
+#' uROI/FIR never extend beyond the cached data envelope.
 #' @param targets (character) subset of \code{c("uROI", "FIR")}; default
 #' both. Invalid or empty targets trigger an error.
 #'
@@ -553,13 +680,25 @@ apply_rt_window_to_annotation <- function(annotation, cpdNb, rt,
         stop("`targets` must be a non-empty subset of c('uROI', 'FIR')")
     }
 
+    roi <- ROI(annotation)[cpdNb, , drop = FALSE]
+    rt[1] <- max(rt[1], roi$rtMin)
+    rt[2] <- min(rt[2], roi$rtMax)
+    if (rt[1] >= rt[2]) return(annotation)
+
     if ("uROI" %in% targets) {
         annotation@uROI[cpdNb, "rtMin"] <- rt[1]
         annotation@uROI[cpdNb, "rtMax"] <- rt[2]
+        # Editing the uROI slot implies the caller wants it used on the next
+        # fit. Without this the refit path reads @ROI (unchanged) and the
+        # edit is silently ignored; uROIExist must also be TRUE for
+        # validObject() to accept useUROI = TRUE.
+        annotation@uROIExist <- TRUE
+        annotation@useUROI <- TRUE
     }
     if ("FIR" %in% targets) {
         annotation@FIR[cpdNb, "rtMin"] <- rt[1]
         annotation@FIR[cpdNb, "rtMax"] <- rt[2]
+        annotation@useFIR <- TRUE
     }
     annotation
 }

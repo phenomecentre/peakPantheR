@@ -421,3 +421,181 @@ test_that('raise errors', {
   wrong_ROI_mz[3,] <- c("ID-3", "testCpd 3", 3420., 3454.435, 3495., 464.204642, 464.2, 464.195358)
   expect_error(peakPantheR_singleFileSearch(singleSpectraDataPath, wrong_ROI_mz), 'Check input, "mzMin" must be <= to "mzMax"')
 })
+
+
+## cacheROI: decouple extraction span from fit span -------------------------
+# Widen input_ROI by 100 sec rt and 0.5 Da mz for these tests — still contains
+# the target peak, but larger than the narrow fit window.
+wide_ROI    <- input_ROI
+wide_ROI[, "rtMin"] <- wide_ROI[, "rtMin"] - 100
+wide_ROI[, "rtMax"] <- wide_ROI[, "rtMax"] + 100
+wide_ROI[, "mzMin"] <- wide_ROI[, "mzMin"] - 0.5
+wide_ROI[, "mzMax"] <- wide_ROI[, "mzMax"] + 0.5
+
+wide_ROIsDataPoints <- extractSignalRawData(tmp_raw_data,
+    rt=wide_ROI[,c("rtMin","rtMax")], mz=wide_ROI[,c("mzMin","mzMax")],
+    verbose=FALSE)
+
+test_that('cacheROI = NULL matches the single-window behaviour', {
+  # sanity: NULL cacheROI (default) is identical to not passing the arg
+  ev_default <- peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI,
+      peakStatistic=FALSE, getAcquTime=FALSE, verbose=FALSE)
+  ev_null    <- peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI,
+      peakStatistic=FALSE, getAcquTime=FALSE, verbose=FALSE,
+      cacheROI=NULL)
+  expect_equal(ev_null$TIC, ev_default$TIC)
+  expect_equal(ev_null$peakTable, ev_default$peakTable, tolerance=1e-6)
+  expect_equal(ev_null$ROIsDataPoint, ev_default$ROIsDataPoint)
+})
+
+test_that('cacheROI widens stored data while fit stays on targetFeatTable', {
+  # ROIsDataPoint spans the wider extraction; the peak fit still matches the
+  # narrow-fit-only run (center / area within float tolerance).
+  ev_narrow <- peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI,
+      peakStatistic=FALSE, getAcquTime=FALSE, verbose=FALSE)
+  ev_wide   <- peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI,
+      peakStatistic=FALSE, getAcquTime=FALSE, verbose=FALSE,
+      cacheROI=wide_ROI)
+
+  # Stored data spans the wider envelope (row count strictly greater, rt
+  # range covers the wide bounds)
+  for (i in seq_len(nrow(input_ROI))) {
+    expect_gt(nrow(ev_wide$ROIsDataPoint[[i]]),
+              nrow(ev_narrow$ROIsDataPoint[[i]]))
+    expect_gte(min(ev_wide$ROIsDataPoint[[i]]$rt), wide_ROI$rtMin[i])
+    expect_lte(max(ev_wide$ROIsDataPoint[[i]]$rt), wide_ROI$rtMax[i])
+  }
+
+  # Fit result matches the narrow-only run: peak center / area / rt drift
+  expect_equal(ev_wide$peakTable$rt,   ev_narrow$peakTable$rt,
+               tolerance=1e-6)
+  expect_equal(ev_wide$peakTable$peakArea, ev_narrow$peakTable$peakArea,
+               tolerance=1e-6)
+  expect_equal(ev_wide$peakTable$found, ev_narrow$peakTable$found)
+})
+
+test_that('cache mode returns full cached span; fit still uses target subset', {
+  # Cache spans wide bounds; target is narrow. ROIsDataPoint returned equals
+  # cachedDataPoints (identity), fit still lands on the peak.
+  ev_cache <- peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI,
+      peakStatistic=FALSE, getAcquTime=FALSE, verbose=FALSE,
+      cacheROI=wide_ROI, cachedDataPoints=wide_ROIsDataPoints)
+
+  # Returned data is the full cached span (row counts match cachedDataPoints)
+  for (i in seq_along(wide_ROIsDataPoints)) {
+    expect_equal(nrow(ev_cache$ROIsDataPoint[[i]]),
+                 nrow(wide_ROIsDataPoints[[i]]))
+  }
+
+  # Fit result matches a non-cache narrow run
+  ev_narrow <- peakPantheR_singleFileSearch(singleSpectraDataPath, input_ROI,
+      peakStatistic=FALSE, getAcquTime=FALSE, verbose=FALSE)
+  expect_equal(ev_cache$peakTable$rt,   ev_narrow$peakTable$rt,
+               tolerance=1e-6)
+  expect_equal(ev_cache$peakTable$peakArea, ev_narrow$peakTable$peakArea,
+               tolerance=1e-6)
+  expect_equal(ev_cache$peakTable$found, ev_narrow$peakTable$found)
+})
+
+## buildFIRData -------------------------------------------------------------
+buildFIR_ROI <- data.frame(
+    rtMin = c(3309.7589296586070, 3670.9201232710743),
+    rt    = c(3346.8277590361445, 3704.1427831325304),
+    rtMax = c(3385.4098874628098, 3740.0172511251831),
+    mzMin = c(522.1995, 536.1995),
+    mz    = c(522.2,    536.2),
+    mzMax = c(522.2005, 536.2005),
+    stringsAsFactors = FALSE)
+
+buildFIR_ROIsDataPoint <- extractSignalRawData(tmp_raw_data,
+    rt = buildFIR_ROI[, c("rtMin", "rtMax")],
+    mz = buildFIR_ROI[, c("mzMin", "mzMax")],
+    verbose = FALSE)
+
+
+test_that('buildFIRData: empty needsFilling returns list() silently', {
+    FIR <- buildFIR_ROI[, c("mzMin", "mzMax", "rtMin", "rtMax")]
+    res <- evaluate_promise(buildFIRData(tmp_raw_data, buildFIR_ROIsDataPoint,
+        buildFIR_ROI, FIR, needsFilling_idx = integer(0), verbose = TRUE))
+    expect_equal(res$result, list())
+    expect_equal(length(res$messages), 0)
+})
+
+
+test_that('buildFIRData: all-contained reuses in-memory data', {
+    FIR <- buildFIR_ROI[, c("mzMin", "mzMax", "rtMin", "rtMax")]
+
+    res <- evaluate_promise(buildFIRData(tmp_raw_data, buildFIR_ROIsDataPoint,
+        buildFIR_ROI, FIR, needsFilling_idx = c(1, 2), verbose = TRUE))
+
+    fresh <- extractSignalRawData(tmp_raw_data,
+        mz = data.frame(mzMin = FIR$mzMin, mzMax = FIR$mzMax),
+        rt = data.frame(rtMin = FIR$rtMin, rtMax = FIR$rtMax),
+        verbose = FALSE)
+    expect_equal(res$result, fresh)
+
+    expect_equal(length(res$messages), 1)
+    expect_equal(res$messages[1],
+        "FIR data reused from ROI for 2/2 windows\n")
+})
+
+
+test_that('buildFIRData: none-contained falls back to batched extract', {
+    FIR <- buildFIR_ROI[, c("mzMin", "mzMax", "rtMin", "rtMax")]
+    FIR$mzMin <- FIR$mzMin - 0.01
+    FIR$mzMax <- FIR$mzMax + 0.01
+
+    res <- evaluate_promise(buildFIRData(tmp_raw_data, buildFIR_ROIsDataPoint,
+        buildFIR_ROI, FIR, needsFilling_idx = c(1, 2), verbose = TRUE))
+
+    fresh <- extractSignalRawData(tmp_raw_data,
+        mz = data.frame(mzMin = FIR$mzMin, mzMax = FIR$mzMax),
+        rt = data.frame(rtMin = FIR$rtMin, rtMax = FIR$rtMax),
+        verbose = FALSE)
+    expect_equal(res$result, fresh)
+
+    reuse_msgs <- grep("reused from ROI", res$messages, value = TRUE)
+    expect_equal(length(reuse_msgs), 0)
+    read_msgs <- grep("Reading data from 2 windows", res$messages,
+        value = TRUE)
+    expect_equal(length(read_msgs), 1)
+})
+
+
+test_that('buildFIRData: mixed reuse one row, extract the other', {
+    FIR <- buildFIR_ROI[, c("mzMin", "mzMax", "rtMin", "rtMax")]
+    FIR$mzMin[2] <- FIR$mzMin[2] - 0.01
+    FIR$mzMax[2] <- FIR$mzMax[2] + 0.01
+
+    res <- evaluate_promise(buildFIRData(tmp_raw_data, buildFIR_ROIsDataPoint,
+        buildFIR_ROI, FIR, needsFilling_idx = c(1, 2), verbose = TRUE))
+
+    fresh <- extractSignalRawData(tmp_raw_data,
+        mz = data.frame(mzMin = FIR$mzMin, mzMax = FIR$mzMax),
+        rt = data.frame(rtMin = FIR$rtMin, rtMax = FIR$rtMax),
+        verbose = FALSE)
+    expect_equal(res$result, fresh)
+
+    expect_true(any(res$messages ==
+        "FIR data reused from ROI for 1/2 windows\n"))
+    expect_true(any(res$messages == "Reading data from 1 windows\n"))
+})
+
+
+test_that('buildFIRData errors when raw_data NULL and FIR not contained', {
+    cached_dp <- extractSignalRawData(tmp_raw_data,
+        rt = input_ROI[, c("rtMin", "rtMax")],
+        mz = input_ROI[, c("mzMin", "mzMax")], verbose = FALSE)
+    FIR_bad <- data.frame(
+        rtMin = c(3336.542, 3378.274, 3444.524, 3689.7),
+        rtMax = c(3390.272, 3426.266, 3478.431, 3738.213),
+        mzMin = c(522.1995 - 10, 496.1995, 464.1995, 536.1995),
+        mzMax = c(522.2005 + 10, 496.2005, 464.2005, 536.2005))
+
+    expect_error(
+        peakPantheR:::buildFIRData(raw_data = NULL,
+            ROIsDataPoint = cached_dp, ROI = input_ROI,
+            FIR = FIR_bad, needsFilling_idx = c(1L, 2L),
+            verbose = FALSE),
+        regexp = "Cached annotation in use")
+})

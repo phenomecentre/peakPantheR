@@ -21,7 +21,7 @@ output$noImportForExportUI <- renderUI ({
 output$showAnnotStatusExp <- renderUI({
   # Capture the annotation shown and split by line into a list
   tmp_text  <- annotation_showText_UI_helper(annotation_showMethod_UI_helper(values$annotation))
-  fail_text <- paste(dim(values$failures)[1], 'annotation failure(s)')
+  fail_text <- paste(NROW(values$failures), 'annotation failure(s)')
   # render the panel
   wellPanel(
     h4('Status:', style="color:#3e648d;font-weight:bold"),
@@ -205,7 +205,7 @@ output$cpuSliderDiag <- renderUI({
 })
 # correction when slider doesn't appear
 ncoresInputPlot <- reactive ({
-  if( input$parallelisationDiag != 0 ) { input$ncoresDiag }
+  if( input$parallelisationDiag != 0 ) { return(input$ncoresDiag) }
   else { return(0) }
 })
 

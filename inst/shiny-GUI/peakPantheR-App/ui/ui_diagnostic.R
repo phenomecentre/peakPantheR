@@ -29,6 +29,21 @@ tabPanel("Diagnostic: plot & update",
         # Tabs
         shiny::tabsetPanel( id="diagnosticTabs", type="pills",
 
+        # Show diagnostic plots - TAB
+          tabPanel("Diagnostic plot",
+            # control strip (feature/colour/samples + drag-edit inside
+            # the same wellPanel, divided by an <hr>)
+            uiOutput("diagPlotControlUI"),
+            # plot output
+            uiOutput("diagPlotResultUI")
+          ),      # end tabPanel
+
+        # RT correction - TAB
+          tabPanel("RT correction",
+            uiOutput("rtCorrControlUI"),
+            uiOutput("rtCorrResultUI")
+          ),      # end tabPanel
+
         # Annotation success statistics - TAB
           tabPanel("Annotation statistics",
             wellPanel(
@@ -45,39 +60,7 @@ tabPanel("Diagnostic: plot & update",
                 uiOutput("annotationStatisticsTable")
               )
             )     # end fluiRow (fit stat panel)
-          ),      # end tabPanel
-
-        # Automatic update uROI/FIR - TAB
-          tabPanel("Update uROI/FIR",
-            wellPanel(
-              fluidRow(
-                column(11, offset=1,
-                  h4('Update uROI and FIR', style="color:#3e648d;font-weight:bold"),
-                  span('Based on the fit results, updated ROI', shiny::span(em('(uROI)')), 'and fallback integration region', shiny::span(em('(FIR)')), 'can be automatically determined:', style="color:black"),
-                  HTML("<ul>"),
-                  HTML("<li style='color:black'><code>uROI</code> are established as the min/max (<code>rt</code> and <code>m/z</code>) of the found peaks (+/- 5% in RT)</li>"),
-                  HTML("<li style='color:black'><code>FIR</code> are established as the median of found <code>rtMin</code>, <code>rtMax</code>, <code>mzMin</code>, <code>mzMax</code></li>"),
-                  HTML("</ul>"),
-                  div(actionButton("goDiagnosticUpdateUROIFIR", label="Update uROI/FIR",
-                                   class="btn btn-primary btn-lg"), align="center")
-                ) # end column
-              )   # end fluidRow
-            ),    # end wellPanel
-            fluidRow(
-              column(12,
-                uiOutput("successUpdateDiagUI") # success message update uROI/FIR
-              )
-            )   # end fluiRow (success panel)
-          ),    # end tabPanel
-
-        # Show diagnostic plots - TAB
-          tabPanel("Diagnostic plot",
-            # control strip (feature/colour/samples + drag-edit inside
-            # the same wellPanel, divided by an <hr>)
-            uiOutput("diagPlotControlUI"),
-            # plot output
-            uiOutput("diagPlotResultUI")
-          )#,    # end tabPanel
+          )#,     # end tabPanel
 
         # Show/modify updated parameters - TAB
         #  tabPanel("Final parameters",

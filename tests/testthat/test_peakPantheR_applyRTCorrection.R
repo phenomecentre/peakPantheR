@@ -113,19 +113,21 @@ test_that('polynomial method rt correction', {
   expected_corrected  <- data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
 
-  expected_corrected[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=10.61282,  predictedRtDrift=0.387176)
-  expected_corrected[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=22.60164,  predictedRtDrift=2.398363)
-  expected_corrected[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 31.16508,  predictedRtDrift=3.834925)
-  expected_corrected[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.72851,  predictedRtDrift=5.271487)
-  expected_corrected[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.29195,  predictedRtDrift=6.708049)
+  # correctedRt = rt + predictedRtDrift (drift = measured - expected; adding
+  # it moves the expected rt onto the observed peak).
+  expected_corrected[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=11.387176,  predictedRtDrift=0.387176)
+  expected_corrected[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=27.398363,  predictedRtDrift=2.398363)
+  expected_corrected[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 38.834925,  predictedRtDrift=3.834925)
+  expected_corrected[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.271487,  predictedRtDrift=5.271487)
+  expected_corrected[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=61.708049,  predictedRtDrift=6.708049)
 
   expected_corrected_dg3                 <-  data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
-  expected_corrected_dg3[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=9.907072,  predictedRtDrift=1.092928)
-  expected_corrected_dg3[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=23.457678,  predictedRtDrift=1.542322)
-  expected_corrected_dg3[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 31.574063,  predictedRtDrift=3.425937)
-  expected_corrected_dg3[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.447720,  predictedRtDrift=5.552280)
-  expected_corrected_dg3[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.013466,  predictedRtDrift=6.986534)
+  expected_corrected_dg3[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=12.092928,  predictedRtDrift=1.092928)
+  expected_corrected_dg3[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=26.542322,  predictedRtDrift=1.542322)
+  expected_corrected_dg3[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 38.425937,  predictedRtDrift=3.425937)
+  expected_corrected_dg3[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.552280,  predictedRtDrift=5.552280)
+  expected_corrected_dg3[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=61.986534,  predictedRtDrift=6.986534)
 
    # results (output, warnings and messages)
   polynomial_regression_dg1 <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=FALSE))
@@ -147,11 +149,11 @@ test_that('polynomial method rt correction', {
 
   expected_corrected_isRef                 <-  data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
-  expected_corrected_isRef[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=10.61282,  predictedRtDrift=0.387176)
-  expected_corrected_isRef[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="Reference set",   correctedRt=22.60164,  predictedRtDrift=2.398363)
-  expected_corrected_isRef[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 31.16508,  predictedRtDrift=3.834925)
-  expected_corrected_isRef[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.72851,  predictedRtDrift=5.271487)
-  expected_corrected_isRef[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.29195,  predictedRtDrift=6.708049)
+  expected_corrected_isRef[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=11.387176,  predictedRtDrift=0.387176)
+  expected_corrected_isRef[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="Reference set",   correctedRt=27.398363,  predictedRtDrift=2.398363)
+  expected_corrected_isRef[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 38.834925,  predictedRtDrift=3.834925)
+  expected_corrected_isRef[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.271487,  predictedRtDrift=5.271487)
+  expected_corrected_isRef[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=61.708049,  predictedRtDrift=6.708049)
 
   polynomial_regression_ref <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='polynomial', params=list(polynomialOrder=1), robust=FALSE))
 
@@ -184,19 +186,19 @@ test_that('RANSAC rt correction function', {
   expected_corrected  <- data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
 
-  expected_corrected[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=10.61282,  predictedRtDrift=0.387176)
-  expected_corrected[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=22.60164,  predictedRtDrift=2.398363)
-  expected_corrected[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 31.16508,  predictedRtDrift=3.834925)
-  expected_corrected[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.72851,  predictedRtDrift=5.271487)
-  expected_corrected[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.29195,  predictedRtDrift=6.708049)
+  expected_corrected[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=11.387176,  predictedRtDrift=0.387176)
+  expected_corrected[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=27.398363,  predictedRtDrift=2.398363)
+  expected_corrected[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 38.834925,  predictedRtDrift=3.834925)
+  expected_corrected[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.271487,  predictedRtDrift=5.271487)
+  expected_corrected[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=61.708049,  predictedRtDrift=6.708049)
 
   expected_corrected_dg3                 <-  data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
-  expected_corrected_dg3[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=9.907072,  predictedRtDrift=1.092928)
-  expected_corrected_dg3[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=23.457678,  predictedRtDrift=1.542322)
-  expected_corrected_dg3[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 31.574063,  predictedRtDrift=3.425937)
-  expected_corrected_dg3[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.447720,  predictedRtDrift=5.552280)
-  expected_corrected_dg3[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.013466,  predictedRtDrift=6.986534)
+  expected_corrected_dg3[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=12.092928,  predictedRtDrift=1.092928)
+  expected_corrected_dg3[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=26.542322,  predictedRtDrift=1.542322)
+  expected_corrected_dg3[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt= 38.425937,  predictedRtDrift=3.425937)
+  expected_corrected_dg3[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.552280,  predictedRtDrift=5.552280)
+  expected_corrected_dg3[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=61.986534,  predictedRtDrift=6.986534)
 
    # results (output, warnings and messages)
   set.seed(19472)
@@ -223,28 +225,28 @@ test_that('RANSAC rt correction function', {
 
   expected_corrected_outlier                 <-  data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
-  expected_corrected_outlier[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=10.14133,  predictedRtDrift=0.8586692)
-  expected_corrected_outlier[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=15.0, isReference="Reference set outlier", correctedRt=22.26570,  predictedRtDrift=2.7343018)
-  expected_corrected_outlier[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=30.92596,  predictedRtDrift=4.0740394)
-  expected_corrected_outlier[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.58622,  predictedRtDrift=5.4137769)
-  expected_corrected_outlier[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.24649,  predictedRtDrift=6.7535145)
+  expected_corrected_outlier[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=11.8586692,  predictedRtDrift=0.8586692)
+  expected_corrected_outlier[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=15.0, isReference="Reference set outlier", correctedRt=27.7343018,  predictedRtDrift=2.7343018)
+  expected_corrected_outlier[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=39.0740394,  predictedRtDrift=4.0740394)
+  expected_corrected_outlier[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.4137769,  predictedRtDrift=5.4137769)
+  expected_corrected_outlier[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=61.7535145,  predictedRtDrift=6.7535145)
 
   expected_corrected_outlier_dg3                 <-  data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
-  expected_corrected_outlier_dg3[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt= 9.90000,  predictedRtDrift=1.100000)
-  expected_corrected_outlier_dg3[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=15.0, isReference="Reference set outlier",   correctedRt=23.25802,  predictedRtDrift=1.741979)
-  expected_corrected_outlier_dg3[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=31.50000,  predictedRtDrift=3.500000)
-  expected_corrected_outlier_dg3[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.50000,  predictedRtDrift=5.500000)
-  expected_corrected_outlier_dg3[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.00000,  predictedRtDrift=7.000000)
+  expected_corrected_outlier_dg3[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=12.10000,  predictedRtDrift=1.100000)
+  expected_corrected_outlier_dg3[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=15.0, isReference="Reference set outlier",   correctedRt=26.741979,  predictedRtDrift=1.741979)
+  expected_corrected_outlier_dg3[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=38.50000,  predictedRtDrift=3.500000)
+  expected_corrected_outlier_dg3[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.50000,  predictedRtDrift=5.500000)
+  expected_corrected_outlier_dg3[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=62.00000,  predictedRtDrift=7.000000)
 
   # Case where outlier is not detected
   expected_corrected_outlier_nd                 <-  data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
-  expected_corrected_outlier_nd[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt= 9.90000,  predictedRtDrift=1.100000)
-  expected_corrected_outlier_nd[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=15.0, isReference="Reference set",   correctedRt=10.00000,  predictedRtDrift=15.000000)
-  expected_corrected_outlier_nd[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=31.50000 ,  predictedRtDrift=3.500000)
-  expected_corrected_outlier_nd[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=50.23268,  predictedRtDrift=-5.232684)
-  expected_corrected_outlier_nd[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=48.00000,  predictedRtDrift=7.000000)
+  expected_corrected_outlier_nd[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt= 12.10000,  predictedRtDrift=1.100000)
+  expected_corrected_outlier_nd[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=15.0, isReference="Reference set",   correctedRt=40.00000,  predictedRtDrift=15.000000)
+  expected_corrected_outlier_nd[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=38.50000 ,  predictedRtDrift=3.500000)
+  expected_corrected_outlier_nd[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=39.767316,  predictedRtDrift=-5.232684)
+  expected_corrected_outlier_nd[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=62.00000,  predictedRtDrift=7.000000)
 
   set.seed(22142)
   polynomial_ransac_outlier <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable_outlier, method='polynomial', params=list(polynomialOrder=1), robust=TRUE))
@@ -280,11 +282,11 @@ test_that('constant rt correction', {
   expected_corrected  <- data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(),
                                     correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
 
-  expected_corrected[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=9.9,  predictedRtDrift=1.1)
-  expected_corrected[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=23.9,  predictedRtDrift=1.1)
-  expected_corrected[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=33.9,  predictedRtDrift=1.1)
-  expected_corrected[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=43.9,  predictedRtDrift=1.1)
-  expected_corrected[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=53.9,  predictedRtDrift=1.1)
+  expected_corrected[1,]       <- list(cpdID="ID-1", cpdName="Cpd 1",  rt=11, rt_dev_sec=1.1, isReference="External set",   correctedRt=12.1,  predictedRtDrift=1.1)
+  expected_corrected[2,]       <- list(cpdID="ID-2", cpdName="Cpd 2",  rt=25, rt_dev_sec=1.5, isReference="External set",   correctedRt=26.1,  predictedRtDrift=1.1)
+  expected_corrected[3,]       <- list(cpdID="ID-3", cpdName="Cpd 3",  rt=35, rt_dev_sec=3.5, isReference="External set",  correctedRt=36.1,  predictedRtDrift=1.1)
+  expected_corrected[4,]       <- list(cpdID="ID-4", cpdName="Cpd 4",  rt=45, rt_dev_sec=5.5, isReference="External set",   correctedRt=46.1,  predictedRtDrift=1.1)
+  expected_corrected[5,]       <- list(cpdID="ID-5", cpdName="Cpd 5",  rt=55, rt_dev_sec=7, isReference="External set",   correctedRt=56.1,  predictedRtDrift=1.1)
 
   constant_correction <- evaluate_promise(peakPantheR_applyRTCorrection(targetFeatTable=tmp_targetFeatTable, referenceTable=tmp_referenceTable, method='constant', params=list(polynomialOrder=1), robust=FALSE))
 

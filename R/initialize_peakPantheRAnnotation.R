@@ -131,7 +131,7 @@ initialize_spectraPaths <- function(spectraPaths, acquisitionTime, TIC,
 
     # load values and allocate size
     nbSpectra   <- length(spectraPaths)
-    filepath    <- spectraPaths
+    filepath    <- normalizePath(spectraPaths, mustWork = FALSE)
 
     # set acquisitionTime default if no acquisitionTime passed in
     if (length(acquisitionTime) == 0) {

@@ -101,12 +101,15 @@ test_that('rt correction on uROI, no plot', {
   annotation <- filledAnnotation
 
   # expected ROI/uROI
+  # correctedRt = uROI$rt + mean(rt_dev_sec) (ID-1 drift = 8.499586),
+  # so uROI$rt moves toward the observed peak (was `- drift` before — that
+  # pushed the red target line away from real peaks).
   expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_uROI[1,] <- list(rtMin=-5.9995863454, rt=1.500414, rtMax=9.000414, mzMin=12, mz=13, mzMax=14)
-  expected_uROI[2,] <- list(rtMi=0.0004136546, rt=7.500414, rtMax=15.000414, mzMin=18, mz=19, mzMax=20)
+  expected_uROI[1,] <- list(rtMin=10.999586, rt=18.499586, rtMax=25.999586, mzMin=12, mz=13, mzMax=14)
+  expected_uROI[2,] <- list(rtMin=16.999586, rt=24.499586, rtMax=31.999586, mzMin=18, mz=19, mzMax=20)
   expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_FIR[1,] <- list(rtMin=-5.9995863454, rtMax=9.000414, mzMin=3, mzMax=4)
-  expected_FIR[2,] <- list(rtMin=0.0004136546, rtMax=15.000414, mzMin=7, mzMax=8)
+  expected_FIR[1,] <- list(rtMin=10.999586, rtMax=25.999586, mzMin=3, mzMax=4)
+  expected_FIR[2,] <- list(rtMin=16.999586, rtMax=31.999586, mzMin=7, mzMax=8)
 
   # run RT correction
   resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
@@ -127,12 +130,13 @@ test_that('rt correction on ROI, no plot', {
   annotation@useUROI <- FALSE
 
   # expected ROI/uROI
+  # ROI$rt (3344.888 / 3385.577) + drift (8.499586)
   expected_uROI_useROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_uROI_useROI[1,] <- list(rtMin=3328.888, rt=3336.388, rtMax=3343.888, mzMin=12, mz=13, mzMax=14)
-  expected_uROI_useROI[2,] <- list(rtMin=3369.577, rt=3377.077, rtMax=3384.577, mzMin=18, mz=19, mzMax=20)
+  expected_uROI_useROI[1,] <- list(rtMin=3345.887586, rt=3353.387586, rtMax=3360.887586, mzMin=12, mz=13, mzMax=14)
+  expected_uROI_useROI[2,] <- list(rtMin=3386.576586, rt=3394.076586, rtMax=3401.576586, mzMin=18, mz=19, mzMax=20)
   expected_FIR_useROI     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_FIR_useROI[1,] <- list(rtMin=3328.888, rtMax=3343.888, mzMin=3, mzMax=4)
-  expected_FIR_useROI[2,] <- list(rtMin=3369.577, rtMax=3384.577, mzMin=7, mzMax=8)
+  expected_FIR_useROI[1,] <- list(rtMin=3345.887586, rtMax=3360.887586, mzMin=3, mzMax=4)
+  expected_FIR_useROI[2,] <- list(rtMin=3386.576586, rtMax=3401.576586, mzMin=7, mzMax=8)
 
   # run RT correction
   resultCorrected_useROI <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
@@ -151,17 +155,17 @@ test_that('rt correction plot (uROI)', {
   # input
   annotation <- filledAnnotation
 
-  # expected ROI/uROI
+  # expected ROI/uROI (uROI$rt + drift, same as 'rt correction on uROI' test)
   expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_uROI[1,] <- list(rtMin=-5.9995863454, rt=1.500414, rtMax=9.000414, mzMin=12, mz=13, mzMax=14)
-  expected_uROI[2,] <- list(rtMi=0.0004136546, rt=7.500414, rtMax=15.000414, mzMin=18, mz=19, mzMax=20)
+  expected_uROI[1,] <- list(rtMin=10.999586, rt=18.499586, rtMax=25.999586, mzMin=12, mz=13, mzMax=14)
+  expected_uROI[2,] <- list(rtMin=16.999586, rt=24.499586, rtMax=31.999586, mzMin=18, mz=19, mzMax=20)
   expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_FIR[1,] <- list(rtMin=-5.9995863454, rtMax=9.000414, mzMin=3, mzMax=4)
-  expected_FIR[2,] <- list(rtMin=0.0004136546, rtMax=15.000414, mzMin=7, mzMax=8)
+  expected_FIR[1,] <- list(rtMin=10.999586, rtMax=25.999586, mzMin=3, mzMax=4)
+  expected_FIR[2,] <- list(rtMin=16.999586, rtMax=31.999586, mzMin=7, mzMax=8)
   # expected plot properties
   expected_plotFrame <- data.frame(cpdID=character(), cpdName=character(), rt=double(), rt_dev_sec=double(), isReference=character(), correctedRt=double(), predictedRtDrift=double(), stringsAsFactors=FALSE)
-  expected_plotFrame[1, ] <- list(cpdID='ID-1', cpdName='Cpd 1', rt=10, rt_dev_sec=8.499586, isReference='Reference set', correctedRt=1.500414, predictedRtDrift=8.499586)
-  expected_plotFrame[2, ] <- list(cpdID='ID-2', cpdName='Cpd 2', rt=16, rt_dev_sec=16.361353, isReference='External set', correctedRt=7.500414, predictedRtDrift=8.499586)
+  expected_plotFrame[1, ] <- list(cpdID='ID-1', cpdName='Cpd 1', rt=10, rt_dev_sec=8.499586, isReference='Reference set', correctedRt=18.499586, predictedRtDrift=8.499586)
+  expected_plotFrame[2, ] <- list(cpdID='ID-2', cpdName='Cpd 2', rt=16, rt_dev_sec=16.361353, isReference='External set', correctedRt=24.499586, predictedRtDrift=8.499586)
 
   # run RT correction
   resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=c('ID-1'), method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=TRUE))
@@ -194,11 +198,11 @@ test_that('rt correction no rtCorrectionReferences', {
   # input
   annotation <- filledAnnotation[,1]
 
-  # expected ROI/uROI
+  # expected ROI/uROI (drift = +8.499586 added to uROI$rt)
   expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_uROI[1,] <- list(rtMin=-5.999586, rt=1.5004137, rtMax=9.000414, mzMin=12, mz=13, mzMax=14)
+  expected_uROI[1,] <- list(rtMin=10.999586, rt=18.499586, rtMax=25.999586, mzMin=12, mz=13, mzMax=14)
   expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
-  expected_FIR[1,] <- list(rtMin=-5.999586, rtMax=9.000414, mzMin=3, mzMax=4)
+  expected_FIR[1,] <- list(rtMin=10.999586, rtMax=25.999586, mzMin=3, mzMax=4)
 
   # run RT correction
   resultCorrected <- evaluate_promise(retentionTimeCorrection(annotation, rtCorrectionReference=NULL, method='constant', params=list(polynomialOrder=1), robust=TRUE, diagnostic=FALSE))
@@ -220,13 +224,15 @@ test_that('rt correction referenceTable has NA and targetFeatTable has NA', {
   annotation@peakTables[[2]]$rt_dev_sec[1] <- NA
   annotation@peakTables[[3]]$rt_dev_sec[1] <- NA
 
-  # expected ROI/uROI
+  # expected ROI/uROI: ID-1 excluded (NA), only ID-2 used as reference.
+  # Drift = mean(peakTable$rt_dev_sec[ID-2]) = 16.361353.
+  # cpd1 preserved (uROI row unchanged, FIR unchanged); cpd2: uROI$rt = 16 + 16.361353.
   expected_uROI     <- data.frame(rtMin=double(), rt=double(), rtMax=double(), mzMin=double(), mz=double(), mzMax=double(), stringsAsFactors=FALSE)
   expected_uROI[1,] <- list(rtMin=9., rt=10., rtMax=11., mzMin=12, mz=13, mzMax=14)
-  expected_uROI[2,] <- list(rtMi=-7.861353, rt=-0.3613534, rtMax=7.138647, mzMin=18, mz=19, mzMax=20)
+  expected_uROI[2,] <- list(rtMin=24.861353, rt=32.361353, rtMax=39.861353, mzMin=18, mz=19, mzMax=20)
   expected_FIR     <- data.frame(rtMin=double(), rtMax=double(), mzMin=double(), mzMax=double(), stringsAsFactors=FALSE)
   expected_FIR[1,] <- list(rtMin=1., rtMax=2., mzMin=3, mzMax=4)
-  expected_FIR[2,] <- list(rtMin=-7.861353, rtMax=7.138647, mzMin=7, mzMax=8)
+  expected_FIR[2,] <- list(rtMin=24.861353, rtMax=39.861353, mzMin=7, mzMax=8)
 
   # expected warnings
   expected_warn <- c('The following references could not be integrated previously and will be excluded: ID-1',

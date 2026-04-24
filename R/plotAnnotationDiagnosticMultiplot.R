@@ -362,6 +362,22 @@ build_rt_window_shapes <- function(windows) {
                         dash = "dot"),
             layer = "above")
     }
+    # Vertical dashed red line at the target rt (uROI$rt, falling back
+    # to ROI$rt when uROI has none).
+    targetRt <- NULL
+    if (!is.null(windows$uROI$rt)) {
+        targetRt <- windows$uROI$rt
+    } else if (!is.null(windows$ROI$rt)) {
+        targetRt <- windows$ROI$rt
+    }
+    if (!is.null(targetRt) && is.finite(targetRt)) {
+        shapes[[length(shapes) + 1L]] <- list(
+            type = "line", xref = "x", yref = "paper",
+            x0 = targetRt, x1 = targetRt, y0 = 0, y1 = 1,
+            line = list(color = "rgba(220,40,40,0.8)", width = 1.5,
+                        dash = "dash"),
+            layer = "above")
+    }
     shapes
 }
 
