@@ -58,7 +58,9 @@ import(shiny)
 import(shinycssloaders)
 import(svglite)
 import(utils)
-importFrom(DT,DTOutput)
-importFrom(DT,datatable)
-importFrom(DT,renderDT)
+importFrom(DT,
+  DTOutput,
+  datatable,
+  renderDT
+)
 importFrom(bslib,bs_theme)

@@ -168,13 +168,13 @@ result_parallelAnnotation$annotation
 
 }
 \seealso{
-Other peakPantheR: 
-\code{\link{peakPantheRAnnotation}},
-\code{\link{peakPantheR_singleFileSearch}()}
+Other peakPantheR:
+\code{\link[=peakPantheRAnnotation]{peakPantheRAnnotation()}},
+\code{\link[=peakPantheR_singleFileSearch]{peakPantheR_singleFileSearch()}}
 
-Other parallelAnnotation: 
-\code{\link{peakPantheRAnnotation}},
-\code{\link{peakPantheR_singleFileSearch}()}
+Other parallelAnnotation:
+\code{\link[=peakPantheRAnnotation]{peakPantheRAnnotation()}},
+\code{\link[=peakPantheR_singleFileSearch]{peakPantheR_singleFileSearch()}}
 }
 \concept{parallelAnnotation}
 \concept{peakPantheR}

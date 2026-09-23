@@ -36,7 +36,6 @@ BugReports: https://github.com/phenomecentre/peakPantheR/issues/new
 URL: https://github.com/phenomecentre/peakPantheR
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 7.3.3
 Suggests: testthat,
     devtools,
 	faahKO,
@@ -46,3 +45,4 @@ Suggests: testthat,
 	pander,
 	BiocStyle
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.0
