@@ -86,6 +86,14 @@ jobs:
         if: runner.os != 'Linux'
         uses: r-lib/actions/setup-pandoc@v2
 
+      ## Fix for macOS C source compilation (missing libintl.h for data.table/Matrix)
+      - name: Install macOS system dependencies (gettext)
+        if: runner.os == 'macOS'
+        run: |
+          brew install gettext
+          echo "CPPFLAGS=-I$(brew --prefix gettext)/include" >> $GITHUB_ENV
+          echo "LDFLAGS=-L$(brew --prefix gettext)/lib" >> $GITHUB_ENV
+
       ## Handles system dependencies, R package resolution, BiocManager setup, and caching automatically
       - name: Setup R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
@@ -95,6 +103,7 @@ jobs:
             any::BiocCheck
             any::pracma
             any::BiocGenerics
+            any::remotes
           needs: check
 
       - name: Install covr
