@@ -3,6 +3,8 @@ context('Continuum/profile mode')
 skip_if_not_installed('msdata',  minimum_version = '0.24.1')
 library(msdata)
 
+# Force garbage collection to clear any unclosed C++ file handles left over by previous tests
+gc()
 
 ## Input
 # use 2 continuum mode files from the msdata pkg
@@ -10,8 +12,8 @@ input_spectraPaths <- c(system.file('sciex/20171016_POOL_POS_1_105-134.mzML', pa
                         system.file('sciex/20171016_POOL_POS_3_105-134.mzML', package = "msdata"))
 
 # target serine in msdata files
-input_ROI     	<- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=FALSE)
-input_ROI[1,] 	<- c("ID-1", "Serine", 175., 181., 187., 106.039871, 106.049871, 106.059871)
+input_ROI       <- data.frame(matrix(vector(), 1, 8, dimnames=list(c(), c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", "mz", "mzMax"))),stringsAsFactors=FALSE)
+input_ROI[1,]   <- c("ID-1", "Serine", 175., 181., 187., 106.039871, 106.049871, 106.059871)
 input_ROI[,3:8] <- vapply(input_ROI[,3:8], as.numeric, FUN.VALUE=numeric(1))
 
 
@@ -38,7 +40,7 @@ found_ROIsDataPoints    <- extractSignalRawData(tmp_raw_data,
 test_that('extractSignalRawData() continuum mode', {
   # Input
   raw_data <- MSnbase::readMSData(system.file('sciex/20171016_POOL_POS_1_105-134.mzML', package = "msdata"),
-                                    centroided = FALSE, mode='onDisk')
+                                  centroided = FALSE, mode='onDisk')
 
   # Expected signal
   expected_rt  <- c(175.217, 175.217, 175.217, 175.217, 175.217, 175.217, 175.217, 175.217, 175.217, 175.496, 175.496, 175.496, 175.496, 175.496, 175.496, 175.496, 175.496, 175.496, 175.775, 175.775, 175.775, 175.775, 175.775, 175.775, 176.054, 176.054, 176.054, 176.054, 176.054, 176.054, 176.054, 176.054, 176.054, 176.054, 176.333, 176.333, 176.333, 176.333, 176.333, 176.333, 176.333, 176.333, 176.333, 176.612, 176.612, 176.612, 176.612, 176.612, 176.612, 176.612, 176.612, 176.891, 176.891, 176.891, 176.891, 176.891, 176.891, 176.891, 176.891, 176.891, 176.891, 177.171, 177.171, 177.171, 177.171, 177.171, 177.171, 177.171, 177.171, 177.171, 177.171, 177.171, 177.450, 177.450, 177.450, 177.450, 177.450, 177.450, 177.450, 177.450, 177.450, 177.729, 177.729, 177.729, 177.729, 177.729, 177.729, 177.729, 177.729, 178.008, 178.008, 178.008, 178.008, 178.008, 178.008, 178.008, 178.287, 178.287, 178.287, 178.287, 178.287, 178.287, 178.287, 178.566, 178.566, 178.566, 178.566, 178.566, 178.566, 178.566, 178.566, 178.845, 178.845, 178.845, 178.845, 178.845, 178.845, 179.124,
@@ -87,9 +89,9 @@ test_that('peakPantheR_singleFileSearch() continuum mode', {
     # found ROIsDataPoint
     tmp_raw_data            <- MSnbase::readMSData(input_spectraPaths[1], centroided = FALSE, mode='onDisk')
     found_ROIsDataPoints    <- extractSignalRawData(tmp_raw_data,
-                                                rt=input_ROI[,c('rtMin','rtMax')],
-                                                mz=input_ROI[,c('mzMin','mzMax')],
-                                                verbose=FALSE)
+                                                    rt=input_ROI[,c('rtMin','rtMax')],
+                                                    mz=input_ROI[,c('mzMin','mzMax')],
+                                                    verbose=FALSE)
 
 
     # Expected TIC
@@ -184,12 +186,9 @@ test_that('peakPantheR_parallelAnnotation() continuum mode', {
     expected_annotation@peakFit     <- expected_peakFit
     expected_annotation@dataPoints  <- expected_dataPoints
     expected_annotation@isAnnotated <- TRUE
-    # Expected failures
-    tmp_status          <- NA
-    names(tmp_status)   <- 'test'
-    tmp_failures        <- !is.na(tmp_status)
-    names(tmp_failures) <- NULL
-    expected_failures   <- data.frame(matrix(c(names(tmp_status)[tmp_failures], tmp_status[tmp_failures]), ncol=2, byrow=FALSE, dimnames=list(c(), c('file', 'error'))), stringsAsFactors=FALSE)
+    
+    # Expected failures (0 rows when no files fail)
+    expected_failures <- data.frame(file=character(0), error=character(0), stringsAsFactors=FALSE)
 
     # results (output, warnings and messages)
     result_parallelAnnotation <- evaluate_promise(peakPantheR_parallelAnnotation(initAnnotation, nCores=1, getAcquTime=FALSE, centroided=FALSE, verbose=FALSE))

@@ -1,2 +1,4 @@
 Changes in version 1.27.2 (2026-09-28)
+- correct test for badly formed files (updated MSnBase mzR behaviour)
+Changes in version 1.27.1 (2026-09-27)
 - BiocCheck fixes, updated documentation and dependencies versions
