@@ -86,14 +86,15 @@ jobs:
         if: runner.os != 'Linux'
         uses: r-lib/actions/setup-pandoc@v2
 
-      ## Inject gettext paths directly into R's build configuration
-      - name: Setup macOS C compilers flags
+      ## Install system C libraries for macOS source builds (gettext, netcdf)
+      - name: Setup macOS C compilers and system dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install gettext
+          brew install gettext netcdf pkg-config
           mkdir -p ~/.R
-          echo "CPPFLAGS += -I$(brew --prefix gettext)/include" >> ~/.R/Makevars
-          echo "LDFLAGS += -L$(brew --prefix gettext)/lib" >> ~/.R/Makevars
+          echo "CPPFLAGS += -I$(brew --prefix gettext)/include -I$(brew --prefix netcdf)/include" >> ~/.R/Makevars
+          echo "LDFLAGS += -L$(brew --prefix gettext)/lib -L$(brew --prefix netcdf)/lib" >> ~/.R/Makevars
+          echo "PKG_CONFIG_PATH=$(brew --prefix netcdf)/lib/pkgconfig" >> $GITHUB_ENV
 
       ## Handles system dependencies, R package resolution, BiocManager setup, and caching automatically
       - name: Setup R dependencies
