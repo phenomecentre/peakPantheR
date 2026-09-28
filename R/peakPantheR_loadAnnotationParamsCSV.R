@@ -125,9 +125,10 @@ prepare_basic_target_parameters <- function(paramTable){
 }
 # Check if NA in ROI, split function too long
 check_NA_in_target_parameters <- function(targetFeatTable) {
-    if (any(is.na(targetFeatTable[,c("rtMin","rtMax","mzMin","mzMax")]))) {
-        stop(paste0('Check ROI values: "ROI$rtMin", "ROI$rtMax", ',
-                    '"ROI$mzMin" and "ROI$mzMax" cannot be NA'))
+    if (any(is.na(targetFeatTable[, c("rtMin", "rtMax", "mzMin", "mzMax")]))) {
+        stop('Check ROI values: "ROI$rtMin", "ROI$rtMax", ',
+            '"ROI$mzMin" and "ROI$mzMax" cannot be NA',
+            call. = FALSE)
     }
 }
 

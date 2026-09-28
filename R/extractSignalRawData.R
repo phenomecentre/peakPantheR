@@ -146,20 +146,20 @@ extractSignalRawData <- function(rawSpec, rt, mz, msLevel = 1L, verbose = TRUE){
 # Looping tryCatch with count and sleep ---------------------------------------
 retry <- function(expr, isError=function(x) "try-error" %in% class(x), 
                 maxErrors=5, sleep=0) {
-    attempts = 0
-    retval = try(eval(expr))
+    attempts <- 0
+    retval <- try(eval(expr))
     while (isError(retval)) {
-        attempts = attempts + 1
+        attempts <- attempts + 1
         if (attempts >= maxErrors) {
-            msg = sprintf("retry: too many retries [[%s]]", 
+            msg <- sprintf("retry: too many retries [[%s]]", 
                             utils::capture.output(str(retval)))
             stop(msg)
         } else {
-            msg = sprintf("retry: error in attempt %i/%i", attempts, maxErrors)
+            msg <- sprintf("retry: error in attempt %i/%i", attempts, maxErrors)
             message(msg)
         }
         if (sleep > 0) Sys.sleep(sleep)
-        retval = try(eval(expr))
+        retval <- try(eval(expr))
     }
     return(retval)
 }

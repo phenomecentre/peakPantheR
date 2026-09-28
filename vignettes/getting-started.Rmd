@@ -18,7 +18,7 @@ vignette: >
 ```{r biocstyle, echo = FALSE, results = "asis" }
 BiocStyle::markdown()
 ```
-```{r, echo = FALSE}
+```{r getting_started_01, echo = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>"
@@ -63,7 +63,7 @@ _mzData_ format as data import is achieved using Bioconductor's
 # Installation
 
 To install `peakPantheR` from Bioconductor:
-```{r, eval = FALSE}
+```{r getting_started_02, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
@@ -71,7 +71,7 @@ BiocManager::install("peakPantheR")
 ```
 
 Install the development version of `peakPantheR` directly from GitHub with:
-```{r, eval = FALSE}
+```{r getting_started_03, eval = FALSE}
 # Install devtools
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("phenomecentre/peakPantheR")
@@ -85,13 +85,13 @@ implements all the functions to detect and integrate **multiple** compounds in
 **multiple** files in **parallel** and store results in a **single** object. It
 can be employed to integrate a large number of expected features across a
 dataset:
-```{r, eval = FALSE}
+```{r getting_started_04, eval = FALSE}
 library(peakPantheR)
 
 peakPantheR_start_GUI(browser = TRUE)
 #  To exit press ESC in the command line
 ```
-```{r, fig.align="center", out.width = "700px", echo = FALSE}
+```{r getting_started_05, fig.align="center", out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/example-UI.png")
 ```
 
@@ -125,13 +125,13 @@ Each file contains data in centroid mode acquired in positive ion mode form
 
 Below we install the `r Biocpkg("faahKO")` package and locate raw CDF files of 
 interest:
-```{r, eval = FALSE}
+```{r getting_started_06, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 BiocManager::install("faahKO")
 ```
-```{r}
+```{r getting_started_07}
 library(faahKO)
 ## file paths
 input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -156,7 +156,7 @@ following information:
 
 Below we define 2 features of interest that are present in the 
 `r Biocpkg("faahKO")` dataset and can be employed in subsequent vignettes:
-```{r, eval=FALSE}
+```{r getting_started_08, eval=FALSE}
 # targetFeatTable
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
                         c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
@@ -168,7 +168,7 @@ input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440., 496.1950
 input_targetFeatTable[,c(1,3:8)] <- sapply(input_targetFeatTable[,c(1,3:8)], 
                                             as.numeric)
 ```
-```{r, results = "asis", echo = FALSE}
+```{r getting_started_09, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
                         c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
@@ -199,7 +199,7 @@ A `peakPantheRAnnotation` (previously annotated or not) can be passed as input
 in a `.RData` file. The `peakPantheRAnnotation` object must be named
 _annotationObject_:
 
-```{r, eval=FALSE}
+```{r getting_started_10, eval=FALSE}
 library(faahKO)
 
 # Define the file paths (3 samples)
@@ -260,7 +260,7 @@ If `uROI` and `FIR` are to be set, the following columns must be provided:
 `ROI_mzMax`, `uROI_rtMin`, `uROI_rtMax`, `uROI_mzMin`, `uROI_mzMax`, `uROI_rt`,
 `uROI_mz`, `FIR_rtMin`, `FIR_rtMax`, `FIR_mzMin`, `FIR_mzMax`
 
-```{r, eval=FALSE}
+```{r getting_started_11, eval=FALSE}
 # Define targeted features without uROI and FIR (2 features)
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
                         c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin",
@@ -276,7 +276,7 @@ write.csv(input_targetFeatTable,
             file = './1-fitParams_example_UI.csv',
             row.names = FALSE)
 ```
-```{r, results = "asis", echo = FALSE}
+```{r getting_started_12, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(),
                         c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin",
@@ -298,7 +298,7 @@ column names) while columns correspond to the path on disk and metadata. At
 minimum a column `filepath` must be present, with subsequent columns defining
 metadata properties.
 
-```{r, eval=FALSE}
+```{r getting_started_13, eval=FALSE}
 # Define the spectra paths and metada
 input_spectraMeta <- data.frame(matrix(vector(), 3, 3,
                         dimnames=list(c(),c("filepath","testcol1","testcol2"))),
@@ -315,7 +315,7 @@ write.csv(input_spectraMeta,
             file = './2-spectraMetaWPath_example_UI.csv',
             row.names = FALSE)
 ```
-```{r, results = "asis", echo = FALSE}
+```{r getting_started_14, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 input_spectraMeta <- data.frame(matrix(vector(), 3, 3,
                         dimnames=list(c(),c("filepath","testcol1","testcol2"))),
@@ -335,7 +335,7 @@ It is possible to define some feature metadata, with targeted features as
 rows (same order as the fitting parameters, first row defining the column
 names), and as columns the metadata.
 
-```{r, eval=FALSE}
+```{r getting_started_15, eval=FALSE}
 # Define the feature metada
 input_featMeta <- data.frame(matrix(vector(), 2, 2,
                     dimnames=list(c(),c("testcol1","testcol2"))),
@@ -348,7 +348,7 @@ write.csv(input_featMeta,
             file = './3-featMeta_example_UI.csv',
             row.names = FALSE)
 ```
-```{r, results = "asis", echo = FALSE}
+```{r getting_started_16, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 input_featMeta <- data.frame(matrix(vector(), 2, 2,
                     dimnames=list(c(),c("testcol1","testcol2"))),
@@ -367,7 +367,7 @@ pander::pandoc.table(input_featMeta, digits = 0)
 
 # Session Information
 
-```{r, echo = FALSE}
+```{r getting_started_17, echo = FALSE}
 devtools::session_info()
 ```
 

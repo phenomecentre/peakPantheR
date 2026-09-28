@@ -37,7 +37,7 @@ Useful links:
 Authors:
 \itemize{
     \item Arnaud Wolfer \email{adwolfer@gmail.com} 
-      (\href{https://orcid.org/0000-0001-5856-3218}{ORCID})
+        (\href{https://orcid.org/0000-0001-5856-3218}{ORCID})
     \item Goncalo Correia \email{gscorreia89@gmail.com} 
         (\href{https://orcid.org/0000-0001-8271-9294}{ORCID})
 }

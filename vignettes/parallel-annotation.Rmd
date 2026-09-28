@@ -17,7 +17,7 @@ vignette: >
 ```{r biocstyle, echo = FALSE, results = "asis" }
 BiocStyle::markdown()
 ```
-```{r, echo = FALSE}
+```{r parallel_annotation_01, echo = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>"
@@ -74,7 +74,7 @@ Parallel compound integration is set to process **multiple** compounds in
 **multiple** files in **parallel**, and store results in a **single** object.
 
 
-```{r, out.width = "700px", echo = FALSE}
+```{r parallel_annotation_02, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/parallelAnnotation.png")
 ```
 
@@ -105,7 +105,7 @@ fallback integration regions (FIR), with all samples
 8. return the resulting object and/or table (_row: file, col: compound_)
 
 
-```{r, out.width = "700px", echo = FALSE}
+```{r parallel_annotation_03, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/parallelAnnotation_procedure.png")
 ```
 
@@ -125,7 +125,7 @@ details on the installation and input data employed, please consult the
 First the paths to 3 MS file from the `r Biocpkg("faahKO")` are located and used
 as input spectras. In this example these 3 samples are considered as 
 representative of the whole run (e.g. Quality Control samples):
-```{r}
+```{r parallel_annotation_04}
 library(faahKO)
 ## file paths
 input_spectraPaths  <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -146,7 +146,7 @@ and stored in a table with as columns:
 * `mzMax` (m/z)
 * `mz` (m/z, optional / `NA`)
 
-```{r, eval = FALSE}
+```{r parallel_annotation_05, eval = FALSE}
 # targetFeatTable
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
                         c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
@@ -158,7 +158,7 @@ input_targetFeatTable[2,] <- c("ID-2", "Cpd 2", 3280., 3385.577, 3440.,
 input_targetFeatTable[,c(3:8)] <- sapply(input_targetFeatTable[,c(3:8)], 
                                         as.numeric)
 ```
-```{r, results = "asis", echo = FALSE}
+```{r parallel_annotation_06, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 input_targetFeatTable <- data.frame(matrix(vector(), 2, 8, dimnames=list(c(), 
                         c("cpdID", "cpdName", "rtMin", "rt", "rtMax", "mzMin", 
@@ -177,14 +177,14 @@ pander::pandoc.table(input_targetFeatTable, digits = 9)
 Additional compound and spectra metadata can be provided but isn't employed 
 during the fitting procedure:
 
-```{r, eval=FALSE}
+```{r parallel_annotation_07, eval=FALSE}
 # spectra Metadata
 input_spectraMetadata  <- data.frame(matrix(c("sample type 1", "sample type 2", 
                             "sample type 1"), 3, 1, 
                             dimnames=list(c(),c("sampleType"))),
                             stringsAsFactors=FALSE)
 ```
-```{r, results = "asis", echo = FALSE}
+```{r parallel_annotation_08, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 input_spectraMetadata  <- data.frame(matrix(c("sample type 1", "sample type 2", 
                                             "sample type 1"), 3, 1, 
@@ -200,7 +200,7 @@ A `peakPantheRAnnotation` object is first initialised with the path to the files
 to process (`spectraPaths`), features to integrate (`targetFeatTable`) and 
 additional information and parameters such as `spectraMetadata`, `uROI`, `FIR` 
 and if they should be used (`useUROI=TRUE`, `useFIR=TRUE`):
-```{r}
+```{r parallel_annotation_09}
 library(peakPantheR)
 init_annotation <- peakPantheRAnnotation(spectraPaths = input_spectraPaths,
                         targetFeatTable = input_targetFeatTable,
@@ -209,14 +209,14 @@ init_annotation <- peakPantheRAnnotation(spectraPaths = input_spectraPaths,
 
 The resulting `peakPantheRAnnotation` object is not annotated, does not contain 
 and use `uROI` and `FIR`
-```{r}
+```{r parallel_annotation_10}
 init_annotation
 ```
 
 `peakPantheR_parallelAnnotation()` will run the annotation across files in 
 parallel (if `nCores` > 1) and return the successful annotations
 (`result$annotation`) and failures (`result$failures`):
-```{r}
+```{r parallel_annotation_11}
 # annotate files serially
 annotation_result <- peakPantheR_parallelAnnotation(init_annotation, nCores=1,
                                                     curveModel='skewedGaussian',
@@ -234,7 +234,7 @@ annotation_result$failures
 `peakPantheR_parallelAnnotation()` will run the annotation across files in
 parallel (if `nCores` > 1) and return the successful annotations
 (`result$annotation`) and failures (`result$failures`):
-```{r}
+```{r parallel_annotation_12}
 # annotate files in parallel using two workers
 annotation_result <- peakPantheR_parallelAnnotation(init_annotation, nCores=2,
                                                     curveModel='skewedGaussian',
@@ -256,7 +256,7 @@ Based on the fit results, updated ROI (`uROI`) and fallback integration region
 * `FIR` are established as the median of found `rtMin`, `rtMax`, `mzMin`,
 `mzMax`
 
-```{r}
+```{r parallel_annotation_13}
 updated_annotation  <- annotationParamsDiagnostic(data_annotation, verbose=TRUE)
 
 # uROI now exist
@@ -268,7 +268,7 @@ updated_annotation
 determined `uROI` and `FIR` for manual validation. Additionnaly a diagnostic 
 plot for each compound is saved for reference and can be generated in parallel 
 with the argument `nCores`:
-```{r, eval=FALSE}
+```{r parallel_annotation_14, eval=FALSE}
 # create a colourScale based on the sampleType
 uniq_sType <- sort(unique(spectraMetadata(updated_annotation)$sampleType),
                     na.last=TRUE)
@@ -286,7 +286,7 @@ outputAnnotationDiagnostic(updated_annotation, saveFolder=output_folder,
 ```
 
 The data saved in `annotationParameters_summary.csv` is as follow:
-```{r, results = "asis", echo = FALSE}
+```{r parallel_annotation_15, results = "asis", echo = FALSE}
 # use pandoc for improved readability, display the diagnostic results
 tmp_csv <- data.frame(matrix(nrow=2,ncol=21,dimnames=list(c(), c('cpdID', 
         'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin', 'ROI_rtMax', 
@@ -310,7 +310,7 @@ colnames(tmp_csv) <- c('cpdID', 'cpdName', 'X', 'ROI_rt', 'ROI_mz','ROI_rtMin',
 pander::pandoc.table(tmp_csv, digits=9)
 ```
 
-```{r, out.width = "700px", echo = FALSE}
+```{r parallel_annotation_16, out.width = "700px", echo = FALSE}
 knitr::include_graphics(
     "figures/parallel_annotation_diagnostic_cpd1.png")
 ```
@@ -362,7 +362,7 @@ To continue with the workflow, simply set a new annotation object with the
 fit parameters established by `retentionTimeCorrection()` and call 
 `peakPantheR_parallelAnnotation()` for the final annotation.
 
-```{r, results="asis", echo=FALSE}
+```{r parallel_annotation_17, results="asis", echo=FALSE}
 # Example with constant correction.
 rtCorrectionOutput <- retentionTimeCorrection(updated_annotation,
                             rtCorrectionReferences=c('ID-1'),
@@ -402,7 +402,7 @@ the analysis to run. `uROIExist` is established depending on the `.csv` uROI
 column, and will only be set to TRUE if no `NA` are present. It is possible to 
 reset the `FIR` values with the `uROI` windows using `resetFIR()`. 
 
-```{r, eval=FALSE}
+```{r parallel_annotation_18, eval=FALSE}
 update_csv_path <- '/path_to_new_csv/'
 
 # load csv
@@ -429,7 +429,7 @@ same processing can be applied to all study samples. `resetAnnotation()` will
 reinitialise all the results and modify the samples or compounds targeted as 
 required:
 
-```{r}
+```{r parallel_annotation_19}
 ## new files
 new_spectraPaths   <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                         system.file('cdf/WT/wt15.CDF', package = "faahKO"),
@@ -442,13 +442,13 @@ new_spectraPaths
 ```
 
 Below we define the metadata of these new samples:
-```{r}
+```{r parallel_annotation_20}
 ## new spectra metadata
 new_spectraMetadata  <- data.frame(matrix(c("KO", "WT", "KO", "WT", "KO", "WT"),
                                         6, 1, dimnames=list(c(), c("Group"))), 
                                     stringsAsFactors=FALSE)
 ```
-```{r, results = "asis", echo = FALSE}
+```{r parallel_annotation_21, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 new_spectraMetadata  <- data.frame(matrix(c("KO", "WT", "KO", "WT", "KO", "WT"),
                                         6, 1, dimnames=list(c(), c("Group"))), 
@@ -456,14 +456,14 @@ new_spectraMetadata  <- data.frame(matrix(c("KO", "WT", "KO", "WT", "KO", "WT"),
 pander::pandoc.table(new_spectraMetadata)
 ```
 
-```{r, echo=FALSE}
+```{r parallel_annotation_22, echo=FALSE}
 new_annotation <- resetAnnotation(updated_annotation, 
                                 spectraPaths=new_spectraPaths, 
                                 spectraMetadata=new_spectraMetadata, 
                                 useUROI=TRUE, useFIR=TRUE, verbose=FALSE) 
 ```
 
-```{r, eval=FALSE}
+```{r parallel_annotation_23, eval=FALSE}
 ## add new samples to the annotation loaded from csv, useUROI, useFIR
 
 new_annotation <- resetAnnotation(new_annotation, spectraPaths=new_spectraPaths,
@@ -480,7 +480,7 @@ new_annotation <- resetAnnotation(new_annotation, spectraPaths=new_spectraPaths,
 #>   New "useUROI" value set
 #>   New "useFIR" value set
 ```
-```{r}
+```{r parallel_annotation_24}
 new_annotation
 ```
 
@@ -489,7 +489,7 @@ new_annotation
 
 We can now run the final annotation on all samples with the optimised targeted 
 features:
-```{r}
+```{r parallel_annotation_25}
 # annotate files serially
 new_annotation_result <- peakPantheR_parallelAnnotation(new_annotation, 
                                                         nCores=1, verbose=FALSE)
@@ -508,7 +508,7 @@ new_annotation_result$failures
 ### Output final results
 
 The final fits can be saved to disk with `outputAnnotationDiagnostic()`:
-```{r, eval=FALSE}
+```{r parallel_annotation_26, eval=FALSE}
 # create a colourScale based on the sampleType
 uniq_group <- sort(unique(spectraMetadata(final_annotation)$Group),na.last=TRUE)
 col_group  <- unname( setNames(c('blue', 'red'),
@@ -526,19 +526,19 @@ outputAnnotationDiagnostic(final_annotation, saveFolder=final_output_folder,
 For each processed sample, a `peakTables` contains all the fit information for 
 all compounds targeted. `annotationTable( , column)` will group the values 
 across all samples and compounds for any `peakTables` column:
-```{r, eval=FALSE}
+```{r parallel_annotation_27, eval=FALSE}
 # peakTables for the first sample
 peakTables(final_annotation)[[1]]
 ```
-```{r, results = "asis", echo = FALSE}
+```{r parallel_annotation_28, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 pander::pandoc.table(peakTables(final_annotation)[[1]])
 ```
-```{r, eval=FALSE}
+```{r parallel_annotation_29, eval=FALSE}
 # Extract the found peak area for all compounds and all samples
 annotationTable(final_annotation, column='peakArea')
 ```
-```{r, results = "asis", echo = FALSE}
+```{r parallel_annotation_30, results = "asis", echo = FALSE}
 # use pandoc for improved readability
 pander::pandoc.table(annotationTable(final_annotation, column='peakArea'))
 ```
@@ -548,7 +548,7 @@ Finally all annotation results can be saved to disk as `.csv` with
 spectra metadata and a file for each column of peakTables (with samples as rows 
 and compounds as columns):
 
-```{r, eval=FALSE}
+```{r parallel_annotation_31, eval=FALSE}
 # create a temporary location to save the diagnotic (otherwise provide the path
 # to the selected location)
 final_output_folder <- tempdir()
@@ -593,6 +593,6 @@ outputAnnotationResult(final_annotation, saveFolder=final_output_folder,
 
 
 # Session Information
-```{r, echo = FALSE}
+```{r parallel_annotation_32, echo = FALSE}
 devtools::session_info()
 ```

@@ -15,7 +15,7 @@ vignette: >
 ```{r biocstyle, echo = FALSE, results = "asis" }
 BiocStyle::markdown()
 ```
-```{r, echo = FALSE}
+```{r peakPantheR_GUI_01, echo = FALSE}
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>"
@@ -71,7 +71,7 @@ This vignette employ the `.csv` or `.RData` files generated from
 ## Getting Started
 
 The graphical user interface is started as follow:
-```{r, eval = FALSE}
+```{r peakPantheR_GUI_02, eval = FALSE}
 library(peakPantheR)
 
 peakPantheR_start_GUI(browser = TRUE)
@@ -92,7 +92,7 @@ _peakPantheRAnnotation_ named `annotationObject`. This object can be annotated
 or not, for example loading a previously run annotation (_see the **Export** 
 section for more details_).
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_03, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/01-import_RData.png")
 ```
 
@@ -102,7 +102,7 @@ The second input format consists of multiple `.csv` files describing the
 targeted features, spectra to process and corresponding metadata (optional). 
 Spectra can also be directly selected on disk.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_04, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/02-import_CSV.png")
 ```
 
@@ -119,7 +119,7 @@ Secondly the curve fitting model to use can be selected from the interface.
 Finally `Parallelisation` enables the selection of the number of CPU cores to 
 employ for parallel file access and processing.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_05, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/03-Run_annotation.png")
 ```
 
@@ -164,7 +164,7 @@ reliably integrated over a large number of samples. Visual evaluation
 (_see below_) and the adjustment of `uROI` or `FIR` might assist in tuning the 
 integration of said feature.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_06, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/04-Diagnostic_statistics.png")
 ```
 
@@ -173,7 +173,7 @@ $~$
 `Update uROI/FIR` automatically sets `uROI` and `FIR` for each feature based on
 the _RT_ / _m/z_ boundaries of the peaks successfully integrated.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_07, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/05-Diagnostic_updateUROIFIR.png")
 ```
 
@@ -185,7 +185,7 @@ in each sample, as well as the change in _RT_ / _m/z_ (of the peak apex) and
 peak area through time. Samples can be automatically coloured based on a 
 _sample metadata_ column.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_08, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/06-Diagnostic_plot.png")
 ```
 
@@ -207,7 +207,7 @@ $~$
 `Overall results` displays a fitting property for all targeted features (_as 
 columns_) and all spectra (_as rows_).
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_09, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/07-Results_Overall.png")
 ```
 
@@ -216,7 +216,7 @@ $~$
 `Results per targeted feature` displays all fitting properties (_as columns_) 
 for all samples (_as rows_) for a selected targeted feature.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_10, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/08-Results_byFeature.png")
 ```
 
@@ -225,7 +225,7 @@ $~$
 `Results per sample` displays all fitting properties (_as columns_) for all 
 targeted features (_as rows_) for a selected sample.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_11, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/09-Results_bySample.png")
 ```
 
@@ -248,7 +248,7 @@ Finally each fitting property can be saved as a `.csv` file with all samples as
 _rows_ and all targeted features as _columns_. Additionally a _summary_ table 
 will present the integration success rate for each targeted feature.
 
-```{r, out.width = "700px", echo = FALSE}
+```{r peakPantheR_GUI_12, out.width = "700px", echo = FALSE}
 knitr::include_graphics("figures/10-Export.png")
 ```
 
@@ -271,6 +271,6 @@ $~$
 $~$
 
 # Session Information
-```{r, echo = FALSE}
+```{r peakPantheR_GUI_13, echo = FALSE}
 devtools::session_info()
 ```

@@ -86,13 +86,14 @@ jobs:
         if: runner.os != 'Linux'
         uses: r-lib/actions/setup-pandoc@v2
 
-      ## Fix for macOS C source compilation (missing libintl.h for data.table/Matrix)
-      - name: Install macOS system dependencies (gettext)
+      ## Inject gettext paths directly into R's build configuration
+      - name: Setup macOS C compilers flags
         if: runner.os == 'macOS'
         run: |
           brew install gettext
-          echo "CPPFLAGS=-I$(brew --prefix gettext)/include" >> $GITHUB_ENV
-          echo "LDFLAGS=-L$(brew --prefix gettext)/lib" >> $GITHUB_ENV
+          mkdir -p ~/.R
+          echo "CPPFLAGS += -I$(brew --prefix gettext)/include" >> ~/.R/Makevars
+          echo "LDFLAGS += -L$(brew --prefix gettext)/lib" >> ~/.R/Makevars
 
       ## Handles system dependencies, R package resolution, BiocManager setup, and caching automatically
       - name: Setup R dependencies

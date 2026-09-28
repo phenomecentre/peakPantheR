@@ -1,2 +1,2 @@
-Changes in version 1.25.1 (2026-04-16)
-- Use `BiocParallel` instead of `doParallel` / `foreach`
+Changes in version 1.27.1 (2026-09-28)
+- BiocCheck fixes, updated documentation and dependencies versions
