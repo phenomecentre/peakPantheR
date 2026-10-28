@@ -1,3 +1,5 @@
+Changes in version 1.27.4 (2026-10-28)
+- Adapt to new MSnBase / mzR behaviour
 Changes in version 1.27.3 (2026-10-05)
 - correct continuum files test  (updated MSnBase mzR values)
 Changes in version 1.27.2 (2026-09-28)

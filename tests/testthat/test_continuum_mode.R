@@ -3,6 +3,18 @@ context('Continuum/profile mode')
 skip_if_not_installed('msdata',  minimum_version = '0.24.1')
 library(msdata)
 
+can_read_continuum_mzml <- function() {
+  file <- system.file('sciex/20171016_POOL_POS_1_105-134.mzML', package = 'msdata')
+  if (!nzchar(file)) {
+    return(FALSE)
+  }
+  isTRUE(try({
+    x <- mzR::openMSfile(file)
+    on.exit(mzR::close(x), add = TRUE)
+    inherits(x, 'mzR')
+  }, silent = TRUE))
+}
+
 # Force garbage collection to clear any unclosed C++ file handles left over by previous tests
 gc()
 
@@ -30,14 +42,20 @@ class(cFit1)    <- 'peakPantheR_curveFit'
 found_curveFit  <- list(cFit1)
 
 # found ROIsDataPoint
-tmp_raw_data            <- MSnbase::readMSData(input_spectraPaths[1], centroided = FALSE, mode='onDisk')
-found_ROIsDataPoints    <- extractSignalRawData(tmp_raw_data,
-                                                rt=input_ROI[,c('rtMin','rtMax')],
-                                                mz=input_ROI[,c('mzMin','mzMax')],
-                                                verbose=FALSE)
+if (can_read_continuum_mzml()) {
+  tmp_raw_data            <- MSnbase::readMSData(input_spectraPaths[1], centroided = FALSE, mode='onDisk')
+  found_ROIsDataPoints    <- extractSignalRawData(tmp_raw_data,
+                                                  rt=input_ROI[,c('rtMin','rtMax')],
+                                                  mz=input_ROI[,c('mzMin','mzMax')],
+                                                  verbose=FALSE)
+} else {
+  tmp_raw_data            <- NULL
+  found_ROIsDataPoints    <- NULL
+}
 
 
 test_that('extractSignalRawData() continuum mode', {
+  skip_if_not(can_read_continuum_mzml(), 'mzR cannot open the continuum mzML fixture in this CI image')
   # Input
   raw_data <- MSnbase::readMSData(system.file('sciex/20171016_POOL_POS_1_105-134.mzML', package = "msdata"),
                                   centroided = FALSE, mode='onDisk')
@@ -63,6 +81,7 @@ test_that('extractSignalRawData() continuum mode', {
 })
 
 test_that('peakPantheR_singleFileSearch() continuum mode', {
+    skip_if_not(can_read_continuum_mzml(), 'mzR cannot open the continuum mzML fixture in this CI image')
 
     # peakStatistic, no plotEICsPath, no getAcquTime, no FIR, no verbose
 

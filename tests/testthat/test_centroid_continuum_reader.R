@@ -5,6 +5,18 @@ skip_if_not_installed('msdata',  minimum_version = '0.24.1')
 library(faahKO)
 library(msdata)
 
+can_read_continuum_mzml <- function() {
+  file <- system.file('sciex/20171016_POOL_POS_1_105-134.mzML', package = 'msdata')
+  if (!nzchar(file)) {
+    return(FALSE)
+  }
+  isTRUE(try({
+    x <- mzR::openMSfile(file)
+    on.exit(mzR::close(x), add = TRUE)
+    inherits(x, 'mzR')
+  }, silent = TRUE))
+}
+
 # MSnbase does not seem to make a difference in data read and the functions peakPantheR
 # employs between centroided and continuum data. To ensure this behavior is constant
 # this test reads centroided and continuum data files in both ways and checks that
@@ -44,6 +56,7 @@ test_that('read centroided as continuum', {
 })
 
 test_that('read continuum as continuum', {
+  skip_if_not(can_read_continuum_mzml(), 'mzR cannot open the continuum mzML fixture in this CI image')
   # Initialize the object
   raw_continuum_as_continuum <- MSnbase::readMSData(system.file('sciex/20171016_POOL_POS_1_105-134.mzML', package = "msdata"), centroided=FALSE, mode='onDisk')
   # results (output, warnings and messages)
@@ -54,6 +67,7 @@ test_that('read continuum as continuum', {
 })
 
 test_that('read continuum as centroided', {
+  skip_if_not(can_read_continuum_mzml(), 'mzR cannot open the continuum mzML fixture in this CI image')
   # Initialize the object
   raw_continuum_as_centroided <- MSnbase::readMSData(system.file('sciex/20171016_POOL_POS_1_105-134.mzML', package = "msdata"), centroided=TRUE, mode='onDisk')
   # results (output, warnings and messages)
